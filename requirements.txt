@@ -1,1 +1,2 @@
 plotly
+git+https://github.com/ESeufert/theseus_growth.git
