@@ -1,4 +1,4 @@
-# ◒ False Dawn Industries | Growth Engine
+# ◒ False Dawn Industries | The Perch
 
 Imagine you have a lemonade stand, and you want to figure out how many people are going to come back tomorrow, next week, or next month. That's exactly what this app does, but for software apps!
 
@@ -86,4 +86,4 @@ The engine allows you to do deep age-based segmentation. Often, certain monetiza
 1.  **`project_aged_DAU`**: Calculates how many users are *at least* X days old on a given date.
 2.  **`project_exact_aged_DAU`**: Calculates how many users are *exactly* X days old on a given date.
 
-*Note: The underlying modeling capabilities are provided by [Theseus](https://github.com/ESeufert/theseus_growth), an MIT-licensed cohort analysis library developed by Eric Benjamin Seufert at Heracles.*
+*Note: The underlying modeling capabilities are provided by [Theseus](https://github.com/ESeufert/theseus_growth), an MIT-licensed cohort analysis library developed by [Eric Benjamin Seufert at Heracles](https://hrcls.co/#about).*
