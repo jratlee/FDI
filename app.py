@@ -59,6 +59,11 @@ with st.expander("📖 The Philosophy: Network Vitality"):
     Whether you are acquiring a human subscriber, a decentralized compute node, or an autonomous AI agent, **every network experiences decay.** 
     
     This engine calculates the exact thermodynamic energy (budget, token emissions, or computing subsidies) required to achieve system equilibrium. By simulating the compounding effect of cohort survival, cross-disciplinary teams can establish a **Baseline Benchmark** to evaluate volatile cultural interventions against stable network mechanics.
+    
+    [📚 Read the complete Guide in the README](https://github.com/jratlee/FDI/blob/main/README.md)
+    - *Includes The "Lemonade Stand" ELI5 Explanation*
+    - *Includes the full "Network Paradigm" Glossary*
+    - *Explains what the Mathematical Decay Functions (`exp`, `log`, etc.) represent for human behavior*
     """)
 
 # --- INITIALIZE THESEUS ---
