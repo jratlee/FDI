@@ -5,7 +5,7 @@ import plotly.express as px
 import theseus_growth as th
 
 # --- UX / UI CONFIGURATION ---
-st.set_page_config(page_title="FDI | System Dynamics Engine", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Systen Dynamics Engine | FDI", layout="wide", initial_sidebar_state="expanded")
 
 # Custom CSS for a sleek, minimalist, dark/light aesthetic
 st.markdown("""
@@ -51,7 +51,7 @@ PARADIGMS = {
     }
 }
 
-st.title("◒ False Dawn Industries | System Dynamics Engine")
+st.title("Systen Dynamics Engine | FDI")
 st.caption("Network Vitality, Thermodynamic Equilibrium, and Value Extraction")
 
 with st.expander("📖 The Philosophy: Network Vitality"):
@@ -195,3 +195,12 @@ with tab3:
     projected_revenue = total_eligible_unique * conv_rate * ltv
     
     st.success(f"**{vocab['yield_title']}:** ${int(projected_revenue):,}")
+st.markdown(
+    """
+    <hr style='margin-top:2rem; margin-bottom:1rem; border-color:rgba(255,255,255,0.08);'>
+    <div style='font-size:0.88rem; color:#8a8d93;'>
+    © 2026 False Dawn Industries. The Systems Dynamics Engine is a creation of False Dawn Industries. This project is provided under the MIT License and retains required attribution for any third-party MIT-licensed components.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
