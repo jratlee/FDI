@@ -84,9 +84,6 @@ def project_retention(profile, profile_max=None, start=None, stop=None):
             retention_projection = [profile['interpolation_s'](z) for z in range(min(profile['x']), max(x2) + 1)]
     retention_projection = [z if z > 0 else 0 for z in retention_projection]
 
-    # replace all negative y values with 0
-    retention_projection[1] = np.where(retention_projection[1] < 0, 0, retention_projection[1])
-
     return retention_projection
 
 

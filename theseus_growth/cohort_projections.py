@@ -15,7 +15,7 @@ def build_cohort(cohorts, date, cohort_size):
 
 def add_cohort(cohorts, date, cohort_size):
     this_cohort = build_cohort(cohorts, date, cohort_size)
-    cohorts = cohorts.append(this_cohort)
+    cohorts = pd.concat([cohorts, this_cohort], ignore_index=True)
     return cohorts
 
 
@@ -32,7 +32,7 @@ def create_cohorts(cohorts_DNU, start_date=None):
     this_date = start_date
     for i, cohort_size in enumerate(cohorts_DNU):
         cohort = build_cohort(cohorts, (this_date), cohort_size)
-        cohorts = cohorts.append(cohort)
+        cohorts = pd.concat([cohorts, cohort], ignore_index=True)
         this_date += 1
     return cohorts
 

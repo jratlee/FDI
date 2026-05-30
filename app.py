@@ -103,7 +103,7 @@ with tab2:
     st.write("### Cumulative DAU Forecast")
     df_chart = combined.T # Transpose for plotting mapping index to days
     fig = px.area(df_chart, labels={'value': 'DAU', 'index': 'Day'}, color_discrete_sequence=['#4A90E2', '#FF4B4B'])
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 with tab3:
     st.subheader("Monetization & Freemium Readiness")
