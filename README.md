@@ -1,6 +1,6 @@
 # ◒ False Dawn Industries | System Dynamics Engine
 
-## 🍋 Running an Lemonade Stand
+## 🍋 Running a Lemonade Stand
 Imagine you have a lemonade stand, and you want to figure out how many people are going to come back tomorrow, next week, or next month. That's exactly what this app does, but for software apps.
 
 This app helps us look into the future to guess things like:
@@ -11,9 +11,9 @@ This app helps us look into the future to guess things like:
 ---
 
 ## 🧠 The Reality: From Lemonade Stands to System Dynamics
-To bridge the gap between today’s aggregated marketing environments (SaaS, Mobile Apps) and the decentralized, AI-driven business models of tomorrow, you need to understand the physics of growth.
+To bridge the gap between today's aggregated marketing environments (SaaS, Mobile Apps) and the decentralized, AI-driven business models of tomorrow, you need to understand the physics of growth.
 
-The underlying math of this engine - **compounding cohort decay** - is universal. It governs human attention just as perfectly as it governs machine uptime or capital liquidity. This engine calculates the exact thermodynamic energy (marketing budget, token emissions, or compute subsidies) required to achieve system equilibrium.
+The underlying math of this engine, **compounding cohort decay**, is universal. It governs human attention just as well as it governs machine uptime or capital liquidity. This engine calculates the exact thermodynamic energy (marketing budget, token emissions, or compute subsidies) required to achieve system equilibrium.
 
 ---
 
@@ -28,7 +28,7 @@ By using the **"Network Paradigm" Toggle** globally in the app, you change the b
 
 ### 2. Decentralized Compute / Web3 Network
 *   **The Vibe:** Financialized networks where participants are brutally rational and financially motivated. 
-*   **What a Marketer Experiences:** You issue **Token Bounties / Emissions** to acquire **DAN** (Daily Active Nodes). Users in this space are often "Mercenary Capital"—they show up for the quick buck (the airdrop) and instantly dump their tokens and leave, causing massive network volatility.
+*   **What a Marketer Experiences:** You issue **Token Bounties / Emissions** to acquire **DAN** (Daily Active Nodes). Users in this space are often "Mercenary Capital." They show up for the quick buck (the airdrop), then instantly dump their tokens and leave, causing massive network volatility.
 *   **How to Model It:** Focus heavily on *Tab 2 (Volatility vs Stability)*. To survive, you must model whether slow, algorithmic token drips are safer than massive volatile marketing stunts.
 
 ### 3. Autonomous AI Economy
@@ -58,7 +58,7 @@ In **Tab 2 (Volatility vs. Stability Modeling)**, the app allows you to select t
 ---
 
 ## 🛠️ Programmatic Capabilities & Data Export
-While this app provides a Streamlit UI, the underlying `theseus_growth` engine supports deep programmatic usecases perfect for Analysts. By using the raw codebase, you can execute:
+While this app provides a Streamlit UI, the underlying `theseus_growth` engine supports deep programmatic use cases perfect for analysts. By using the raw codebase, you can execute:
 *   `engine.to_excel(df)` or `engine.to_json(df)`: Export raw cohort projections directly to your BI system.
 *   `project_aged_DAU` or `project_exact_aged_DAU`: Perform deep Python segmentation to see exactly how many users are mathematically eligible for a specific product milestone based on their age in the network. 
 
