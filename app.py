@@ -5,7 +5,7 @@ import plotly.express as px
 import theseus_growth as th
 
 # --- UX / UI CONFIGURATION ---
-st.set_page_config(page_title="Systen Dynamics Engine | FDI", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="System Dynamics Engine | FDI", layout="wide", initial_sidebar_state="expanded")
 
 # Custom CSS for a sleek, minimalist, dark/light aesthetic
 st.markdown("""
@@ -51,7 +51,7 @@ PARADIGMS = {
     }
 }
 
-st.title("Systen Dynamics Engine | FDI")
+st.title("System Dynamics Engine | FDI")
 st.caption("Network Vitality, Thermodynamic Equilibrium, and Value Extraction")
 
 with st.expander("📖 The Philosophy: Network Vitality"):
