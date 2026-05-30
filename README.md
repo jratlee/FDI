@@ -50,7 +50,7 @@ Tell the engine how many days it takes for a user to start paying, what percenta
 
 ## �� The Philosophy: Outcome-Oriented Modeling
 
-This application is powered by the math inside `https://github.com/ESeufert/theseus_growth`, originally created by mobile growth expert Eric Seufert. While the original software was a powerful Python library built for data scientists, this interface democratizes that complex "cohort compounding" math so anyone can use it. 
+This application is powered by the math inside [theseus_growth](https://github.com/ESeufert/theseus_growth), originally created by mobile growth expert Eric Seufert. While the original software was a powerful Python library built for data scientists, this interface democratizes that complex "cohort compounding" math so anyone can use it. 
 
 In modern businesses, teams often work in silos and speak different languages:
 *   **Marketing** speaks in "CPI" (Cost Per Install).
