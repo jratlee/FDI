@@ -20,6 +20,15 @@ st.markdown("""
 st.title("◒ False Dawn Industries | Growth Engine")
 st.caption("Advanced Cohort Forecasting, Media Mix Modeling, and Monetization Readiness")
 
+with st.expander("📖 The Philosophy: Outcome-Oriented Modeling"):
+    st.markdown("""
+    This engine breaks down silos so Marketing, Product, and Finance can speak the same language: **Outcomes**. 
+    
+    Start by establishing your **Baseline Benchmark** using the tabs below (e.g. *what does 'survival' look like with our current ad spend and retention?*). Once established, you can instantly model massive cultural interventions—like a viral TikTok spike—against your baseline to see if short-term reach actually translates to long-term yield.
+    
+    [Read the full ELI5 guide in the README](https://github.com/jratlee/FDI/blob/main/README.md)
+    """)
+
 # --- INITIALIZE THESEUS ---
 @st.cache_resource
 def init_theseus():
