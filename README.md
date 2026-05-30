@@ -26,6 +26,7 @@ The application features a global **"Network Paradigm" Toggle**. Depending on wh
 
 ### Module 1: Network Liquidity Target
 **The Problem:** How much energy is required to hit a specific network size?
+
 **The Dynamics:** Frame your target (e.g., 50,000 Daily Active Agents). The engine calculates the exact baseline daily injection of new units required to hit that metric equilibrium milestone, accounting for the natural decay (churn) of the network.
 
 ### Module 2: Volatility vs. Stability Modeling
