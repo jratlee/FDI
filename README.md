@@ -45,3 +45,26 @@ Let's say you only ask people for a donation if they come to your lemonade stand
 
 **How to use it:**
 Tell the engine how many days it takes for a user to start paying, what percentage of people actually pay, and how much money they usually give. It will guess your total revenue!
+
+---
+
+## �� The Philosophy: Outcome-Oriented Modeling
+
+This application is powered by the math inside `theseus_growth`, originally created by mobile growth expert Eric Seufert. While the original software was a powerful Python library built for data scientists, this interface democratizes that complex "cohort compounding" math so anyone can use it. 
+
+In modern businesses, teams often work in silos and speak different languages:
+*   **Marketing** speaks in "CPI" (Cost Per Install).
+*   **Product** speaks in "Retention."
+*   **Brand/PR** speaks in "Cultural Reach."
+*   **Finance** speaks in "Yield" or "Revenue."
+
+By pulling all these elements into one unified, visual model, this engine forces every discipline to look at how their specific lever impacts the **ultimate outcome**.
+
+### Establishing a Business Benchmark
+The true superpower of this software is establishing a **Baseline Benchmark Model** for a "normal" operating environment (e.g., *If we pay $2.50 per user, and 10% stay for 30 days, and 2% of survivors buy a $50 subscription, we survive*). 
+
+Once that baseline is established, you can model massive cultural marketing outcomes against it.
+*   **What if we go viral on TikTok?** You can model a massive acquisition spike with a steep drop-off retention curve to see if millions of views actually translate to lasting revenue compared to normal performance marketing.
+*   **What if Product improves the Day-7 experience?** Marketing can instantly see that spending their exact same budget results in dramatically more active users simply because the retention curve flattened out.
+
+This software proves that modern business models aren't driven by just marketing, just product, or just finance—they are driven by the compounding intersection of all three.
