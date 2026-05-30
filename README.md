@@ -2,7 +2,7 @@
 
 To bridge the gap between today’s aggregated marketing environments (SaaS, Mobile Apps) and the decentralized, AI-driven business models of tomorrow, you need to understand the physics of growth.
 
-The underlying math of this engine—**compounding cohort decay**—is universal. It governs human attention just as perfectly as it governs machine uptime or capital liquidity.
+The underlying math of this engine - **compounding cohort decay** - is universal. It governs human attention just as perfectly as it governs machine uptime or capital liquidity.
 
 ## The Paradigm: Network Vitality
 
