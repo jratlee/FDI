@@ -97,6 +97,10 @@ with st.sidebar:
     stable_retention = engine.create_profile([1, 7, 30], [40, 20, 10], profile_max=days_to_project)
     volatile_retention = engine.create_profile([1, 7, 30], [25, 15, 8], form=volatile_curve, profile_max=days_to_project) 
     
+    st.markdown(f"**{vocab['drip']} Baseline**")
+    daily_paid = st.slider(f"Daily Steady {vocab['unit']}", 0, 5000, 1000)
+    paid_cohorts = [daily_paid] * days_to_project
+    
     st.success(f"System Loaded: Stable Baseline, Volatile Dynamics")
 
 
@@ -144,9 +148,8 @@ with tab2:
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(f"**{vocab['drip']}**")
-        daily_paid = st.slider(f"Daily Steady {vocab['unit']}", 0, 5000, 1000)
-        paid_cohorts = [daily_paid] * days_to_project
+        st.markdown(f"**Stable Baseline Active**")
+        st.info(f"Using sidebar baseline: {daily_paid:,} daily base {vocab['unit'].lower()}")
         
     with col2:
         st.markdown(f"**{vocab['spike']}**")
@@ -195,12 +198,12 @@ with tab3:
     projected_revenue = total_eligible_unique * conv_rate * ltv
     
     st.success(f"**{vocab['yield_title']}:** ${int(projected_revenue):,}")
-st.markdown(
-    """
-    <hr style='margin-top:2rem; margin-bottom:1rem; border-color:rgba(255,255,255,0.08);'>
-    <div style='font-size:0.88rem; color:#8a8d93;'>
-    © 2026 False Dawn Industries. The Systems Dynamics Engine is a creation of False Dawn Industries. This project is provided under the MIT License and retains required attribution for any third-party MIT-licensed components.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+
+# --- ATTRIBUTION / COPYRIGHT ---
+st.markdown("---")
+st.markdown("""
+<div style="text-align: center; color: gray; font-size: 0.8em;">
+    &copy; 2026 False Dawn Industries. The System Dynamics Engine interface and paradigm implementation is a creation of False Dawn Industries.<br>
+    Powered by the open-source MIT-licensed <a href="https://github.com/ESeufert/theseus_growth" target="_blank" style="color: gray; text-decoration: underline;">theseus_growth</a> mathematical library originally created by Eric Benjamin Seufert at Heracles.
+</div>
+""", unsafe_allow_html=True)
