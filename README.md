@@ -31,12 +31,14 @@ The application features a global **"Network Paradigm" Toggle**. Depending on wh
 
 ### Module 2: Volatility vs. Stability Modeling
 **The Problem:** What happens when catastrophic viral moments inject volatility into the system?
+
 **The Dynamics:** The engine visually pits a "cultural volatility moment" (a PR spike or mercenary airdrop) against a steady, programmatic drip. 
 
 *Advanced:* You can actively manipulate the mathematical curve physics. Model human habituation using `log` (Logarithmic Decay), or model mercenary capital/airdrop farmers abandoning the network immediately using `exp` (Exponential Decay). This reveals how destructive volatile spikes can be if the underlying retention physics are poor.
 
 ### Module 3: Cohort Maturity & Value Extraction
 **The Problem:** When does the network actually generate yield?
+
 **The Dynamics:** Whether an AI agent takes 7 days to train in the environment before generating micro-transaction volume, or a human user takes 14 days before converting to a SaaS subscription, units must *mature* to generate value. This module calculates exactly how many units survive the decay curve long enough to trigger yield events.
 
 ---
