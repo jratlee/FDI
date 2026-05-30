@@ -68,3 +68,22 @@ Once that baseline is established, you can model massive cultural marketing outc
 *   **What if Product improves the Day-7 experience?** Marketing can instantly see that spending their exact same budget results in dramatically more active users simply because the retention curve flattened out.
 
 This software proves that modern business models aren't driven by just marketing, just product, or just finance—they are driven by the compounding intersection of all three.
+
+---
+
+## ��️ Programmatic Capabilities & Data Export
+
+While this app provides a visual UI (Streamlit), the underlying engine supports deep programmatic use cases perfect for Analysts and Data Scientists.
+
+### Exporting Projections
+For those who want to take their projections and run them through their own financial models, the underlying `theseus_growth` engine comes out-of-the-box with two file output functions that can be incorporated into the app or run in an adjoining script:
+
+*   `engine.to_excel(df, file_name='theseus_output.xlsx')`: Exports your forward DAU projection dataframe directly as a `.xlsx` file.
+*   `engine.to_json(df, file_name='theseus_output.json')`: Saves your forward projection dataframe as a `.json` file for programmatic ingestion into BI tools.
+
+### Age-Based Cohort Segmentation
+The engine allows you to do deep age-based segmentation. Often, certain monetization moments are only available to users *after some amount of time*. The engine contains highly specific age projection methods such as:
+1.  **`project_aged_DAU`**: Calculates how many users are *at least* X days old on a given date.
+2.  **`project_exact_aged_DAU`**: Calculates how many users are *exactly* X days old on a given date.
+
+*Note: The underlying modeling capabilities are provided by [Theseus](https://github.com/ESeufert/theseus_growth), an MIT-licensed cohort analysis library developed by Eric Benjamin Seufert at Heracles.*
