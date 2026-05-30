@@ -1,7 +1,7 @@
 # ◒ False Dawn Industries | System Dynamics Engine
 
-## 🍋 The ELI5 Explanation (Lemonade Stand Growth!)
-Imagine you have a lemonade stand, and you want to figure out how many people are going to come back tomorrow, next week, or next month. That's exactly what this app does, but for software apps!
+## 🍋 Running an Lemonade Stand
+Imagine you have a lemonade stand, and you want to figure out how many people are going to come back tomorrow, next week, or next month. That's exactly what this app does, but for software apps.
 
 This app helps us look into the future to guess things like:
 - How much money we need to spend on ads to reach our daily goals.
@@ -13,7 +13,7 @@ This app helps us look into the future to guess things like:
 ## 🧠 The Reality: From Lemonade Stands to System Dynamics
 To bridge the gap between today’s aggregated marketing environments (SaaS, Mobile Apps) and the decentralized, AI-driven business models of tomorrow, you need to understand the physics of growth.
 
-The underlying math of this engine—**compounding cohort decay**—is universal. It governs human attention just as perfectly as it governs machine uptime or capital liquidity. This engine calculates the exact thermodynamic energy (marketing budget, token emissions, or compute subsidies) required to achieve system equilibrium.
+The underlying math of this engine - **compounding cohort decay** - is universal. It governs human attention just as perfectly as it governs machine uptime or capital liquidity. This engine calculates the exact thermodynamic energy (marketing budget, token emissions, or compute subsidies) required to achieve system equilibrium.
 
 ---
 
