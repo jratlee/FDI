@@ -71,7 +71,7 @@ This software proves that modern business models aren't driven by just marketing
 
 ---
 
-## ��️ Programmatic Capabilities & Data Export
+## :package: Programmatic Capabilities & Data Export
 
 While this app provides a visual UI (Streamlit), the underlying engine supports deep programmatic use cases perfect for Analysts and Data Scientists.
 
