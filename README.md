@@ -13,7 +13,7 @@ This app helps us look into the future to guess things like:
 
 To bridge the gap between today’s aggregated marketing environments (SaaS, Mobile Apps) and the decentralized, AI-driven business models of tomorrow, you need to understand the mechanics of growth.
 
-The underlying math of this engine—**compounding cohort decay**—is universal. It governs human attention just as perfectly as it governs machine uptime or capital liquidity. This engine calculates the energy (marketing budget, token emissions, or compute subsidies) required to achieve system equilibrium.
+The underlying math of this engine, **compounding cohort decay**, is universal. It governs human attention just as perfectly as it governs machine uptime or capital liquidity. This engine calculates the energy (marketing budget, token emissions, or compute subsidies) required to achieve system equilibrium.
 
 ## Quick Start
 
