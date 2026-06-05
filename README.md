@@ -3,9 +3,9 @@
 Imagine you have a lemonade stand, and you want to figure out how many people are going to come back tomorrow, next week, or next month.
 
 This app helps us look into the future to guess things like:
-- How much money we need to spend on ads to reach our daily goals.
-- What happens if we get a huge shoutout on the news (a massive spike of people showing up).
-- How many people will stick around long enough to actually pay us money.
+- How much money we need to spend on ads to reach our daily goals?
+- What happens if we get a huge shoutout on the news (a massive spike of people showing up)?
+- How many people will stick around long enough to actually pay us money?
 
 ---
 
