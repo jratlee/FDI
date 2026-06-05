@@ -1,6 +1,6 @@
 # ◒ False Dawn Industries | System Dynamics Engine
 
-**In plain English:** Imagine you have a lemonade stand, and you want to figure out how many people are going to come back tomorrow, next week, or next month. That's exactly what this app does, but for software apps!
+Imagine you have a lemonade stand, and you want to figure out how many people are going to come back tomorrow, next week, or next month. That's exactly what this app does, but for software apps!
 
 This app helps us look into the future to guess things like:
 - How much money we need to spend on ads to reach our daily goals.
