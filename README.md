@@ -85,4 +85,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 © 2026 False Dawn Industries.
 
-The underlying modeling capabilities are provided by [`theseus_growth`](https://github.com/ESeufert/theseus_growth), an open-source MIT-licensed cohort analysis library. Copyright © 2020 Heracles LLC / Eric Benjamin Seufert. See `THIRD_PARTY_NOTICES.md` for full attribution.
+The underlying modeling capabilities are provided by [`theseus_growth`](https://github.com/ESeufert/theseus_growth), an open-source MIT-licensed cohort analysis library. Copyright © 2020 Heracles LLC / Eric Benjamin Seufert. See [THIRD_PARTY_NOTICES.md](https://github.com/jratlee/FDI/blob/main/THIRD_PARTY_NOTICES.md) for full attribution.
