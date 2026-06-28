@@ -1,0 +1,1 @@
+- [presentArtifact artifactId](present-artifact.md) — artifactId must be the full artifact path (e.g. `artifacts/mockup-sandbox`), not the bare slug.

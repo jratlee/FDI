@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.brand-kit-root {
+  --bg-base: #0D0B08;
+  --bg-surface: #141009;
+  --bg-elevated: #1C160D;
+  --border-umber: #2A2015;
+  --border-hairline: #3A2D1C;
+  
+  --text-primary: #F0E8D5;
+  --text-secondary: #A8997B;
+  --text-muted: #7A6A50;
+  
+  --accent-signal: #FFB12B;
+  --accent-press: #E0920C;
+  --accent-glow: #FFCB6B;
+  
+  --semantic-meridian: #5ABFA8;
+  --semantic-distress: #D8504A;
+}
+
+.brand-kit-bg-base { background-color: var(--bg-base); }
+.brand-kit-bg-surface { background-color: var(--bg-surface); }
+.brand-kit-bg-elevated { background-color: var(--bg-elevated); }
+
+.brand-kit-border-umber { border-color: var(--border-umber); }
+.brand-kit-border-hairline { border-color: var(--border-hairline); }
+
+.brand-kit-text-primary { color: var(--text-primary); }
+.brand-kit-text-secondary { color: var(--text-secondary); }
+.brand-kit-text-muted { color: var(--text-muted); }
+
+.brand-kit-text-signal { color: var(--accent-signal); }
+.brand-kit-bg-signal { background-color: var(--accent-signal); }
+
+.brand-kit-text-meridian { color: var(--semantic-meridian); }
+.brand-kit-text-distress { color: var(--semantic-distress); }
+
+.grid-pattern {
+  background-image: linear-gradient(var(--border-umber) 1px, transparent 1px), linear-gradient(90deg, var(--border-umber) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
