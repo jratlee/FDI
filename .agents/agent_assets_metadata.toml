@@ -77,3 +77,21 @@ id = "sy-qD9JBumsypDO3Ef8hz"
 uri = "file://exports/channel/github/social-preview-1280x640.png"
 type = "image"
 title = "GitHub social preview (1280x640)"
+
+[[outputs]]
+id = "FIBI2ZBN-OvCuXl2vW0QZ"
+uri = "file://exports/false-dawn-campaign.zip"
+type = "unspecified"
+title = "False Dawn — full campaign image pack (.zip)"
+
+[[outputs]]
+id = "JTU7OngLxR9XGpDJCd0Oh"
+uri = "file://exports/false-dawn-campaign/ads/angle1-chart/angle1-chart-square-1080x1080.png"
+type = "image"
+title = "Sample ad — Chart the network (1080x1080)"
+
+[[outputs]]
+id = "p4JHUxH6SO78_2w0smJLJ"
+uri = "file://exports/false-dawn-campaign/channel/github/gh-social-preview-1280x640.png"
+type = "image"
+title = "Sample channel asset — GitHub social preview (1280x640)"
