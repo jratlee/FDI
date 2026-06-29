@@ -43,12 +43,13 @@ const CompassMark = ({ size, color }: { size: number; color: string }) => (
 // Concept 2: False Dawn Horizon
 const HorizonMark = ({ size, color }: { size: number; color: string }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10 65 L90 65" stroke={color} strokeWidth="3" />
-    <path d="M10 75 L90 75" stroke={color} strokeWidth="1" opacity="0.5" />
-    <path d="M10 85 L90 85" stroke={color} strokeWidth="1" opacity="0.2" />
-    <path d="M20 65 C20 40 40 25 50 25 C60 25 80 40 80 65" stroke={color} strokeWidth="4" />
-    <circle cx="50" cy="45" r="8" fill={color} />
-    <path d="M50 25 L50 5" stroke={color} strokeWidth="2" strokeDasharray="2 4" />
+    {/* Rising gradient horizon lines */}
+    <path d="M10 70 L90 70" stroke={color} strokeWidth="3" />
+    <path d="M10 80 L90 80" stroke={color} strokeWidth="1.5" opacity="0.5" />
+    <path d="M10 90 L90 90" stroke={color} strokeWidth="1" opacity="0.2" />
+    {/* Half-filled rising sun (◒) */}
+    <circle cx="50" cy="48" r="22" stroke={color} strokeWidth="4" />
+    <path d="M28 48 A22 22 0 0 0 72 48 Z" fill={color} />
   </svg>
 );
 
