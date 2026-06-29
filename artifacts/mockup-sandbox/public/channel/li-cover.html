@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FDI — LinkedIn Cover</title>
+<link rel="stylesheet" href="/__mockup/channel/channel.css">
+<style>
+  html, body { width: 100vw; height: 100vh; overflow: hidden; }
+  .banner { position: relative; width: 100vw; height: 100vh; background: var(--base);
+    display: flex; align-items: center; justify-content: space-between; gap: 4vw; padding: 0 4vw; overflow: hidden; }
+  .banner .tex { position: absolute; inset: 0; right: 0; opacity: .22;
+    background: url('/__mockup/images/contour-h.png') center right / cover no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, transparent 38%, #000 100%);
+            mask-image: linear-gradient(90deg, transparent 38%, #000 100%); }
+  .banner .scrim { position: absolute; inset: 0; background: linear-gradient(90deg, var(--base) 30%, rgba(13,11,8,.4) 100%); }
+  .banner .lockup { position: relative; font-size: 16vh; color: var(--cream); flex: none; }
+  .banner .right { position: relative; text-align: right; flex: none; }
+  .banner .tline { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 20vh;
+    color: var(--cream); letter-spacing: -.01em; line-height: 1; white-space: nowrap; }
+  .banner .sub { font-family: 'JetBrains Mono', monospace; font-size: 7.5vh; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--amber); margin-top: 4vh; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="tex"></div>
+  <div class="scrim"></div>
+  <div class="lockup">
+    <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path class="ln1" d="M10 70 L90 70"/><path class="ln2" d="M10 80 L90 80"/><path class="ln3" d="M10 90 L90 90"/><circle class="ring" cx="50" cy="48" r="22"/><path class="sun" d="M28 48 A22 22 0 0 0 72 48 Z"/></svg>
+    <span class="wm">False Dawn Industries</span>
+  </div>
+  <div class="right">
+    <div class="tline">Chart the network.</div>
+    <div class="sub">System Dynamics Engine</div>
+  </div>
+</div>
+</body>
+</html>

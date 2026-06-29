@@ -1,1 +1,1 @@
-- [presentArtifact artifactId](present-artifact.md) — artifactId must be the full artifact path (e.g. `artifacts/mockup-sandbox`), not the bare slug.
+- [Canvas asset verification](canvas-asset-verification.md) — external_url screenshots are always wide; verify fixed-ratio HTML creatives via iframe contact sheets, not direct shots. Playwright is libnspr4-blocked.

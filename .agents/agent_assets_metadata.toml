@@ -1,0 +1,50 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "nHelq2BsXfXU5HH8L3Vig"
+uri = "file://artifacts/mockup-sandbox/public/images/contour-v.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "UbHVZUlxh4MQ2axA5WHNB"
+uri = "file://artifacts/mockup-sandbox/public/images/contour-h.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "guMuaXoHX--xptp9Pp_9V"
+uri = "file://artifacts/mockup-sandbox/public/images/dawn-v.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "k1fl4bZA6W_k7JIoL3Omm"
+uri = "file://artifacts/mockup-sandbox/public/images/dawn-h.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "wFA5UD4cMbJOWi9kw5EL7"
+uri = "file://artifacts/mockup-sandbox/public/images/drift-v.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "VxNGKGtT-xdVviBsXw7jl"
+uri = "file://artifacts/mockup-sandbox/public/images/drift-h.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "H_ZBgOR2yG64-qZV2TVOz"
+uri = "file://artifacts/mockup-sandbox/public/images/constellation-v.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "tcHjijcUCffwTyGCnHXyr"
+uri = "file://artifacts/mockup-sandbox/public/images/constellation-h.png"
+type = "image"
+title = "generated_image"

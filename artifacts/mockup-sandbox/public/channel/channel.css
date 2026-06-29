@@ -1,0 +1,46 @@
+/* False Dawn Industries — channel identity assets */
+@import url('/__mockup/ads/brand.css');
+
+/* ---------- Avatar (square, safe for circular crop) ---------- */
+.avatar { position: relative; width: 100vw; height: 100vh; background:
+  radial-gradient(circle at 50% 42%, #181208 0%, var(--base) 62%);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.avatar .glow { position: absolute; width: 120vmin; height: 120vmin; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,177,43,.14), rgba(13,11,8,0) 60%); }
+.avatar .ringframe { position: absolute; width: 76vmin; height: 76vmin; border: .35vmin solid var(--hairline);
+  border-radius: 50%; }
+.avatar .ringframe.inner { width: 64vmin; height: 64vmin; border-style: dashed; opacity: .55; }
+.avatar .mark { position: relative; color: var(--amber); width: 40vmin; height: 40vmin; }
+
+/* ---------- Grid post (square, cohesive series) ---------- */
+.post { position: relative; width: 100vw; height: 100vh; background: var(--base);
+  overflow: hidden; padding: 9vmin; display: flex; flex-direction: column; justify-content: space-between; }
+.post .grid-bg { position: absolute; inset: 0; opacity: .14;
+  background-image: linear-gradient(var(--hairline) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size: 7vmin 7vmin; }
+.post .glow { position: absolute; bottom: -30vmin; right: -20vmin; width: 90vmin; height: 90vmin;
+  border-radius: 50%; background: radial-gradient(circle, rgba(255,177,43,.16), rgba(13,11,8,0) 62%); }
+.post .ptop, .post .pbody, .post .pfoot { position: relative; }
+.post .ptop { display: flex; align-items: center; justify-content: space-between; }
+.post .lockup { font-size: 4vmin; }
+.post .ptag { font-family: 'JetBrains Mono', monospace; font-size: 2.4vmin; letter-spacing: .24em;
+  text-transform: uppercase; color: var(--muted); }
+.post .idx { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 30vmin; line-height: .8;
+  color: transparent; -webkit-text-stroke: .45vmin var(--amber); }
+.post .pname { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 10vmin;
+  letter-spacing: -.01em; color: var(--cream); line-height: 1; margin-top: 2vmin; }
+.post .pdesc { font-family: 'Inter', sans-serif; font-size: 3.3vmin; color: var(--faded);
+  line-height: 1.4; max-width: 18em; margin-top: 3.5vmin; }
+.post .pfoot { display: flex; align-items: center; gap: 1em; font-family: 'JetBrains Mono', monospace;
+  font-size: 2.4vmin; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.post .pfoot .dot { width: .55em; height: .55em; border-radius: 50%; background: var(--amber); }
+
+/* ---------- Story-highlight cover (square, centered icon for circular crop) ---------- */
+.cover { position: relative; width: 100vw; height: 100vh; background:
+  radial-gradient(circle at 50% 45%, #17110a 0%, var(--base) 65%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6vmin; overflow: hidden; }
+.cover .ring { position: absolute; width: 70vmin; height: 70vmin; border: .35vmin solid var(--hairline); border-radius: 50%; }
+.cover .ic { color: var(--amber); width: 30vmin; height: 30vmin; }
+.cover .clabel { position: relative; font-family: 'JetBrains Mono', monospace; font-size: 4vmin;
+  letter-spacing: .3em; text-transform: uppercase; color: var(--faded); }
