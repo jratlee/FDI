@@ -173,6 +173,7 @@
   --amber: #FFB12B;
   --amber-press: #E0920C;
   --amber-glow: #FFCB6B;
+  --signal-orange: #FF5E00;
   --meridian: #5ABFA8;
   --distress: #D8504A;
 }
@@ -181,16 +182,13 @@
 html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--base); }
 body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
-/* ----- Logo mark (Concept 02 — Horizon Dawn) ----- */
-.mark { color: var(--amber); display: block; }
-.mark .ln1 { stroke: currentColor; stroke-width: 3; }
-.mark .ln2 { stroke: currentColor; stroke-width: 1.5; opacity: .5; }
-.mark .ln3 { stroke: currentColor; stroke-width: 1; opacity: .2; }
-.mark .ring { stroke: currentColor; stroke-width: 4; fill: none; }
-.mark .sun { fill: currentColor; }
+/* ----- Logo mark (bold dawn circle — Signal Orange) ----- */
+.mark { color: var(--signal-orange); display: block; }
+.mark .arc { stroke: currentColor; stroke-width: 7; fill: none; }
+.mark .fill { fill: currentColor; }
 
-/* ----- Lockup ----- */
-.lockup { display: flex; align-items: center; gap: 1.1em; color: var(--cream); }
+/* ----- Lockup (wordmark with trailing mark) ----- */
+.lockup { display: flex; flex-direction: row-reverse; align-items: center; gap: 1.1em; color: var(--cream); }
 .lockup .mark { height: 1em; width: 1em; flex: none; }
 .lockup .wm { font-family: 'Space Grotesk', sans-serif; font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase; line-height: 1; white-space: nowrap; }

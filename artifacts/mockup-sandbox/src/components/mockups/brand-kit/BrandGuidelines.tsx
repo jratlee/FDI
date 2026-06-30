@@ -33,7 +33,7 @@ export function BrandGuidelines() {
               01 // Color Architecture
             </h3>
             <p className="brand-kit-text-secondary max-w-2xl mt-4">
-              The palette is constrained and functional. Backgrounds provide a warm, dark canvas. Amber is strictly reserved for signal, action, and key data — never used for large fills.
+              The palette is constrained and functional. Backgrounds provide a warm, dark canvas. The identity runs two-tone: Signal Orange belongs to the logo mark alone, while Signal Amber is reserved for signal, action, and key data — never used for large fills.
             </p>
           </div>
 
@@ -52,6 +52,7 @@ export function BrandGuidelines() {
             <div className="flex flex-col gap-4">
               <h4 className="brand-kit-text-primary font-medium">Signal & Action</h4>
               <div className="flex flex-col gap-2">
+                <ColorSwatch name="Signal Orange (Logo)" hex="#FF5E00" bgClass="bg-[#FF5E00]" textClass="text-[#0D0B08]" />
                 <ColorSwatch name="Signal Amber" hex="#FFB12B" bgClass="bg-[#FFB12B]" textClass="text-[#0D0B08]" />
                 <ColorSwatch name="Amber Press" hex="#E0920C" bgClass="bg-[#E0920C]" textClass="text-[#0D0B08]" />
                 <ColorSwatch name="Amber Glow" hex="#FFCB6B" bgClass="bg-[#FFCB6B]" textClass="text-[#0D0B08]" />
@@ -170,11 +171,10 @@ export function BrandGuidelines() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="md:col-span-2 border border-[#2A2015] bg-[#141009] p-12 rounded flex flex-col items-center justify-center gap-6 relative overflow-hidden grid-pattern">
               <div className="absolute inset-0 opacity-20 pointer-events-none"></div>
-              <div className="w-16 h-16 border-2 border-[#FFB12B] rounded-full flex items-center justify-center relative z-10">
-                <div className="w-2 h-2 bg-[#FFB12B] rounded-full"></div>
-                <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-[#FFB12B] opacity-30"></div>
-                <div className="absolute left-0 right-0 top-1/2 h-[1px] bg-[#FFB12B] opacity-30"></div>
-              </div>
+              <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
+                <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FF5E00" strokeWidth="7" fill="none" />
+                <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#FF5E00" />
+              </svg>
               <div className="font-['Space_Grotesk'] text-2xl tracking-widest brand-kit-text-primary uppercase relative z-10">
                 False Dawn
               </div>
@@ -182,17 +182,19 @@ export function BrandGuidelines() {
             </div>
             
             <div className="border border-[#2A2015] bg-[#141009] p-6 rounded flex flex-col items-center justify-center relative opacity-70">
-              <div className="w-16 h-16 border-2 border-[#5ABFA8] rounded-full flex items-center justify-center relative z-10">
-                <div className="w-2 h-2 bg-[#5ABFA8] rounded-full"></div>
-              </div>
+              <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
+                <path d="M12 50 A38 38 0 0 1 88 50" stroke="#5ABFA8" strokeWidth="7" fill="none" />
+                <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#5ABFA8" />
+              </svg>
               <div className="absolute top-2 right-2 text-[#D8504A] font-bold">X</div>
               <div className="mt-4 text-xs text-[#7A6A50] uppercase tracking-wider text-center">Don't recolor</div>
             </div>
 
             <div className="border border-[#2A2015] bg-[#141009] p-6 rounded flex flex-col items-center justify-center relative opacity-70">
-              <div className="w-24 h-12 border-2 border-[#FFB12B] rounded-[50%] flex items-center justify-center relative z-10">
-                <div className="w-3 h-2 bg-[#FFB12B] rounded-full"></div>
-              </div>
+              <svg width="96" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="relative z-10">
+                <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FF5E00" strokeWidth="7" fill="none" />
+                <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#FF5E00" />
+              </svg>
               <div className="absolute top-2 right-2 text-[#D8504A] font-bold">X</div>
               <div className="mt-4 text-xs text-[#7A6A50] uppercase tracking-wider text-center">Don't stretch</div>
             </div>
@@ -221,6 +223,7 @@ export function BrandGuidelines() {
                 <TableRow name="Cream #F0E8D5" ratio="16.11:1" rating="AAA" colorHex="#F0E8D5" />
                 <TableRow name="Faded Ink #A8997B" ratio="7.03:1" rating="AAA" colorHex="#A8997B" />
                 <TableRow name="Muted #7A6A50" ratio="3.75:1" rating="Large text only" colorHex="#7A6A50" />
+                <TableRow name="Signal Orange #FF5E00" ratio="6.3:1" rating="AA normal text" colorHex="#FF5E00" />
                 <TableRow name="Signal Amber #FFB12B" ratio="10.83:1" rating="AAA" colorHex="#FFB12B" />
                 <TableRow name="Amber Glow #FFCB6B" ratio="13.11:1" rating="AAA" colorHex="#FFCB6B" />
                 <TableRow name="Meridian #5ABFA8" ratio="8.85:1" rating="AAA" colorHex="#5ABFA8" />

@@ -127,6 +127,12 @@ export function ColorTypography() {
               </h4>
               <div className="space-y-4">
                 <Swatch
+                  name="Signal Orange"
+                  role="Logo mark only"
+                  hex="#FF5E00"
+                  textColor="#0D0B08"
+                />
+                <Swatch
                   name="Signal Amber"
                   role="Hero accent"
                   hex="#FFB12B"

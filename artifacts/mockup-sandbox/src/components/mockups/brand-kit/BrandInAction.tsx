@@ -10,10 +10,9 @@ export function BrandInAction() {
         <header className="border-b border-[#2A2015] bg-[#141009] px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center w-10 h-10 border border-[#3A2D1C] bg-[#1C160D]">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFB12B" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter">
-                <circle cx="12" cy="12" r="8"/>
-                <path d="M12 2v20M2 12h20"/>
-                <circle cx="12" cy="12" r="2" fill="#FFB12B"/>
+              <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FF5E00" strokeWidth="8" fill="none" />
+                <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#FF5E00" />
               </svg>
             </div>
             <div>

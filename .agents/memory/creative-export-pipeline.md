@@ -35,3 +35,13 @@ image files at exact platform dimensions:
   stdout to a log file (piping to `tail` buffers and loses output on kill).
 
 - `zip` is not installed; build archives with Python's `zipfile` module.
+
+- **Canonical deliverable folder is `exports/false-dawn-campaign/`** (28 PNGs in
+  angle/channel subdirs, filenames encode exact dims, plus `.zip` + `.tar.gz`).
+  An older `exports/ads/` + `exports/channel/` set (+ `fdi-creative-assets.zip`)
+  is a superseded earlier naming — leave it; re-export and refresh archives only
+  for `false-dawn-campaign`.
+
+- React brand boards preview at `/__mockup/preview/<subdir>/<Component>` (e.g.
+  `/__mockup/preview/brand-kit/LogoConcepts`) — the subdir under
+  `src/components/mockups/` is required, not just the component name.

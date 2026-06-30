@@ -10,7 +10,7 @@
 .avatar .ringframe { position: absolute; width: 76vmin; height: 76vmin; border: .35vmin solid var(--hairline);
   border-radius: 50%; }
 .avatar .ringframe.inner { width: 64vmin; height: 64vmin; border-style: dashed; opacity: .55; }
-.avatar .mark { position: relative; color: var(--amber); width: 40vmin; height: 40vmin; }
+.avatar .mark { position: relative; color: var(--signal-orange); width: 40vmin; height: 40vmin; }
 
 /* ---------- Grid post (square, cohesive series) ---------- */
 .post { position: relative; width: 100vw; height: 100vh; background: var(--base);
