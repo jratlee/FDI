@@ -40,14 +40,26 @@ for (let i = 1; i <= 3; i++)
 // LinkedIn
 jobs.push({ url: `${BASE}/channel/li-cover.html`, w: 1128, h: 191, out: "channel/linkedin/li-cover-1128x191.png" });
 
+// Brand boards — rendered at deviceScaleFactor 2 for crisp documentation quality
+// (logical 1280x1600; actual PNG pixels are 2560x3200)
+const boardJobs = [
+  { slug: "ColorTypography", name: "board-01-color-typography-1280x1600.png" },
+  { slug: "LogoConcepts",    name: "board-02-logo-concepts-1280x1600.png"    },
+  { slug: "BrandInAction",   name: "board-03-brand-in-action-1280x1600.png"  },
+  { slug: "BrandGuidelines", name: "board-04-brand-guidelines-1280x1600.png" },
+];
+
 const browser = await puppeteer.launch({
   executablePath: CHROME,
   headless: true,
   args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--force-color-profile=srgb"],
 });
 
+const total = jobs.length + boardJobs.length;
 const page = await browser.newPage();
 let ok = 0;
+
+// --- Ad + channel jobs (exact platform px, deviceScaleFactor 1) ---
 for (const job of jobs) {
   await page.setViewport({ width: job.w, height: job.h, deviceScaleFactor: 1 });
   await page.goto(job.url, { waitUntil: "load", timeout: 30000 });
@@ -57,8 +69,22 @@ for (const job of jobs) {
   await mkdir(path.dirname(outPath), { recursive: true });
   await page.screenshot({ path: outPath, clip: { x: 0, y: 0, width: job.w, height: job.h } });
   ok++;
-  console.log(`[${ok}/${jobs.length}] ${job.out} (${job.w}x${job.h})`);
+  console.log(`[${ok}/${total}] ${job.out} (${job.w}x${job.h})`);
+}
+
+// --- Brand boards (deviceScaleFactor 2 for crisp documentation quality) ---
+for (const board of boardJobs) {
+  const url = `${BASE}/preview/brand-kit/${board.slug}`;
+  await page.setViewport({ width: 1280, height: 1600, deviceScaleFactor: 2 });
+  await page.goto(url, { waitUntil: "load", timeout: 30000 });
+  await page.evaluate(async () => { await document.fonts.ready; });
+  await new Promise((r) => setTimeout(r, 300));
+  const outPath = path.join(OUT, "brand-boards", board.name);
+  await mkdir(path.dirname(outPath), { recursive: true });
+  await page.screenshot({ path: outPath, clip: { x: 0, y: 0, width: 1280, height: 1600 } });
+  ok++;
+  console.log(`[${ok}/${total}] brand-boards/${board.name} (1280x1600 @2x)`);
 }
 
 await browser.close();
-console.log(`Done: ${ok}/${jobs.length} exported to ${OUT}`);
+console.log(`Done: ${ok}/${total} exported to ${OUT}`);
