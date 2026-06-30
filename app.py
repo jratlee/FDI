@@ -5,16 +5,77 @@ import plotly.express as px
 import theseus_growth as th
 
 # --- UX / UI CONFIGURATION ---
-st.set_page_config(page_title="System Dynamics Engine | FDI", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="False Dawn Industries — System Dynamics Engine", layout="wide", initial_sidebar_state="expanded")
 
-# Custom CSS for a sleek, minimalist, dark/light aesthetic
-st.markdown("""
+# --- FALSE DAWN INDUSTRIES BRAND SYSTEM ---
+# Strict two-tone warm family. Signal Orange (#FF5E00) = logo mark ONLY.
+# Accents use the amber ramp; neutrals are cream/faded on near-black. No teal, no red.
+BRAND = {
+    "base": "#0D0B08",
+    "surface": "#141009",
+    "elevated": "#1C160D",
+    "border": "#2A2015",
+    "hairline": "#3A2D1C",
+    "cream": "#F0E8D5",
+    "faded": "#A8997B",
+    "muted": "#7A6A50",
+    "amber": "#FFB12B",
+    "amber_press": "#E0920C",
+    "amber_glow": "#FFCB6B",
+    "signal_orange": "#FF5E00",
+}
+
+# Custom CSS — warm two-tone FDI aesthetic on near-black
+st.markdown(f"""
     <style>
-    .main {background-color: #0E1117;}
-    h1, h2, h3 {font-family: 'Inter', sans-serif; font-weight: 300; letter-spacing: -1px;}
-    .stTabs [data-baseweb="tab-list"] {gap: 24px;}
-    .stTabs [data-baseweb="tab"] {height: 50px; white-space: pre-wrap; font-weight: 500;}
+    .stApp {{ background-color: {BRAND['base']}; color: {BRAND['cream']}; }}
+    [data-testid="stHeader"] {{ background: transparent; }}
+    [data-testid="stSidebar"] {{ background-color: {BRAND['surface']}; border-right: 1px solid {BRAND['border']}; }}
+    h1, h2, h3, h4 {{ font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 500; letter-spacing: -.015em; color: {BRAND['cream']}; }}
+    p, label, span, .stMarkdown {{ color: {BRAND['cream']}; }}
+    .stTabs [data-baseweb="tab-list"] {{ gap: 24px; border-bottom: 1px solid {BRAND['border']}; }}
+    .stTabs [data-baseweb="tab"] {{ height: 50px; white-space: pre-wrap; font-weight: 500; color: {BRAND['faded']}; }}
+    .stTabs [aria-selected="true"] {{ color: {BRAND['amber']}; }}
+    .stTabs [data-baseweb="tab-highlight"] {{ background-color: {BRAND['amber']}; }}
+    /* Status / alert blocks unified to the warm family (no green/blue/red) */
+    [data-testid="stAlert"], .stAlert,
+    [data-testid="stAlertContainer"],
+    [data-testid="stAlert"] [role="alert"] {{
+        background-color: {BRAND['elevated']} !important;
+        border-color: {BRAND['hairline']} !important;
+        border-left: 3px solid {BRAND['amber']} !important;
+        color: {BRAND['cream']} !important;
+        border-radius: 4px;
+    }}
+    [data-testid="stAlert"] *, .stAlert * {{ color: {BRAND['cream']} !important; }}
+    [data-testid="stAlert"] svg {{ fill: {BRAND['amber']} !important; color: {BRAND['amber']} !important; }}
+    /* Metrics */
+    [data-testid="stMetricValue"] {{ color: {BRAND['amber']}; font-family: 'Space Grotesk', sans-serif; }}
+    [data-testid="stMetricLabel"] {{ color: {BRAND['faded']}; }}
+    /* Inputs / widgets accent */
+    .stSlider [data-baseweb="slider"] [role="slider"] {{ background-color: {BRAND['amber']}; }}
+    /* FDI header lockup */
+    .fdi-header {{ display: flex; align-items: center; gap: 16px; padding: 4px 0 2px; }}
+    .fdi-header .mark {{ width: 40px; height: 40px; color: {BRAND['signal_orange']}; flex: none; }}
+    .fdi-header .mark .arc {{ stroke: currentColor; stroke-width: 7; fill: none; }}
+    .fdi-header .mark .fill {{ fill: currentColor; }}
+    .fdi-header .wm {{ font-family: 'Space Grotesk', sans-serif; font-weight: 600; letter-spacing: .16em;
+        text-transform: uppercase; color: {BRAND['cream']}; font-size: 1.05rem; line-height: 1; }}
+    .fdi-eyebrow {{ font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .28em;
+        color: {BRAND['faded']}; font-size: .7rem; margin: 14px 0 2px; }}
     </style>
+    """, unsafe_allow_html=True)
+
+# --- FDI MASTER BRAND HEADER (logo mark in Signal Orange only) ---
+st.markdown("""
+    <div class="fdi-header">
+        <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+            <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+        </svg>
+        <span class="wm">False Dawn Industries</span>
+    </div>
+    <div class="fdi-eyebrow">Growth Cartography</div>
     """, unsafe_allow_html=True)
 
 # --- DYNAMIC PARADIGM LAYER ---
@@ -51,7 +112,7 @@ PARADIGMS = {
     }
 }
 
-st.title("System Dynamics Engine | FDI")
+st.title("System Dynamics Engine")
 st.caption("Network Vitality, Thermodynamic Equilibrium, and Value Extraction")
 
 with st.expander("📖 The Philosophy: Network Vitality"):
@@ -170,9 +231,28 @@ with tab2:
     )
     
     # Render interactive Plotly chart
+    # Warm two-tone convention: stable baseline = faded neutral (dashed),
+    # volatile series = Signal Amber (solid). No teal/red.
     st.write(f"### Cumulative {vocab['metric']} System Dynamics")
     df_chart = combined.T # Transpose for plotting mapping index to days
-    fig = px.area(df_chart, labels={'value': vocab['metric'], 'index': 'Day'}, color_discrete_sequence=['#4A90E2', '#FF4B4B'])
+    fig = px.area(df_chart, labels={'value': vocab['metric'], 'index': 'Day'},
+                  color_discrete_sequence=[BRAND['faded'], BRAND['amber']])
+    # Distinguish stable vs volatile by warmth + a non-color cue (dash) rather than hue alone
+    for trace in fig.data:
+        if trace.name and trace.name.startswith("Stable"):
+            trace.line.dash = "dash"
+            trace.line.color = BRAND['faded']
+            trace.fillcolor = "rgba(168, 153, 123, 0.12)"
+        else:
+            trace.line.color = BRAND['amber']
+            trace.fillcolor = "rgba(255, 177, 43, 0.22)"
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font_color=BRAND['cream'], legend_title_text="",
+        margin=dict(t=10, r=10, b=10, l=10),
+    )
+    fig.update_xaxes(gridcolor=BRAND['border'], zerolinecolor=BRAND['border'])
+    fig.update_yaxes(gridcolor=BRAND['border'], zerolinecolor=BRAND['border'])
     st.plotly_chart(fig, width='stretch')
 
 with tab3:
@@ -187,7 +267,7 @@ with tab3:
     aged_dau = engine.project_aged_DAU(stable_retention, days_to_project, paid_cohorts, ages=[conversion_day])
     
     st.write(f"### Matured {vocab['unit']} Older Than {conversion_day} Days")
-    st.line_chart(aged_dau.T)
+    st.line_chart(aged_dau.T, color=BRAND['amber'])
     
     # Calculate true unique users surviving past the milestone for revenue projection
     retention_rate = stable_retention['retention_projection'][1][conversion_day] / 100
@@ -202,8 +282,8 @@ with tab3:
 # --- ATTRIBUTION / COPYRIGHT ---
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: gray; font-size: 0.8em;">
+<div style="text-align: center; color: #A8997B; font-size: 0.8em;">
     &copy; 2026 False Dawn Industries. The System Dynamics Engine interface and paradigm implementation is a creation of False Dawn Industries.<br>
-    Powered by the open-source MIT-licensed <a href="https://github.com/ESeufert/theseus_growth" target="_blank" style="color: gray; text-decoration: underline;">theseus_growth</a> mathematical library originally created by Eric Benjamin Seufert at Heracles.
+    Powered by the open-source MIT-licensed <a href="https://github.com/ESeufert/theseus_growth" target="_blank" style="color: #E0920C; text-decoration: underline;">theseus_growth</a> mathematical library originally created by Eric Benjamin Seufert at Heracles.
 </div>
 """, unsafe_allow_html=True)

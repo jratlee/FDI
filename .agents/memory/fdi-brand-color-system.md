@@ -5,8 +5,12 @@ description: The locked color/naming rules for the False Dawn Industries (FDI) c
 
 # FDI brand color & naming rules (campaign assets)
 
-Applies to `artifacts/mockup-sandbox/public/{ads,channel}/` and the brand boards
-in `src/components/mockups/brand-kit/`.
+Applies to `artifacts/mockup-sandbox/public/{ads,channel}/`, the brand boards
+in `src/components/mockups/brand-kit/`, AND the live Streamlit product `app.py`
+(it injects the same warm tokens via custom CSS: near-black base, cream/faded
+text, amber accents, Signal Orange reserved for the header dawn-circle mark; the
+header leads with the FDI master brand + "Growth Cartography" eyebrow, with
+"System Dynamics Engine" demoted to the product/tool title).
 
 ## Color
 - **Strict two-tone warm family.** Signal Orange `#FF5E00` is the **logo mark
