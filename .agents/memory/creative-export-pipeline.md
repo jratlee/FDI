@@ -39,8 +39,8 @@ image files at exact platform dimensions:
 - **Canonical deliverable folder is `exports/false-dawn-campaign/`** (28 PNGs in
   angle/channel subdirs, filenames encode exact dims, plus `.zip` + `.tar.gz`).
   An older `exports/ads/` + `exports/channel/` set (+ `fdi-creative-assets.zip`)
-  is a superseded earlier naming — leave it; re-export and refresh archives only
-  for `false-dawn-campaign`.
+  was a superseded earlier naming and has been deleted — `false-dawn-campaign`
+  is the only export set; re-export and refresh archives only for it.
 
 - React brand boards preview at `/__mockup/preview/<subdir>/<Component>` (e.g.
   `/__mockup/preview/brand-kit/LogoConcepts`) — the subdir under
