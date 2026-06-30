@@ -16,9 +16,6 @@
   --accent-signal: #FFB12B;
   --accent-press: #E0920C;
   --accent-glow: #FFCB6B;
-  
-  --semantic-meridian: #5ABFA8;
-  --semantic-distress: #D8504A;
 }
 
 .brand-kit-bg-base { background-color: var(--bg-base); }
@@ -34,9 +31,6 @@
 
 .brand-kit-text-signal { color: var(--accent-signal); }
 .brand-kit-bg-signal { background-color: var(--accent-signal); }
-
-.brand-kit-text-meridian { color: var(--semantic-meridian); }
-.brand-kit-text-distress { color: var(--semantic-distress); }
 
 .grid-pattern {
   background-image: linear-gradient(var(--border-umber) 1px, transparent 1px), linear-gradient(90deg, var(--border-umber) 1px, transparent 1px);

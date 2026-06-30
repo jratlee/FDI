@@ -13,7 +13,7 @@ export function BrandGuidelines() {
               False Dawn Industries
             </h1>
             <div className="brand-kit-text-signal font-['JetBrains_Mono'] text-sm uppercase tracking-wider">
-              System Dynamics Engine // v1.0.0
+              Brand System // v1.0.0
             </div>
           </div>
           <div>
@@ -59,23 +59,24 @@ export function BrandGuidelines() {
               </div>
             </div>
 
-            {/* Semantic */}
+            {/* Text & Neutrals */}
             <div className="flex flex-col gap-4">
-              <h4 className="brand-kit-text-primary font-medium">Semantic Data</h4>
+              <h4 className="brand-kit-text-primary font-medium">Text & Neutrals</h4>
               <div className="flex flex-col gap-2">
-                <ColorSwatch name="Meridian (Stable)" hex="#5ABFA8" bgClass="bg-[#5ABFA8]" textClass="text-[#0D0B08]" />
-                <ColorSwatch name="Distress (Volatile)" hex="#D8504A" bgClass="bg-[#D8504A]" textClass="text-[#F0E8D5]" />
+                <ColorSwatch name="Cream (Primary)" hex="#F0E8D5" bgClass="bg-[#F0E8D5]" textClass="text-[#0D0B08]" />
+                <ColorSwatch name="Faded Ink (Secondary)" hex="#A8997B" bgClass="bg-[#A8997B]" textClass="text-[#0D0B08]" />
+                <ColorSwatch name="Muted (Quiet)" hex="#7A6A50" bgClass="bg-[#7A6A50]" textClass="text-[#F0E8D5]" />
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             <div className="p-6 border border-[#2A2015] bg-[#141009] rounded">
-              <div className="text-[#5ABFA8] font-['Space_Grotesk'] mb-2 font-medium">DO</div>
+              <div className="text-[#FFB12B] font-['Space_Grotesk'] mb-2 font-medium">DO</div>
               <p className="brand-kit-text-secondary text-sm">Use Signal Amber sparingly for the most important action on a screen or to highlight critical shifts in data. Backgrounds stay warm dark.</p>
             </div>
             <div className="p-6 border border-[#2A2015] bg-[#141009] rounded">
-              <div className="text-[#D8504A] font-['Space_Grotesk'] mb-2 font-medium">DON'T</div>
+              <div className="text-[#7A6A50] font-['Space_Grotesk'] mb-2 font-medium">DON'T</div>
               <p className="brand-kit-text-secondary text-sm">Never use amber for large fills, background colors, or generic decorative elements. This dilutes its power as a navigational signal.</p>
             </div>
           </div>
@@ -148,11 +149,11 @@ export function BrandGuidelines() {
               <h4 className="brand-kit-text-primary font-medium">Copy Examples</h4>
               <div className="flex flex-col gap-3">
                 <div className="p-4 border border-[#2A2015] bg-[#141009] rounded flex gap-4">
-                  <div className="text-[#5ABFA8] font-['JetBrains_Mono'] text-sm mt-1">DO</div>
+                  <div className="text-[#FFB12B] font-['JetBrains_Mono'] text-sm mt-1">DO</div>
                   <div className="brand-kit-text-primary">"The model lost its bearing."</div>
                 </div>
                 <div className="p-4 border border-[#2A2015] bg-[#141009] rounded flex gap-4">
-                  <div className="text-[#D8504A] font-['JetBrains_Mono'] text-sm mt-1">DON'T</div>
+                  <div className="text-[#7A6A50] font-['JetBrains_Mono'] text-sm mt-1">DON'T</div>
                   <div className="brand-kit-text-muted">"Unleash the power of next-gen AI to supercharge your ROI!"</div>
                 </div>
               </div>
@@ -183,10 +184,10 @@ export function BrandGuidelines() {
             
             <div className="border border-[#2A2015] bg-[#141009] p-6 rounded flex flex-col items-center justify-center relative opacity-70">
               <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
-                <path d="M12 50 A38 38 0 0 1 88 50" stroke="#5ABFA8" strokeWidth="7" fill="none" />
-                <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#5ABFA8" />
+                <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FFB12B" strokeWidth="7" fill="none" />
+                <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#FFB12B" />
               </svg>
-              <div className="absolute top-2 right-2 text-[#D8504A] font-bold">X</div>
+              <div className="absolute top-2 right-2 text-[#A8997B] font-bold">X</div>
               <div className="mt-4 text-xs text-[#7A6A50] uppercase tracking-wider text-center">Don't recolor</div>
             </div>
 
@@ -195,7 +196,7 @@ export function BrandGuidelines() {
                 <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FF5E00" strokeWidth="7" fill="none" />
                 <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#FF5E00" />
               </svg>
-              <div className="absolute top-2 right-2 text-[#D8504A] font-bold">X</div>
+              <div className="absolute top-2 right-2 text-[#A8997B] font-bold">X</div>
               <div className="mt-4 text-xs text-[#7A6A50] uppercase tracking-wider text-center">Don't stretch</div>
             </div>
           </div>
@@ -226,15 +227,14 @@ export function BrandGuidelines() {
                 <TableRow name="Signal Orange #FF5E00" ratio="6.3:1" rating="AA normal text" colorHex="#FF5E00" />
                 <TableRow name="Signal Amber #FFB12B" ratio="10.83:1" rating="AAA" colorHex="#FFB12B" />
                 <TableRow name="Amber Glow #FFCB6B" ratio="13.11:1" rating="AAA" colorHex="#FFCB6B" />
-                <TableRow name="Meridian #5ABFA8" ratio="8.85:1" rating="AAA" colorHex="#5ABFA8" />
-                <TableRow name="Distress #D8504A" ratio="4.83:1" rating="AA normal text" colorHex="#D8504A" />
+                <TableRow name="Amber Press #E0920C" ratio="7.94:1" rating="AAA" colorHex="#E0920C" />
                 <tr>
                   <td className="p-4 flex items-center gap-3">
                     <div className="w-4 h-4 rounded-full bg-[#FFB12B] border border-[#2A2015]"></div>
                     <span className="brand-kit-text-primary font-medium">Parchment Night on Signal Amber</span>
                   </td>
                   <td className="p-4 font-['JetBrains_Mono'] text-[#F0E8D5]">10.83:1</td>
-                  <td className="p-4 text-[#5ABFA8] font-['JetBrains_Mono'] uppercase">AAA</td>
+                  <td className="p-4 text-[#FFCB6B] font-['JetBrains_Mono'] uppercase">AAA</td>
                 </tr>
               </tbody>
             </table>
@@ -247,7 +247,7 @@ export function BrandGuidelines() {
             <div>
               <h4 className="brand-kit-text-primary font-medium mb-1">Colorblind Safety Note</h4>
               <p className="brand-kit-text-secondary text-sm leading-relaxed">
-                Meridian (stable) and Distress (volatile) must also be distinguished by label or position, not color alone. Amber-for-text should always use the brighter token (Signal Amber or Amber Glow) to maintain legibility.
+                Data series within the warm family (e.g. stable baseline vs. volatile spike) must be distinguished by label, weight, or position — never by hue alone. Amber-for-text should always use the brighter token (Signal Amber or Amber Glow) to maintain legibility.
               </p>
             </div>
           </div>
@@ -275,7 +275,7 @@ function TableRow({ name, ratio, rating, colorHex }: { name: string, ratio: stri
         <span className="brand-kit-text-primary font-medium">{name}</span>
       </td>
       <td className="p-4 font-['JetBrains_Mono'] text-[#F0E8D5]">{ratio}</td>
-      <td className={`p-4 font-['JetBrains_Mono'] uppercase ${rating.includes('AAA') ? 'text-[#5ABFA8]' : rating.includes('AA ') ? 'text-[#FFB12B]' : 'text-[#A8997B]'}`}>
+      <td className={`p-4 font-['JetBrains_Mono'] uppercase ${rating.includes('AAA') ? 'text-[#FFCB6B]' : rating.includes('AA ') ? 'text-[#FFB12B]' : 'text-[#A8997B]'}`}>
         {rating}
       </td>
     </tr>

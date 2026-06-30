@@ -4,49 +4,49 @@ uploads = []
 id = "nHelq2BsXfXU5HH8L3Vig"
 uri = "file://artifacts/mockup-sandbox/public/images/contour-v.png"
 type = "image"
-title = "generated_image"
+title = "contour hero vertical"
 
 [[generated]]
 id = "UbHVZUlxh4MQ2axA5WHNB"
 uri = "file://artifacts/mockup-sandbox/public/images/contour-h.png"
 type = "image"
-title = "generated_image"
+title = "contour hero horizontal"
 
 [[generated]]
 id = "guMuaXoHX--xptp9Pp_9V"
 uri = "file://artifacts/mockup-sandbox/public/images/dawn-v.png"
 type = "image"
-title = "generated_image"
+title = "dawn hero vertical"
 
 [[generated]]
 id = "k1fl4bZA6W_k7JIoL3Omm"
 uri = "file://artifacts/mockup-sandbox/public/images/dawn-h.png"
 type = "image"
-title = "generated_image"
+title = "dawn hero horizontal"
 
 [[generated]]
 id = "wFA5UD4cMbJOWi9kw5EL7"
 uri = "file://artifacts/mockup-sandbox/public/images/drift-v.png"
 type = "image"
-title = "generated_image"
+title = "drift hero vertical"
 
 [[generated]]
 id = "VxNGKGtT-xdVviBsXw7jl"
 uri = "file://artifacts/mockup-sandbox/public/images/drift-h.png"
 type = "image"
-title = "generated_image"
+title = "drift hero horizontal"
 
 [[generated]]
 id = "H_ZBgOR2yG64-qZV2TVOz"
 uri = "file://artifacts/mockup-sandbox/public/images/constellation-v.png"
 type = "image"
-title = "generated_image"
+title = "constellation hero vertical"
 
 [[generated]]
 id = "tcHjijcUCffwTyGCnHXyr"
 uri = "file://artifacts/mockup-sandbox/public/images/constellation-h.png"
 type = "image"
-title = "generated_image"
+title = "constellation hero horizontal"
 
 [[outputs]]
 id = "V81jOwZAcz2jPVIskwNTy"

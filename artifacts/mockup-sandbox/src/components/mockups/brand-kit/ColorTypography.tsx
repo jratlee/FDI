@@ -139,16 +139,16 @@ export function ColorTypography() {
                   textColor="#0D0B08"
                 />
                 <Swatch
-                  name="Meridian"
-                  role="Stable metric"
-                  hex="#5ABFA8"
+                  name="Amber Press"
+                  role="Deep accent"
+                  hex="#E0920C"
                   textColor="#0D0B08"
                 />
                 <Swatch
-                  name="Distress"
-                  role="Volatile metric"
-                  hex="#D8504A"
-                  textColor="#F0E8D5"
+                  name="Amber Glow"
+                  role="Light accent"
+                  hex="#FFCB6B"
+                  textColor="#0D0B08"
                 />
               </div>
             </div>
@@ -313,7 +313,7 @@ export function ColorTypography() {
                     <div className="font-['JetBrains_Mono'] text-xs text-[#7A6A50]">
                       ACQUISITION
                     </div>
-                    <div className="font-['JetBrains_Mono'] text-2xl text-[#5ABFA8]">
+                    <div className="font-['JetBrains_Mono'] text-2xl text-[#F0E8D5]">
                       CAC $2.50
                     </div>
                   </div>
@@ -321,7 +321,7 @@ export function ColorTypography() {
                     <div className="font-['JetBrains_Mono'] text-xs text-[#7A6A50]">
                       VARIANCE
                     </div>
-                    <div className="font-['JetBrains_Mono'] text-2xl text-[#D8504A]">
+                    <div className="font-['JetBrains_Mono'] text-2xl text-[#FFB12B]">
                       +18.4%
                     </div>
                   </div>
@@ -346,7 +346,7 @@ export function ColorTypography() {
                   label="H1"
                   font="Space Grotesk"
                   size="48px"
-                  sample="System Engine"
+                  sample="Growth Cartography"
                   className="font-['Space_Grotesk'] text-[48px] leading-none"
                 />
                 <TypeRow

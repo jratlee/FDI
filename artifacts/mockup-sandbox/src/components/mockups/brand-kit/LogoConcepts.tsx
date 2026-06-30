@@ -13,14 +13,12 @@ const COLORS = {
   amberPress: '#E0920C',
   amberGlow: '#FFCB6B',
   signalOrange: '#FF5E00',
-  meridian: '#5ABFA8',
-  distress: '#D8504A',
   lightChip: '#F0E8D5',
 };
 
 const Tagline = () => (
   <div className="text-[0.6rem] tracking-[0.2em] uppercase mt-1" style={{ color: COLORS.textMuted, fontFamily: 'Inter' }}>
-    System Dynamics Engine
+    Growth Cartography
   </div>
 );
 
@@ -30,7 +28,7 @@ const Label = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-// Concept 1: Meridian Compass
+// Concept 1: True North Compass
 const CompassMark = ({ size, color }: { size: number; color: string }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="50" cy="50" r="46" stroke={color} strokeWidth="2" opacity="0.3" strokeDasharray="4 4" />
@@ -179,7 +177,7 @@ export function LogoConcepts() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 md:gap-12">
         <ConceptCard 
-          title="Concept 01: Meridian Compass"
+          title="Concept 01: True North Compass"
           description="A reimagined compass rose focusing on trajectory and true north. The outer dashed ring suggests data boundaries, while the solid inner structure provides a grounded center."
           Mark={CompassMark}
         />

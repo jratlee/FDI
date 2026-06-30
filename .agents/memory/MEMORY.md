@@ -1,2 +1,2 @@
-- [Canvas asset verification](canvas-asset-verification.md) — external_url screenshots are always wide; verify fixed-ratio HTML creatives via iframe contact sheets, not direct shots. Playwright is libnspr4-blocked.
-- [Creative export pipeline](creative-export-pipeline.md) — export HTML creatives to exact-px PNGs via Nix `chromium` + puppeteer-core over the local vite URL; run synchronously (bg procs get killed).
+- [FDI brand color & naming system](fdi-brand-color-system.md) — strict two-tone warm family (orange=logo only, amber accents); no teal/red; SDE demoted to "Growth Cartography" + Model/Method/Network.
+- [Creative export pipeline](creative-export-pipeline.md) — render FDI ad/channel HTML to exact-dim PNGs headlessly with Nix chromium + puppeteer-core via the vite URL.

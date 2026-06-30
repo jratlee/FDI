@@ -26,7 +26,7 @@ export function BrandInAction() {
           </div>
           <div className="flex items-center gap-4 text-xs font-['JetBrains_Mono'] text-[#A8997B]">
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#5ABFA8]"></span>
+              <span className="w-2 h-2 rounded-full bg-[#FFCB6B]"></span>
               SYS.ONLINE
             </span>
             <span className="text-[#3A2D1C]">|</span>
@@ -104,8 +104,8 @@ export function BrandInAction() {
 
             <div className="p-6 border-t border-[#2A2015] bg-[#1C160D]">
               <div className="inline-flex items-center gap-2 border border-[#3A2D1C] bg-[#141009] px-3 py-1.5 w-full justify-center">
-                <span className="w-2 h-2 bg-[#5ABFA8] shadow-[0_0_8px_rgba(90,191,168,0.6)]"></span>
-                <span className="text-xs tracking-wider uppercase text-[#5ABFA8] font-['Space_Grotesk']">System Loaded</span>
+                <span className="w-2 h-2 bg-[#FFCB6B] shadow-[0_0_8px_rgba(255,203,107,0.6)]"></span>
+                <span className="text-xs tracking-wider uppercase text-[#FFCB6B] font-['Space_Grotesk']">System Loaded</span>
               </div>
             </div>
           </aside>
@@ -146,7 +146,7 @@ export function BrandInAction() {
                     412,000
                   </div>
                   <div className="text-[#A8997B] text-xs flex items-center gap-2">
-                    <span className="text-[#5ABFA8]">↑ Steady Baseline</span>
+                    <span className="text-[#A8997B]">↑ Steady Baseline</span>
                     <span>Computed across 90-day projection</span>
                   </div>
                 </div>
@@ -170,11 +170,11 @@ export function BrandInAction() {
                   <h3 className="font-['Space_Grotesk'] text-sm tracking-wide text-[#F0E8D5] uppercase">Cumulative DAU System Dynamics</h3>
                   <div className="flex items-center gap-6 text-xs font-['JetBrains_Mono']">
                     <div className="flex items-center gap-2">
-                      <span className="w-3 h-0.5 bg-[#5ABFA8]"></span>
+                      <span className="w-3 h-0 border-t-2 border-dashed border-[#A8997B]"></span>
                       <span className="text-[#A8997B]">Stable Baseline</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="w-3 h-0.5 bg-[#D8504A]"></span>
+                      <span className="w-3 h-0.5 bg-[#FFB12B]"></span>
                       <span className="text-[#A8997B]">Volatile Spike</span>
                     </div>
                   </div>
@@ -206,12 +206,13 @@ export function BrandInAction() {
                       <path d="M 500 0 L 500 400" stroke="#3A2D1C" strokeWidth="1" strokeDasharray="2 4" />
                       <path d="M 750 0 L 750 400" stroke="#3A2D1C" strokeWidth="1" strokeDasharray="2 4" />
 
-                      {/* Stable Curve (#5ABFA8 - Meridian) */}
+                      {/* Stable Curve (#A8997B - Faded Ink, quiet baseline; dashed for non-color encoding) */}
                       <path 
                         d="M 0 400 Q 150 250 300 180 T 600 120 T 1000 100" 
                         fill="none" 
-                        stroke="#5ABFA8" 
+                        stroke="#A8997B" 
                         strokeWidth="2" 
+                        strokeDasharray="6 5"
                       />
                       {/* Stable Curve Area Fill */}
                       <path 
@@ -220,11 +221,11 @@ export function BrandInAction() {
                         opacity="0.2"
                       />
 
-                      {/* Volatile Spike (#D8504A - Distress) */}
+                      {/* Volatile Spike (#FFB12B - Signal Amber, the critical series) */}
                       <path 
                         d="M 0 400 L 200 380 L 250 360 L 300 50 L 350 150 L 450 280 L 600 350 L 800 380 L 1000 390" 
                         fill="none" 
-                        stroke="#D8504A" 
+                        stroke="#FFB12B" 
                         strokeWidth="2" 
                       />
                       {/* Volatile Spike Area Fill */}
@@ -237,19 +238,19 @@ export function BrandInAction() {
                       {/* Gradients */}
                       <defs>
                         <linearGradient id="stableGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#5ABFA8" stopOpacity="1"/>
-                          <stop offset="100%" stopColor="#5ABFA8" stopOpacity="0"/>
+                          <stop offset="0%" stopColor="#A8997B" stopOpacity="1"/>
+                          <stop offset="100%" stopColor="#A8997B" stopOpacity="0"/>
                         </linearGradient>
                         <linearGradient id="volatileGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#D8504A" stopOpacity="1"/>
-                          <stop offset="100%" stopColor="#D8504A" stopOpacity="0"/>
+                          <stop offset="0%" stopColor="#FFB12B" stopOpacity="1"/>
+                          <stop offset="100%" stopColor="#FFB12B" stopOpacity="0"/>
                         </linearGradient>
                       </defs>
                       
                       {/* Intersect point / Marker */}
-                      <circle cx="300" cy="50" r="4" fill="#D8504A" stroke="#0D0B08" strokeWidth="2" />
-                      <line x1="300" y1="50" x2="300" y2="400" stroke="#D8504A" strokeWidth="1" strokeDasharray="4 4" opacity="0.5" />
-                      <rect x="260" y="20" width="80" height="20" fill="#1C160D" stroke="#D8504A" strokeWidth="1" />
+                      <circle cx="300" cy="50" r="4" fill="#FFB12B" stroke="#0D0B08" strokeWidth="2" />
+                      <line x1="300" y1="50" x2="300" y2="400" stroke="#FFB12B" strokeWidth="1" strokeDasharray="4 4" opacity="0.5" />
+                      <rect x="260" y="20" width="80" height="20" fill="#1C160D" stroke="#FFB12B" strokeWidth="1" />
                       <text x="300" y="34" fill="#F0E8D5" fontSize="10" fontFamily="JetBrains Mono" textAnchor="middle">SPIKE EVENT</text>
                     </svg>
                   </div>
