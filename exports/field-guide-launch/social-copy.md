@@ -44,7 +44,7 @@ Today we're releasing The CMO's Field Guide to System & Cohort Dynamics — the 
 
 It covers:
 → Compounding cohort decay, and why acquisition-only budgets refill a leaking map
-→ Disillusionomics — consumers now price in the machinery of persuasion
+→ Disillusionomics (a term coined by economist Alice Lassman, via Fortune, Jan 2026) — consumers now price in the machinery of persuasion
 → Shapley-value attribution vs the last-click illusion
 → Identity as the ultimate infrastructure
 
