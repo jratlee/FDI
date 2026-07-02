@@ -95,3 +95,27 @@ id = "p4JHUxH6SO78_2w0smJLJ"
 uri = "file://exports/false-dawn-campaign/channel/github/gh-social-preview-1280x640.png"
 type = "image"
 title = "Sample channel asset — GitHub social preview (1280x640)"
+
+[[outputs]]
+id = "5HlmvAqIAbDhsOFX0GqxD"
+uri = "file://exports/field-guide-launch/fdi-field-guide-deck.pdf"
+type = "pdf"
+title = "Field Guide Launch Deck (12 slides, PDF)"
+
+[[outputs]]
+id = "Si8ocyflTuls2hKsTi3Nl"
+uri = "file://exports/field-guide-launch/social-copy.md"
+type = "text"
+title = "Social Copy — LinkedIn + Instagram"
+
+[[outputs]]
+id = "bunas0FPqBtag1tz7hAXc"
+uri = "file://exports/field-guide-launch/citations-and-originality.md"
+type = "text"
+title = "Citations & Originality Report"
+
+[[outputs]]
+id = "o-gTfDSsbqSL27MdSJdVd"
+uri = "file://exports/field-guide-launch/fdi-field-guide-launch-bundle.zip"
+type = "unspecified"
+title = "Complete Launch Bundle (deck PNGs + social visuals + docs)"
