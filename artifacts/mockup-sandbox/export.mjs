@@ -88,3 +88,33 @@ for (const board of boardJobs) {
 
 await browser.close();
 console.log(`Done: ${ok}/${total} exported to ${OUT}`);
+
+if (ok !== total) {
+  console.error(`Expected ${total} files but only ${ok} exported — skipping archive rebuild.`);
+  process.exit(1);
+}
+
+// Rebuild archives with Python's zipfile module (zip not installed in Nix env)
+console.log("\nRebuilding archives…");
+const { execFileSync } = await import("node:child_process");
+const archivePy = `
+import os, zipfile, tarfile, pathlib
+
+base = pathlib.Path(r"${OUT}")
+files = sorted(f for f in base.rglob("*.png"))
+
+zip_path  = base / "false-dawn-campaign.zip"
+tgz_path  = base / "false-dawn-campaign.tar.gz"
+
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    for f in files:
+        zf.write(f, f.relative_to(base))
+print(f"  ZIP  → {zip_path}  ({len(files)} files)")
+
+with tarfile.open(tgz_path, "w:gz") as tf:
+    for f in files:
+        tf.add(f, arcname=str(f.relative_to(base)))
+print(f"  TGZ  → {tgz_path}  ({len(files)} files)")
+`;
+execFileSync("python3", ["-c", archivePy], { stdio: "inherit" });
+console.log("Archives rebuilt.");
