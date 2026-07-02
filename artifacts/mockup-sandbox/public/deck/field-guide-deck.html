@@ -133,10 +133,10 @@
     text-transform: uppercase; color: var(--faded); }
 
   /* ---- TPL/SOURCES ---- */
-  .tpl-sources .body { position: absolute; left: 96px; right: 96px; top: 200px; }
-  .tpl-sources .headline { font-size: 64px; margin-top: 26px; }
-  .tpl-sources .srcgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 72px; margin-top: 60px; }
-  .tpl-sources .src { display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 30px; }
+  .tpl-sources .body { position: absolute; left: 96px; right: 96px; top: 148px; }
+  .tpl-sources .headline { font-size: 64px; margin-top: 16px; }
+  .tpl-sources .srcgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 72px; margin-top: 32px; }
+  .tpl-sources .src { display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 22px; }
   .tpl-sources .src .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
     color: var(--amber); padding-top: 8px; }
   .tpl-sources .src .meta { min-width: 0; }
@@ -150,6 +150,18 @@
     margin-top: 16px; }
   .tpl-sources .src .url a { color: var(--amber); text-decoration: none; }
   .tpl-sources .src .url a:hover { text-decoration: underline; }
+  /* borrowed-framework attributions (distinct from the verified data sources above) */
+  .tpl-sources .attrib { margin-top: 26px; }
+  .tpl-sources .attrib .lbl { font-family: 'JetBrains Mono', monospace; font-size: 16.5px;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .tpl-sources .attrib .items { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 72px; margin-top: 16px; }
+  .tpl-sources .attrib .item { display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+  .tpl-sources .attrib .item .n { font-family: 'JetBrains Mono', monospace; font-size: 19px;
+    letter-spacing: .2em; color: var(--amber); }
+  .tpl-sources .attrib .item .txt { font-size: 21px; color: var(--faded); line-height: 1.45; }
+  .tpl-sources .attrib .item .txt b { color: var(--cream); font-weight: 500; }
+  .tpl-sources .attrib .item .txt a { color: var(--amber); text-decoration: none; }
+  .tpl-sources .attrib .item .txt a:hover { text-decoration: underline; }
 
   /* definition card (Disillusionomics) */
   .defcard { margin-top: 72px; background: var(--surface); border: 1px solid var(--border);
@@ -470,6 +482,19 @@
           <div class="org"><a href="https://econsultancy.com/blog/63321-companies-more-focused-on-acquisition-than-retention-stats" target="_blank" rel="noopener">Econsultancy — Cross-Channel Marketing Report</a></div>
           <div class="claim">44% focus on acquisition vs 16% on retention</div>
           <div class="url"><a href="https://econsultancy.com/blog/63321-companies-more-focused-on-acquisition-than-retention-stats" target="_blank" rel="noopener">econsultancy.com ↗</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="attrib">
+      <div class="lbl">Borrowed frameworks · credited in full</div>
+      <div class="items">
+        <div class="item">
+          <div class="n">A</div>
+          <div class="txt">The ~70,000-year "shared belief" framing is Yuval Noah Harari's Cognitive Revolution thesis from <b>Sapiens</b> — paraphrased here, and credited to Harari.</div>
+        </div>
+        <div class="item">
+          <div class="n">B</div>
+          <div class="txt"><b>"Disillusionomics"</b> is a term coined by economist Alice Lassman, popularized via <a href="https://fortune.com/2026/01/10/gen-z-disillusionomics-rebelling-against-economy-life-hacking-income-streams-debt-dupe-culture/" target="_blank" rel="noopener">Fortune, Jan 2026</a>.</div>
         </div>
       </div>
     </div>
