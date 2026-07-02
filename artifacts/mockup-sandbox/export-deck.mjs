@@ -6,7 +6,7 @@ import path from "node:path";
 const CHROME = execSync("which chromium").toString().trim();
 const URL = "http://localhost:23636/__mockup/deck/field-guide-deck.html";
 const OUT = path.resolve(import.meta.dirname, "../../exports/field-guide-launch");
-const SLIDES = 12;
+const SLIDES = 13;
 
 const browser = await puppeteer.launch({
   executablePath: CHROME,
