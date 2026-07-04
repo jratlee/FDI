@@ -4,6 +4,10 @@
 **Header image:** `li-article-header-1200x627.png`
 **Attribution note:** Credits Ben Thompson / Stratechery, Eric Seufert / DeCANT (Mobile Dev Memo), Alice Lassman (Disillusionomics), and Yuval Noah Harari (Sapiens), consistent with the launch deck's originality standard.
 
+**SEO title (62 chars):** Owned Marketing Systems for the AI Age | False Dawn Industries
+**SEO description (157 chars):** Reach is commoditized and ad platforms are black boxes. The durable play is owned marketing systems: a persistent identity and corpus you can prove. Read on.
+**Primary keyword:** owned marketing systems
+
 ---
 
 The cost of making content just fell to zero. That's not the opportunity. That's the emergency.
