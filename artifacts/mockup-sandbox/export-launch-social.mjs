@@ -14,6 +14,9 @@ const jobs = [
   { url: `${BASE}/ig-story3.html`, w: 1080, h: 1920, out: "ig-story-3-1080x1920.png" },
   { url: `${BASE}/li-card.html`,   w: 1200, h: 627,  out: "li-card-1200x627.png" },
   { url: `${BASE}/li-article-header.html`, w: 1200, h: 627, out: "li-article-header-1200x627.png" },
+  { url: `${BASE}/viz-identity-bridge.html`, w: 1200, h: 620, out: "viz-identity-bridge-1200x620.png" },
+  { url: `${BASE}/viz-two-builds.html`, w: 1200, h: 700, out: "viz-two-builds-1200x700.png" },
+  { url: `${BASE}/viz-three-markets.html`, w: 1200, h: 620, out: "viz-three-markets-1200x620.png" },
 ];
 
 const browser = await puppeteer.launch({

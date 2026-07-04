@@ -119,3 +119,27 @@ id = "o-gTfDSsbqSL27MdSJdVd"
 uri = "file://exports/field-guide-launch/fdi-field-guide-launch-bundle.zip"
 type = "unspecified"
 title = "FDI Field Guide Launch Bundle"
+
+[[outputs]]
+id = "se423K4Pe5g6FJ3pueXXd"
+uri = "file://exports/field-guide-launch/li-article-header-1200x627.png"
+type = "image"
+title = "Article header (subtitle removed, machine-graph motif)"
+
+[[outputs]]
+id = "vAKxhYaqdKDPSS0m9jnzw"
+uri = "file://exports/field-guide-launch/viz-identity-bridge-1200x620.png"
+type = "image"
+title = "In-article visual 1: Identity Bridge (Belief · Trust · Identity)"
+
+[[outputs]]
+id = "1ujC_fjYLV2xVjxS2_paj"
+uri = "file://exports/field-guide-launch/viz-two-builds-1200x700.png"
+type = "image"
+title = "In-article visual 2: Two Builds (Pile vs Talk to NYC)"
+
+[[outputs]]
+id = "6yW9gbaTd9tQosuBShtd3"
+uri = "file://exports/field-guide-launch/viz-three-markets-1200x620.png"
+type = "image"
+title = "In-article visual 3: Three Markets (Aggregated · Decentralized · Autonomous)"

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI — Two Builds Architecture</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html,body{height:auto;}
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:3.6vw 3.8vw 3vw;}
+  .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2.4vw;}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
+    font-size:2.5vw;letter-spacing:-.01em;}
+  .htitle em{font-style:normal;color:var(--amber);}
+  .hmeta{font-family:'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);font-size:1.05vw;}
+  .cols{display:flex;gap:2.4vw;flex:1;}
+  .col{flex:1;display:flex;flex-direction:column;background:var(--surface);
+    border:1px solid var(--border);border-radius:.5vw;padding:2vw 1.9vw;}
+  .col .cnum{font-family:'JetBrains Mono',monospace;color:var(--amber);font-size:1.1vw;
+    letter-spacing:.2em;}
+  .col .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--cream);
+    font-size:2vw;margin:.5vw 0 .2vw;}
+  .col .ctag{font-family:'JetBrains Mono',monospace;color:var(--faded);font-size:1.05vw;
+    letter-spacing:.06em;margin-bottom:1vw;}
+  .col .cdesc{font-family:'Inter',sans-serif;color:var(--cream);font-size:1.25vw;line-height:1.5;
+    margin-bottom:1.4vw;min-height:5.4vw;}
+  .stage{flex:1;display:flex;align-items:center;justify-content:center;
+    background:var(--base);border:1px solid var(--border);border-radius:.4vw;padding:1.4vw;}
+  .stage svg{width:100%;height:100%;overflow:visible;}
+  .cfoot{font-family:'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-size:.98vw;margin-top:1.2vw;}
+  /* schema */
+  .tbl{fill:var(--elevated);stroke:var(--hairline);stroke-width:1.2;}
+  .tbar{fill:#241b10;}
+  .thead{font-family:'JetBrains Mono',monospace;font-size:9px;fill:var(--amber);}
+  .trow{font-family:'JetBrains Mono',monospace;font-size:8px;fill:var(--faded);}
+  .rel{stroke:var(--muted);stroke-width:1.4;fill:none;}
+  /* graph */
+  .ed{stroke:var(--muted);stroke-width:1.6;fill:none;}
+  .ed.on{stroke:var(--amber);stroke-width:2.2;}
+  .nd{fill:var(--elevated);stroke:var(--hairline);stroke-width:1.4;}
+  .nd.on{fill:#241b10;stroke:var(--amber);stroke-width:1.8;}
+  .ndt{font-family:'JetBrains Mono',monospace;font-size:9px;fill:var(--cream);}
+  .edt{font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:var(--muted);letter-spacing:.05em;}
+</style>
+</head>
+<body>
+<div class="ad"><div class="wrap">
+  <div class="head">
+    <div class="htitle">Two builds, two ways to make a machine <em>trustworthy</em></div>
+    <div class="hmeta">False Dawn Industries</div>
+  </div>
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">PILE</div>
+      <div class="cname">Transactional Trust</div>
+      <div class="ctag">Pay-per-question RAG · React / Node / PostgreSQL</div>
+      <div class="cdesc">Turns the marketing promise of honesty into a hard database constraint.</div>
+      <div class="stage">
+        <svg viewBox="0 0 360 190">
+          <path class="rel" d="M96 52 H150 M120 118 H150 M210 60 V96 M150 76 H210"/>
+          <!-- users -->
+          <rect class="tbl" x="24" y="34" width="82" height="60" rx="3"/>
+          <rect class="tbar" x="24" y="34" width="82" height="16" rx="3"/>
+          <text class="thead" x="32" y="46">users</text>
+          <text class="trow" x="32" y="64">user_id  PK</text>
+          <text class="trow" x="32" y="77">email</text>
+          <text class="trow" x="32" y="90">credits</text>
+          <!-- queries -->
+          <rect class="tbl" x="150" y="30" width="96" height="72" rx="3"/>
+          <rect class="tbar" x="150" y="30" width="96" height="16" rx="3"/>
+          <text class="thead" x="158" y="42">queries</text>
+          <text class="trow" x="158" y="60">query_id PK</text>
+          <text class="trow" x="158" y="73">content_hash</text>
+          <text class="trow" x="158" y="86">cost</text>
+          <text class="trow" x="158" y="99">stripe_id</text>
+          <!-- documents -->
+          <rect class="tbl" x="24" y="118" width="82" height="58" rx="3"/>
+          <rect class="tbar" x="24" y="118" width="82" height="16" rx="3"/>
+          <text class="thead" x="32" y="130">documents</text>
+          <text class="trow" x="32" y="148">doc_id  PK</text>
+          <text class="trow" x="32" y="161">sha256</text>
+          <!-- chunks -->
+          <rect class="tbl" x="150" y="118" width="96" height="58" rx="3"/>
+          <rect class="tbar" x="150" y="118" width="96" height="16" rx="3"/>
+          <text class="thead" x="158" y="130">document_chunks</text>
+          <text class="trow" x="158" y="148">chunk_id PK</text>
+          <text class="trow" x="158" y="161">embedding vector</text>
+          <path class="rel" d="M106 147 H150"/>
+          <text class="trow" x="270" y="70" fill="#7A6A50">UNIQUE(doc_id,</text>
+          <text class="trow" x="270" y="82" fill="#7A6A50">chunk_index)</text>
+          <path class="rel" d="M246 147 C300 147 300 76 262 76" stroke-dasharray="3 3"/>
+        </svg>
+      </div>
+      <div class="cfoot">Relational · invariants in the database</div>
+    </div>
+    <div class="col">
+      <div class="cnum">TALK TO NYC</div>
+      <div class="cname">Informational Belief</div>
+      <div class="ctag">Hybrid GraphRAG · Neo4j / Python / FastAPI</div>
+      <div class="cdesc">Turns the need for a shared reality into verifiable graph traversals.</div>
+      <div class="stage">
+        <svg viewBox="0 0 360 190">
+          <path class="ed on" d="M60 96 L150 50"/>
+          <path class="ed" d="M60 96 L150 150"/>
+          <path class="ed on" d="M150 50 L258 60"/>
+          <path class="ed" d="M150 150 L258 140"/>
+          <path class="ed on" d="M258 60 L258 140"/>
+          <path class="ed" d="M258 60 L318 96"/>
+          <text class="edt" x="92" y="66">CITES</text>
+          <text class="edt" x="188" y="48">IMPLEMENTS</text>
+          <text class="edt" x="200" y="150">TARGETS</text>
+          <circle class="nd on" cx="60" cy="96" r="20"/><text class="ndt" x="46" y="99">query</text>
+          <circle class="nd" cx="150" cy="50" r="22"/><text class="ndt" x="132" y="53">§ Rule</text>
+          <circle class="nd" cx="150" cy="150" r="22"/><text class="ndt" x="130" y="153">§ Code</text>
+          <circle class="nd on" cx="258" cy="60" r="22"/><text class="ndt" x="238" y="63">Charter</text>
+          <circle class="nd" cx="258" cy="140" r="22"/><text class="ndt" x="236" y="143">Exception</text>
+          <circle class="nd" cx="318" cy="96" r="18"/><text class="ndt" x="304" y="99">Org</text>
+        </svg>
+      </div>
+      <div class="cfoot">Graph · vector meaning + cited relationships</div>
+    </div>
+  </div>
+</div></div>
+</body>
+</html>

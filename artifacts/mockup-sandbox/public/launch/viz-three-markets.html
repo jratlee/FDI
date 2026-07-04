@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI — Three Markets</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html,body{height:auto;}
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:3.8vw 4vw 3vw;}
+  .head{margin-bottom:2.8vw;}
+  .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.28em;
+    color:var(--faded);font-size:1.15vw;display:flex;align-items:center;gap:.9em;margin-bottom:1.2vw;}
+  .keyb::before{content:"";width:1.8em;height:0;border-top:2px solid var(--amber);}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
+    font-size:2.9vw;letter-spacing:-.015em;}
+  .htitle em{font-style:normal;color:var(--amber);}
+  .cols{display:flex;gap:2vw;flex:1;}
+  .col{flex:1;display:flex;flex-direction:column;background:var(--surface);
+    border:1px solid var(--border);border-top:3px solid var(--amber);border-radius:.4vw;
+    padding:1.9vw 1.7vw;}
+  .cnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:1.1vw;letter-spacing:.2em;}
+  .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--amber);
+    font-size:2vw;margin:.5vw 0 1vw;}
+  .cdef{font-family:'Inter',sans-serif;color:var(--cream);font-size:1.28vw;line-height:1.5;
+    margin-bottom:1.4vw;}
+  .stage{height:8vw;display:flex;align-items:center;justify-content:center;margin-bottom:1.4vw;}
+  .stage svg{height:100%;width:auto;overflow:visible;}
+  .own{border-top:1px solid var(--border);padding-top:1.1vw;margin-top:auto;}
+  .own .lbl{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.16em;
+    color:var(--amber);font-size:.95vw;margin-bottom:.4vw;}
+  .own .txt{font-family:'Inter',sans-serif;color:var(--faded);font-size:1.12vw;line-height:1.45;}
+  .ln{stroke:var(--muted);stroke-width:2;fill:none;}
+  .lna{stroke:var(--amber);stroke-width:2.4;fill:none;}
+  .nd{fill:var(--faded);}
+  .nda{fill:var(--amber);}
+  .rg{stroke:var(--amber);stroke-width:2.4;fill:none;}
+  .bx{fill:none;stroke:var(--muted);stroke-width:2;}
+</style>
+</head>
+<body>
+<div class="ad"><div class="wrap">
+  <div class="head">
+    <div class="keyb">The next three Field Guides</div>
+    <div class="htitle">Three market structures, one response: <em>own the system</em></div>
+  </div>
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">01</div>
+      <div class="cname">Aggregated</div>
+      <div class="cdef">Discovery moves behind recommenders and chat. A model, not a search box, decides whether you exist.</div>
+      <div class="stage">
+        <svg viewBox="0 0 150 90">
+          <rect class="bx" x="14" y="26" width="42" height="38" rx="4"/>
+          <path class="ln" d="M24 38 h22 M24 45 h22 M24 52 h14"/>
+          <path class="lna" d="M60 45 h34 M88 39 l8 6 l-8 6"/>
+          <circle class="rg" cx="116" cy="45" r="16"/>
+          <circle class="rg" cx="116" cy="45" r="7"/>
+        </svg>
+      </div>
+      <div class="own"><div class="lbl">Own this</div>
+        <div class="txt">A persistent identity and a corpus a machine can retrieve and cite. (Pile)</div></div>
+    </div>
+    <div class="col">
+      <div class="cnum">02</div>
+      <div class="cname">Decentralized</div>
+      <div class="cdef">Your knowledge is scattered across docs, product data, and policies that never talk to each other.</div>
+      <div class="stage">
+        <svg viewBox="0 0 150 90">
+          <circle class="nd" cx="18" cy="20" r="5"/><circle class="nd" cx="14" cy="60" r="5"/>
+          <circle class="nd" cx="40" cy="78" r="5"/>
+          <path class="lna" d="M56 45 h20 M70 39 l8 6 l-8 6"/>
+          <path class="lna" d="M96 26 L124 20 M124 20 L134 46 M134 46 L110 62 M110 62 L96 40 M96 40 L96 26 M96 40 L124 20"/>
+          <circle class="nda" cx="96" cy="26" r="6"/><circle class="nda" cx="124" cy="20" r="7"/>
+          <circle class="nda" cx="134" cy="46" r="6"/><circle class="nda" cx="110" cy="62" r="6"/>
+          <circle class="nda" cx="96" cy="40" r="5"/>
+        </svg>
+      </div>
+      <div class="own"><div class="lbl">Own this</div>
+        <div class="txt">One queryable graph with the relationships preserved and citable. (Talk to NYC)</div></div>
+    </div>
+    <div class="col">
+      <div class="cnum">03</div>
+      <div class="cname">Autonomous</div>
+      <div class="cdef">Agents will transact on your customers' behalf, and on yours. They need something safe to call.</div>
+      <div class="stage">
+        <svg viewBox="0 0 150 90">
+          <rect class="bx" x="16" y="30" width="34" height="30" rx="5"/>
+          <circle class="nd" cx="26" cy="45" r="3.4"/><circle class="nd" cx="40" cy="45" r="3.4"/>
+          <path class="ln" d="M33 22 v8"/><circle class="nd" cx="33" cy="20" r="3"/>
+          <path class="lna" d="M54 45 h26 M74 39 l8 6 l-8 6"/>
+          <rect class="rg" x="96" y="28" width="40" height="34" rx="5"/>
+          <path class="lna" d="M116 28 v-8 M108 45 h16 M110 52 h12"/>
+          <circle class="nda" cx="116" cy="18" r="3.4"/>
+        </svg>
+      </div>
+      <div class="own"><div class="lbl">Own this</div>
+        <div class="txt">An MCP interface with trust boundaries: data is never a command. (Both)</div></div>
+    </div>
+  </div>
+</div></div>
+</body>
+</html>
