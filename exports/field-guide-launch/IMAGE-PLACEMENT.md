@@ -13,7 +13,7 @@ positions if you preview it anywhere that renders Markdown.
 | `li-article-header-1200x627.png` | Article cover / header image | 1200 x 627 |
 | `viz-identity-bridge-1200x620.png` | In-article figure 1 | 1200 x 620 |
 | `viz-two-builds-1200x700.png` | In-article figure 2 | 1200 x 700 |
-| `viz-three-markets-1200x620.png` | In-article figure 3 | 1200 x 620 |
+| `viz-three-markets-1200x680.png` | In-article figure 3 | 1200 x 680 |
 
 ## Where each image goes
 
@@ -40,14 +40,14 @@ and BEFORE the line:
 Suggested caption:
 > Same goal from two directions: Pile puts honesty in a database constraint, Talk to NYC puts shared reality in a graph you can check.
 
-### 4. `viz-three-markets-1200x620.png` — after the Autonomous paragraph
+### 4. `viz-three-markets-1200x680.png` — after the Autonomous paragraph
 Insert immediately AFTER the paragraph that ends:
 > "...never let data become a command."
 and BEFORE the line:
 > "Here is the urgency..."
 
 Suggested caption:
-> Three shifts, happening at once, each answered by the same move: own the identity, the corpus, and the interface instead of renting reach.
+> Each market rewires how attention and trust flow, and each demands a new form of brand identity: legible to machines, portable across communities, and verifiable by agents.
 
 ## Posting tips
 - LinkedIn articles support inline hyperlinks. When you paste the text, link the source

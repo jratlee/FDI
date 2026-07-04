@@ -6,29 +6,35 @@
 <link rel="stylesheet" href="/__mockup/ads/brand.css" />
 <style>
   html,body{height:auto;}
-  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:3.8vw 4vw 3vw;}
-  .head{margin-bottom:2.8vw;}
-  .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.28em;
-    color:var(--faded);font-size:1.15vw;display:flex;align-items:center;gap:.9em;margin-bottom:1.2vw;}
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:3.1vw 3.4vw 2.6vw;}
+  .head{margin-bottom:2vw;}
+  .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.26em;
+    color:var(--faded);font-size:1.02vw;display:flex;align-items:center;gap:.9em;margin-bottom:1vw;}
   .keyb::before{content:"";width:1.8em;height:0;border-top:2px solid var(--amber);}
   .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
-    font-size:2.9vw;letter-spacing:-.015em;}
+    font-size:2.55vw;letter-spacing:-.015em;line-height:1.08;}
   .htitle em{font-style:normal;color:var(--amber);}
-  .cols{display:flex;gap:2vw;flex:1;}
+  .cols{display:flex;gap:1.7vw;flex:1;}
   .col{flex:1;display:flex;flex-direction:column;background:var(--surface);
     border:1px solid var(--border);border-top:3px solid var(--amber);border-radius:.4vw;
-    padding:1.9vw 1.7vw;}
-  .cnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:1.1vw;letter-spacing:.2em;}
+    padding:1.6vw 1.5vw;}
+  .cnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:1vw;letter-spacing:.2em;}
   .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--amber);
-    font-size:2vw;margin:.5vw 0 1vw;}
-  .cdef{font-family:'Inter',sans-serif;color:var(--cream);font-size:1.28vw;line-height:1.5;
-    margin-bottom:1.4vw;}
-  .stage{height:8vw;display:flex;align-items:center;justify-content:center;margin-bottom:1.4vw;}
+    font-size:1.85vw;margin:.35vw 0 .1vw;}
+  .csub{font-family:'JetBrains Mono',monospace;color:var(--faded);font-size:.92vw;
+    letter-spacing:.04em;margin-bottom:1vw;}
+  .stage{height:6vw;display:flex;align-items:center;justify-content:center;margin:.2vw 0 1vw;}
   .stage svg{height:100%;width:auto;overflow:visible;}
-  .own{border-top:1px solid var(--border);padding-top:1.1vw;margin-top:auto;}
-  .own .lbl{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.16em;
-    color:var(--amber);font-size:.95vw;margin-bottom:.4vw;}
-  .own .txt{font-family:'Inter',sans-serif;color:var(--faded);font-size:1.12vw;line-height:1.45;}
+  .blk{margin-bottom:.9vw;}
+  .lbl{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.14em;
+    font-size:.82vw;margin-bottom:.35vw;color:var(--muted);}
+  .lbl.a{color:var(--amber);}
+  .txt{font-family:'Inter',sans-serif;color:var(--cream);font-size:1.05vw;line-height:1.42;}
+  .form{border-top:1px solid var(--border);padding-top:.9vw;margin-top:auto;}
+  .form .txt{color:var(--faded);}
+  .foot{margin-top:1.8vw;font-family:'Inter',sans-serif;color:var(--muted);font-size:1.05vw;
+    text-align:center;}
+  .foot b{color:var(--amber);font-weight:600;}
   .ln{stroke:var(--muted);stroke-width:2;fill:none;}
   .lna{stroke:var(--amber);stroke-width:2.4;fill:none;}
   .nd{fill:var(--faded);}
@@ -40,63 +46,87 @@
 <body>
 <div class="ad"><div class="wrap">
   <div class="head">
-    <div class="keyb">The next three Field Guides</div>
-    <div class="htitle">Three market structures, one response: <em>own the system</em></div>
+    <div class="keyb">The next three Field Guides · Market mechanics</div>
+    <div class="htitle">Three markets, three new forms <em>brand identity</em> has to take</div>
   </div>
   <div class="cols">
+
     <div class="col">
       <div class="cnum">01</div>
       <div class="cname">Aggregated</div>
-      <div class="cdef">Discovery moves behind recommenders and chat. A model, not a search box, decides whether you exist.</div>
+      <div class="csub">A few models mediate discovery</div>
       <div class="stage">
-        <svg viewBox="0 0 150 90">
-          <rect class="bx" x="14" y="26" width="42" height="38" rx="4"/>
-          <path class="ln" d="M24 38 h22 M24 45 h22 M24 52 h14"/>
-          <path class="lna" d="M60 45 h34 M88 39 l8 6 l-8 6"/>
-          <circle class="rg" cx="116" cy="45" r="16"/>
-          <circle class="rg" cx="116" cy="45" r="7"/>
+        <svg viewBox="0 0 150 84">
+          <rect class="bx" x="10" y="14" width="30" height="18" rx="3"/>
+          <rect class="bx" x="10" y="52" width="30" height="18" rx="3"/>
+          <path class="ln" d="M16 21 h18 M16 26 h12 M16 59 h18 M16 64 h12"/>
+          <path class="lna" d="M40 23 C64 23 60 42 78 42 M40 61 C64 61 60 42 78 42"/>
+          <circle class="rg" cx="92" cy="42" r="15"/>
+          <circle class="rg" cx="92" cy="42" r="6"/>
+          <path class="lna" d="M107 42 h26 M126 36 l8 6 l-8 6"/>
         </svg>
       </div>
-      <div class="own"><div class="lbl">Own this</div>
-        <div class="txt">A persistent identity and a corpus a machine can retrieve and cite. (Pile)</div></div>
+      <div class="blk"><div class="lbl">Mechanic</div>
+        <div class="txt">The model is your first audience. It summarizes, ranks, and answers for you, so the customer meets a machine's version of you first.</div></div>
+      <div class="form"><div class="lbl a">Brand's new form</div>
+        <div class="txt">A brand legible to machines: one consistent, structured point of view the model can retrieve and repeat without distorting you.</div></div>
     </div>
+
     <div class="col">
       <div class="cnum">02</div>
       <div class="cname">Decentralized</div>
-      <div class="cdef">Your knowledge is scattered across docs, product data, and policies that never talk to each other.</div>
+      <div class="csub">Attention fragments across communities</div>
       <div class="stage">
-        <svg viewBox="0 0 150 90">
-          <circle class="nd" cx="18" cy="20" r="5"/><circle class="nd" cx="14" cy="60" r="5"/>
-          <circle class="nd" cx="40" cy="78" r="5"/>
-          <path class="lna" d="M56 45 h20 M70 39 l8 6 l-8 6"/>
-          <path class="lna" d="M96 26 L124 20 M124 20 L134 46 M134 46 L110 62 M110 62 L96 40 M96 40 L96 26 M96 40 L124 20"/>
-          <circle class="nda" cx="96" cy="26" r="6"/><circle class="nda" cx="124" cy="20" r="7"/>
-          <circle class="nda" cx="134" cy="46" r="6"/><circle class="nda" cx="110" cy="62" r="6"/>
-          <circle class="nda" cx="96" cy="40" r="5"/>
+        <svg viewBox="0 0 150 84">
+          <g>
+            <circle class="nda" cx="26" cy="24" r="6"/>
+            <circle class="nd" cx="14" cy="12" r="3.4"/><circle class="nd" cx="40" cy="14" r="3.4"/>
+            <circle class="nd" cx="16" cy="36" r="3.4"/>
+            <path class="ln" d="M26 24 L14 12 M26 24 L40 14 M26 24 L16 36"/>
+          </g>
+          <g>
+            <circle class="nda" cx="118" cy="22" r="6"/>
+            <circle class="nd" cx="108" cy="10" r="3.4"/><circle class="nd" cx="134" cy="16" r="3.4"/>
+            <path class="ln" d="M118 22 L108 10 M118 22 L134 16"/>
+          </g>
+          <g>
+            <circle class="nda" cx="72" cy="62" r="6"/>
+            <circle class="nd" cx="60" cy="72" r="3.4"/><circle class="nd" cx="86" cy="70" r="3.4"/>
+            <circle class="nd" cx="72" cy="48" r="3.4"/>
+            <path class="ln" d="M72 62 L60 72 M72 62 L86 70 M72 62 L72 48"/>
+          </g>
+          <path class="lna" d="M32 26 C52 40 52 48 66 58 M112 26 C92 40 92 48 78 58" stroke-dasharray="3 4"/>
         </svg>
       </div>
-      <div class="own"><div class="lbl">Own this</div>
-        <div class="txt">One queryable graph with the relationships preserved and citable. (Talk to NYC)</div></div>
+      <div class="blk"><div class="lbl">Mechanic</div>
+        <div class="txt">Reach gives way to belonging. No single channel holds your audience, so trust is earned in many small rooms you don't control.</div></div>
+      <div class="form"><div class="lbl a">Brand's new form</div>
+        <div class="txt">A portable identity system: voice, symbols, and POV modular enough to stay recognizably you as other people carry it.</div></div>
     </div>
+
     <div class="col">
       <div class="cnum">03</div>
       <div class="cname">Autonomous</div>
-      <div class="cdef">Agents will transact on your customers' behalf, and on yours. They need something safe to call.</div>
+      <div class="csub">Agents transact on everyone's behalf</div>
       <div class="stage">
-        <svg viewBox="0 0 150 90">
-          <rect class="bx" x="16" y="30" width="34" height="30" rx="5"/>
-          <circle class="nd" cx="26" cy="45" r="3.4"/><circle class="nd" cx="40" cy="45" r="3.4"/>
-          <path class="ln" d="M33 22 v8"/><circle class="nd" cx="33" cy="20" r="3"/>
-          <path class="lna" d="M54 45 h26 M74 39 l8 6 l-8 6"/>
-          <rect class="rg" x="96" y="28" width="40" height="34" rx="5"/>
-          <path class="lna" d="M116 28 v-8 M108 45 h16 M110 52 h12"/>
-          <circle class="nda" cx="116" cy="18" r="3.4"/>
+        <svg viewBox="0 0 150 84">
+          <rect class="bx" x="12" y="30" width="32" height="26" rx="5"/>
+          <circle class="nd" cx="22" cy="43" r="3.2"/><circle class="nd" cx="34" cy="43" r="3.2"/>
+          <path class="ln" d="M28 22 v8"/><circle class="nd" cx="28" cy="20" r="2.8"/>
+          <path class="lna" d="M48 43 h22 M64 37 l8 6 l-8 6"/>
+          <rect class="rg" x="86" y="26" width="34" height="34" rx="5"/>
+          <path class="lna" d="M96 43 l6 6 l12 -13"/>
+          <path class="ln" d="M126 34 h12 M126 43 h9 M126 52 h12"/>
         </svg>
       </div>
-      <div class="own"><div class="lbl">Own this</div>
-        <div class="txt">An MCP interface with trust boundaries: data is never a command. (Both)</div></div>
+      <div class="blk"><div class="lbl">Mechanic</div>
+        <div class="txt">The buyer becomes software. Agents choose by verifiable criteria and clean interfaces, not by emotion or creative, then act.</div></div>
+      <div class="form"><div class="lbl a">Brand's new form</div>
+        <div class="txt">Trust rendered as code: proofs, credentials, and a safe interface an agent can check and confidently prefer.</div></div>
     </div>
+
   </div>
+  <div class="foot">Culture earns the belief. <b>Code makes it legible, portable, and verifiable.</b></div>
 </div></div>
 </body>
 </html>

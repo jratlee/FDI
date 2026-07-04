@@ -148,4 +148,10 @@ title = "In-article visual 3: Three Markets (Aggregated · Decentralized · Auto
 id = "dEj0PIqH1BhQlLq-Sthdf"
 uri = "file://exports/field-guide-launch/fdi-linkedin-thesis-package.zip"
 type = "unspecified"
-title = "FDI LinkedIn Thesis Article Package (article + 4 images + placement guide)"
+title = "Updated package (article + 4 images + placement guide)"
+
+[[outputs]]
+id = "LuKbIS9SnTbcVc4w-jT32"
+uri = "file://exports/field-guide-launch/viz-three-markets-1200x680.png"
+type = "image"
+title = "Rebuilt: Three Markets — marketing mechanics + new brand forms"

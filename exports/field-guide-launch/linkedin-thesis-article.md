@@ -44,9 +44,9 @@ Those two builds aren't a portfolio. They're a preview of the three market struc
 
 **Autonomous.** Agents are about to transact on your customers' behalf, and on yours. That means your marketing system needs to be something another agent can safely call. Talk to NYC's MCP server and Pile's gated agent API are early versions of exactly that, with the trust boundaries that make it survivable: treat every retrieved document as hostile input, sanitize everything that goes out, and never let data become a command.
 
-![Three market structures, one response: own the system. Aggregated, Decentralized, and Autonomous](viz-three-markets-1200x620.png)
+![Three markets, three new forms brand identity has to take: Aggregated, Decentralized, and Autonomous](viz-three-markets-1200x680.png)
 
-*Three shifts, happening at once, each answered by the same move: own the identity, the corpus, and the interface instead of renting reach.*
+*Each market rewires how attention and trust flow, and each demands a new form of brand identity: legible to machines, portable across communities, and verifiable by agents.*
 
 Here is the urgency. These three shifts aren't tidy predictions for later this decade. They are happening at once, right now, and they compound. Every quarter you spend buying commoditized reach is a quarter you didn't spend building the identity, the corpus, and the interfaces that will still be yours when the aggregators and the agents finish rearranging the market. The window to build owned marketing systems closes the moment a competitor's system becomes the default your customers' agents reach for first.
 
