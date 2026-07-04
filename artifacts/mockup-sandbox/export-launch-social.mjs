@@ -13,6 +13,7 @@ const jobs = [
   { url: `${BASE}/ig-story2.html`, w: 1080, h: 1920, out: "ig-story-2-1080x1920.png" },
   { url: `${BASE}/ig-story3.html`, w: 1080, h: 1920, out: "ig-story-3-1080x1920.png" },
   { url: `${BASE}/li-card.html`,   w: 1200, h: 627,  out: "li-card-1200x627.png" },
+  { url: `${BASE}/li-article-header.html`, w: 1200, h: 627, out: "li-article-header-1200x627.png" },
 ];
 
 const browser = await puppeteer.launch({
