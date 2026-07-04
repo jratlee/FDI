@@ -1,0 +1,65 @@
+Based on your development blueprints and launch checkpoints, here is a detailed breakdown of the **Skillfoundry Model Context Protocol (MCP)**, covering its strategic mechanics, modular architecture, decoupled backend system, and go-to-market structure:
+
+---
+
+### 1. Strategic Purpose & Clean-Room Compliance
+
+* **Core Value Proposition:** Skillfoundry MCP is designed to transition False Dawn Industries from a traditional agency retainer model to an owner/operator model shipping "Strategy as Code". It addresses a critical vulnerability in modern communications teams: automated execution without high-level strategic oversight.
+* **Target Champion Persona:** The initial build is tailored specifically for technical B2B communications leaders, such as David Schraeder (Head of Communications at ToltIQ). While leaders like Schraeder have built advanced automated execution engines using Claude Design and custom CMS agents, Skillfoundry provides the overarching strategic "brain" to ensure those automated outputs drive actual enterprise value.
+* **Clean-Room IP Strategy:** To ensure absolute compliance with prior employment agreements prohibiting the disclosure or use of proprietary "Work Product," "Trade Secrets," or "Confidential Information," the product is built entirely on original, newly abstracted "Clean Room" intellectual property.
+
+---
+
+### 2. The Core Engine: The "Signal-to-Value" Framework
+
+Skillfoundry functions as an agnostic, multimodal strategic firewall evaluating assets across three opinionated gates:
+
+* **Gate 1: The Market-Deficit Analyzer (The Relevance Filter)**
+* **Purpose:** Enforces strict audience utility by filtering raw text or assets through Clayton Christensen's Jobs-to-be-Done (JTBD) framework. It strips away hollow impression-farming hooks and forces content to solve a specific, acute functional, emotional, or social problem for the target audience rather than acting as generic industry noise.
+* **Parameters:** Takes in `[Business_Problem]` (the core friction or bottleneck) and `[Audience_Logic]` (the explicit persona profile).
+* **Output:** Returns the optimized asset alongside a quantifiable `"Relevance Score Metric"`.
+
+
+* **Gate 2: The Enterprise Valuation Gate (The Performance Filter)**
+* **Purpose:** Translates soft public relations metrics into C-Suite KPIs and enforces a "risk-constraint architecture" to maximize perceived enterprise valuation. It audits the narrative to ensure the voice claims undisputed category authority and grounds all claims in measurable enterprise value drivers.
+* **Parameters:** Takes in `[Category_Positioning]` (defined market category or strategic POV) and `[Intended_Use]` (the specific publication format).
+* **Output:** Returns the optimized asset alongside a `"Performance Delta Log"`.
+
+
+* **Gate 3: The Adversarial Defense Matrix (The Algorithmic Signal Filter)**
+* **Purpose:** Acts as a distribution defense mechanism against programmatic AI noise in adversarial algorithmic feeds. It strips out LLM stylistic footprints and sentence symmetries by injecting high-density human signal. Furthermore, it formats structural metadata (AEO/GEO) to ensure AI search engines cite the brand as a definitive source.
+* **Output:** Returns the finalized deployable asset alongside a `"Signal and Optimization Audit"`.
+
+
+
+---
+
+### 3. Modular Architecture (Anthropic Standard)
+
+The product is built to the open-source Anthropic knowledge-work-plugins standard, establishing a competitive moat through opinionated strategic logic:
+
+* **Skills (`skills/`):** Markdown files encoding the prompt logic and reasoning for the Market-Deficit, Enterprise Valuation, and Adversarial Defense gates.
+* **Commands (`commands/`):** Explicit slash commands configured in `.mcp.json`, such as `/sf:full-audit` (or `/skillfoundry:strategic-audit`), allowing users to route local files directly through the three filters from their terminal.
+* **Connectors (`.mcp.json`):** Configuration files ensuring native connection into existing workflows, CMS platforms, and design tools.
+
+---
+
+### 4. Decoupled Infrastructure & Payload Processing
+
+To protect proprietary IP while supporting continuous over-the-wire updates, Skillfoundry utilizes a **Decoupled Engine Architecture**:
+
+* **Public Client (`@false-dawn/skillfoundry-mcp-client`):** Distributed to users via a private GitHub repository upon checkout. It acts as a universal transport gateway (`index.js`) that reads local files, resolves absolute file paths, and determines the modality (`text` vs. `binary` for formats like `.png`, `.jpg`, `.pdf`, `.mp4`, `.mp3`, or `.figma`). It packages the file into a base64 string accompanied by a SHA-256 payload hash and transmits it securely over HTTPS to the backend.
+* **Secure Backend (`false-dawn-secure-backend`):** Hosted privately on cloud infrastructure (e.g., AWS, Vercel, or Render). It houses the core LLM processing engine (`llm-orchestrator.js`) and the proprietary prompt logic.
+* **Authentication Layer (`stripe-validator.js`):** Intercepts incoming requests at `/v1/process` and queries Stripe customer metadata to validate the supplied `licenseKey`. It verifies whether the user holds an active subscription or a valid perpetual license tier before executing the strategic audit.
+
+---
+
+### 5. Commercial Model & Go-to-Market Strategy
+
+* **Pricing Ladder:** Structured across three tiers:
+1. **Tier 1 (Static Product):** One-time purchase for a V1.0 perpetual license.
+2. **Tier 2 (Dynamic Product):** Recurring subscription providing continuous updates over-the-wire via Second Brain / Stripe.
+3. **Tier 3 (Advisory Hybrid):** Subscription paired with a dedicated strategic retainer.
+
+
+* **Commerce & Crypto Integration:** Payments are processed via Stripe Atlas and Stripe Connect, natively accepting traditional corporate fiat channels alongside stablecoin micro-settlements in **USDC**. Accepting USDC serves as both a functional digital-first checkout mechanism and a symbolic step toward wallet-to-wallet micro-transactions where AI agents upgrade their own strategic capabilities autonomously.
