@@ -1,0 +1,15 @@
+{
+  "name": "skillfoundry",
+  "version": "1.0.0",
+  "description": "A strategic firewall for content. Routes any text asset through three opinionated Signal-to-Value gates - Relevance, Performance, and Algorithmic Signal - and returns a scored, structured audit with line-level rewrites. Strategy as code.",
+  "author": {
+    "name": "False Dawn Industries",
+    "url": "https://github.com/jratlee/FDI"
+  },
+  "homepage": "https://github.com/jratlee/FDI",
+  "license": "MIT",
+  "keywords": ["content-strategy", "audit", "jtbd", "geo", "aeo", "mcp", "marketing"],
+  "commands": "./commands",
+  "skills": "./skills",
+  "mcpServers": "./.mcp.json"
+}

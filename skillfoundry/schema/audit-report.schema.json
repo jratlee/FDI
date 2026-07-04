@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://falsedawn.industries/skillfoundry/audit-report.schema.json",
+  "title": "Skillfoundry Strategic Audit Report",
+  "description": "The single deterministic contract every Skillfoundry gate conforms to. A consolidated report contains exactly three gate results plus a rollup. Every gate returns a 0-100 score, ranked reasons, and specific line-level rewrites.",
+  "type": "object",
+  "required": ["asset", "gates", "rollup"],
+  "additionalProperties": false,
+  "properties": {
+    "asset": {
+      "type": "object",
+      "required": ["title", "word_count"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "description": "Human label for the audited asset." },
+        "source": { "type": "string", "description": "Optional path or URL the asset came from." },
+        "word_count": { "type": "integer", "minimum": 0 },
+        "audited_at": { "type": "string", "description": "ISO-8601 timestamp of the audit run." }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "description": "Exactly the three Skillfoundry gates, in fixed order: relevance, performance, signal.",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/definitions/gateResult" }
+    },
+    "rollup": {
+      "type": "object",
+      "required": ["composite_score", "ship_recommendation", "top_moves"],
+      "additionalProperties": false,
+      "properties": {
+        "composite_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Weighted mean of the three gate scores. Default weights: relevance 0.40, performance 0.35, signal 0.25."
+        },
+        "ship_recommendation": {
+          "type": "string",
+          "enum": ["SHIP", "REVISE", "BLOCK"],
+          "description": "SHIP if every gate PASSes; BLOCK if any gate BLOCKs; otherwise REVISE."
+        },
+        "top_moves": {
+          "type": "array",
+          "description": "The 3-5 highest-leverage changes across all gates, ranked. This is the answer to 'what do I do first'.",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["rank", "gate", "move"],
+            "additionalProperties": false,
+            "properties": {
+              "rank": { "type": "integer", "minimum": 1 },
+              "gate": { "type": "string", "enum": ["relevance", "performance", "signal"] },
+              "move": { "type": "string", "description": "One concrete, non-obvious action." }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "gateResult": {
+      "type": "object",
+      "required": ["gate", "gate_name", "framework", "score", "verdict", "ranked_reasons", "rewrites"],
+      "additionalProperties": false,
+      "properties": {
+        "gate": {
+          "type": "string",
+          "enum": ["relevance", "performance", "signal"],
+          "description": "Stable machine id for the gate."
+        },
+        "gate_name": {
+          "type": "string",
+          "description": "Product name, e.g. 'Market-Deficit Analyzer'."
+        },
+        "framework": {
+          "type": "string",
+          "description": "The public, cited framework this gate rests on."
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "0-100. Computed from the gate's weighted sub-criteria, not assigned by vibe."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["PASS", "REVISE", "BLOCK"],
+          "description": "PASS >= 75, REVISE 50-74, BLOCK < 50."
+        },
+        "subscores": {
+          "type": "array",
+          "description": "The weighted sub-criteria that produced the score. Present so the number is auditable.",
+          "items": {
+            "type": "object",
+            "required": ["criterion", "weight", "points"],
+            "additionalProperties": false,
+            "properties": {
+              "criterion": { "type": "string" },
+              "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+              "points": { "type": "integer", "minimum": 0, "maximum": 100 }
+            }
+          }
+        },
+        "ranked_reasons": {
+          "type": "array",
+          "description": "Why the score is what it is, most important first. Each reason cites evidence from the asset.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["rank", "severity", "finding"],
+            "additionalProperties": false,
+            "properties": {
+              "rank": { "type": "integer", "minimum": 1 },
+              "severity": { "type": "string", "enum": ["high", "medium", "low"] },
+              "finding": { "type": "string", "description": "The specific problem or strength, stated plainly." },
+              "evidence": { "type": "string", "description": "A short quote or location from the asset that grounds the finding." }
+            }
+          }
+        },
+        "rewrites": {
+          "type": "array",
+          "description": "Line-level fixes, not vague prose. Each pairs the exact original text with a concrete replacement.",
+          "items": {
+            "type": "object",
+            "required": ["original", "revised", "rationale"],
+            "additionalProperties": false,
+            "properties": {
+              "original": { "type": "string", "description": "The exact span from the asset to replace." },
+              "revised": { "type": "string", "description": "The concrete replacement text." },
+              "rationale": { "type": "string", "description": "Which rubric criterion the rewrite satisfies." }
+            }
+          }
+        }
+      }
+    }
+  }
+}
