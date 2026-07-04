@@ -23,10 +23,13 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
     PDF download, launch-bundle download, and a 13-slide thumbnail strip
   - `/skillfoundry` — three Signal-to-Value gates, Anthropic-standard modular
     architecture, three-tier pricing ladder, and a waitlist email-capture CTA
-    (opens a prefilled `mailto:` — no backend, by design)
-- `serve.mjs` is a zero-dependency Node static server with correct MIME types,
-  long-cache headers for `/fonts` + `/assets`, and clean extensionless routing
-  (`/field-guide` → `field-guide.html`).
+    that POSTs to `/api/waitlist` (durable Postgres storage), with inline
+    success/error states and a prefilled `mailto:` as fallback
+- `serve.mjs` is a Node static server (correct MIME types, long-cache headers
+  for `/fonts` + `/assets`, clean extensionless routing) plus a single dynamic
+  route: `POST /api/waitlist` validates the email and upserts it into the
+  `waitlist_signups` Postgres table (`DATABASE_URL`) with `ON CONFLICT DO
+  NOTHING`. Uses the `pg` client; returns `503` if no `DATABASE_URL` is set.
 - Build: `node site/build.mjs`. Serve: `node site/serve.mjs` (PORT env, default 5000).
 - The site reuses the locked FDI brand tokens/fonts but has its own scrollable
   stylesheet (`site/src/site.css`) — it does NOT import the ad system's fixed
