@@ -143,3 +143,9 @@ id = "6yW9gbaTd9tQosuBShtd3"
 uri = "file://exports/field-guide-launch/viz-three-markets-1200x620.png"
 type = "image"
 title = "In-article visual 3: Three Markets (Aggregated · Decentralized · Autonomous)"
+
+[[outputs]]
+id = "dEj0PIqH1BhQlLq-Sthdf"
+uri = "file://exports/field-guide-launch/fdi-linkedin-thesis-package.zip"
+type = "unspecified"
+title = "FDI LinkedIn Thesis Article Package (article + 4 images + placement guide)"
