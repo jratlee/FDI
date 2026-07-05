@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-07-05T00:54:42.284Z",
+  "runs": 1,
+  "nodes": 27,
+  "edges": 25,
+  "entities": {
+    "executive": 3,
+    "company": 5,
+    "category": 4,
+    "move": 5,
+    "implication": 6,
+    "source": 4
+  },
+  "moves_by_confidence": {
+    "high": 3,
+    "medium": 1,
+    "low": 1
+  },
+  "confidence_upgrades_all_time": 1
+}

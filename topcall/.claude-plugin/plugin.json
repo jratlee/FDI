@@ -1,0 +1,15 @@
+{
+  "name": "topcall",
+  "version": "1.0.0",
+  "description": "Signal as Code — the owned radar. Top Call turns executive-intelligence monitoring into an owned asset: a persistent, provenance-stamped corpus and knowledge graph of executive moves, graded against a source-authority trust layer, exposed over a verifiable MCP interface that returns answers stamped with source, tier, and confidence. The inbound sibling to Skillfoundry.",
+  "author": {
+    "name": "False Dawn Industries",
+    "url": "https://github.com/jratlee/FDI"
+  },
+  "homepage": "https://github.com/jratlee/FDI",
+  "license": "MIT",
+  "keywords": ["executive-intelligence", "knowledge-graph", "provenance", "source-authority", "mcp", "marketing", "retail-media", "advertising"],
+  "commands": "./commands",
+  "skills": "./skills",
+  "mcpServers": "./.mcp.json"
+}

@@ -1,0 +1,164 @@
+[
+  {
+    "id": "move:kroger-precision-marketing-jordan-avery-commercialization",
+    "move_type": "commercialization",
+    "headline": "Kroger Precision Marketing's new President signals a measurement-first upfront",
+    "summary": "Ad Age reports Jordan Avery's elevation to President reorganizes Kroger Precision Marketing around measurement guarantees ahead of the retail media upfront.",
+    "so_what": "Independent trade coverage corroborates the press release and confirms the strategic read — measurement is the pitch, not a feature.",
+    "date": "2026-06-30",
+    "company": "Kroger Precision Marketing",
+    "executive": "Jordan Avery",
+    "category": "Retail Media",
+    "confidence": "high",
+    "confidence_rationale": "Tier 1 source corroborated by 2 sources across 2 tier(s)",
+    "source_count": 2,
+    "sources": [
+      {
+        "source_id": "src:ad-age-2026-06-30-https-adage-com-article-2026-06-30-kroger-precision-marketing-",
+        "publication": "Ad Age",
+        "tier": "1B",
+        "tier_label": "Brand-name advertising / marketing / media trade",
+        "url": "https://adage.com/article/2026/06/30/kroger-precision-marketing-president",
+        "date": "2026-06-30",
+        "access": "paywalled",
+        "run_id": "run:2026-07-05T00:54:42.277Z",
+        "ingested_at": "2026-07-05T00:54:42.284Z"
+      },
+      {
+        "source_id": "src:business-wire-2026-06-26-https-www-businesswire-com-news-2026-06-26-publicis-com",
+        "publication": "Business Wire",
+        "tier": "2",
+        "tier_label": "Primary source (confirms facts, not interpretation)",
+        "url": "https://www.businesswire.com/news/2026/06/26/publicis-commerce",
+        "date": "2026-06-26",
+        "access": "open",
+        "run_id": "run:2026-07-05T00:54:42.277Z",
+        "ingested_at": "2026-07-05T00:54:42.282Z"
+      }
+    ],
+    "implications": [
+      "Expect Kroger to lead with measurement guarantees in its upfront pitch to brands.",
+      "Brands will demand comparable measurement guarantees from every competing network this upfront cycle."
+    ]
+  },
+  {
+    "id": "move:warner-bros-discovery-marcus-bell-category-convergence",
+    "move_type": "category convergence",
+    "headline": "Warner Bros. Discovery poaches Marcus Bell to run streaming ad measurement",
+    "summary": "Ad Age reports WBD hired Marcus Bell from a retail media network to lead streaming ad measurement across Max.",
+    "so_what": "A retail-media measurement leader moving to streaming is category convergence — CTV is importing closed-loop, outcome-based measurement from commerce.",
+    "date": "2026-06-30",
+    "company": "Warner Bros. Discovery",
+    "executive": "Marcus Bell",
+    "category": "CTV & Streaming",
+    "confidence": "high",
+    "confidence_rationale": "Tier 1 reported coverage",
+    "source_count": 1,
+    "sources": [
+      {
+        "source_id": "src:ad-age-2026-06-30-https-adage-com-article-2026-06-30-kroger-precision-marketing-",
+        "publication": "Ad Age",
+        "tier": "1B",
+        "tier_label": "Brand-name advertising / marketing / media trade",
+        "url": "https://adage.com/article/2026/06/30/kroger-precision-marketing-president",
+        "date": "2026-06-30",
+        "access": "paywalled",
+        "run_id": "run:2026-07-05T00:54:42.277Z",
+        "ingested_at": "2026-07-05T00:54:42.284Z"
+      }
+    ],
+    "implications": [
+      "The line between retail media and CTV blurs; buyers will expect commerce-grade attribution from streaming inventory."
+    ]
+  },
+  {
+    "id": "move:instacart-ads-priya-raman-capability-build",
+    "move_type": "capability build",
+    "headline": "Instacart Ads hires Priya Raman to lead agency partnerships",
+    "summary": "Instacart created a new head-of-agency-partnerships role and hired Priya Raman from a holding-company media desk to court agency spend directly.",
+    "so_what": "Retail media networks are building agency-facing teams to capture planned budgets earlier, moving upstream from performance to brand.",
+    "date": "2026-06-29",
+    "company": "Instacart Ads",
+    "executive": "Priya Raman",
+    "category": "Retail Media",
+    "confidence": "high",
+    "confidence_rationale": "Tier 1 reported coverage",
+    "source_count": 1,
+    "sources": [
+      {
+        "source_id": "src:retail-brew-2026-06-29-https-www-retailbrew-com-issues-2026-06-29",
+        "publication": "Retail Brew",
+        "tier": "1B",
+        "tier_label": "Brand-name advertising / marketing / media trade",
+        "url": "https://www.retailbrew.com/issues/2026-06-29",
+        "date": "2026-06-29",
+        "access": "registration",
+        "run_id": "run:2026-07-05T00:54:42.277Z",
+        "ingested_at": "2026-07-05T00:54:42.281Z"
+      }
+    ],
+    "implications": [
+      "Agencies become the battleground for retail media; networks with the best agency interfaces win the reallocation."
+    ]
+  },
+  {
+    "id": "move:publicis-groupe-m-a",
+    "move_type": "m&a",
+    "headline": "Publicis Groupe acquires commerce-analytics firm Cartlytics",
+    "summary": "Publicis announced the acquisition of Cartlytics, a first-party commerce-analytics firm, to strengthen its retail media and commerce practice.",
+    "so_what": "Holding companies are buying commerce data capability rather than building it, racing to sit between brands and the retail media networks.",
+    "date": "2026-06-26",
+    "company": "Publicis Groupe",
+    "executive": null,
+    "category": "Agency & Holding Companies",
+    "confidence": "medium",
+    "confidence_rationale": "primary source confirms facts; interpretation is ours",
+    "source_count": 1,
+    "sources": [
+      {
+        "source_id": "src:business-wire-2026-06-26-https-www-businesswire-com-news-2026-06-26-publicis-com",
+        "publication": "Business Wire",
+        "tier": "2",
+        "tier_label": "Primary source (confirms facts, not interpretation)",
+        "url": "https://www.businesswire.com/news/2026/06/26/publicis-commerce",
+        "date": "2026-06-26",
+        "access": "open",
+        "run_id": "run:2026-07-05T00:54:42.277Z",
+        "ingested_at": "2026-07-05T00:54:42.282Z"
+      }
+    ],
+    "implications": [
+      "Agencies without proprietary commerce data become resellers; those who own the data layer keep the margin."
+    ]
+  },
+  {
+    "id": "move:perplexity-capability-build",
+    "move_type": "capability build",
+    "headline": "Unnamed platform said to be building an agentic shopping agent",
+    "summary": "A vendor blog claims, without named sourcing, that a major AI-search platform is staffing up for an agentic shopping agent.",
+    "so_what": "Interesting as a lead, but unverified — this is discovery-tier signal, not brief-grade evidence.",
+    "date": "2026-06-24",
+    "company": "Perplexity",
+    "executive": null,
+    "category": "Platforms & AI Search",
+    "confidence": "low",
+    "confidence_rationale": "supplemental / discovery source only",
+    "source_count": 1,
+    "sources": [
+      {
+        "source_id": "src:adtechdaily-blog-2026-06-24-https-adtechdaily-example-com-2026-06-agentic-commer",
+        "publication": "AdTechDaily Blog",
+        "tier": "3",
+        "tier_label": "Supplemental / discovery only",
+        "url": "https://adtechdaily.example.com/2026/06/agentic-commerce-boom",
+        "date": "2026-06-24",
+        "access": "open",
+        "run_id": "run:2026-07-05T00:54:42.277Z",
+        "ingested_at": "2026-07-05T00:54:42.284Z"
+      }
+    ],
+    "implications": [
+      "Track for corroboration from Tier 1 trade or the company itself before acting."
+    ]
+  }
+]

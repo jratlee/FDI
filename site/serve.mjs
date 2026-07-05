@@ -73,10 +73,13 @@ async function handleWaitlist(req, res) {
     return;
   }
   let email;
+  let source;
   try {
     const raw = await readBody(req);
     const parsed = raw ? JSON.parse(raw) : {};
     email = String(parsed.email || "").trim().toLowerCase();
+    source = String(parsed.source || "site").trim().slice(0, 64);
+    if (!/^[a-z0-9][a-z0-9._-]*$/i.test(source)) source = "site";
   } catch {
     sendJson(res, 400, { ok: false, error: "bad_request" });
     return;
@@ -92,7 +95,7 @@ async function handleWaitlist(req, res) {
        VALUES ($1, $2)
        ON CONFLICT (email) DO NOTHING
        RETURNING id`,
-      [email, "skillfoundry"],
+      [email, source],
     );
     sendJson(res, 200, { ok: true, duplicate: result.rowCount === 0 });
   } catch (err) {

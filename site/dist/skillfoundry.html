@@ -24,6 +24,7 @@
     <nav class="nav-links" id="nav-links">
       <a href="/field-guide">Field Guide</a>
       <a href="/skillfoundry" aria-current="page">Skillfoundry</a>
+      <a href="/topcall">Top Call</a>
       <a href="/#about">About</a>
       <a class="btn btn-primary" href="/skillfoundry#waitlist">Request access</a>
     </nav>
@@ -158,12 +159,12 @@
       <span class="eyebrow" style="justify-content:center;">Request access</span>
       <h2>Get Skillfoundry the day it ships.</h2>
       <p>Drop your email to join the waitlist. We'll reach out with early access, pricing, and the worked example — no spam.</p>
-      <form class="waitlist" id="waitlist-form" novalidate>
+      <form class="waitlist js-capture" data-source="skillfoundry" data-subject="Skillfoundry waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Skillfoundry waitlist." novalidate>
         <label class="sr-only" for="wl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         <input type="email" id="wl-email" name="email" placeholder="you@company.com" autocomplete="email" required />
         <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
       </form>
-      <p class="form-msg" id="wl-msg" role="status" aria-live="polite"></p>
+      <p class="form-msg" role="status" aria-live="polite"></p>
       <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:hello@falsedawn.industries">hello@falsedawn.industries</a>.</p>
     </div>
   </div>
@@ -181,6 +182,7 @@
         <ul>
           <li><a href="/field-guide">The Field Guide</a></li>
           <li><a href="/skillfoundry">Skillfoundry</a></li>
+          <li><a href="/topcall">Top Call</a></li>
           <li><a href="/#products">Product line</a></li>
           <li><a href="/#about">About</a></li>
         </ul>

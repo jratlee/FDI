@@ -20,7 +20,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
 
-const EXPECTED_ROUTES = ["/", "/field-guide", "/skillfoundry"];
+const EXPECTED_ROUTES = ["/", "/field-guide", "/skillfoundry", "/topcall"];
 const EXPECTED_SLIDES = 13;
 
 const errors = [];

@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://falsedawn.industries/topcall/corpus.schema.json",
+  "title": "Top Call Corpus",
+  "description": "The persistent, provenance-stamped Top Call knowledge graph. A node/edge graph of executives, companies, categories, moves, implications, and sources. Provenance and confidence live on move nodes so the audit compounds across ingest runs.",
+  "type": "object",
+  "required": ["meta", "nodes", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "runs"],
+      "additionalProperties": true,
+      "properties": {
+        "version": { "type": "string" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" },
+        "runs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["run_id", "sources_ingested"],
+            "additionalProperties": true,
+            "properties": {
+              "run_id": { "type": "string" },
+              "at": { "type": "string" },
+              "sources_ingested": { "type": "integer", "minimum": 0 },
+              "moves_new": { "type": "integer", "minimum": 0 },
+              "moves_corroborated": { "type": "integer", "minimum": 0 },
+              "confidence_upgrades": { "type": "array" }
+            }
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "props"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^(exec|company|category|move|implication|src):" },
+          "type": {
+            "type": "string",
+            "enum": ["executive", "company", "category", "move", "implication", "source"]
+          },
+          "props": { "type": "object" },
+          "provenance": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["source_id", "tier"],
+              "additionalProperties": true,
+              "properties": {
+                "source_id": { "type": "string" },
+                "publication": { "type": "string" },
+                "tier": { "type": "string", "enum": ["1A", "1B", "1C", "2", "3"] },
+                "tier_label": { "type": "string" },
+                "url": { "type": ["string", "null"] },
+                "date": { "type": ["string", "null"] },
+                "access": { "type": "string" },
+                "run_id": { "type": "string" },
+                "ingested_at": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "rel"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "rel": {
+            "type": "string",
+            "enum": ["led_by", "at_company", "in_category", "implies", "cited_by"]
+          }
+        }
+      }
+    }
+  }
+}

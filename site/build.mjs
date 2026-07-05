@@ -37,6 +37,7 @@ function nav(active) {
     <nav class="nav-links" id="nav-links">
       ${link("/field-guide", "Field Guide", "field-guide")}
       ${link("/skillfoundry", "Skillfoundry", "skillfoundry")}
+      ${link("/topcall", "Top Call", "topcall")}
       ${link("/#about", "About", "about")}
       <a class="btn btn-primary" href="/skillfoundry#waitlist">Request access</a>
     </nav>
@@ -57,6 +58,7 @@ function footer() {
         <ul>
           <li><a href="/field-guide">The Field Guide</a></li>
           <li><a href="/skillfoundry">Skillfoundry</a></li>
+          <li><a href="/topcall">Top Call</a></li>
           <li><a href="/#products">Product line</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
@@ -155,12 +157,18 @@ function home() {
       <h2>Tools and field guides for owned marketing systems.</h2>
       <p>False Dawn Industries maps the shift to aggregated, decentralized, and autonomous markets — and ships the working systems that let you own your place in them.</p>
     </div>
-    <div class="grid cols-3">
+    <div class="grid cols-2">
       <article class="card featured">
-        <span class="pill">Product</span>
+        <span class="pill">Product · Strategy as Code</span>
         <h3>Skillfoundry</h3>
         <p>A strategic firewall for your content. Route any asset through three opinionated Signal-to-Value gates — Relevance, Performance, and Algorithmic Signal — as an Anthropic-standard plugin. Strategy as code.</p>
         <div class="card-foot"><a class="link-arrow" href="/skillfoundry">See how it works <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card featured">
+        <span class="pill">Product · Signal as Code</span>
+        <h3>Top Call</h3>
+        <p>The owned radar for executive intelligence. Every source you grade is written into a provenance-stamped corpus and knowledge graph that compounds — queryable through a verifiable MCP interface. Free prompt-pack in, owned system out.</p>
+        <div class="card-foot"><a class="link-arrow" href="/topcall">See how it works <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
         <span class="tag">Field Guide 001</span>
@@ -471,12 +479,12 @@ function skillfoundry() {
       <span class="eyebrow" style="justify-content:center;">Request access</span>
       <h2>Get Skillfoundry the day it ships.</h2>
       <p>Drop your email to join the waitlist. We'll reach out with early access, pricing, and the worked example — no spam.</p>
-      <form class="waitlist" id="waitlist-form" novalidate>
+      <form class="waitlist js-capture" data-source="skillfoundry" data-subject="Skillfoundry waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Skillfoundry waitlist." novalidate>
         <label class="sr-only" for="wl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         <input type="email" id="wl-email" name="email" placeholder="you@company.com" autocomplete="email" required />
         <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
       </form>
-      <p class="form-msg" id="wl-msg" role="status" aria-live="polite"></p>
+      <p class="form-msg" role="status" aria-live="polite"></p>
       <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
     </div>
   </div>
@@ -488,6 +496,206 @@ function skillfoundry() {
     active: "skillfoundry",
     body,
     canonical: "https://falsedawn.industries/skillfoundry",
+  });
+}
+
+/* ---------------- TOP CALL ---------------- */
+function topcall() {
+  const construct = (n, thesis, name, desc, outLbl, outVal) => `
+    <article class="gate">
+      <span class="gnum">${thesis}</span>
+      <h3>${name}</h3>
+      <span class="role">Construct ${n}</span>
+      <p>${desc}</p>
+      <div class="out"><div class="lbl">${outLbl}</div><div class="val">${outVal}</div></div>
+    </article>`;
+
+  const tier = (name, title, model, feats, mid) => `
+    <article class="tier${mid ? " mid" : ""}">
+      ${mid ? '<span class="pill">Most popular</span>' : ""}
+      <span class="tname">${name}</span>
+      <h3>${title}</h3>
+      <p class="model">${model}</p>
+      <ul>${feats.map((f) => `<li>${f}</li>`).join("")}</ul>
+      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Request access</a></div>
+    </article>`;
+
+  const body = `
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">A False Dawn Industries product</span>
+      <h1>Top Call: <em>signal as code</em>.</h1>
+      <p class="lede">Executive-intelligence monitoring is usually a disposable weekly brief — read once, then gone. Top Call is the owned radar: the sibling to Skillfoundry that turns every signal you grade into a provenance-stamped corpus, a knowledge graph, and a verifiable interface agents can query. Skillfoundry is strategy as code; Top Call is signal as code.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#prompt-pack">Get the free prompt-pack <span class="arrow">↓</span></a>
+        <a class="btn btn-ghost" href="#constructs">See the owned system</a>
+      </div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>
+
+<section class="section" id="prompt-pack">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Free · Field-Guide companion</span>
+      <h2>Start with the prompt-pack. See the thesis — and its ceiling.</h2>
+      <p>The Top Call prompt-pack is a complete, agent-ready system for tracking executive moves from free, public sources — a working demonstration of the FDI thesis. It also demonstrates its own ceiling: a prompt-pack is a recipe anyone can copy, and every run starts from a blank page. That gap is exactly what the owned system below is built to close.</p>
+    </div>
+    <div class="grid cols-2">
+      <article class="card featured">
+        <span class="tag">The lead magnet</span>
+        <h3>Top Call Prompt-Pack</h3>
+        <p>Copilot/agent instructions, an executive-moves model, a source-authority policy, a no-paid-ingestion playbook, a search-query library, and worked output templates. Drop your email and the download starts immediately — no spam.</p>
+        <form class="waitlist js-capture" data-source="topcall-prompt-pack" data-subject="Top Call prompt-pack" data-download="/assets/top-call-prompt-pack.zip" data-mail-body="Please send me the Top Call prompt-pack." novalidate style="margin-top:22px;">
+          <label class="sr-only" for="tc-lm-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+          <input type="email" id="tc-lm-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+          <button class="btn btn-primary" type="submit">Email me the pack <span class="arrow">↓</span></button>
+        </form>
+        <p class="form-msg" role="status" aria-live="polite"></p>
+        <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer a direct link? <a href="/assets/top-call-prompt-pack.zip" download>Download the ZIP</a>.</p>
+      </article>
+      <article class="card">
+        <span class="tag">The ceiling</span>
+        <h3>Why a prompt-pack can't compound</h3>
+        <p>A prompt-pack is stateless. It re-derives the same relationships every run, keeps no memory of which sources you trusted, and can be copied verbatim by anyone who receives it. It proves the method — but the method is not the moat.</p>
+        <p style="margin-top:16px;">The non-replicable asset is the graded, provenance-stamped corpus that accumulates behind it — and the gated interface agents can trust. That is the owned system.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="constructs">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The thesis, in code</span>
+      <h2>Three constructs turn signal into an owned asset.</h2>
+      <p>Top Call maps the FDI thesis directly onto working infrastructure. Every source you grade is written into a store that compounds instead of evaporating.</p>
+    </div>
+    <div class="grid cols-3">
+      ${construct(
+        1,
+        "Aggregated",
+        "A citable corpus",
+        "Every source is classified into a source-authority tier (1A/1B/1C/2/3) at ingest and written into a persistent, provenance-stamped store. Re-running is cumulative: known moves gain provenance instead of duplicating.",
+        "Becomes",
+        "Owned, provenance-stamped store",
+      )}
+      ${construct(
+        2,
+        "Decentralized",
+        "A knowledge graph",
+        "Executives, companies, moves, categories, implications, and sources become a queryable node/edge graph. Relationships are preserved and traceable, never re-derived from scratch.",
+        "Becomes",
+        "Queryable node/edge graph",
+      )}
+      ${construct(
+        3,
+        "Autonomous",
+        "A verifiable MCP interface",
+        "The repeatable read skills are exposed as MCP tools built to the same Anthropic standard as Skillfoundry — so an agent can call them and get answers stamped with source, tier, and confidence.",
+        "Becomes",
+        "Answers stamped source · tier · confidence",
+      )}
+    </div>
+    <p class="flowline" style="margin-top:40px;">Source in &nbsp;→&nbsp; <b>graded by tier</b> &nbsp;→&nbsp; <b>written to the corpus</b> &nbsp;→&nbsp; <b>linked in the graph</b> &nbsp;→&nbsp; provenance-stamped answer out</p>
+    <p class="flowline" style="margin-top:14px;color:var(--muted);">The moat compounds: when a Tier 1 trade later corroborates a move first seen in a Tier 2 release, the move's confidence upgrades — automatically, permanently, and traceably.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="architecture">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Built to the Anthropic standard</span>
+      <h2>Same conventions as Skillfoundry. A radar an agent can trust.</h2>
+      <p>Top Call ships as an open-standard plugin with the same modular layout as Skillfoundry — but where Skillfoundry composes prompts, Top Call reads a persistent corpus and returns real, provenance-stamped answers.</p>
+    </div>
+    <div class="arch">
+      <div class="mod"><code>skills/</code><h4>Skills</h4><p>Markdown files encoding the corpus contract and the repeatable reads: exec-move scan, authority audit, and brief generation.</p></div>
+      <div class="mod"><code>commands/</code><h4>Commands</h4><p>Slash commands like <code>/topcall:exec-move-scan</code>, <code>/topcall:authority-audit</code>, and <code>/topcall:brief</code> run the reads straight from your terminal.</p></div>
+      <div class="mod"><code>.mcp.json</code><h4>Connectors</h4><p>An MCP server that loads natively into MCP-compatible clients and answers with source, tier, and confidence attached to every line.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The pricing ladder</span>
+      <h2>Own the radar, subscribe to it, or run it with us.</h2>
+      <p>Three tiers, from a self-hosted engine to a managed intelligence retainer. Billing and license validation arrive in the commercialization phase — join the waitlist to lock early access.</p>
+    </div>
+    <div class="price-grid">
+      ${tier(
+        "Tier 1 · Engine",
+        "Self-Hosted Corpus",
+        "One-time license for the ingestion engine, graph, and MCP interface.",
+        [
+          "Corpus + knowledge-graph engine",
+          "Source-authority tiering &amp; validator",
+          "The four MCP read tools",
+          "Run locally in any MCP client",
+        ],
+        false,
+      )}
+      ${tier(
+        "Tier 2 · Feed",
+        "Managed Corpus",
+        "Recurring subscription with a continuously ingested, hosted corpus.",
+        [
+          "Everything in Engine",
+          "Continuously ingested source feeds",
+          "Hosted, always-current corpus",
+          "Priority release channel",
+        ],
+        true,
+      )}
+      ${tier(
+        "Tier 3 · Desk",
+        "Intelligence Retainer",
+        "Managed corpus paired with a dedicated analyst retainer.",
+        [
+          "Everything in Feed",
+          "Dedicated analyst retainer",
+          "Custom source &amp; tier calibration",
+          "Direct line to FDI",
+        ],
+        false,
+      )}
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="waitlist">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Request access</span>
+      <h2>Get the Top Call owned system the day it ships.</h2>
+      <p>Drop your email to join the waitlist for the paid owned system. We'll reach out with early access, pricing, and a worked corpus — no spam.</p>
+      <form class="waitlist js-capture" data-source="topcall" data-subject="Top Call waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Top Call waitlist." novalidate>
+        <label class="sr-only" for="tc-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        <input type="email" id="tc-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: "Top Call — Signal as Code, the Owned Radar | False Dawn Industries",
+    description:
+      "Top Call turns executive-intelligence monitoring into an owned asset: a provenance-stamped corpus, a knowledge graph, and a verifiable MCP interface. Get the free prompt-pack, then the owned system.",
+    active: "topcall",
+    body,
+    canonical: "https://falsedawn.industries/topcall",
   });
 }
 
@@ -508,53 +716,75 @@ const SITE_JS = `(function () {
       }
     });
   }
-  var form = document.getElementById("waitlist-form");
-  if (form) {
+  var EMAIL_RE = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+  var forms = document.querySelectorAll("form.js-capture");
+  Array.prototype.forEach.call(forms, function (form) {
     var btn = form.querySelector("button[type=submit]");
-    function setMsg(msg, text, state) {
+    var input = form.querySelector("input[type=email]");
+    var msg = form.parentNode.querySelector(".form-msg");
+    var source = form.getAttribute("data-source") || "site";
+    var subject = form.getAttribute("data-subject") || "FDI waitlist";
+    var successText = form.getAttribute("data-success") || "You're on the list. We'll reach out with early access.";
+    var dupText = form.getAttribute("data-duplicate") || "You're already on the list — we'll be in touch.";
+    var download = form.getAttribute("data-download") || "";
+    var mailBody = form.getAttribute("data-mail-body") || ("Please add me to the " + source + " list.");
+
+    function setMsg(text, state) {
+      if (!msg) return;
       msg.textContent = text;
       msg.classList.remove("is-ok", "is-error");
       if (state) msg.classList.add(state);
     }
     function mailtoFallback(email) {
-      var subject = encodeURIComponent("Skillfoundry waitlist");
-      var bodyTxt = encodeURIComponent("Please add me to the Skillfoundry waitlist.\\n\\nEmail: " + email);
-      window.location.href = "mailto:${CONTACT}?subject=" + subject + "&body=" + bodyTxt;
+      var s = encodeURIComponent(subject);
+      var b = encodeURIComponent(mailBody + "\\n\\nEmail: " + email);
+      window.location.href = "mailto:${CONTACT}?subject=" + s + "&body=" + b;
+    }
+    function triggerDownload() {
+      if (!download) return;
+      var a = document.createElement("a");
+      a.href = download;
+      a.setAttribute("download", "");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var input = document.getElementById("wl-email");
-      var msg = document.getElementById("wl-msg");
-      var email = (input.value || "").trim();
-      var ok = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
-      if (!ok) { setMsg(msg, "Please enter a valid email address.", "is-error"); input.focus(); return; }
+      var email = ((input && input.value) || "").trim();
+      if (!EMAIL_RE.test(email)) { setMsg("Please enter a valid email address.", "is-error"); if (input) input.focus(); return; }
       if (btn) btn.disabled = true;
-      setMsg(msg, "Adding you to the waitlist…", null);
+      setMsg(download ? "Preparing your download…" : "Adding you to the list…", null);
       fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email })
+        body: JSON.stringify({ email: email, source: source })
       }).then(function (res) {
         return res.json().then(function (data) { return { status: res.status, data: data }; });
       }).then(function (r) {
         if (r.status === 200 && r.data && r.data.ok) {
           form.reset();
-          setMsg(msg, r.data.duplicate ? "You're already on the list — we'll be in touch." : "You're on the list. We'll reach out with early access.", "is-ok");
+          if (download) {
+            setMsg("Thanks — your download is starting. Check your downloads folder.", "is-ok");
+            triggerDownload();
+          } else {
+            setMsg(r.data.duplicate ? dupText : successText, "is-ok");
+          }
         } else if (r.status === 422) {
-          setMsg(msg, "Please enter a valid email address.", "is-error");
-          input.focus();
+          setMsg("Please enter a valid email address.", "is-error");
+          if (input) input.focus();
         } else {
-          setMsg(msg, "Something went wrong — opening your email app instead.", "is-error");
+          setMsg("Something went wrong — opening your email app instead.", "is-error");
           mailtoFallback(email);
         }
       }).catch(function () {
-        setMsg(msg, "Couldn't reach the server — opening your email app instead.", "is-error");
+        setMsg("Couldn't reach the server — opening your email app instead.", "is-error");
         mailtoFallback(email);
       }).then(function () {
         if (btn) btn.disabled = false;
       });
     });
-  }
+  });
 })();`;
 
 /* ---------------- build ---------------- */
@@ -571,6 +801,7 @@ function copyAssets() {
     "viz-three-markets-1200x680.png",
     "fdi-field-guide-deck.pdf",
     "fdi-field-guide-launch-bundle.zip",
+    "top-call-prompt-pack.zip",
   ];
   for (const f of assetFiles) {
     const from = path.join(EXPORTS, f);
@@ -613,9 +844,10 @@ function main() {
     fieldGuide({ ...parsed, bodyHtml }, slideFiles),
   );
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
+  fs.writeFileSync(path.join(DIST, "topcall.html"), topcall());
 
   console.log(
-    `[build] wrote 3 pages, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 4 pages, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 
