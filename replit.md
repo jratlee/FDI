@@ -134,9 +134,14 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   /admin/waitlist` shows a login form; on POST it timing-safe-compares the token
   against the `WAITLIST_ADMIN_TOKEN` secret and sets an httpOnly `wl_admin`
   cookie (12h). Once authed it lists all signups (email, source, created_at,
-  newest first) with a "Download CSV" link. `GET /admin/waitlist.csv` streams the
-  same list as a dated CSV attachment. Auth accepts the cookie, a `Bearer` token,
-  or a `?token=` query param. `/admin/logout` clears the cookie. Returns `503` if
+  newest first) with a "Download CSV" link, plus a row of per-source count chips
+  (All + one per source, most signups first) that filter the table when clicked.
+  Both the table and CSV honor an optional `?source=` filter (sanitized with the
+  same allow-list as signup inserts); the filtered CSV filename includes the
+  source and the download button targets the active filter. `GET
+  /admin/waitlist.csv` streams the (optionally filtered) list as a dated CSV
+  attachment. Auth accepts the cookie, a `Bearer` token, or a `?token=` query
+  param. `/admin/logout` clears the cookie. Returns `503` if
   `WAITLIST_ADMIN_TOKEN` is unset. Pages carry `noindex, nofollow`. The view also
   has a "Data rights" section: `POST /admin/waitlist/delete` (authed) hard-deletes
   one signup by email for erasure requests (redirects back with a generic status,

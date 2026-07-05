@@ -402,6 +402,12 @@ function adminShell(body) {
   .bar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:0 0 20px}
   .btn{display:inline-block;background:#FFB12B;color:#0D0B08;font-weight:600;text-decoration:none;padding:9px 16px;border-radius:8px;border:0;cursor:pointer;font-size:.9rem}
   .count{color:#A8997B;font-size:.85rem}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+  .chip{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#15120c;border:1px solid #2a2418;border-radius:999px;padding:6px 14px;font-size:.85rem;color:#A8997B;font-family:'JetBrains Mono',ui-monospace,monospace}
+  .chip .n{background:#0D0B08;color:#FFCB6B;border-radius:999px;padding:1px 8px;font-size:.78rem}
+  .chip.on{border-color:#E0920C;color:#F0E8D5}
+  .chip.on .n{color:#FFB12B}
+  .chip:hover{border-color:#E0920C}
   table{border-collapse:collapse;width:100%;font-size:.88rem}
   th,td{text-align:left;padding:10px 12px;border-bottom:1px solid #2a2418}
   th{color:#A8997B;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
@@ -451,12 +457,41 @@ function cookieAttrs(req) {
   return `Path=/admin; HttpOnly; SameSite=Strict;${secure}`;
 }
 
-async function fetchSignups() {
+// Normalize a ?source= filter the same way signups are sanitized on insert.
+// Returns "" (no filter) if missing or invalid.
+function cleanSourceFilter(value) {
+  const s = String(value || "").trim().slice(0, 64);
+  return /^[a-z0-9][a-z0-9._-]*$/i.test(s) ? s : "";
+}
+
+async function fetchSignups(source = "") {
   await ensureTable();
+  if (source) {
+    const { rows } = await pool.query(
+      `SELECT email, source, created_at
+         FROM waitlist_signups
+        WHERE source = $1
+        ORDER BY created_at DESC`,
+      [source],
+    );
+    return rows;
+  }
   const { rows } = await pool.query(
     `SELECT email, source, created_at
        FROM waitlist_signups
       ORDER BY created_at DESC`,
+  );
+  return rows;
+}
+
+// Signup counts grouped by source, most signups first.
+async function fetchSourceCounts() {
+  await ensureTable();
+  const { rows } = await pool.query(
+    `SELECT COALESCE(NULLIF(source, ''), 'site') AS source, COUNT(*)::int AS count
+       FROM waitlist_signups
+      GROUP BY 1
+      ORDER BY count DESC, source ASC`,
   );
   return rows;
 }
@@ -576,11 +611,12 @@ async function handleAdmin(req, res, urlObj) {
     return;
   }
 
-  // CSV export
+  // CSV export (optionally filtered by ?source=)
   if (pathname === "/admin/waitlist.csv") {
+    const sourceFilter = cleanSourceFilter(urlObj.searchParams.get("source"));
     let rows;
     try {
-      rows = await fetchSignups();
+      rows = await fetchSignups(sourceFilter);
     } catch (err) {
       console.error("[admin] csv query failed:", err.message);
       res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
@@ -598,9 +634,10 @@ async function handleAdmin(req, res, urlObj) {
       );
     }
     const stamp = new Date().toISOString().slice(0, 10);
+    const suffix = sourceFilter ? `-${sourceFilter}` : "";
     res.writeHead(200, {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="waitlist-signups-${stamp}.csv"`,
+      "Content-Disposition": `attachment; filename="waitlist-signups${suffix}-${stamp}.csv"`,
       "Cache-Control": "no-store",
     });
     res.end(lines.join("\r\n") + "\r\n");
@@ -662,9 +699,14 @@ async function handleAdmin(req, res, urlObj) {
 
   // Table view
   if (pathname === "/admin/waitlist") {
+    const sourceFilter = cleanSourceFilter(urlObj.searchParams.get("source"));
     let rows;
+    let counts;
     try {
-      rows = await fetchSignups();
+      [rows, counts] = await Promise.all([
+        fetchSignups(sourceFilter),
+        fetchSourceCounts(),
+      ]);
     } catch (err) {
       console.error("[admin] view query failed:", err.message);
       res.writeHead(500, {
@@ -687,7 +729,20 @@ async function handleAdmin(req, res, urlObj) {
       : "";
     const table = rows.length
       ? `<table><thead><tr><th>Email</th><th>Source</th><th>Signed up</th></tr></thead><tbody>${bodyRows}</tbody></table>`
-      : `<p class="empty">No signups yet.</p>`;
+      : sourceFilter
+        ? `<p class="empty">No signups for source "${esc(sourceFilter)}".</p>`
+        : `<p class="empty">No signups yet.</p>`;
+    const total = counts.reduce((sum, c) => sum + c.count, 0);
+    const chips = counts.length
+      ? `<div class="chips">
+  <a class="chip${sourceFilter ? "" : " on"}" href="/admin/waitlist">All <span class="n">${total}</span></a>${counts
+    .map(
+      (c) =>
+        `<a class="chip${sourceFilter === c.source ? " on" : ""}" href="/admin/waitlist?source=${encodeURIComponent(c.source)}">${esc(c.source)} <span class="n">${c.count}</span></a>`,
+    )
+    .join("")}
+</div>`
+      : "";
     const MSGS = {
       deleted: ["ok", "Signup deleted."],
       notfound: ["warn", "No matching signup found."],
@@ -716,12 +771,19 @@ async function handleAdmin(req, res, urlObj) {
     </div>
   </form>
 </section>`;
+    const csvHref = sourceFilter
+      ? `/admin/waitlist.csv?source=${encodeURIComponent(sourceFilter)}`
+      : "/admin/waitlist.csv";
+    const shownLabel = sourceFilter
+      ? `${rows.length} in "${esc(sourceFilter)}"`
+      : `${rows.length} signup${rows.length === 1 ? "" : "s"}`;
     const body = `<p class="eyebrow">Growth Cartography — Internal</p>
 <h1>Waitlist signups</h1>
 ${msg}
+${chips}
 <div class="bar">
-  <a class="btn" href="/admin/waitlist.csv">Download CSV</a>
-  <span class="count">${rows.length} signup${rows.length === 1 ? "" : "s"}</span>
+  <a class="btn" href="${csvHref}">Download CSV${sourceFilter ? ` (${esc(sourceFilter)})` : ""}</a>
+  <span class="count">${shownLabel}</span>
   <a href="/admin/logout" style="margin-left:auto">Log out</a>
 </div>
 ${table}
