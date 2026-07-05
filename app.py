@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
+import matplotlib.pyplot as plt
 import theseus_growth as th
 
 # --- UX / UI CONFIGURATION ---
@@ -230,30 +230,36 @@ with tab2:
         [f"Stable {vocab['metric']}", f"Volatile {vocab['metric']}"]
     )
     
-    # Render interactive Plotly chart
+    # Render Matplotlib chart
     # Warm two-tone convention: stable baseline = faded neutral (dashed),
     # volatile series = Signal Amber (solid). No teal/red.
     st.write(f"### Cumulative {vocab['metric']} System Dynamics")
     df_chart = combined.T # Transpose for plotting mapping index to days
-    fig = px.area(df_chart, labels={'value': vocab['metric'], 'index': 'Day'},
-                  color_discrete_sequence=[BRAND['faded'], BRAND['amber']])
+    fig, ax = plt.subplots(figsize=(10, 4.5))
+    fig.patch.set_alpha(0.0)
+    ax.patch.set_alpha(0.0)
+    x = range(len(df_chart))  # 0-based day axis, robust to the index dtype
     # Distinguish stable vs volatile by warmth + a non-color cue (dash) rather than hue alone
-    for trace in fig.data:
-        if trace.name and trace.name.startswith("Stable"):
-            trace.line.dash = "dash"
-            trace.line.color = BRAND['faded']
-            trace.fillcolor = "rgba(168, 153, 123, 0.12)"
+    for col in df_chart.columns:
+        if str(col).startswith("Stable"):
+            ax.plot(x, df_chart[col], color=BRAND['faded'], linestyle='--', linewidth=1.8, label=str(col))
+            ax.fill_between(x, df_chart[col], color=BRAND['faded'], alpha=0.12)
         else:
-            trace.line.color = BRAND['amber']
-            trace.fillcolor = "rgba(255, 177, 43, 0.22)"
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font_color=BRAND['cream'], legend_title_text="",
-        margin=dict(t=10, r=10, b=10, l=10),
-    )
-    fig.update_xaxes(gridcolor=BRAND['border'], zerolinecolor=BRAND['border'])
-    fig.update_yaxes(gridcolor=BRAND['border'], zerolinecolor=BRAND['border'])
-    st.plotly_chart(fig, width='stretch')
+            ax.plot(x, df_chart[col], color=BRAND['amber'], linewidth=2.0, label=str(col))
+            ax.fill_between(x, df_chart[col], color=BRAND['amber'], alpha=0.22)
+    ax.set_xlabel("Day", color=BRAND['cream'])
+    ax.set_ylabel(vocab['metric'], color=BRAND['cream'])
+    ax.tick_params(colors=BRAND['cream'])
+    for spine in ax.spines.values():
+        spine.set_color(BRAND['border'])
+    ax.grid(True, color=BRAND['border'], linewidth=0.6)
+    ax.margins(x=0)
+    legend = ax.legend(loc='upper left', frameon=False)
+    for text in legend.get_texts():
+        text.set_color(BRAND['cream'])
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
 
 with tab3:
     st.subheader("Cohort Maturity & Value Extraction")
