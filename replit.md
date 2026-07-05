@@ -46,6 +46,14 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   `source` field (allow-listed `[a-z0-9._-]`, else `"site"`), and upserts both
   into the `waitlist_signups` Postgres table (`DATABASE_URL`) with `ON CONFLICT
   DO NOTHING`. Uses the `pg` client; returns `503` if no `DATABASE_URL` is set.
+- Internal, token-gated signups view (NOT linked from public nav): `GET
+  /admin/waitlist` shows a login form; on POST it timing-safe-compares the token
+  against the `WAITLIST_ADMIN_TOKEN` secret and sets an httpOnly `wl_admin`
+  cookie (12h). Once authed it lists all signups (email, source, created_at,
+  newest first) with a "Download CSV" link. `GET /admin/waitlist.csv` streams the
+  same list as a dated CSV attachment. Auth accepts the cookie, a `Bearer` token,
+  or a `?token=` query param. `/admin/logout` clears the cookie. Returns `503` if
+  `WAITLIST_ADMIN_TOKEN` is unset. Pages carry `noindex, nofollow`.
 - Build: `node site/build.mjs`. Serve: `node site/serve.mjs` (PORT env, default 5000).
 - The site reuses the locked FDI brand tokens/fonts but has its own scrollable
   stylesheet (`site/src/site.css`) — it does NOT import the ad system's fixed
