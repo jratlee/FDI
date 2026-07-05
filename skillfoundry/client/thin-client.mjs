@@ -15,6 +15,10 @@
 // Usage:
 //   SKILLFOUNDRY_KEY=SFS-... node thin-client.mjs "<asset text to audit>"
 //   ... | node thin-client.mjs         (reads the asset from stdin)
+//
+// It prints a short human-readable summary to stderr and the full audit report
+// (JSON conforming to schema/audit-report.schema.json) to stdout, so it composes
+// in a pipeline: `... | node thin-client.mjs > report.json`.
 
 const KEY = (process.env.SKILLFOUNDRY_KEY || "").trim();
 const API = (process.env.SKILLFOUNDRY_API_URL || "https://falsedawn.industries")
@@ -73,8 +77,27 @@ async function main() {
     fail(data.error || `backend returned HTTP ${res.status}.`, 5);
   }
 
-  // Entitlement gate passed — print whatever the server returned.
-  process.stdout.write(JSON.stringify(data.result, null, 2) + "\n");
+  // Entitlement gate passed — the server ran the real three-gate audit.
+  const report = data.result;
+  // Short human-readable summary to stderr (keeps stdout a clean JSON report).
+  if (report && report.rollup && Array.isArray(report.gates)) {
+    const r = report.rollup;
+    const gates = report.gates
+      .map((g) => `${g.gate} ${g.score}/100 ${g.verdict}`)
+      .join("  ");
+    process.stderr.write(
+      `\nSkillfoundry audit — ${report.asset?.title || "asset"}\n` +
+        `  composite ${r.composite_score}/100 -> ${r.ship_recommendation}\n` +
+        `  ${gates}\n` +
+        (Array.isArray(r.top_moves)
+          ? r.top_moves
+              .map((m) => `  ${m.rank}. [${m.gate}] ${m.move}`)
+              .join("\n") + "\n"
+          : ""),
+    );
+  }
+  // Full machine-readable report to stdout.
+  process.stdout.write(JSON.stringify(report, null, 2) + "\n");
 }
 
 main();

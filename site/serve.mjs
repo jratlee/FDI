@@ -7,6 +7,8 @@ import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { RateLimiterMemory, RateLimiterPostgres } from "rate-limiter-flexible";
 import { sendConfirmationRequest, sendWelcomeEmails } from "./email.mjs";
+import { runAudit } from "../skillfoundry/engine/audit.mjs";
+import { validateReport } from "../skillfoundry/schema/validate.mjs";
 import {
   TIERS,
   CommerceError,
@@ -1304,17 +1306,29 @@ async function handleRun(req, res) {
   }
   let key;
   let asset;
+  let assetTitle;
+  let assetSource;
   try {
     const raw = await readBody(req);
     const parsed = raw ? JSON.parse(raw) : {};
     key = String(parsed.key || "").trim();
     asset = String(parsed.asset || "").trim();
+    assetTitle = parsed.title ? String(parsed.title).trim() : "";
+    assetSource = parsed.source ? String(parsed.source).trim() : "";
   } catch {
     sendJson(res, 400, { ok: false, error: "bad_request" });
     return;
   }
   if (!key) {
     sendJson(res, 400, { ok: false, error: "missing_key" });
+    return;
+  }
+  if (!asset) {
+    sendJson(res, 400, {
+      ok: false,
+      error: "missing_asset",
+      message: "Provide the content asset to audit in the 'asset' field.",
+    });
     return;
   }
   const result = await validateKey(key);
@@ -1340,17 +1354,29 @@ async function handleRun(req, res) {
     });
     return;
   }
-  // Entitlement gate passed. In this commerce-layer task the protected compute
-  // is a minimal stub (see task non-goals) — the point is that access is gated.
+  // Entitlement gate passed — run the REAL three-gate Skillfoundry audit
+  // server-side (Relevance / Performance / Algorithmic Signal). The gate logic
+  // stays on the server; the thin client only ever gets the finished report.
+  let report;
+  try {
+    report = runAudit(asset, { title: assetTitle, source: assetSource });
+  } catch (err) {
+    console.error("skillfoundry audit failed:", err);
+    sendJson(res, 500, { ok: false, error: "audit_failed" });
+    return;
+  }
+  // Guarantee the output conforms to the deterministic audit contract before it
+  // leaves the server. A conformance miss is a server bug, not the buyer's, so
+  // we log it and still return the report (never fail a paid run over a nit).
+  const errors = validateReport(report);
+  if (errors.length > 0) {
+    console.error("skillfoundry audit report failed schema validation:", errors);
+  }
   sendJson(res, 200, {
     ok: true,
     active: true,
     tier: result.tier,
-    result: {
-      note: "Skillfoundry latest gate logic ran server-side (stub).",
-      assetChars: asset.length,
-      ranAt: new Date().toISOString(),
-    },
+    result: report,
   });
 }
 
