@@ -5,6 +5,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { RateLimiterMemory } from "rate-limiter-flexible";
+import { sendSignupEmails } from "./email.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
@@ -174,7 +175,15 @@ async function handleWaitlist(req, res) {
        RETURNING id`,
       [email, source],
     );
-    sendJson(res, 200, { ok: true, duplicate: result.rowCount === 0 });
+    const isNew = result.rowCount > 0;
+    sendJson(res, 200, { ok: true, duplicate: !isNew });
+    // Best-effort welcome/notification email for genuinely new signups only.
+    // Runs after the response is sent and never blocks or fails the signup.
+    if (isNew) {
+      sendSignupEmails({ email, source }).catch((err) =>
+        console.error("[waitlist] signup email error:", err.message),
+      );
+    }
   } catch (err) {
     console.error("[waitlist] insert failed:", err.message);
     sendJson(res, 500, { ok: false, error: "server_error" });

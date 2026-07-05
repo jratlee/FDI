@@ -35,6 +35,20 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
     (email-capture that triggers the ZIP download), the three owned-system
     constructs (corpus / knowledge graph / MCP), Anthropic-standard architecture,
     a three-tier pricing ladder (Engine / Feed / Desk), and a paid waitlist CTA
+- New signups trigger a best-effort transactional email via the **Resend**
+  integration (`site/email.mjs`, Replit Connectors proxy): a brand-styled,
+  source-aware welcome/confirmation to the subscriber and, if
+  `WAITLIST_NOTIFY_EMAIL` is set, a plain-text notification to the FDI team.
+  Mail sends only on genuinely new inserts (not duplicates), runs after the
+  HTTP response, and never blocks or fails a signup. Requires `RESEND_FROM`
+  (an address on a Resend-verified domain, e.g. `FDI <hello@yourdomain>`); if
+  unset, the confirmation is skipped and logged. Optional `RESEND_REPLY_TO`.
+  Until a domain is verified in Resend, `RESEND_FROM` falls back to the Resend
+  shared test sender (`onboarding@resend.dev`), which only delivers to the
+  Resend account owner's own address — subscriber confirmations to any other
+  recipient return a 403 that's caught and logged (team notifications to the
+  owner still work). Swap `RESEND_FROM` to a verified-domain address to enable
+  confirmations for all subscribers.
 - All email-capture forms use one generic handler: any `form.js-capture` with
   `data-source` (waitlist tag), `data-subject`/`data-mail-body` (mailto fallback),
   optional `data-download` (success triggers a file download instead of a "you're
