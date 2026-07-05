@@ -76,8 +76,11 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
 ## Workflows & deployment
 - Workflow **Start application** builds then serves the site on port 5000
   (`node site/build.mjs && node site/serve.mjs`) — this is what the preview shows.
-- Deployment: `autoscale`, build `npm --prefix site ci && node site/build.mjs`,
-  run `node site/serve.mjs`.
+- Deployment: `autoscale`, build `npm --prefix site ci && node site/check.mjs`,
+  run `node site/serve.mjs`. The deploy build runs the `site/check.mjs` smoke
+  check (which itself rebuilds), so any broken internal link, missing
+  `/assets`/`/fonts` file, missing deck PDF, or wrong slide count fails the
+  build and blocks the deploy instead of shipping a broken page.
 - The Streamlit engine can still be run manually (`streamlit run app.py`) but is
   no longer the public/deployed surface.
 
