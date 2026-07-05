@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
-import { RateLimiterMemory } from "rate-limiter-flexible";
+import { RateLimiterMemory, RateLimiterPostgres } from "rate-limiter-flexible";
 import { sendSignupEmails } from "./email.mjs";
 import {
   TIERS,
@@ -36,14 +36,39 @@ const pool = process.env.DATABASE_URL
 
 /* ---------------- abuse protection ---------------- */
 // Per-IP rate limit: a modest number of signup attempts per IP per hour.
-// In-memory store is fine for the single-instance Node server; can later be
-// pointed at Postgres/Redis without changing call sites.
-const waitlistLimiter = new RateLimiterMemory({
+//
+// Counters are persisted in Postgres (the same `DATABASE_URL` the waitlist
+// uses) so they survive restarts/deploys and are shared across all autoscale
+// instances. A determined bot can no longer reset its budget by waiting for a
+// restart or spraying different instances. A RateLimiterMemory acts as the
+// "insurance" limiter: if Postgres is briefly unreachable, the limiter falls
+// back to per-instance in-memory counting instead of failing open entirely.
+// When there is no DATABASE_URL at all, we degrade to the memory limiter.
+const RL_OPTS = {
   keyPrefix: "wl",
   points: 8, // attempts allowed
   duration: 60 * 60, // per hour (seconds)
   blockDuration: 60 * 60, // stay blocked for an hour once exceeded
-});
+};
+const waitlistLimiter = pool
+  ? new RateLimiterPostgres(
+      {
+        ...RL_OPTS,
+        storeClient: pool,
+        storeType: "pool",
+        tableName: "rate_limits",
+        clearExpiredByTimeout: true, // periodically purge stale rows
+        insuranceLimiter: new RateLimiterMemory(RL_OPTS),
+      },
+      (err) => {
+        if (err) {
+          console.error("[ratelimit] Postgres store init failed:", err.message);
+        } else {
+          console.log("[ratelimit] using Postgres-backed store (table: rate_limits)");
+        }
+      }
+    )
+  : new RateLimiterMemory(RL_OPTS);
 
 // Disposable / throwaway email domains we don't want on the list.
 //
