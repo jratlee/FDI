@@ -724,11 +724,17 @@ function topcall() {
       <div class="out"><div class="lbl">${outLbl}</div><div class="val">${outVal}</div></div>
     </article>`;
 
-  const tier = (name, title, model, feats, mid) => `
+  const tier = (name, title, model, price, feats, mid) => `
     <article class="tier${mid ? " mid" : ""}">
       ${mid ? '<span class="pill">Most popular</span>' : ""}
       <span class="tname">${name}</span>
       <h3>${title}</h3>
+      <div class="tprice">
+        ${price.anchor ? `<span class="tprice-anchor">${price.anchor}</span>` : ""}
+        <span class="tprice-amt">${price.amount}</span>
+        ${price.unit ? `<span class="tprice-unit">${price.unit}</span>` : ""}
+      </div>
+      ${price.note ? `<p class="tprice-note">${price.note}</p>` : ""}
       <p class="model">${model}</p>
       <ul>${feats.map((f) => `<li>${f}</li>`).join("")}</ul>
       <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Join the waitlist</a></div>
@@ -845,18 +851,26 @@ function topcall() {
     <div class="section-hd">
       <span class="eyebrow">The pricing ladder</span>
       <h2>Own the radar, subscribe to it, or run it with us.</h2>
-      <p>Three tiers, from a self-hosted engine to a managed intelligence retainer. Billing and license validation arrive in the commercialization phase, so join the waitlist to lock early access.</p>
+      <p>Three tiers, from a self-hosted engine to a managed intelligence retainer. Prices are set, and checkout arrives in the commercialization phase, so join the waitlist to lock launch pricing.</p>
     </div>
+    <p class="price-anchor">A managed competitive-intelligence subscription runs <b>$5,000 to $50,000 a year</b>. Top Call Engine is a one-time license that runs the same owned radar on your own machine, forever.</p>
     <div class="price-grid">
       ${tier(
         "Tier 1 · Engine",
         "Self-Hosted Corpus",
         "One-time license for the ingestion engine, graph, and MCP interface.",
+        {
+          amount: "$149",
+          unit: "one-time",
+          anchor: "$199",
+          note: "Launch price <b>$99</b> for early adopters.",
+        },
         [
           "Corpus + knowledge-graph engine",
           "Source-authority tiering &amp; validator",
           "The four MCP read tools",
           "Run locally in any MCP client",
+          "Single operator",
         ],
         false,
       )}
@@ -864,11 +878,17 @@ function topcall() {
         "Tier 2 · Feed",
         "Managed Corpus",
         "Recurring subscription with a continuously ingested, hosted corpus.",
+        {
+          amount: "$99",
+          unit: "/mo",
+          note: "Founding rate <b>$79/mo</b> · <b>$990/yr</b> annual.",
+        },
         [
-          "Everything in Engine",
+          "Everything in Engine, plus:",
           "Continuously ingested source feeds",
           "Hosted, always-current corpus",
           "Priority release channel",
+          "Team seats",
         ],
         true,
       )}
@@ -876,11 +896,17 @@ function topcall() {
         "Tier 3 · Desk",
         "Intelligence Retainer",
         "Managed corpus paired with a dedicated analyst retainer.",
+        {
+          amount: "$3,500",
+          unit: "/mo",
+          note: "Limited to ~5 clients · custom onboarding.",
+        },
         [
-          "Everything in Feed",
+          "Everything in Feed, plus:",
           "Dedicated analyst retainer",
           "Custom source &amp; tier calibration",
           "Direct line to FDI",
+          "Quarterly intelligence review",
         ],
         false,
       )}
