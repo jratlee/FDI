@@ -342,14 +342,20 @@ function skillfoundry() {
       <div class="out"><div class="lbl">${outLbl}</div><div class="val">${outVal}</div></div>
     </article>`;
 
-  const tier = (name, title, model, feats, mid) => `
+  const tier = (name, title, model, price, feats, mid) => `
     <article class="tier${mid ? " mid" : ""}">
       ${mid ? '<span class="pill">Most popular</span>' : ""}
       <span class="tname">${name}</span>
       <h3>${title}</h3>
+      <div class="tprice">
+        ${price.anchor ? `<span class="tprice-anchor">${price.anchor}</span>` : ""}
+        <span class="tprice-amt">${price.amount}</span>
+        ${price.unit ? `<span class="tprice-unit">${price.unit}</span>` : ""}
+      </div>
+      ${price.note ? `<p class="tprice-note">${price.note}</p>` : ""}
       <p class="model">${model}</p>
       <ul>${feats.map((f) => `<li>${f}</li>`).join("")}</ul>
-      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Request access</a></div>
+      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Join the waitlist</a></div>
     </article>`;
 
   const body = `
@@ -430,30 +436,47 @@ function skillfoundry() {
     <div class="section-hd">
       <span class="eyebrow">The pricing ladder</span>
       <h2>Own it, subscribe to it, or run it with us.</h2>
-      <p>Three tiers, from a perpetual license to a strategic retainer. Billing and license validation arrive in the commercialization phase — join the waitlist to lock early access.</p>
+      <p>Three tiers, from a perpetual license to a strategic retainer. Prices are set — checkout arrives in the commercialization phase, so join the waitlist to lock launch pricing.</p>
     </div>
+    <p class="price-anchor">One strategist hour runs <b>$150–$400</b>. Skillfoundry Tier 1 runs the same three-gate audit as many times as you like — for the price of lunch.</p>
     <div class="price-grid">
       ${tier(
-        "Tier 1 · Static",
+        "Tier 1 · Perpetual",
         "Perpetual License",
-        "One-time purchase of the V1.0 plugin.",
+        "One-time purchase of the frozen V1.0 plugin.",
+        {
+          amount: "$29",
+          unit: "one-time",
+          anchor: "$49",
+          note: "Launch price <b>$19</b> for early adopters.",
+        },
         [
-          "The full three-gate plugin",
-          "Skills, commands &amp; connector",
-          "Run locally in any MCP client",
-          "V1.0 perpetual license",
+          "Frozen V1.0 gate logic",
+          "Runs locally in any MCP client",
+          "Text-only asset auditing",
+          "Consolidated markdown report",
+          "Single operator",
+          "<code>/sf:</code> slash commands",
         ],
         false,
       )}
       ${tier(
-        "Tier 2 · Dynamic",
+        "Tier 2 · Living Brain",
         "Continuous Updates",
         "Recurring subscription with over-the-wire updates.",
+        {
+          amount: "$49",
+          unit: "/mo",
+          note: "Founding rate <b>$39/mo</b> · <b>$490/yr</b> annual · Team <b>$149/mo</b>.",
+        },
         [
-          "Everything in Static",
-          "Continuous gate &amp; logic updates",
-          "New market-structure modules",
-          "Priority release channel",
+          "Everything in Perpetual, plus:",
+          "Continuous over-the-wire updates",
+          "Latest multimodal models",
+          "Machine-readable JSON output",
+          "Higher rate limits",
+          "Re-audit history",
+          "Team seats",
         ],
         true,
       )}
@@ -461,11 +484,18 @@ function skillfoundry() {
         "Tier 3 · Advisory",
         "Hybrid Retainer",
         "Subscription paired with a dedicated strategic retainer.",
+        {
+          amount: "$2,500",
+          unit: "/mo",
+          note: "Limited to ~5 clients · or a one-time <b>$5k–$10k</b> Foundry Sprint.",
+        },
         [
-          "Everything in Dynamic",
-          "Dedicated strategic retainer",
-          "Custom gate calibration",
-          "Direct line to FDI",
+          "Everything in Living Brain, plus:",
+          "Dedicated strategist retainer",
+          "Custom-tuned gates",
+          "Hands-on onboarding",
+          "Private async channel",
+          "Quarterly strategy session",
         ],
         false,
       )}
