@@ -30,6 +30,7 @@ const EXPECTED_ROUTES = [
   "/aggregated",
   "/decentralized",
   "/autonomous",
+  "/roadmap",
 ];
 const EXPECTED_SLIDES = 13;
 

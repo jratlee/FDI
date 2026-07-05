@@ -62,6 +62,7 @@ function nav(active) {
       ${link("/field-guide", "Field Guide", "field-guide")}
       ${link("/skillfoundry", "SkillFoundry", "skillfoundry")}
       ${link("/topcall", "Top Call", "topcall")}
+      ${link("/roadmap", "Roadmap", "roadmap")}
       ${link("/#about", "About", "about")}
       <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the waitlist</a>
     </nav>
@@ -84,6 +85,7 @@ function footer() {
           <li><a href="/skillfoundry">SkillFoundry</a></li>
           <li><a href="/topcall">Top Call</a></li>
           <li><a href="/series">The Series</a></li>
+          <li><a href="/roadmap">Roadmap</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
       </div>
@@ -1335,6 +1337,189 @@ function seriesPage() {
   });
 }
 
+/* ---------------- ROADMAP ----------------
+   Public feature tracker (Now / Next / Later). This is the single, editable
+   source of truth for the /roadmap page: add or update an item here and the
+   page rerenders on the next build. Keep items to a short title + one-line
+   description + a status tag (In progress / Committed / Exploring / Live). */
+const ROADMAP = {
+  northStar:
+    "Become a forward research organization: publish owned-marketing-systems research at a cadence, monetized through productized tools and community, with internal research capability as the long-term moat.",
+  goal: {
+    label: "This-quarter goal",
+    value: "$5,000/month in revenue by August 15, 2026",
+    detail:
+      "Funded by a self-sustaining publishing engine, powered by the products we already have.",
+  },
+  columns: [
+    {
+      key: "now",
+      title: "Now",
+      blurb: "The revenue engine: make the existing products buyable and the funnel convert.",
+      items: [
+        {
+          title: "SkillFoundry is for sale",
+          desc: "Finalized pricing live on the page and checkout that actually takes money.",
+          status: "In progress",
+          link: "/skillfoundry",
+        },
+        {
+          title: "Top Call, the free lead magnet",
+          desc: "The on-thesis prompt-pack owned system that pulls people into the funnel.",
+          status: "Live",
+          link: "/topcall",
+        },
+        {
+          title: "Email delivery and nurture",
+          desc: "Signups and lead-magnet users receive their asset plus a welcome, turning capture into a channel.",
+          status: "In progress",
+        },
+        {
+          title: "A site that converts and gets cited",
+          desc: "Copy, brand, and GEO polish so pages read human, stay on-brand, and surface in AI answer engines.",
+          status: "In progress",
+        },
+        {
+          title: "First customers",
+          desc: "A researched Tier 1 US prospect list plus outreach to land the first sales and sharpen the higher-tier pitch.",
+          status: "In progress",
+        },
+      ],
+    },
+    {
+      key: "next",
+      title: "Next",
+      blurb: "The publishing engine: turn research into a cadence and a community.",
+      items: [
+        {
+          title: "The Growth Cartography series ships",
+          desc: "The three field guides (Aggregated, Decentralized, Autonomous), each backed by a deep-research report, published as real destinations.",
+          status: "Committed",
+          link: "/series",
+        },
+        {
+          title: "A research library",
+          desc: "A home and index for the field guides so new drops have somewhere to live and the cadence is visible.",
+          status: "Committed",
+        },
+        {
+          title: "Top Call corpus compounds",
+          desc: "Live source ingestion so the owned system grows on its own (the Feed tier direction).",
+          status: "Exploring",
+        },
+        {
+          title: "Audience operations",
+          desc: "One place to see and export who signed up for each product, so the community can be nurtured deliberately.",
+          status: "Committed",
+        },
+      ],
+    },
+    {
+      key: "later",
+      title: "Later",
+      blurb: "The research house: the long-term moat.",
+      items: [
+        {
+          title: "Internal research capability and tooling",
+          desc: "Durable data corpora, Top Call as a standing model, and the System Dynamics Engine turned into a real research instrument.",
+          status: "Exploring",
+        },
+        {
+          title: "Research membership and community",
+          desc: "A research subscription and a community built around the work.",
+          status: "Exploring",
+        },
+        {
+          title: "Automated research-to-publishing pipeline",
+          desc: "A pipeline from research to published drop so the cadence scales.",
+          status: "Exploring",
+        },
+      ],
+    },
+  ],
+};
+
+function roadmapPage() {
+  const statusClass = (s) =>
+    "st-" + s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const item = (it) => {
+    const inner = `<div class="rm-item-hd"><h3>${it.title}</h3><span class="rm-status ${statusClass(
+      it.status,
+    )}">${it.status}</span></div><p>${it.desc}</p>${
+      it.link
+        ? `<div class="rm-item-foot"><a class="link-arrow" href="${it.link}">Learn more <span class="arrow">→</span></a></div>`
+        : ""
+    }`;
+    return `<li class="rm-item">${inner}</li>`;
+  };
+  const column = (col) => `<section class="rm-col rm-col-${col.key}">
+        <div class="rm-col-hd">
+          <span class="rm-col-label">${col.title}</span>
+          <p class="rm-col-blurb">${col.blurb}</p>
+        </div>
+        <ul class="rm-list">
+          ${col.items.map(item).join("\n          ")}
+        </ul>
+      </section>`;
+  const body = `
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">Roadmap · As of ${AS_OF}</span>
+      <h1>Where FDI is <em>headed</em>.</h1>
+      <p class="lede">${ROADMAP.northStar}</p>
+      <div class="rm-goal">
+        <span class="rm-goal-label">${ROADMAP.goal.label}</span>
+        <span class="rm-goal-value">${ROADMAP.goal.value}</span>
+        <span class="rm-goal-detail">${ROADMAP.goal.detail}</span>
+      </div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The tracker</span>
+      <h2>Now, Next, Later.</h2>
+      <p>The customer and community-facing themes we are building toward the goal. Statuses move as work lands. This is the public view; the full backlog lives with the team.</p>
+    </div>
+    <div class="rm-board">
+      ${ROADMAP.columns.map(column).join("\n      ")}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="cta" id="follow">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Follow along</span>
+      <h2>Watch the roadmap turn into shipped work.</h2>
+      <p>Join the waitlist and we'll reach out as each milestone lands. No spam.</p>
+      <form class="waitlist js-capture" data-source="roadmap" data-subject="FDI roadmap follower" data-success="You're on the list. We'll reach out as milestones ship." data-mail-body="Please add me to the FDI roadmap updates list." novalidate>
+        <label class="sr-only" for="rm-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="rm-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: "Roadmap | False Dawn Industries",
+    description:
+      "The FDI public roadmap: a Now / Next / Later tracker of the customer and community-facing work toward $5,000/month in revenue by August 15, 2026, and the long-term goal of a forward research organization.",
+    active: "roadmap",
+    body,
+    canonical: `${SITE_URL}/roadmap`,
+  });
+}
+
 /* Plain-text guide for AI crawlers and LLMs (served at /llms.txt). */
 function llmsTxt() {
   return `# False Dawn Industries (FDI)
@@ -1388,10 +1573,11 @@ function main() {
     conceptPage("decentralized"),
   );
   fs.writeFileSync(path.join(DIST, "autonomous.html"), conceptPage("autonomous"));
+  fs.writeFileSync(path.join(DIST, "roadmap.html"), roadmapPage());
   fs.writeFileSync(path.join(DIST, "llms.txt"), llmsTxt());
 
   console.log(
-    `[build] wrote 8 pages + llms.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 9 pages + llms.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 
