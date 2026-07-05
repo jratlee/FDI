@@ -5,10 +5,10 @@ opinionated Signal-to-Value gates — **Relevance**, **Performance**, and
 **Algorithmic Signal** — and get back a scored, structured audit with line-level
 rewrites. Strategy as code.
 
-Skillfoundry is a False Dawn Industries product, shipped to the Anthropic
-knowledge-work-plugin standard: `skills/` (the gate rubrics), `commands/` (the
-audit command plus per-gate commands), and an `.mcp.json` connector so it loads
-in any MCP-compatible client. This is the MVP — text-first, no backend, no
+Skillfoundry is a False Dawn Industries product, built on the open Model Context
+Protocol (MCP): `skills/` (the gate rubrics), `commands/` (the audit command plus
+per-gate commands), and an `.mcp.json` connector so it loads in any MCP-compatible
+client. This is the MVP — text-first, no backend, no
 billing. It exists to prove the rubric quality, not the plumbing.
 
 ## The three gates

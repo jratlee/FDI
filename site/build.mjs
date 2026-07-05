@@ -27,7 +27,12 @@ const lockup = (tag = "span") =>
 
 const GITHUB = "https://github.com/jratlee/FDI";
 const GITHUB_USER = "https://github.com/jratlee";
+const LINKEDIN_USER = "https://www.linkedin.com/in/jratlee";
 const CONTACT = "hello@falsedawn.industries";
+/* SkillFoundry Stripe checkout is not live yet: while false, the tier CTAs
+   route to the waitlist instead of the checkout flow. Flip to true once the
+   purchase flow is proven in Stripe (see skillfoundry/STRIPE_SETUP.md). */
+const CHECKOUT_LIVE = false;
 const SITE_URL = "https://falsedawn.industries";
 const MCP_URL = "https://modelcontextprotocol.io";
 const AS_OF = "2026";
@@ -301,6 +306,16 @@ function home() {
       <h2>Belief lives in culture. Trust lives in experience. Identity is the bridge.</h2>
       <p>False Dawn Industries is building the thesis that when reach is commoditized and platforms are opaque, persistent identity, legible to machines, portable across communities, and verifiable by agents, becomes the ultimate infrastructure.</p>
     </div>
+    <div class="social-badges">
+      <a class="social-badge" href="${LINKEDIN_USER}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+        LinkedIn
+      </a>
+      <a class="social-badge" href="${GITHUB_USER}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.13-.3-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.01 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.25 2.88.12 3.18.77.84 1.24 1.92 1.24 3.23 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </div>
     <div class="hero-cta">
       <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the SkillFoundry waitlist <span class="arrow">→</span></a>
       <a class="btn btn-ghost" href="mailto:${CONTACT}">Get in touch</a>
@@ -397,7 +412,6 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
     </div>
     <div class="deck-actions">
       <a class="btn btn-primary" href="/assets/fdi-field-guide-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
-      <a class="btn btn-ghost" href="/assets/fdi-field-guide-launch-bundle.zip" download>Download the full launch bundle</a>
     </div>
     <div class="slides-strip">
       ${slidesStrip(slideFiles)}
@@ -432,10 +446,10 @@ function skillfoundry() {
 
   const tier = (name, title, model, price, feats, mid, cta) => {
     const btnClass = mid ? "btn-primary" : "btn-ghost";
-    const foot = cta && cta.tier
+    const foot = cta && cta.tier && CHECKOUT_LIVE
       ? `<button type="button" class="btn ${btnClass} js-buy" data-tier="${cta.tier}" data-fallback="#waitlist">${cta.label} <span class="arrow">→</span></button>
          <p class="form-msg js-buy-msg" role="status" aria-live="polite"></p>`
-      : `<a class="btn ${btnClass}" href="#waitlist">Join the waitlist</a>`;
+      : `<a class="btn ${btnClass}" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>`;
     return `
     <article class="tier${mid ? " mid" : ""}">
       ${mid ? '<span class="pill">Most popular</span>' : ""}
@@ -544,7 +558,7 @@ function skillfoundry() {
       <div class="mod"><code>.mcp.json</code><h4>Connectors</h4><p>A connector definition that loads the plugin natively into MCP-compatible clients, existing workflows, CMS platforms, and design tools.</p></div>
     </div>
     <p class="flowline">Asset in &nbsp;→&nbsp; <b>Relevance</b> &nbsp;→&nbsp; <b>Performance</b> &nbsp;→&nbsp; <b>Algorithmic Signal</b> &nbsp;→&nbsp; deployable asset + three audits out</p>
-    <p class="flowline" style="margin-top:14px;color:var(--muted);">Clean-room IP: all gate logic is original and self-contained, with no third-party confidential or proprietary material. Model Context Protocol is an open standard; this product is not affiliated with or endorsed by Anthropic.</p>
+    <p class="flowline" style="margin-top:14px;color:var(--muted);">Every gate is built from publicly documented strategy frameworks, cited in the plugin. Model Context Protocol is an open standard; this product is not affiliated with or endorsed by Anthropic.</p>
   </div>
 </section>
 
@@ -555,7 +569,7 @@ function skillfoundry() {
     <div class="section-hd">
       <span class="eyebrow">How to run it</span>
       <h2>Four commands. One firewall.</h2>
-      <p>Point Claude Code at the plugin (or load the <code>.mcp.json</code> connector) and route any asset (pasted text or a path to a <code>.md</code>/<code>.txt</code> file) through the gates. No backend, no glue code.</p>
+      <p>Point any MCP-compatible client (Claude Code, or another client via the <code>.mcp.json</code> connector) at the plugin and route any asset (pasted text or a path to a <code>.md</code>/<code>.txt</code> file) through the gates. No backend, no glue code.</p>
     </div>
     <div class="cmds">
       <div class="cmd cmd-hero">
@@ -660,11 +674,6 @@ function skillfoundry() {
 
 <section class="section" id="faq">
   <div class="wrap">
-    <div class="section-hd">
-      <span class="eyebrow">Questions, answered</span>
-      <h2>SkillFoundry FAQ</h2>
-      <p>Direct answers for readers and AI assistants alike. As of ${AS_OF}.</p>
-    </div>
     <div class="faq">
       ${faqs
         .map(
@@ -1163,8 +1172,8 @@ const CONCEPTS = {
         p: "Build owned systems whose value does not depend on any single channel: a graded corpus, verifiable provenance, and an identity legible to both people and agents.",
       },
       {
-        h: "The proof",
-        p: "Pile is a pay-per-question answer engine where the free preview and the paid answer are the same bytes, each carrying a SHA-256 proof-of-delivery hash. Provable honesty as the product.",
+        h: "In the wild",
+        p: 'Ben Thompson\'s <a href="https://stratechery.com/aggregation-theory/" target="_blank" rel="noopener">Aggregation Theory</a> maps this exactly: platforms that own demand commoditize the suppliers behind them and set the terms of discovery. The durable countermove is owning assets the aggregator cannot revoke.',
       },
     ],
   },
@@ -1186,8 +1195,8 @@ const CONCEPTS = {
         p: "Preserve structure. Write every source and relationship into a persistent knowledge graph so meaning compounds instead of evaporating.",
       },
       {
-        h: "The proof",
-        p: "Talk to NYC is a Hybrid GraphRAG system that turns thousands of scattered legal XML files into one citable knowledge graph, answering with both meaning and structure, section numbers attached.",
+        h: "In the wild",
+        p: '<a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a> is the pattern in public: it turns scattered, independently maintained facts into one structured, queryable, citable knowledge graph that other systems build on instead of re-deriving from scratch.',
       },
     ],
   },
@@ -1209,8 +1218,8 @@ const CONCEPTS = {
         p: "Expose your corpus through a verifiable interface built on the open Model Context Protocol (MCP), so every answer carries its source, tier, and confidence.",
       },
       {
-        h: "The proof",
-        p: "Top Call grades every source into an authority tier and exposes the reads as MCP tools, so an agent can call them and get answers stamped source, tier, and confidence.",
+        h: "In the wild",
+        p: 'The open <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol</a> is the pattern in public: it gives agents a verifiable interface to call tools and retrieve answers with their sources attached, rather than trusting unprovenanced text.',
       },
     ],
   },

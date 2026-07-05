@@ -16,7 +16,7 @@ prompt-pack structurally cannot be.
 |---|---|---|
 | **Aggregated** | a citable **corpus** | every source you grade is written into a persistent, provenance-stamped store (`corpus/corpus.json`). The audit compounds instead of evaporating. |
 | **Decentralized** | a **knowledge graph** | executives, companies, moves, categories, implications, and sources become a queryable node/edge graph — the relationships preserved, not re-derived. |
-| **Autonomous** | a verifiable **MCP interface** | the repeatable read skills are exposed as MCP tools built to the same Anthropic standard as Skillfoundry, so an agent can call them and get answers stamped with source, tier, and confidence. |
+| **Autonomous** | a verifiable **MCP interface** | the repeatable read skills are exposed as MCP tools built on the same open Model Context Protocol as Skillfoundry, so an agent in any MCP-compatible client can call them and get answers stamped with source, tier, and confidence. |
 
 ## Why it compounds (and a prompt-pack can't)
 

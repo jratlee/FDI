@@ -99,6 +99,11 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; color: var(--cream); lin
 .hero h1 em { font-style: normal; color: var(--amber); }
 .hero .lede { color: var(--faded); font-size: clamp(17px, 2.2vw, 21px); margin: 26px 0 0; max-width: 34em; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px; }
+.social-badges { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.social-badge { display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--faded); text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; transition: color .15s ease, border-color .15s ease; }
+.social-badge svg { color: var(--faded); transition: color .15s ease; }
+.social-badge:hover { color: var(--amber); border-color: var(--amber); }
+.social-badge:hover svg { color: var(--amber); }
 .hero-machine { display: flex; align-items: center; justify-content: center; }
 .hero-machine svg { width: 100%; max-width: 380px; height: auto; overflow: visible; }
 .m-ed { stroke: var(--hairline); stroke-width: 2; fill: none; }

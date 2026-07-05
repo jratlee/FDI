@@ -32,7 +32,7 @@ const SOURCES = {
     product: "Skillfoundry",
     subject: "You're on the Skillfoundry waitlist",
     heading: "You're on the list",
-    lead: "Thanks for joining the Skillfoundry waitlist. Skillfoundry turns your signal into value with an Anthropic-standard modular architecture — we'll reach out with early access before we open the doors.",
+    lead: "Thanks for joining the Skillfoundry waitlist. Skillfoundry turns your signal into value with a modular architecture built on the open Model Context Protocol, so it runs in any MCP-compatible client. We'll reach out with early access before we open the doors.",
   },
   topcall: {
     product: "Top Call",
