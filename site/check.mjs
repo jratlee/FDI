@@ -7,7 +7,8 @@ import { fileURLToPath } from "node:url";
  * Smoke check for the built site.
  *
  * Builds the site, then verifies:
- *  - all three routes (/, /field-guide, /skillfoundry) resolve to real pages
+ *  - all public routes resolve to real pages
+ *  - the /llms.txt AI-crawler guide is present
  *  - every referenced /assets and /fonts file exists on disk
  *  - the deck PDF and all 13 deck slides are present
  *  - every internal nav/href link resolves to a real page or file, using the
@@ -20,7 +21,16 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
 
-const EXPECTED_ROUTES = ["/", "/field-guide", "/skillfoundry", "/topcall"];
+const EXPECTED_ROUTES = [
+  "/",
+  "/field-guide",
+  "/skillfoundry",
+  "/topcall",
+  "/series",
+  "/aggregated",
+  "/decentralized",
+  "/autonomous",
+];
 const EXPECTED_SLIDES = 13;
 
 const errors = [];
@@ -77,13 +87,16 @@ execFileSync("node", [path.join(__dirname, "build.mjs")], {
 });
 
 if (!fs.existsSync(path.join(DIST, "index.html"))) {
-  fail("dist/index.html missing — build did not produce output");
+  fail("dist/index.html missing, build did not produce output");
 }
 
-/* 1. the three routes resolve */
+/* 1. every public route resolves */
 for (const route of EXPECTED_ROUTES) {
   if (!resolveFile(route)) fail(`route does not resolve: ${route}`);
 }
+
+/* 1b. the /llms.txt AI-crawler guide is present */
+if (!resolveFile("/llms.txt")) fail("missing /llms.txt AI-crawler guide");
 
 /* 2. deck PDF + 13 slides present */
 const deckPdf = path.join(DIST, "assets", "fdi-field-guide-deck.pdf");

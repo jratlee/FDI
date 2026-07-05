@@ -5,13 +5,13 @@ False Dawn Industries is building the thesis of **owned marketing systems** for
 aggregated, decentralized, and autonomous markets. This repo holds three things:
 
 1. **The public marketing site** (`site/`) — the FDI umbrella homepage, the
-   Field Guide (thesis article + visuals + launch deck), the Skillfoundry
+   Field Guide (thesis article + visuals + launch deck), the SkillFoundry
    product/landing page, and the Top Call product/landing page. This is the
    deployed, public web presence.
 2. **The System Dynamics Engine** (`app.py`) — an internal Streamlit modeling
    tool (compounding cohort decay). Internal only; not linked from the public site.
 3. **Top Call owned system** (`topcall/`) — the paid "Signal as Code" sibling to
-   Skillfoundry: a source-authority-graded corpus + knowledge graph + verifiable
+   SkillFoundry: a source-authority-graded corpus + knowledge graph + verifiable
    MCP interface (ingest/scan/audit/brief CLI, stdio MCP server, skills, commands).
    Zero-dependency Node ESM; illustrative seed data in `topcall/sources/`.
 4. **Brand + launch assets** (`artifacts/mockup-sandbox/`, `exports/`) — the FDI
@@ -24,19 +24,44 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
 - Lightweight, dependency-light static site. `build.mjs` renders the thesis
   markdown (`exports/field-guide-launch/linkedin-thesis-article.md`) with `marked`,
   folds the inline visuals + captions into `<figure>`s, copies the launch assets
-  and self-hosted fonts, and emits four pages to `site/dist/`:
-  - `/` — homepage (hero, stat band, product line, proof builds, about). The
-    product line features Skillfoundry and Top Call as a 2x2 featured pair.
+  and self-hosted fonts, and emits eight pages plus `/llms.txt` to `site/dist/`:
+  - `/` — homepage (hero, stat band, product line, proof builds, about). Eyebrow
+    is just "Growth Cartography"; product-line label is "The FDI Operating
+    System"; the featured pair is SkillFoundry and Top Call; the three homepage
+    stats ($1.3T, 2.5s, 70,000yrs) each carry an inline `.cite` superscript
+    source link; the hero tags and the series card link to the new series pages
+    (not GitHub).
   - `/field-guide` — the article + 3 inline visuals + inline deck viewer, deck
     PDF download, launch-bundle download, and a 13-slide thumbnail strip
-  - `/skillfoundry` — three Signal-to-Value gates, Anthropic-standard modular
-    architecture, three-tier pricing ladder with live Stripe checkout (Tier 1
-    "Buy now" one-time, Tier 2 "Subscribe" monthly; Tier 3 stays a waitlist CTA),
-    and a waitlist email-capture CTA
+  - `/skillfoundry` — a direct-answer `.definition` block, three Signal-to-Value
+    gates, modular architecture built on the open Model Context Protocol (MCP,
+    `modelcontextprotocol.io`), three-tier pricing ladder with live Stripe
+    checkout (Tier 1 "Buy now" one-time, Tier 2 "Subscribe" monthly; Tier 3 stays
+    a waitlist CTA), a native `<details>` FAQ section, and a waitlist CTA
   - `/topcall` — Top Call ("Signal as Code"): a FREE prompt-pack lead magnet
     (email-capture that triggers the ZIP download), the three owned-system
-    constructs (corpus / knowledge graph / MCP), Anthropic-standard architecture,
-    a three-tier pricing ladder (Engine / Feed / Desk), and a paid waitlist CTA
+    constructs (corpus / knowledge graph / MCP), architecture built on the open
+    Model Context Protocol (MCP), a three-tier pricing ladder (Engine / Feed /
+    Desk), and a paid waitlist CTA
+  - `/series` — landing page for the field-guide series (source tag `series`)
+  - `/aggregated`, `/decentralized`, `/autonomous` — one-pager concept pages,
+    each a direct-answer definition + pattern/answer/proof cards + a waitlist CTA
+    with a per-page source tag (`series-aggregated`, etc.)
+- Brand/copy conventions (locked): all visible product copy uses "SkillFoundry"
+  (the `/skillfoundry` URL and `skillfoundry/` dir stay lowercase); every waitlist
+  CTA and every waitlist-style pricing-tier button reads "Join the waitlist". The
+  SkillFoundry Tier 1/2/3 buttons are the ONE exception: they drive live Stripe
+  checkout, so they keep their commerce labels ("Buy now" one-time, "Subscribe"
+  monthly, "Start retainer") and must not be relabeled to "Join the waitlist" or
+  the checkout flow breaks. No em-dashes anywhere in `build.mjs`/`site.css`
+  (sentences are rewritten instead); MCP is described as an open standard and the
+  site never claims Anthropic affiliation or endorsement.
+- GEO / AI-search visibility: `page()` injects JSON-LD `<script>` blocks
+  (Organization on `/`, SoftwareApplication + FAQPage on `/skillfoundry`, Article
+  on `/field-guide`, a per-concept FAQPage on the concept pages); direct-answer
+  `.definition` blocks and "as of 2026" freshness markers appear on product and
+  concept pages; `build.mjs` emits `/llms.txt` (served `text/plain`) as an
+  AI-crawler guide to the org, products, and series.
 - New signups trigger a best-effort transactional email via the **Resend**
   integration (`site/email.mjs`, Replit Connectors proxy): a brand-styled,
   source-aware welcome/confirmation to the subscriber and, if
@@ -62,7 +87,7 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   `source` field (allow-listed `[a-z0-9._-]`, else `"site"`), and upserts both
   into the `waitlist_signups` Postgres table (`DATABASE_URL`) with `ON CONFLICT
   DO NOTHING`. Uses the `pg` client; returns `503` if no `DATABASE_URL` is set.
-- Skillfoundry commerce (Stripe) lives in `site/commerce.mjs` (self-contained:
+- SkillFoundry commerce (Stripe) lives in `site/commerce.mjs` (self-contained:
   own `pg` pool + lazy Stripe client, so it can later move to a standalone
   backend). All credentials come from **env secrets**, never the Replit
   connector: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, and

@@ -26,7 +26,25 @@ const lockup = (tag = "span") =>
   `<${tag} class="lockup"><span class="wm">False Dawn Industries</span>${MARK}</${tag}>`;
 
 const GITHUB = "https://github.com/jratlee/FDI";
+const GITHUB_USER = "https://github.com/jratlee";
 const CONTACT = "hello@falsedawn.industries";
+const SITE_URL = "https://falsedawn.industries";
+const MCP_URL = "https://modelcontextprotocol.io";
+const AS_OF = "2026";
+
+/* Primary sources verified for the Field Guide launch (see
+   exports/field-guide-launch/citations-and-originality.md). Reused inline so
+   headline claims carry a checkable citation. */
+const CITE = {
+  adspend:
+    "https://www.warc.com/en/article/warc-global-ad-forecasts-upgraded-but-growth-concentrated-within-big-tech-9ed8089870e64fbe84b6bf2b1f8d6442",
+  attention: "https://www.dentsu.com/us/en/attention-economy",
+  belief: "https://www.ynharari.com/book/sapiens-2/",
+};
+
+/* Small superscript source link rendered after a factual claim. */
+const cite = (href, label) =>
+  `<a class="cite" href="${href}" target="_blank" rel="noopener" aria-label="Source: ${label}"><sup>[source]</sup></a>`;
 
 /* honeypot: a hidden field bots fill but humans never see. Off-screen, not
    display:none (some bots skip hidden inputs), with autocomplete disabled and
@@ -38,14 +56,14 @@ function nav(active) {
     `<a href="${href}"${active === id ? ' aria-current="page"' : ""}>${label}</a>`;
   return `<header class="nav">
   <div class="wrap nav-inner">
-    <a href="/" aria-label="False Dawn Industries — home">${lockup()}</a>
+    <a href="/" aria-label="False Dawn Industries home">${lockup()}</a>
     <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">Menu</button>
     <nav class="nav-links" id="nav-links">
       ${link("/field-guide", "Field Guide", "field-guide")}
-      ${link("/skillfoundry", "Skillfoundry", "skillfoundry")}
+      ${link("/skillfoundry", "SkillFoundry", "skillfoundry")}
       ${link("/topcall", "Top Call", "topcall")}
       ${link("/#about", "About", "about")}
-      <a class="btn btn-primary" href="/skillfoundry#waitlist">Request access</a>
+      <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the waitlist</a>
     </nav>
   </div>
 </header>`;
@@ -57,15 +75,15 @@ function footer() {
     <div class="footer-grid">
       <div>
         ${lockup()}
-        <p class="blurb">Owned marketing systems for aggregated, decentralized, and autonomous markets. We map the machine that decides who gets seen — and build the tools to own your place in it.</p>
+        <p class="blurb">Owned marketing systems for aggregated, decentralized, and autonomous markets.</p>
       </div>
       <div>
         <h5>Explore</h5>
         <ul>
-          <li><a href="/field-guide">The Field Guide</a></li>
-          <li><a href="/skillfoundry">Skillfoundry</a></li>
+          <li><a href="/field-guide">Field Guide</a></li>
+          <li><a href="/skillfoundry">SkillFoundry</a></li>
           <li><a href="/topcall">Top Call</a></li>
-          <li><a href="/#products">Product line</a></li>
+          <li><a href="/series">The Series</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
       </div>
@@ -80,13 +98,19 @@ function footer() {
     </div>
     <div class="footer-base">
       <span>© 2026 False Dawn Industries</span>
-      <span>Growth Cartography · Aggregated · Decentralized · Autonomous</span>
+      <span>Growth Cartography</span>
     </div>
   </div>
 </footer>`;
 }
 
-function page({ title, description, active, body, canonical }) {
+function page({ title, description, active, body, canonical, jsonLd }) {
+  const ld = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])
+    .map(
+      (obj) =>
+        `<script type="application/ld+json">${JSON.stringify(obj)}</script>`,
+    )
+    .join("\n");
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,6 +124,7 @@ function page({ title, description, active, body, canonical }) {
 <meta property="og:image" content="/assets/li-article-header-1200x627.png" />
 <meta name="twitter:card" content="summary_large_image" />
 ${canonical ? `<link rel="canonical" href="${canonical}" />` : ""}
+${ld}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preload" as="font" type="font/woff2" href="/fonts/space-grotesk-600-latin.woff2" crossorigin />
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-400-latin.woff2" crossorigin />
@@ -129,20 +154,79 @@ const MACHINE = `<svg viewBox="0 0 200 200" role="img" aria-label="A network gra
   <circle class="m-core" cx="100" cy="100" r="8"/>
 </svg>`;
 
+/* ---------------- structured data (JSON-LD) ---------------- */
+const orgJsonLd = () => ({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "False Dawn Industries",
+  alternateName: "FDI",
+  url: `${SITE_URL}/`,
+  logo: `${SITE_URL}/favicon.svg`,
+  email: CONTACT,
+  description:
+    "False Dawn Industries builds owned marketing systems for aggregated, decentralized, and autonomous markets: a persistent identity and corpus you can prove.",
+  sameAs: [GITHUB, GITHUB_USER],
+});
+
+const productJsonLd = () => ({
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "SkillFoundry",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "MCP-compatible clients (cross-platform)",
+  url: `${SITE_URL}/skillfoundry`,
+  description:
+    "SkillFoundry is a strategic firewall that routes any content asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal), delivered as a plugin built on the open Model Context Protocol (MCP).",
+  publisher: { "@type": "Organization", name: "False Dawn Industries", url: `${SITE_URL}/` },
+  offers: {
+    "@type": "Offer",
+    price: "29.00",
+    priceCurrency: "USD",
+    description: "Perpetual License (Tier 1), one-time.",
+  },
+});
+
+const faqJsonLd = (faqs) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+});
+
+const articleJsonLd = ({ headline, description }) => ({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline,
+  description,
+  image: `${SITE_URL}/assets/li-article-header-1200x627.png`,
+  author: { "@type": "Organization", name: "False Dawn Industries", url: `${SITE_URL}/` },
+  publisher: {
+    "@type": "Organization",
+    name: "False Dawn Industries",
+    logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.svg` },
+  },
+  datePublished: "2026-07-01",
+  dateModified: `${AS_OF}-07-01`,
+  mainEntityOfPage: `${SITE_URL}/field-guide`,
+});
+
 /* ---------------- HOME ---------------- */
 function home() {
   const body = `
 <section class="hero">
   <div class="wrap hero-inner">
     <div>
-      <span class="eyebrow">Growth Cartography · The Thesis</span>
+      <span class="eyebrow">Growth Cartography</span>
       <h1>Build the machine, <em>not the ad</em>.</h1>
-      <p class="lede">The cost of making content just fell to zero. That's not the opportunity — it's the emergency. When reach is commoditized and platforms are black boxes, the only durable marketing assets are the ones you own and can prove.</p>
+      <p class="lede">The cost of making content just fell to zero. That is not the opportunity, it is the emergency. When reach is commoditized and platforms are black boxes, the only durable marketing assets are the ones you own and can prove.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="/field-guide">Read the Field Guide <span class="arrow">→</span></a>
-        <a class="btn btn-ghost" href="/skillfoundry">Explore Skillfoundry</a>
+        <a class="btn btn-ghost" href="/skillfoundry">Explore SkillFoundry</a>
       </div>
-      <div class="hero-tags"><span><b>Aggregated</b></span><span><b>Decentralized</b></span><span><b>Autonomous</b></span></div>
+      <div class="hero-tags"><a href="/aggregated"><b>Aggregated</b></a><a href="/decentralized"><b>Decentralized</b></a><a href="/autonomous"><b>Autonomous</b></a></div>
     </div>
     <div class="hero-machine">${MACHINE}</div>
   </div>
@@ -150,43 +234,43 @@ function home() {
 
 <section class="statband" aria-label="The paradox funding modern marketing">
   <div class="wrap">
-    <div class="stat"><div class="k"><span class="amber">$1.3T</span></div><div class="l">what the world will spend on advertising in 2026</div></div>
-    <div class="stat"><div class="k">2.5s</div><div class="l">active attention the average digital ad actually earns</div></div>
-    <div class="stat"><div class="k">70,000<span class="amber">yrs</span></div><div class="l">humans have coordinated around shared belief — identity is still the bridge</div></div>
+    <div class="stat"><div class="k"><span class="amber">$1.3T</span></div><div class="l">what the world will spend on advertising in 2026 ${cite(CITE.adspend, "WARC global ad forecast, Dec 2025")}</div></div>
+    <div class="stat"><div class="k">2.5s</div><div class="l">active attention the average digital ad actually earns ${cite(CITE.attention, "Dentsu Attention Economy / Lumen Research")}</div></div>
+    <div class="stat"><div class="k">70,000<span class="amber">yrs</span></div><div class="l">humans have coordinated around shared belief, and identity is still the bridge ${cite(CITE.belief, "Yuval Noah Harari, Sapiens")}</div></div>
   </div>
 </section>
 
 <section class="section" id="products">
   <div class="wrap">
     <div class="section-hd">
-      <span class="eyebrow">The FDI product line</span>
+      <span class="eyebrow">The FDI Operating System</span>
       <h2>Tools and field guides for owned marketing systems.</h2>
-      <p>False Dawn Industries maps the shift to aggregated, decentralized, and autonomous markets — and ships the working systems that let you own your place in them.</p>
+      <p>False Dawn Industries maps the shift to aggregated, decentralized, and autonomous markets, then ships the working systems that let you own your place in them.</p>
     </div>
     <div class="grid cols-2">
       <article class="card featured">
         <span class="pill">Product · Strategy as Code</span>
-        <h3>Skillfoundry</h3>
-        <p>A strategic firewall for your content. Route any asset through three opinionated Signal-to-Value gates — Relevance, Performance, and Algorithmic Signal — as an Anthropic-standard plugin. Strategy as code.</p>
+        <h3>SkillFoundry</h3>
+        <p>A strategic firewall for your content. Route any asset through three opinionated Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) as a plugin built on the open Model Context Protocol (MCP). Strategy as code.</p>
         <div class="card-foot"><a class="link-arrow" href="/skillfoundry">See how it works <span class="arrow">→</span></a></div>
       </article>
       <article class="card featured">
         <span class="pill">Product · Signal as Code</span>
         <h3>Top Call</h3>
-        <p>The owned radar for executive intelligence. Every source you grade is written into a provenance-stamped corpus and knowledge graph that compounds — queryable through a verifiable MCP interface. Free prompt-pack in, owned system out.</p>
+        <p>The owned radar for executive intelligence. Every source you grade is written into a provenance-stamped corpus and knowledge graph that compounds, queryable through a verifiable MCP interface. Free prompt-pack in, owned system out.</p>
         <div class="card-foot"><a class="link-arrow" href="/topcall">See how it works <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
         <span class="tag">Field Guide 001</span>
         <h3>The CMO's Field Guide</h3>
-        <p>System &amp; cohort dynamics: why every cohort decays on day one, why last-click is gameable, and why identity is the last durable infrastructure. The article, visuals, and deck — in one place.</p>
+        <p>System and cohort dynamics: why every cohort decays on day one, why last-click is gameable, and why identity is the last durable infrastructure. The article, visuals, and deck, in one place.</p>
         <div class="card-foot"><a class="link-arrow" href="/field-guide">Read the guide <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
         <span class="tag">The series</span>
         <h3>Aggregated · Decentralized · Autonomous</h3>
-        <p>Three more field guides map the market structures reshaping discovery, knowledge, and machine-to-machine commerce — each grounded in real, working code.</p>
-        <div class="card-foot"><a class="link-arrow" href="${GITHUB}" rel="noopener">Pressure-test the code ↗</a></div>
+        <p>Three more field guides map the market structures reshaping discovery, knowledge, and machine-to-machine commerce, each grounded in real, working code.</p>
+        <div class="card-foot"><a class="link-arrow" href="/series">See the series <span class="arrow">→</span></a></div>
       </article>
     </div>
   </div>
@@ -199,7 +283,7 @@ function home() {
     <div class="section-hd">
       <span class="eyebrow">Proof, not slides</span>
       <h2>A thesis you can't ship is just a slide.</h2>
-      <p>Two working builds show what owned systems look like in practice — the same trust architecture that runs through everything FDI makes.</p>
+      <p>Two working builds show what owned systems look like in practice, the same trust architecture that runs through everything FDI makes.</p>
     </div>
     <div class="grid cols-2">
       <article class="card">
@@ -210,7 +294,7 @@ function home() {
       <article class="card">
         <span class="tag">Build · Decentralized &amp; Autonomous</span>
         <h3>Talk to NYC</h3>
-        <p>A Hybrid GraphRAG system that turns thousands of scattered legal XML files into one citable knowledge graph — answering with both meaning and structure, section numbers attached, exposed through an MCP server other agents can query directly.</p>
+        <p>A Hybrid GraphRAG system that turns thousands of scattered legal XML files into one citable knowledge graph, answering with both meaning and structure, section numbers attached, exposed through an MCP server other agents can query directly.</p>
       </article>
     </div>
   </div>
@@ -223,10 +307,10 @@ function home() {
     <div class="section-hd">
       <span class="eyebrow">About FDI</span>
       <h2>Belief lives in culture. Trust lives in experience. Identity is the bridge.</h2>
-      <p>False Dawn Industries is building the thesis that when reach is commoditized and platforms are opaque, persistent identity — legible to machines, portable across communities, and verifiable by agents — becomes the ultimate infrastructure. We publish the map (the Field Guides) and build the instruments (Skillfoundry and the working systems behind it).</p>
+      <p>False Dawn Industries is building the thesis that when reach is commoditized and platforms are opaque, persistent identity, legible to machines, portable across communities, and verifiable by agents, becomes the ultimate infrastructure.</p>
     </div>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the Skillfoundry waitlist <span class="arrow">→</span></a>
+      <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the SkillFoundry waitlist <span class="arrow">→</span></a>
       <a class="btn btn-ghost" href="mailto:${CONTACT}">Get in touch</a>
     </div>
   </div>
@@ -234,8 +318,9 @@ function home() {
   return page({
     title: "False Dawn Industries | Owned Marketing Systems for the AI Age",
     description:
-      "Reach is commoditized and ad platforms are black boxes. FDI builds owned marketing systems — a persistent identity and corpus you can prove. Read the Field Guide and explore Skillfoundry.",
+      "Reach is commoditized and ad platforms are black boxes. FDI builds owned marketing systems: a persistent identity and corpus you can prove. Read the Field Guide and explore SkillFoundry.",
     active: "home",
+    jsonLd: orgJsonLd(),
     body,
     canonical: "https://falsedawn.industries/",
   });
@@ -300,7 +385,7 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       <p class="byline">${attribution}</p>
     </div>
     <div class="article-cover">
-      <img src="/assets/li-article-header-1200x627.png" alt="False Dawn Industries — Build the machine, not the ad. Aggregated, Decentralized, Autonomous." width="1200" height="627" />
+      <img src="/assets/li-article-header-1200x627.png" alt="False Dawn Industries: Build the machine, not the ad. Aggregated, Decentralized, Autonomous." width="1200" height="627" />
     </div>
     <div class="prose">
       ${bodyHtml}
@@ -327,13 +412,18 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
     </div>
   </div>
 </section>`;
+  const fgDescription =
+    "The FDI thesis on owned marketing systems for aggregated, decentralized, and autonomous markets, with the launch deck, visuals, and working-code proof.";
   return page({
     title: "Build the Machine, Not the Ad | FDI Field Guide",
-    description:
-      "The FDI thesis on owned marketing systems for aggregated, decentralized, and autonomous markets — with the launch deck, visuals, and working-code proof.",
+    description: fgDescription,
     active: "field-guide",
+    jsonLd: articleJsonLd({
+      headline: "Build the Machine, Not the Ad",
+      description: fgDescription,
+    }),
     body,
-    canonical: "https://falsedawn.industries/field-guide",
+    canonical: `${SITE_URL}/field-guide`,
   });
 }
 
@@ -371,13 +461,31 @@ function skillfoundry() {
     </article>`;
   };
 
+  const faqs = [
+    {
+      q: "What is SkillFoundry?",
+      a: "SkillFoundry is a strategic firewall for content: a plugin, built on the open Model Context Protocol (MCP), that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) and returns the optimized asset plus a structured audit. It is built by False Dawn Industries.",
+    },
+    {
+      q: "How does SkillFoundry work?",
+      a: "You point an MCP-compatible client at the plugin (or load its .mcp.json connector) and run a slash command such as /skillfoundry:strategic-audit on pasted text or a file. The asset passes through the Relevance, Performance, and Algorithmic Signal gates and comes back with the optimized asset and three audits.",
+    },
+    {
+      q: "Is SkillFoundry affiliated with Anthropic?",
+      a: "No. SkillFoundry is built on the Model Context Protocol, an open standard documented at modelcontextprotocol.io. It is not affiliated with or endorsed by Anthropic.",
+    },
+    {
+      q: "How much does SkillFoundry cost?",
+      a: "There are three tiers: a Perpetual License (Tier 1) from $29 one-time, Continuous Updates (Tier 2) from $49 per month, and a Hybrid Retainer (Tier 3) from $2,500 per month. Launch pricing is available to waitlist members.",
+    },
+  ];
   const body = `
 <section class="hero">
   <div class="wrap hero-inner">
     <div>
-      <span class="eyebrow">A False Dawn Industries product</span>
-      <h1>Skillfoundry: <em>strategy as code</em>.</h1>
-      <p class="lede">Modern comms teams have automated execution but lost strategic oversight. Skillfoundry is an agnostic strategic firewall — it routes any content asset through three opinionated gates before it ships, so automated output actually drives enterprise value.</p>
+      <span class="eyebrow">A False Dawn Industries product · As of ${AS_OF}</span>
+      <h1>SkillFoundry: <em>strategy as code</em>.</h1>
+      <p class="lede">Modern comms teams have automated execution but lost strategic oversight. SkillFoundry is an agnostic strategic firewall: it routes any content asset through three opinionated gates before it ships, so automated output actually drives enterprise value.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="#gates">See the three gates</a>
@@ -387,19 +495,25 @@ function skillfoundry() {
   </div>
 </section>
 
+<section class="section" id="what">
+  <div class="wrap">
+    <p class="definition"><b>SkillFoundry is a strategic firewall for content.</b> It is a plugin, built on the open Model Context Protocol (MCP), that routes any asset (pasted text or a file) through three Signal-to-Value gates, Relevance, Performance, and Algorithmic Signal, and returns the optimized asset plus a structured audit you can defend to the C-suite. Built by False Dawn Industries. As of ${AS_OF}.</p>
+  </div>
+</section>
+
 <section class="section" id="gates">
   <div class="wrap">
     <div class="section-hd">
       <span class="eyebrow">The Signal-to-Value framework</span>
       <h2>Three gates every asset has to earn.</h2>
-      <p>Skillfoundry evaluates content across three opinionated filters. Each returns the optimized asset plus a structured audit you can defend to the C-suite.</p>
+      <p>SkillFoundry evaluates content across three opinionated filters. Each returns the optimized asset plus a structured audit you can defend to the C-suite.</p>
     </div>
     <div class="grid cols-3">
       ${gate(
         1,
         "Market-Deficit Analyzer",
         "The Relevance Filter",
-        "Filters raw text through a Jobs-to-be-Done lens, stripping hollow impression-farming hooks and forcing the asset to solve a specific functional, emotional, or social problem for a defined audience — not generic industry noise.",
+        "Filters raw text through a Jobs-to-be-Done lens, stripping hollow impression-farming hooks and forcing the asset to solve a specific functional, emotional, or social problem for a defined audience, not generic industry noise.",
         "Returns",
         "Relevance Score",
       )}
@@ -417,7 +531,7 @@ function skillfoundry() {
         "The Algorithmic-Signal Filter",
         "A distribution defense against programmatic AI noise: it strips LLM stylistic footprints, injects high-density human signal, and structures AEO/GEO metadata so AI search engines cite the brand as a definitive source.",
         "Returns",
-        "Signal &amp; Optimization Audit",
+        "Signal and Optimization Audit",
       )}
     </div>
   </div>
@@ -428,9 +542,9 @@ function skillfoundry() {
 <section class="section" id="architecture">
   <div class="wrap">
     <div class="section-hd">
-      <span class="eyebrow">Built to the Anthropic standard</span>
+      <span class="eyebrow">Built on the open Model Context Protocol</span>
       <h2>Modular by design. Native to your workflow.</h2>
-      <p>Skillfoundry ships as an open-standard knowledge-work plugin, so it drops into MCP-compatible clients, terminals, and CMS platforms with no glue code.</p>
+      <p>SkillFoundry ships as a plugin built on the <a href="${MCP_URL}" target="_blank" rel="noopener">open Model Context Protocol (MCP)</a>, so it drops into MCP-compatible clients, terminals, and CMS platforms with no glue code.</p>
     </div>
     <div class="arch">
       <div class="mod"><code>skills/</code><h4>Skills</h4><p>Markdown files encoding the prompt logic and reasoning for the Market-Deficit, Enterprise Valuation, and Adversarial Defense gates.</p></div>
@@ -438,7 +552,7 @@ function skillfoundry() {
       <div class="mod"><code>.mcp.json</code><h4>Connectors</h4><p>A connector definition that loads the plugin natively into MCP-compatible clients, existing workflows, CMS platforms, and design tools.</p></div>
     </div>
     <p class="flowline">Asset in &nbsp;→&nbsp; <b>Relevance</b> &nbsp;→&nbsp; <b>Performance</b> &nbsp;→&nbsp; <b>Algorithmic Signal</b> &nbsp;→&nbsp; deployable asset + three audits out</p>
-    <p class="flowline" style="margin-top:14px;color:var(--muted);">Clean-room IP: all gate logic is original and self-contained — no third-party confidential or proprietary material.</p>
+    <p class="flowline" style="margin-top:14px;color:var(--muted);">Clean-room IP: all gate logic is original and self-contained, with no third-party confidential or proprietary material. Model Context Protocol is an open standard; this product is not affiliated with or endorsed by Anthropic.</p>
   </div>
 </section>
 
@@ -449,24 +563,24 @@ function skillfoundry() {
     <div class="section-hd">
       <span class="eyebrow">How to run it</span>
       <h2>Four commands. One firewall.</h2>
-      <p>Point Claude Code at the plugin (or load the <code>.mcp.json</code> connector) and route any asset — pasted text or a path to a <code>.md</code>/<code>.txt</code> file — through the gates. No backend, no glue code.</p>
+      <p>Point Claude Code at the plugin (or load the <code>.mcp.json</code> connector) and route any asset (pasted text or a path to a <code>.md</code>/<code>.txt</code> file) through the gates. No backend, no glue code.</p>
     </div>
     <div class="cmds">
       <div class="cmd cmd-hero">
         <div class="cmd-hd"><code class="cmd-name">/skillfoundry:strategic-audit</code><span class="cmd-tag">Hero</span></div>
-        <p>Runs the asset through all three gates in order and returns one consolidated strategic audit report — scored, ranked, with line-level rewrites you can defend to the C-suite.</p>
+        <p>Runs the asset through all three gates in order and returns one consolidated strategic audit report, scored, ranked, with line-level rewrites you can defend to the C-suite.</p>
       </div>
       <div class="cmd">
         <div class="cmd-hd"><code class="cmd-name">/skillfoundry:relevance-gate</code></div>
-        <p>Runs only Gate 1 — the Market-Deficit Analyzer — scoring the asset through a Jobs-to-be-Done lens and returning its Relevance GateResult.</p>
+        <p>Runs only Gate 1, the Market-Deficit Analyzer, scoring the asset through a Jobs-to-be-Done lens and returning its Relevance GateResult.</p>
       </div>
       <div class="cmd">
         <div class="cmd-hd"><code class="cmd-name">/skillfoundry:performance-gate</code></div>
-        <p>Runs only Gate 2 — the Enterprise Valuation Gate — auditing brand equity and competitive positioning and returning its Performance GateResult.</p>
+        <p>Runs only Gate 2, the Enterprise Valuation Gate, auditing brand equity and competitive positioning and returning its Performance GateResult.</p>
       </div>
       <div class="cmd">
         <div class="cmd-hd"><code class="cmd-name">/skillfoundry:signal-gate</code></div>
-        <p>Runs only Gate 3 — the Adversarial Defense Matrix — checking GEO/AEO and human-signal density and returning its Algorithmic-Signal GateResult.</p>
+        <p>Runs only Gate 3, the Adversarial Defense Matrix, checking GEO/AEO and human-signal density and returning its Algorithmic-Signal GateResult.</p>
       </div>
     </div>
     <p class="cmd-eg">Example &nbsp;→&nbsp; <code>/skillfoundry:strategic-audit ./drafts/launch-post.md</code></p>
@@ -480,9 +594,9 @@ function skillfoundry() {
     <div class="section-hd">
       <span class="eyebrow">The pricing ladder</span>
       <h2>Own it, subscribe to it, or run it with us.</h2>
-      <p>Three tiers, from a perpetual license to a strategic retainer. Prices are set — checkout arrives in the commercialization phase, so join the waitlist to lock launch pricing.</p>
+      <p>Three tiers, from a perpetual license to a strategic retainer. Prices are set, and checkout arrives in the commercialization phase, so join the waitlist to lock launch pricing.</p>
     </div>
-    <p class="price-anchor">One strategist hour runs <b>$150–$400</b>. Skillfoundry Tier 1 runs the same three-gate audit as many times as you like — for the price of lunch.</p>
+    <p class="price-anchor">One strategist hour runs <b>$150 to $400</b>. SkillFoundry Tier 1 runs the same three-gate audit as many times as you like, for the price of lunch.</p>
     <div class="price-grid">
       ${tier(
         "Tier 1 · Perpetual",
@@ -550,13 +664,32 @@ function skillfoundry() {
   </div>
 </section>
 
+<hr class="divider" />
+
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Questions, answered</span>
+      <h2>SkillFoundry FAQ</h2>
+      <p>Direct answers for readers and AI assistants alike. As of ${AS_OF}.</p>
+    </div>
+    <div class="faq">
+      ${faqs
+        .map(
+          (f) => `<details class="faq-item"><summary>${f.q}</summary><p>${f.a}</p></details>`,
+        )
+        .join("\n      ")}
+    </div>
+  </div>
+</section>
+
 <section class="cta" id="waitlist">
   <div class="wrap section">
     <div class="cta-box">
-      <span class="eyebrow" style="justify-content:center;">Request access</span>
-      <h2>Get Skillfoundry the day it ships.</h2>
-      <p>Drop your email to join the waitlist. We'll reach out with early access, pricing, and the worked example — no spam.</p>
-      <form class="waitlist js-capture" data-source="skillfoundry" data-subject="Skillfoundry waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Skillfoundry waitlist." novalidate>
+      <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
+      <h2>Get SkillFoundry the day it ships.</h2>
+      <p>Drop your email to join the waitlist. We'll reach out with early access, pricing, and the worked example. No spam.</p>
+      <form class="waitlist js-capture" data-source="skillfoundry" data-subject="SkillFoundry waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the SkillFoundry waitlist." novalidate>
         <label class="sr-only" for="wl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
         <input type="email" id="wl-email" name="email" placeholder="you@company.com" autocomplete="email" required />
@@ -568,12 +701,13 @@ function skillfoundry() {
   </div>
 </section>`;
   return page({
-    title: "Skillfoundry — Strategy as Code | False Dawn Industries",
+    title: "SkillFoundry: Strategy as Code | False Dawn Industries",
     description:
-      "Skillfoundry is a strategic firewall that routes content through three Signal-to-Value gates — Relevance, Performance, and Algorithmic Signal — as an Anthropic-standard plugin. Join the waitlist.",
+      "SkillFoundry is a strategic firewall that routes content through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) as a plugin built on the open Model Context Protocol (MCP). Join the waitlist.",
     active: "skillfoundry",
+    jsonLd: [productJsonLd(), faqJsonLd(faqs)],
     body,
-    canonical: "https://falsedawn.industries/skillfoundry",
+    canonical: `${SITE_URL}/skillfoundry`,
   });
 }
 
@@ -595,16 +729,16 @@ function topcall() {
       <h3>${title}</h3>
       <p class="model">${model}</p>
       <ul>${feats.map((f) => `<li>${f}</li>`).join("")}</ul>
-      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Request access</a></div>
+      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Join the waitlist</a></div>
     </article>`;
 
   const body = `
 <section class="hero">
   <div class="wrap hero-inner">
     <div>
-      <span class="eyebrow">A False Dawn Industries product</span>
+      <span class="eyebrow">A False Dawn Industries product · As of ${AS_OF}</span>
       <h1>Top Call: <em>signal as code</em>.</h1>
-      <p class="lede">Executive-intelligence monitoring is usually a disposable weekly brief — read once, then gone. Top Call is the owned radar: the sibling to Skillfoundry that turns every signal you grade into a provenance-stamped corpus, a knowledge graph, and a verifiable interface agents can query. Skillfoundry is strategy as code; Top Call is signal as code.</p>
+      <p class="lede">Executive-intelligence monitoring is usually a disposable weekly brief, read once, then gone. Top Call is the owned radar: the sibling to SkillFoundry that turns every signal you grade into a provenance-stamped corpus, a knowledge graph, and a verifiable interface agents can query. SkillFoundry is strategy as code; Top Call is signal as code.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#prompt-pack">Get the free prompt-pack <span class="arrow">↓</span></a>
         <a class="btn btn-ghost" href="#constructs">See the owned system</a>
@@ -618,14 +752,14 @@ function topcall() {
   <div class="wrap">
     <div class="section-hd">
       <span class="eyebrow">Free · Field-Guide companion</span>
-      <h2>Start with the prompt-pack. See the thesis — and its ceiling.</h2>
-      <p>The Top Call prompt-pack is a complete, agent-ready system for tracking executive moves from free, public sources — a working demonstration of the FDI thesis. It also demonstrates its own ceiling: a prompt-pack is a recipe anyone can copy, and every run starts from a blank page. That gap is exactly what the owned system below is built to close.</p>
+      <h2>Start with the prompt-pack. See the thesis, and its ceiling.</h2>
+      <p>The Top Call prompt-pack is a complete, agent-ready system for tracking executive moves from free, public sources: a working demonstration of the FDI thesis. It also demonstrates its own ceiling: a prompt-pack is a recipe anyone can copy, and every run starts from a blank page. That gap is exactly what the owned system below is built to close.</p>
     </div>
     <div class="grid cols-2">
       <article class="card featured">
         <span class="tag">The lead magnet</span>
         <h3>Top Call Prompt-Pack</h3>
-        <p>Copilot/agent instructions, an executive-moves model, a source-authority policy, a no-paid-ingestion playbook, a search-query library, and worked output templates. Drop your email and the download starts immediately — no spam.</p>
+        <p>Copilot/agent instructions, an executive-moves model, a source-authority policy, a no-paid-ingestion playbook, a search-query library, and worked output templates. Drop your email and the download starts immediately. No spam.</p>
         <form class="waitlist js-capture" data-source="topcall-prompt-pack" data-subject="Top Call prompt-pack" data-download="/assets/top-call-prompt-pack.zip" data-mail-body="Please send me the Top Call prompt-pack." novalidate style="margin-top:22px;">
           <label class="sr-only" for="tc-lm-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
           ${HONEYPOT}
@@ -638,8 +772,8 @@ function topcall() {
       <article class="card">
         <span class="tag">The ceiling</span>
         <h3>Why a prompt-pack can't compound</h3>
-        <p>A prompt-pack is stateless. It re-derives the same relationships every run, keeps no memory of which sources you trusted, and can be copied verbatim by anyone who receives it. It proves the method — but the method is not the moat.</p>
-        <p style="margin-top:16px;">The non-replicable asset is the graded, provenance-stamped corpus that accumulates behind it — and the gated interface agents can trust. That is the owned system.</p>
+        <p>A prompt-pack is stateless. It re-derives the same relationships every run, keeps no memory of which sources you trusted, and can be copied verbatim by anyone who receives it. It proves the method, but the method is not the moat.</p>
+        <p style="margin-top:16px;">The non-replicable asset is the graded, provenance-stamped corpus that accumulates behind it, plus the gated interface agents can trust. That is the owned system.</p>
       </article>
     </div>
   </div>
@@ -675,13 +809,13 @@ function topcall() {
         3,
         "Autonomous",
         "A verifiable MCP interface",
-        "The repeatable read skills are exposed as MCP tools built to the same Anthropic standard as Skillfoundry — so an agent can call them and get answers stamped with source, tier, and confidence.",
+        "The repeatable read skills are exposed as MCP tools built on the same open Model Context Protocol (MCP) as SkillFoundry, so an agent can call them and get answers stamped with source, tier, and confidence.",
         "Becomes",
         "Answers stamped source · tier · confidence",
       )}
     </div>
     <p class="flowline" style="margin-top:40px;">Source in &nbsp;→&nbsp; <b>graded by tier</b> &nbsp;→&nbsp; <b>written to the corpus</b> &nbsp;→&nbsp; <b>linked in the graph</b> &nbsp;→&nbsp; provenance-stamped answer out</p>
-    <p class="flowline" style="margin-top:14px;color:var(--muted);">The moat compounds: when a Tier 1 trade later corroborates a move first seen in a Tier 2 release, the move's confidence upgrades — automatically, permanently, and traceably.</p>
+    <p class="flowline" style="margin-top:14px;color:var(--muted);">The moat compounds: when a Tier 1 trade later corroborates a move first seen in a Tier 2 release, the move's confidence upgrades automatically, permanently, and traceably.</p>
   </div>
 </section>
 
@@ -690,9 +824,9 @@ function topcall() {
 <section class="section" id="architecture">
   <div class="wrap">
     <div class="section-hd">
-      <span class="eyebrow">Built to the Anthropic standard</span>
-      <h2>Same conventions as Skillfoundry. A radar an agent can trust.</h2>
-      <p>Top Call ships as an open-standard plugin with the same modular layout as Skillfoundry — but where Skillfoundry composes prompts, Top Call reads a persistent corpus and returns real, provenance-stamped answers.</p>
+      <span class="eyebrow">Built on the open Model Context Protocol</span>
+      <h2>Same conventions as SkillFoundry. A radar an agent can trust.</h2>
+      <p>Top Call ships as a plugin built on the <a href="${MCP_URL}" target="_blank" rel="noopener">open Model Context Protocol (MCP)</a>, with the same modular layout as SkillFoundry. Where SkillFoundry composes prompts, Top Call reads a persistent corpus and returns real, provenance-stamped answers.</p>
     </div>
     <div class="arch">
       <div class="mod"><code>skills/</code><h4>Skills</h4><p>Markdown files encoding the corpus contract and the repeatable reads: exec-move scan, authority audit, and brief generation.</p></div>
@@ -709,7 +843,7 @@ function topcall() {
     <div class="section-hd">
       <span class="eyebrow">The pricing ladder</span>
       <h2>Own the radar, subscribe to it, or run it with us.</h2>
-      <p>Three tiers, from a self-hosted engine to a managed intelligence retainer. Billing and license validation arrive in the commercialization phase — join the waitlist to lock early access.</p>
+      <p>Three tiers, from a self-hosted engine to a managed intelligence retainer. Billing and license validation arrive in the commercialization phase, so join the waitlist to lock early access.</p>
     </div>
     <div class="price-grid">
       ${tier(
@@ -755,9 +889,9 @@ function topcall() {
 <section class="cta" id="waitlist">
   <div class="wrap section">
     <div class="cta-box">
-      <span class="eyebrow" style="justify-content:center;">Request access</span>
+      <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
       <h2>Get the Top Call owned system the day it ships.</h2>
-      <p>Drop your email to join the waitlist for the paid owned system. We'll reach out with early access, pricing, and a worked corpus — no spam.</p>
+      <p>Drop your email to join the waitlist for the paid owned system. We'll reach out with early access, pricing, and a worked corpus. No spam.</p>
       <form class="waitlist js-capture" data-source="topcall" data-subject="Top Call waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Top Call waitlist." novalidate>
         <label class="sr-only" for="tc-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
@@ -770,12 +904,12 @@ function topcall() {
   </div>
 </section>`;
   return page({
-    title: "Top Call — Signal as Code, the Owned Radar | False Dawn Industries",
+    title: "Top Call: Signal as Code, the Owned Radar | False Dawn Industries",
     description:
       "Top Call turns executive-intelligence monitoring into an owned asset: a provenance-stamped corpus, a knowledge graph, and a verifiable MCP interface. Get the free prompt-pack, then the owned system.",
     active: "topcall",
     body,
-    canonical: "https://falsedawn.industries/topcall",
+    canonical: `${SITE_URL}/topcall`,
   });
 }
 
@@ -806,7 +940,7 @@ const SITE_JS = `(function () {
     var source = form.getAttribute("data-source") || "site";
     var subject = form.getAttribute("data-subject") || "FDI waitlist";
     var successText = form.getAttribute("data-success") || "You're on the list. We'll reach out with early access.";
-    var dupText = form.getAttribute("data-duplicate") || "You're already on the list — we'll be in touch.";
+    var dupText = form.getAttribute("data-duplicate") || "You're already on the list. We'll be in touch.";
     var download = form.getAttribute("data-download") || "";
     var mailBody = form.getAttribute("data-mail-body") || ("Please add me to the " + source + " list.");
 
@@ -846,7 +980,7 @@ const SITE_JS = `(function () {
         if (r.status === 200 && r.data && r.data.ok) {
           form.reset();
           if (download) {
-            setMsg("Thanks — your download is starting. Check your downloads folder.", "is-ok");
+            setMsg("Thanks. Your download is starting. Check your downloads folder.", "is-ok");
             triggerDownload();
           } else {
             setMsg(r.data.duplicate ? dupText : successText, "is-ok");
@@ -857,11 +991,11 @@ const SITE_JS = `(function () {
           setMsg((r.data && r.data.message) || "Please enter a valid email address.", "is-error");
           if (input) input.focus();
         } else {
-          setMsg("Something went wrong — opening your email app instead.", "is-error");
+          setMsg("Something went wrong. Opening your email app instead.", "is-error");
           mailtoFallback(email);
         }
       }).catch(function () {
-        setMsg("Couldn't reach the server — opening your email app instead.", "is-error");
+        setMsg("Couldn't reach the server. Opening your email app instead.", "is-error");
         mailtoFallback(email);
       }).then(function () {
         if (btn) btn.disabled = false;
@@ -869,7 +1003,7 @@ const SITE_JS = `(function () {
     });
   });
 
-  // Buy buttons — start Stripe Checkout for a tier. On any failure (checkout
+  // Buy buttons start Stripe Checkout for a tier. On any failure (checkout
   // not live yet, network error) fall back to the waitlist so intent is kept.
   var buys = document.querySelectorAll(".js-buy");
   Array.prototype.forEach.call(buys, function (buy) {
@@ -902,11 +1036,11 @@ const SITE_JS = `(function () {
           return;
         }
         buy.disabled = false;
-        setBuyMsg((r.data && r.data.message) || "Checkout isn't live yet — join the waitlist below.", "is-error");
+        setBuyMsg((r.data && r.data.message) || "Checkout isn't live yet. Join the waitlist below.", "is-error");
         toWaitlist();
       }).catch(function () {
         buy.disabled = false;
-        setBuyMsg("Couldn't reach checkout — join the waitlist below.", "is-error");
+        setBuyMsg("Couldn't reach checkout. Join the waitlist below.", "is-error");
         toWaitlist();
       });
     });
@@ -960,7 +1094,7 @@ function copyAssets() {
 function buildPluginZip() {
   const srcDir = path.join(ROOT, "skillfoundry");
   if (!fs.existsSync(srcDir)) {
-    console.warn("[build] skillfoundry/ not found — skipping plugin package");
+    console.warn("[build] skillfoundry/ not found, skipping plugin package");
     return;
   }
   const outDir = path.join(__dirname, "private");
@@ -991,6 +1125,242 @@ function buildPluginZip() {
   }
 }
 
+/* ---------------- SERIES + CONCEPT PAGES ---------------- */
+const CONCEPTS = {
+  aggregated: {
+    slug: "aggregated",
+    eyebrow: "The series · Aggregated markets",
+    h1: "Aggregated",
+    lede:
+      "When discovery is mediated by a handful of aggregators, attention pools where the algorithm points. The durable move is to own a corpus and an identity the aggregator cannot revoke.",
+    definition:
+      "An aggregated market is one where a few intermediaries sit between makers and audiences and set the terms of discovery. In aggregated markets, the winning strategy is owning assets (a corpus, a provenance trail, a persistent identity) that keep their value if the aggregator changes the rules.",
+    points: [
+      {
+        h: "The pattern",
+        p: "Reach is commoditized and gatekept at the same time. You can make infinite content for near-zero cost, yet who sees it is decided by a black box you do not control.",
+      },
+      {
+        h: "The FDI answer",
+        p: "Build owned systems whose value does not depend on any single channel: a graded corpus, verifiable provenance, and an identity legible to both people and agents.",
+      },
+      {
+        h: "The proof",
+        p: "Pile is a pay-per-question answer engine where the free preview and the paid answer are the same bytes, each carrying a SHA-256 proof-of-delivery hash. Provable honesty as the product.",
+      },
+    ],
+  },
+  decentralized: {
+    slug: "decentralized",
+    eyebrow: "The series · Decentralized markets",
+    h1: "Decentralized",
+    lede:
+      "Knowledge and community are fragmenting across countless surfaces. Structure, not scale, is what makes a scattered corpus usable and citable.",
+    definition:
+      "A decentralized market is one where audiences, knowledge, and trust are spread across many independent surfaces rather than one platform. In decentralized markets, the winning strategy is turning scattered sources into one structured, citable knowledge graph.",
+    points: [
+      {
+        h: "The pattern",
+        p: "There is no single feed to win. Value lives in the relationships between sources, and those relationships are lost every time they are re-derived from scratch.",
+      },
+      {
+        h: "The FDI answer",
+        p: "Preserve structure. Write every source and relationship into a persistent knowledge graph so meaning compounds instead of evaporating.",
+      },
+      {
+        h: "The proof",
+        p: "Talk to NYC is a Hybrid GraphRAG system that turns thousands of scattered legal XML files into one citable knowledge graph, answering with both meaning and structure, section numbers attached.",
+      },
+    ],
+  },
+  autonomous: {
+    slug: "autonomous",
+    eyebrow: "The series · Autonomous markets",
+    h1: "Autonomous",
+    lede:
+      "Agents are becoming the buyers, readers, and routers. The durable asset is an interface they can query and verify, with source, tier, and confidence attached to every answer.",
+    definition:
+      "An autonomous market is one where software agents discover, evaluate, and transact on behalf of people. In autonomous markets, the winning strategy is exposing verifiable interfaces (built on the open Model Context Protocol) that agents can trust and cite.",
+    points: [
+      {
+        h: "The pattern",
+        p: "Machine-to-machine discovery and commerce need machine-readable trust. An answer with no provenance is worthless to an agent that has to defend it.",
+      },
+      {
+        h: "The FDI answer",
+        p: "Expose your corpus through a verifiable interface built on the open Model Context Protocol (MCP), so every answer carries its source, tier, and confidence.",
+      },
+      {
+        h: "The proof",
+        p: "Top Call grades every source into an authority tier and exposes the reads as MCP tools, so an agent can call them and get answers stamped source, tier, and confidence.",
+      },
+    ],
+  },
+};
+
+function conceptPage(key) {
+  const c = CONCEPTS[key];
+  const source = `series-${c.slug}`;
+  const body = `
+<section class="hero concept-hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">${c.eyebrow} · As of ${AS_OF}</span>
+      <h1>${c.h1}, <em>owned</em>.</h1>
+      <p class="lede">${c.lede}</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/field-guide">Read the Field Guide</a>
+      </div>
+      <div class="hero-tags"><a href="/aggregated"${key === "aggregated" ? ' aria-current="page"' : ""}><b>Aggregated</b></a><a href="/decentralized"${key === "decentralized" ? ' aria-current="page"' : ""}><b>Decentralized</b></a><a href="/autonomous"${key === "autonomous" ? ' aria-current="page"' : ""}><b>Autonomous</b></a></div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="definition"><b>What is a ${c.h1.toLowerCase()} market?</b> ${c.definition}</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section">
+  <div class="wrap">
+    <div class="grid cols-3">
+      ${c.points
+        .map(
+          (pt) =>
+            `<article class="card"><h3>${pt.h}</h3><p>${pt.p}</p></article>`,
+        )
+        .join("\n      ")}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="cta" id="waitlist">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
+      <h2>Get the ${c.h1} field guide the day it ships.</h2>
+      <p>Drop your email to follow the series. We'll reach out when the ${c.h1} field guide and its working code are live. No spam.</p>
+      <form class="waitlist js-capture" data-source="${source}" data-subject="FDI series: ${c.h1}" data-success="You're on the list. We'll reach out as the series ships." data-mail-body="Please add me to the FDI ${c.h1} series waitlist." novalidate>
+        <label class="sr-only" for="cp-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="cp-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: `${c.h1} Markets | The FDI Series`,
+    description: c.definition,
+    active: "series",
+    jsonLd: faqJsonLd([
+      { q: `What is a ${c.h1.toLowerCase()} market?`, a: c.definition },
+    ]),
+    body,
+    canonical: `${SITE_URL}/${c.slug}`,
+  });
+}
+
+function seriesPage() {
+  const card = (key) => {
+    const c = CONCEPTS[key];
+    return `<article class="card"><span class="tag">${c.h1}</span><h3>${c.h1} markets</h3><p>${c.lede}</p><div class="card-foot"><a class="link-arrow" href="/${c.slug}">Read the one-pager <span class="arrow">→</span></a></div></article>`;
+  };
+  const body = `
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">The series · As of ${AS_OF}</span>
+      <h1>Aggregated. Decentralized. <em>Autonomous.</em></h1>
+      <p class="lede">Three market structures are reshaping discovery, knowledge, and machine-to-machine commerce. The FDI series maps each one and ships the working code that proves the thesis.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="/field-guide">Read the Field Guide <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#waitlist">Follow the series</a>
+      </div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Three market structures</span>
+      <h2>One thesis, three field guides.</h2>
+      <p>Each guide maps a market structure and grounds it in a real, working build you can pressure-test.</p>
+    </div>
+    <div class="grid cols-3">
+      ${card("aggregated")}
+      ${card("decentralized")}
+      ${card("autonomous")}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="cta" id="waitlist">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
+      <h2>Follow the FDI series.</h2>
+      <p>Drop your email and we'll reach out as each field guide and its working code ship. No spam.</p>
+      <form class="waitlist js-capture" data-source="series" data-subject="FDI series waitlist" data-success="You're on the list. We'll reach out as the series ships." data-mail-body="Please add me to the FDI series waitlist." novalidate>
+        <label class="sr-only" for="series-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="series-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: "The FDI Series | Aggregated, Decentralized, Autonomous",
+    description:
+      "The FDI series maps three market structures reshaping discovery, knowledge, and machine-to-machine commerce: aggregated, decentralized, and autonomous, each grounded in working code.",
+    active: "series",
+    body,
+    canonical: `${SITE_URL}/series`,
+  });
+}
+
+/* Plain-text guide for AI crawlers and LLMs (served at /llms.txt). */
+function llmsTxt() {
+  return `# False Dawn Industries (FDI)
+
+> False Dawn Industries builds owned marketing systems for aggregated, decentralized, and autonomous markets: a persistent identity and corpus you can prove. As of ${AS_OF}.
+
+False Dawn Industries (FDI) publishes the Field Guide thesis and ships working products that let organizations own their place in AI-mediated markets.
+
+## Products
+- SkillFoundry (${SITE_URL}/skillfoundry): a strategic firewall for content. A plugin built on the open Model Context Protocol (MCP) that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) and returns the optimized asset plus a structured audit.
+- Top Call (${SITE_URL}/topcall): "Signal as Code." An owned radar for executive intelligence that turns graded sources into a provenance-stamped corpus, a knowledge graph, and a verifiable MCP interface.
+
+## The Field Guide
+- Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
+
+## The series
+- Aggregated markets (${SITE_URL}/aggregated): a few intermediaries set the terms of discovery; own assets that survive rule changes.
+- Decentralized markets (${SITE_URL}/decentralized): knowledge is scattered; turn it into one structured, citable knowledge graph.
+- Autonomous markets (${SITE_URL}/autonomous): agents transact; expose verifiable MCP interfaces they can trust and cite.
+
+## Notes
+- Model Context Protocol (MCP) is an open standard documented at ${MCP_URL}. FDI is not affiliated with or endorsed by Anthropic.
+- Contact: ${CONTACT}
+`;
+}
+
 function main() {
   rm(DIST);
   mkdir(DIST);
@@ -1011,9 +1381,17 @@ function main() {
   );
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
   fs.writeFileSync(path.join(DIST, "topcall.html"), topcall());
+  fs.writeFileSync(path.join(DIST, "series.html"), seriesPage());
+  fs.writeFileSync(path.join(DIST, "aggregated.html"), conceptPage("aggregated"));
+  fs.writeFileSync(
+    path.join(DIST, "decentralized.html"),
+    conceptPage("decentralized"),
+  );
+  fs.writeFileSync(path.join(DIST, "autonomous.html"), conceptPage("autonomous"));
+  fs.writeFileSync(path.join(DIST, "llms.txt"), llmsTxt());
 
   console.log(
-    `[build] wrote 4 pages, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 8 pages + llms.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 
