@@ -444,6 +444,37 @@ function skillfoundry() {
 
 <hr class="divider" />
 
+<section class="section" id="commands">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">How to run it</span>
+      <h2>Four commands. One firewall.</h2>
+      <p>Point Claude Code at the plugin (or load the <code>.mcp.json</code> connector) and route any asset — pasted text or a path to a <code>.md</code>/<code>.txt</code> file — through the gates. No backend, no glue code.</p>
+    </div>
+    <div class="cmds">
+      <div class="cmd cmd-hero">
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:strategic-audit</code><span class="cmd-tag">Hero</span></div>
+        <p>Runs the asset through all three gates in order and returns one consolidated strategic audit report — scored, ranked, with line-level rewrites you can defend to the C-suite.</p>
+      </div>
+      <div class="cmd">
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:relevance-gate</code></div>
+        <p>Runs only Gate 1 — the Market-Deficit Analyzer — scoring the asset through a Jobs-to-be-Done lens and returning its Relevance GateResult.</p>
+      </div>
+      <div class="cmd">
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:performance-gate</code></div>
+        <p>Runs only Gate 2 — the Enterprise Valuation Gate — auditing brand equity and competitive positioning and returning its Performance GateResult.</p>
+      </div>
+      <div class="cmd">
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:signal-gate</code></div>
+        <p>Runs only Gate 3 — the Adversarial Defense Matrix — checking GEO/AEO and human-signal density and returning its Algorithmic-Signal GateResult.</p>
+      </div>
+    </div>
+    <p class="cmd-eg">Example &nbsp;→&nbsp; <code>/skillfoundry:strategic-audit ./drafts/launch-post.md</code></p>
+  </div>
+</section>
+
+<hr class="divider" />
+
 <section class="section" id="pricing">
   <div class="wrap">
     <div class="section-hd">

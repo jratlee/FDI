@@ -182,6 +182,17 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; color: var(--cream); lin
 .flowline { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--faded); text-align: center; margin-top: 26px; line-height: 1.9; }
 .flowline b { color: var(--amber); }
 
+/* ---------- Commands ---------- */
+.cmds { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.cmd { border: 1px solid var(--border); border-radius: 12px; padding: 24px 26px; background: var(--surface); }
+.cmd-hero { grid-column: 1 / -1; border-color: var(--amber); }
+.cmd-hd { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.cmd .cmd-name { font-family: 'JetBrains Mono', monospace; color: var(--amber); font-size: 14px; word-break: break-word; }
+.cmd .cmd-tag { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #1a1206; background: var(--amber); border-radius: 999px; padding: 3px 9px; }
+.cmd p { color: var(--faded); font-size: 14.5px; margin: 12px 0 0; }
+.cmd-eg { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; margin-top: 24px; }
+.cmd-eg code { color: var(--amber); }
+
 /* ---------- Pricing ---------- */
 .price-anchor { color: var(--faded); font-size: 15px; margin: 0 0 26px; max-width: 52em; }
 .price-anchor b { color: var(--amber); font-weight: 600; }
@@ -231,7 +242,7 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; color: var(--cream); lin
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; gap: 40px; }
   .hero-machine { order: -1; max-width: 300px; }
-  .grid.cols-3, .grid.cols-2, .arch, .price-grid { grid-template-columns: 1fr; }
+  .grid.cols-3, .grid.cols-2, .arch, .price-grid, .cmds { grid-template-columns: 1fr; }
   .statband .wrap { grid-template-columns: 1fr; gap: 26px; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .nav-links { position: fixed; inset: 68px 0 auto 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 24px 20px; transform: translateY(-140%); transition: transform .25s ease; }
