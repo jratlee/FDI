@@ -28,6 +28,10 @@ args = "site-links"
 task = "workflow.run"
 args = "audit-report"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "site-links-outbound"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -61,6 +65,17 @@ args = "node skillfoundry/schema/validate-report.mjs"
 
 [workflows.workflow.metadata]
 isValidation = true
+
+[[workflows.workflow]]
+name = "site-links-outbound"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node site/link-check.mjs"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 5000

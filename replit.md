@@ -192,6 +192,16 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   check (which itself rebuilds), so any broken internal link, missing
   `/assets`/`/fonts` file, missing deck PDF, or wrong slide count fails the
   build and blocks the deploy instead of shipping a broken page.
+- Advisory outbound/anchor link check: `site/link-check.mjs` (workflow
+  `site-links-outbound`, npm `check:links`) scans the built `dist/` for the two
+  things the deploy gate deliberately skips: external/outbound URLs (fetched over
+  the network) and in-page `#fragment` / cross-page `/route#fragment` anchors
+  (verified against real `id`/`name` targets; PDF/asset `#view=` directives are
+  skipped). It is NOT a deploy gate and NOT a validation step: by default it only
+  reports and exits 0, so flaky third-party hosts never block a deploy. `--strict`
+  exits non-zero only on deterministic anchor failures; `--strict-external` opts
+  into failing on unreachable URLs (manual use). `site/check.mjs` remains the sole
+  authoritative deploy-blocking gate.
 - The Streamlit engine can still be run manually (`streamlit run app.py`) but is
   no longer the public/deployed surface.
 
