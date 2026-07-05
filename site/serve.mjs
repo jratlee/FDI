@@ -77,6 +77,28 @@ function clientIp(req) {
 }
 let dbReady = null;
 
+// Unguessable, single-purpose per-signup token used for self-serve deletion.
+// Opaque (hex), never derived from the email, so it cannot be guessed or used
+// to enumerate other records.
+function newUnsubToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+// Give any pre-existing rows a deletion token so they can be unsubscribed too.
+// Done in JS (per-row crypto token) to avoid depending on a DB crypto extension.
+async function backfillTokens() {
+  const { rows } = await pool.query(
+    `SELECT id FROM waitlist_signups WHERE unsub_token IS NULL`,
+  );
+  for (const r of rows) {
+    await pool.query(
+      `UPDATE waitlist_signups SET unsub_token = $1
+        WHERE id = $2 AND unsub_token IS NULL`,
+      [newUnsubToken(), r.id],
+    );
+  }
+}
+
 function ensureTable() {
   if (!pool) return Promise.resolve(false);
   if (!dbReady) {
@@ -87,8 +109,12 @@ function ensureTable() {
            email TEXT NOT NULL UNIQUE,
            source TEXT,
            created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-         )`,
+         );
+         ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS unsub_token TEXT;
+         CREATE UNIQUE INDEX IF NOT EXISTS waitlist_signups_unsub_token_uniq
+           ON waitlist_signups (unsub_token);`,
       )
+      .then(() => backfillTokens())
       .then(() => true)
       .catch((err) => {
         console.error("[waitlist] table init failed:", err.message);
@@ -183,18 +209,20 @@ async function handleWaitlist(req, res) {
   try {
     await ensureTable();
     const result = await pool.query(
-      `INSERT INTO waitlist_signups (email, source)
-       VALUES ($1, $2)
+      `INSERT INTO waitlist_signups (email, source, unsub_token)
+       VALUES ($1, $2, $3)
        ON CONFLICT (email) DO NOTHING
-       RETURNING id`,
-      [email, source],
+       RETURNING id, unsub_token`,
+      [email, source, newUnsubToken()],
     );
     const isNew = result.rowCount > 0;
     sendJson(res, 200, { ok: true, duplicate: !isNew });
     // Best-effort welcome/notification email for genuinely new signups only.
     // Runs after the response is sent and never blocks or fails the signup.
     if (isNew) {
-      sendSignupEmails({ email, source }).catch((err) =>
+      const token = result.rows[0].unsub_token;
+      const unsubscribeUrl = `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(token)}`;
+      sendSignupEmails({ email, source, unsubscribeUrl }).catch((err) =>
         console.error("[waitlist] signup email error:", err.message),
       );
     }
@@ -202,6 +230,115 @@ async function handleWaitlist(req, res) {
     console.error("[waitlist] insert failed:", err.message);
     sendJson(res, 500, { ok: false, error: "server_error" });
   }
+}
+
+/* ---------------- self-serve deletion (unsubscribe) ---------------- */
+// Standalone, on-brand, mobile-first confirmation page. Uses the locked FDI
+// palette (Signal Orange is reserved for the logo mark, so accents are amber).
+function unsubscribeShell(body) {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Manage your email preferences — False Dawn Industries</title>
+<style>
+  :root{color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:#0D0B08;color:#F0E8D5;font-family:'Inter',system-ui,-apple-system,sans-serif;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;line-height:1.6}
+  .card{width:100%;max-width:520px;background:#15120c;border:1px solid #2a2418;border-radius:16px;padding:32px 24px}
+  .eyebrow{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.72rem;letter-spacing:.14em;
+    text-transform:uppercase;color:#A8997B;margin:0 0 12px}
+  h1{font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.5rem;line-height:1.25;margin:0 0 14px}
+  p{font-size:1rem;margin:0 0 16px;color:#F0E8D5}
+  .muted{color:#A8997B;font-size:.95rem}
+  .btn{display:inline-block;min-height:44px;line-height:44px;padding:0 20px;background:#FFB12B;color:#0D0B08;
+    font-weight:600;text-decoration:none;border:0;border-radius:10px;cursor:pointer;font-size:1rem;font-family:inherit}
+  .btn.ghost{background:transparent;color:#FFB12B;border:1px solid #2a2418;line-height:42px}
+  a{color:#FFB12B}
+  a:focus-visible,.btn:focus-visible,button:focus-visible{outline:2px solid #FFCB6B;outline-offset:3px}
+  form{margin:0}
+  @media (min-width:600px){ .card{padding:40px} h1{font-size:1.75rem} }
+</style></head><body><main class="card">${body}</main></body></html>`;
+}
+
+function unsubscribeRender(res, status, body) {
+  res.writeHead(status, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store",
+  });
+  res.end(unsubscribeShell(body));
+}
+
+// Tokens are 64 hex chars; accept a small range defensively without querying on
+// obviously malformed input.
+const UNSUB_TOKEN_RE = /^[a-f0-9]{32,128}$/i;
+
+async function handleUnsubscribe(req, res, urlObj) {
+  const back = `<p class="muted" style="margin-top:22px"><a href="/">Return to False Dawn Industries</a></p>`;
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("405 Method Not Allowed");
+    return;
+  }
+  if (!pool) {
+    unsubscribeRender(
+      res,
+      503,
+      `<p class="eyebrow">Email preferences</p><h1>Temporarily unavailable</h1><p class="muted">We can't process this request right now. Please try again later.</p>${back}`,
+    );
+    return;
+  }
+
+  let token = (urlObj.searchParams.get("token") || "").trim();
+  if (req.method === "POST") {
+    // Supports both an in-page form POST and RFC 8058 one-click unsubscribe.
+    try {
+      const raw = await readBody(req);
+      const params = new URLSearchParams(raw);
+      token = (params.get("token") || token).trim();
+    } catch {
+      // fall through with whatever query token we have
+    }
+  }
+
+  let removed = false;
+  if (UNSUB_TOKEN_RE.test(token)) {
+    try {
+      await ensureTable();
+      // Hard delete, scoped to this token only — a token can never touch
+      // another person's record. The email is never read back or logged.
+      const result = await pool.query(
+        `DELETE FROM waitlist_signups WHERE unsub_token = $1 RETURNING id`,
+        [token],
+      );
+      removed = result.rowCount > 0;
+    } catch (err) {
+      console.error("[unsubscribe] delete failed:", err.message);
+      unsubscribeRender(
+        res,
+        500,
+        `<p class="eyebrow">Email preferences</p><h1>Something went wrong</h1><p class="muted">We couldn't process this request. Please try again later.</p>${back}`,
+      );
+      return;
+    }
+  }
+
+  // RFC 8058 one-click POST expects a 200 regardless.
+  if (removed) {
+    unsubscribeRender(
+      res,
+      200,
+      `<p class="eyebrow">Email preferences</p><h1>You have been removed</h1><p>Your email address has been deleted from our list. You will no longer receive messages from False Dawn Industries.</p><p class="muted">Changed your mind? You can sign up again any time.</p>${back}`,
+    );
+    return;
+  }
+  // Generic response for invalid/expired/already-used tokens. Reveals nothing
+  // about whether any given email exists on the list.
+  unsubscribeRender(
+    res,
+    req.method === "POST" ? 200 : 400,
+    `<p class="eyebrow">Email preferences</p><h1>Link no longer active</h1><p>This link is invalid or has already been used. If you were on our list, you may already have been removed.</p>${back}`,
+  );
 }
 
 /* ---------------- admin: view + export signups ---------------- */
@@ -275,6 +412,18 @@ function adminShell(body) {
   label{display:block;font-size:.85rem;color:#A8997B;margin:0 0 6px}
   input{width:100%;box-sizing:border-box;background:#15120c;border:1px solid #2a2418;border-radius:8px;color:#F0E8D5;padding:10px 12px;font-size:.95rem;margin:0 0 14px}
   .err{color:#E0920C;font-size:.85rem;margin:0 0 14px}
+  .btn:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #FFCB6B;outline-offset:2px}
+  .notice{border-radius:8px;padding:10px 14px;font-size:.9rem;margin:0 0 20px}
+  .notice.ok{background:#15120c;border:1px solid #E0920C;color:#FFCB6B}
+  .notice.warn{background:#15120c;border:1px solid #2a2418;color:#A8997B}
+  .ops{margin-top:40px;padding-top:28px;border-top:1px solid #2a2418}
+  .ops h2{font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.15rem;margin:0 0 18px}
+  .ops-form{margin:0 0 20px}
+  .ops-form label{margin:0 0 8px}
+  .ops-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+  .ops-row input{flex:1 1 220px;margin:0}
+  .btn.ghost{background:transparent;color:#FFB12B;border:1px solid #2a2418}
+  .btn.danger{background:transparent;color:#E0920C;border:1px solid #E0920C}
 </style></head><body><div class="wrap">${body}</div></body></html>`;
 }
 
@@ -364,6 +513,47 @@ async function handleAdmin(req, res, urlObj) {
     return;
   }
 
+  // Delete a single signup by email (support / right-to-erasure request).
+  if (req.method === "POST" && pathname === "/admin/waitlist/delete") {
+    if (!isAdmin(req, urlObj)) {
+      loginPage(res, 401);
+      return;
+    }
+    let email = "";
+    try {
+      const raw = await readBody(req);
+      const params = new URLSearchParams(raw);
+      email = String(params.get("email") || "").trim().toLowerCase();
+    } catch {
+      res.writeHead(303, { Location: "/admin/waitlist?msg=bad", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    let deleted = 0;
+    if (email) {
+      try {
+        await ensureTable();
+        const result = await pool.query(
+          `DELETE FROM waitlist_signups WHERE email = $1 RETURNING id`,
+          [email],
+        );
+        deleted = result.rowCount;
+      } catch (err) {
+        // Never log the email itself.
+        console.error("[admin] delete failed:", err.message);
+        res.writeHead(303, { Location: "/admin/waitlist?msg=error", "Cache-Control": "no-store" });
+        res.end();
+        return;
+      }
+    }
+    res.writeHead(303, {
+      Location: `/admin/waitlist?msg=${deleted ? "deleted" : "notfound"}`,
+      "Cache-Control": "no-store",
+    });
+    res.end();
+    return;
+  }
+
   if (req.method !== "GET") {
     res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("405 Method Not Allowed");
@@ -417,6 +607,59 @@ async function handleAdmin(req, res, urlObj) {
     return;
   }
 
+  // Single-record data-access export (right-to-access request).
+  if (pathname === "/admin/waitlist/record") {
+    const email = String(urlObj.searchParams.get("email") || "")
+      .trim()
+      .toLowerCase();
+    if (!email) {
+      res.writeHead(303, {
+        Location: "/admin/waitlist?msg=needemail",
+        "Cache-Control": "no-store",
+      });
+      res.end();
+      return;
+    }
+    let row;
+    try {
+      await ensureTable();
+      const result = await pool.query(
+        `SELECT email, source, created_at
+           FROM waitlist_signups
+          WHERE email = $1`,
+        [email],
+      );
+      row = result.rows[0];
+    } catch (err) {
+      console.error("[admin] record query failed:", err.message);
+      res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("500 Server Error");
+      return;
+    }
+    if (!row) {
+      res.writeHead(303, {
+        Location: "/admin/waitlist?msg=notfound",
+        "Cache-Control": "no-store",
+      });
+      res.end();
+      return;
+    }
+    const ts =
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at);
+    // Deliberately omits unsub_token — that is a credential, not user data.
+    const record = { email: row.email, source: row.source, created_at: ts };
+    const stamp = new Date().toISOString().slice(0, 10);
+    res.writeHead(200, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Disposition": `attachment; filename="signup-record-${stamp}.json"`,
+      "Cache-Control": "no-store",
+    });
+    res.end(JSON.stringify(record, null, 2) + "\n");
+    return;
+  }
+
   // Table view
   if (pathname === "/admin/waitlist") {
     let rows;
@@ -445,14 +688,44 @@ async function handleAdmin(req, res, urlObj) {
     const table = rows.length
       ? `<table><thead><tr><th>Email</th><th>Source</th><th>Signed up</th></tr></thead><tbody>${bodyRows}</tbody></table>`
       : `<p class="empty">No signups yet.</p>`;
+    const MSGS = {
+      deleted: ["ok", "Signup deleted."],
+      notfound: ["warn", "No matching signup found."],
+      needemail: ["warn", "Enter an email address first."],
+      bad: ["warn", "Bad request."],
+      error: ["warn", "Something went wrong. Try again."],
+    };
+    const msgKey = urlObj.searchParams.get("msg") || "";
+    const msg = MSGS[msgKey]
+      ? `<p class="notice ${MSGS[msgKey][0]}">${esc(MSGS[msgKey][1])}</p>`
+      : "";
+    const dataRights = `<section class="ops">
+  <h2>Data rights (support)</h2>
+  <form class="ops-form" method="POST" action="/admin/waitlist/delete" onsubmit="return confirm('Permanently delete this signup?')">
+    <label for="del-email">Delete a signup by email (erasure request)</label>
+    <div class="ops-row">
+      <input id="del-email" name="email" type="email" placeholder="person@example.com" autocomplete="off" required>
+      <button class="btn danger" type="submit">Delete</button>
+    </div>
+  </form>
+  <form class="ops-form" method="GET" action="/admin/waitlist/record">
+    <label for="rec-email">Export one person's record (access request)</label>
+    <div class="ops-row">
+      <input id="rec-email" name="email" type="email" placeholder="person@example.com" autocomplete="off" required>
+      <button class="btn ghost" type="submit">Export JSON</button>
+    </div>
+  </form>
+</section>`;
     const body = `<p class="eyebrow">Growth Cartography — Internal</p>
 <h1>Waitlist signups</h1>
+${msg}
 <div class="bar">
   <a class="btn" href="/admin/waitlist.csv">Download CSV</a>
   <span class="count">${rows.length} signup${rows.length === 1 ? "" : "s"}</span>
   <a href="/admin/logout" style="margin-left:auto">Log out</a>
 </div>
-${table}`;
+${table}
+${dataRights}`;
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
@@ -912,6 +1185,17 @@ const server = http.createServer((req, res) => {
   }
   if (rawPath === "/api/waitlist") {
     handleWaitlist(req, res);
+    return;
+  }
+  if (rawPath === "/unsubscribe") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleUnsubscribe(req, res, urlObj).catch((err) => {
+      console.error("[unsubscribe] handler error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
     return;
   }
   if (rawPath === "/api/checkout") {

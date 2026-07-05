@@ -58,7 +58,10 @@ function copyFor(source) {
   return SOURCES[source] || SOURCES.site;
 }
 
-function subscriberHtml({ heading, lead, product }) {
+function subscriberHtml({ heading, lead, product, unsubscribeUrl }) {
+  const unsub = unsubscribeUrl
+    ? `<br>Don't want these emails? <a href="${unsubscribeUrl}" style="color:${C.amber};">Remove me from the list</a>.`
+    : "";
   return `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:32px 16px;">
   <tr><td align="center">
@@ -72,14 +75,17 @@ function subscriberHtml({ heading, lead, product }) {
         <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:${C.faded};">\u2014 False Dawn Industries</p>
       </td></tr>
     </table>
-    <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:${C.faded};">You received this because you signed up for ${product} at False Dawn Industries.</p>
+    <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.6;color:${C.faded};">You received this because you signed up for ${product} at False Dawn Industries.${unsub}</p>
   </td></tr>
 </table>
 </body></html>`;
 }
 
-function subscriberText({ heading, lead, product }) {
-  return `${heading}\n\n${lead}\n\n\u2014 False Dawn Industries\n\nYou received this because you signed up for ${product} at False Dawn Industries.`;
+function subscriberText({ heading, lead, product, unsubscribeUrl }) {
+  const unsub = unsubscribeUrl
+    ? `\n\nDon't want these emails? Remove yourself from the list: ${unsubscribeUrl}`
+    : "";
+  return `${heading}\n\n${lead}\n\n\u2014 False Dawn Industries\n\nYou received this because you signed up for ${product} at False Dawn Industries.${unsub}`;
 }
 
 async function send(message) {
@@ -193,8 +199,8 @@ export async function sendEntitlementEmail({
 
 // Fire-and-forget: send the subscriber confirmation and (optionally) a team
 // notification. Never throws — email is best-effort and must not break signup.
-export async function sendSignupEmails({ email, source }) {
-  const copy = copyFor(source);
+export async function sendSignupEmails({ email, source, unsubscribeUrl }) {
+  const copy = { ...copyFor(source), unsubscribeUrl };
 
   if (!FROM) {
     console.warn(
@@ -210,6 +216,16 @@ export async function sendSignupEmails({ email, source }) {
         html: subscriberHtml(copy),
         text: subscriberText(copy),
         ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+        // One-click unsubscribe (RFC 8058) so mailbox providers surface a
+        // native "Unsubscribe" control alongside the in-body link.
+        ...(unsubscribeUrl
+          ? {
+              headers: {
+                "List-Unsubscribe": `<${unsubscribeUrl}>`,
+                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+              },
+            }
+          : {}),
       });
     } catch (err) {
       console.error("[email] subscriber confirmation failed:", err.message);

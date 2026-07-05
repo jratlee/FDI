@@ -36,11 +36,22 @@ const EXPECTED_SLIDES = 13;
 const errors = [];
 const fail = (msg) => errors.push(msg);
 
+/* Server-rendered dynamic routes that have no file in dist/ but are valid
+ * targets (handled directly by serve.mjs). Referenced e.g. from emails. */
+const DYNAMIC_ROUTES = new Set([
+  "/unsubscribe",
+  "/api/waitlist",
+  "/admin/waitlist",
+  "/admin/waitlist.csv",
+]);
+
 /* Resolve a site path to a file on disk, mirroring serve.mjs routing:
  *  - trailing "/" -> index.html
  *  - extensionless -> try "<path>.html"
  * Returns the resolved absolute path, or null if nothing matches. */
 function resolveFile(urlPath) {
+  const bare = urlPath.split("?")[0].split("#")[0];
+  if (DYNAMIC_ROUTES.has(bare)) return bare;
   let p;
   try {
     p = decodeURIComponent(urlPath.split("?")[0].split("#")[0]);

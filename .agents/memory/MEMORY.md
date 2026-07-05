@@ -2,3 +2,4 @@
 - [Creative export pipeline](creative-export-pipeline.md) — render FDI ad/channel HTML to exact-dim PNGs headlessly with Nix chromium + puppeteer-core via the vite URL.
 - [Top Call owned system & site forms](topcall-owned-system.md) — "Signal as Code" paid sibling to Skillfoundry (corpus/graph/MCP, compounding tiers); generic `js-capture` data-attr email forms.
 - [Skillfoundry commerce (Stripe)](skillfoundry-commerce.md) — env-secret Stripe on the plain-http site; DB-enforced idempotency (Pile pattern), gated download outside dist/, 402 subscription gate, graceful 503 degradation.
+- [Postgres parse-time table references](pg-parse-time-table-refs.md) — a to_regclass runtime guard can't protect a statement that names a missing table; check existence in JS first, then build SQL conditionally.

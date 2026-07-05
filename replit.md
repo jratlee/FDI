@@ -81,6 +81,23 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   optional `data-download` (success triggers a file download instead of a "you're
   on the list" message), and a sibling `.form-msg` for inline status. POSTs to
   `/api/waitlist` (durable Postgres), with `mailto:` fallback on failure.
+- Self-serve deletion (data-subject rights): every `waitlist_signups` row carries
+  an unguessable per-signup `unsub_token` (64 hex chars, generated on insert;
+  pre-existing rows backfilled in `ensureTable`). The subscriber confirmation
+  email includes a one-click "Remove me from the list" link plus RFC 8058
+  `List-Unsubscribe`/`List-Unsubscribe-Post` headers pointing at
+  `/unsubscribe?token=`. `GET|POST /unsubscribe` validates the token server-side,
+  hard-deletes only that row (a token can never touch another record), and renders
+  a responsive, on-brand, `noindex` confirmation page. Invalid/used tokens get a
+  generic "link no longer active" page (never reveals whether an email exists);
+  the email is never logged. Deletion is idempotent.
+- Retention: waitlist emails are not kept forever. `site/purge.mjs` hard-deletes
+  signups older than the window that have NOT converted (converted = the email
+  appears in `skillfoundry_entitlements`; the join is skipped if that table
+  doesn't exist). Window is `WAITLIST_RETENTION_DAYS` (default 730 = ~24 months;
+  a value of 0 or below is rejected and falls back to the default as a safety).
+  Run `node site/purge.mjs` (or `--dry-run` to report the count only); logs counts
+  and the window only, never emails. Safe to schedule.
 - `serve.mjs` is a Node static server (correct MIME types, long-cache headers
   for `/fonts` + `/assets`, clean extensionless routing) plus a single dynamic
   route: `POST /api/waitlist` validates the email, sanitizes the optional
@@ -120,7 +137,12 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   newest first) with a "Download CSV" link. `GET /admin/waitlist.csv` streams the
   same list as a dated CSV attachment. Auth accepts the cookie, a `Bearer` token,
   or a `?token=` query param. `/admin/logout` clears the cookie. Returns `503` if
-  `WAITLIST_ADMIN_TOKEN` is unset. Pages carry `noindex, nofollow`.
+  `WAITLIST_ADMIN_TOKEN` is unset. Pages carry `noindex, nofollow`. The view also
+  has a "Data rights" section: `POST /admin/waitlist/delete` (authed) hard-deletes
+  one signup by email for erasure requests (redirects back with a generic status,
+  never logs the email), and `GET /admin/waitlist/record?email=` streams a single
+  person's record as a JSON attachment for a data-access request (email, source,
+  created_at only; the `unsub_token` is treated as a credential and excluded).
 - Build: `node site/build.mjs`. Serve: `node site/serve.mjs` (PORT env, default 5000).
 - The site reuses the locked FDI brand tokens/fonts but has its own scrollable
   stylesheet (`site/src/site.css`) — it does NOT import the ad system's fixed
