@@ -61,8 +61,6 @@ function nav(active) {
     <nav class="nav-links" id="nav-links">
       ${link("/field-guide", "Field Guide", "field-guide")}
       ${link("/skillfoundry", "SkillFoundry", "skillfoundry")}
-      ${link("/topcall", "Top Call", "topcall")}
-      ${link("/roadmap", "Roadmap", "roadmap")}
       ${link("/#about", "About", "about")}
       <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the waitlist</a>
     </nav>
@@ -83,9 +81,7 @@ function footer() {
         <ul>
           <li><a href="/field-guide">Field Guide</a></li>
           <li><a href="/skillfoundry">SkillFoundry</a></li>
-          <li><a href="/topcall">Top Call</a></li>
           <li><a href="/series">The Series</a></li>
-          <li><a href="/roadmap">Roadmap</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
       </div>
@@ -106,7 +102,7 @@ function footer() {
 </footer>`;
 }
 
-function page({ title, description, active, body, canonical, jsonLd }) {
+function page({ title, description, active, body, canonical, jsonLd, noindex }) {
   const ld = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])
     .map(
       (obj) =>
@@ -119,7 +115,7 @@ function page({ title, description, active, body, canonical, jsonLd }) {
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>${title}</title>
-<meta name="description" content="${description}" />
+${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<meta name="description" content="${description}" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="${title}" />
 <meta property="og:description" content="${description}" />
@@ -255,12 +251,6 @@ function home() {
         <h3>SkillFoundry</h3>
         <p>A strategic firewall for your content. Route any asset through three opinionated Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) as a plugin built on the open Model Context Protocol (MCP). Strategy as code.</p>
         <div class="card-foot"><a class="link-arrow" href="/skillfoundry">See how it works <span class="arrow">→</span></a></div>
-      </article>
-      <article class="card featured">
-        <span class="pill">Product · Signal as Code</span>
-        <h3>Top Call</h3>
-        <p>The owned radar for executive intelligence. Every source you grade is written into a provenance-stamped corpus and knowledge graph that compounds, queryable through a verifiable MCP interface. Free prompt-pack in, owned system out.</p>
-        <div class="card-foot"><a class="link-arrow" href="/topcall">See how it works <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
         <span class="tag">Field Guide 001</span>
@@ -1556,7 +1546,6 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 
 ## Products
 - SkillFoundry (${SITE_URL}/skillfoundry): a strategic firewall for content. A plugin built on the open Model Context Protocol (MCP) that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) and returns the optimized asset plus a structured audit.
-- Top Call (${SITE_URL}/topcall): "Signal as Code." An owned radar for executive intelligence that turns graded sources into a provenance-stamped corpus, a knowledge graph, and a verifiable MCP interface.
 
 ## The Field Guide
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
@@ -1570,6 +1559,47 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 - Model Context Protocol (MCP) is an open standard documented at ${MCP_URL}. FDI is not affiliated with or endorsed by Anthropic.
 - Contact: ${CONTACT}
 `;
+}
+
+/* ---------------- temporary page gating ----------------
+ * Some pages are built but held back from public view pending review. Their
+ * full builders (topcall(), roadmapPage()) stay intact above so they can be
+ * switched back on by removing the route from GATED. While gated, the route is
+ * still emitted (so links/routes resolve) but renders a neutral, noindex
+ * holding page with no gated detail. */
+const GATED = new Set(["topcall", "roadmap"]);
+
+function holdingPage({ title, active }) {
+  const body = `
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">False Dawn Industries</span>
+      <h1>Coming back <em>soon</em>.</h1>
+      <p class="lede">This page is being refined and is temporarily offline. It will be back shortly. In the meantime, explore our work below or join the waitlist and we will let you know when it returns.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the waitlist <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/">Back to home</a>
+      </div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>`;
+  return page({
+    title,
+    description:
+      "This False Dawn Industries page is being refined and is temporarily offline. It will be back soon.",
+    active,
+    body,
+    canonical: `${SITE_URL}/${active}`,
+    noindex: true,
+  });
+}
+
+function renderRoute(active, builder) {
+  return GATED.has(active)
+    ? holdingPage({ title: "Coming soon | False Dawn Industries", active })
+    : builder();
 }
 
 function main() {
@@ -1591,7 +1621,7 @@ function main() {
     fieldGuide({ ...parsed, bodyHtml }, slideFiles),
   );
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
-  fs.writeFileSync(path.join(DIST, "topcall.html"), topcall());
+  fs.writeFileSync(path.join(DIST, "topcall.html"), renderRoute("topcall", topcall));
   fs.writeFileSync(path.join(DIST, "series.html"), seriesPage());
   fs.writeFileSync(path.join(DIST, "aggregated.html"), conceptPage("aggregated"));
   fs.writeFileSync(
@@ -1599,7 +1629,7 @@ function main() {
     conceptPage("decentralized"),
   );
   fs.writeFileSync(path.join(DIST, "autonomous.html"), conceptPage("autonomous"));
-  fs.writeFileSync(path.join(DIST, "roadmap.html"), roadmapPage());
+  fs.writeFileSync(path.join(DIST, "roadmap.html"), renderRoute("roadmap", roadmapPage));
   fs.writeFileSync(path.join(DIST, "llms.txt"), llmsTxt());
 
   console.log(
