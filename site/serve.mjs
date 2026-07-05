@@ -2,6 +2,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import dns from "node:dns/promises";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { RateLimiterMemory } from "rate-limiter-flexible";
@@ -44,9 +45,15 @@ const waitlistLimiter = new RateLimiterMemory({
   blockDuration: 60 * 60, // stay blocked for an hour once exceeded
 });
 
-// Disposable / throwaway email domains we don't want on the list. Not
-// exhaustive — a light guard against the most common junk providers.
-const DISPOSABLE_DOMAINS = new Set([
+// Disposable / throwaway email domains we don't want on the list.
+//
+// The blocklist is backed by a large, community-maintained public list that is
+// refreshed by `site/refresh-disposable-domains.mjs` into a bundled data file
+// (`disposable-domains.txt`). We load that file at startup and always merge in
+// the hardcoded CORE baseline, so the guard stays effective as new throwaway
+// providers appear without touching this code, and never regresses below the
+// known-bad core even if the bundled file is missing.
+const CORE_DISPOSABLE_DOMAINS = [
   "mailinator.com",
   "guerrillamail.com",
   "guerrillamail.info",
@@ -67,7 +74,67 @@ const DISPOSABLE_DOMAINS = new Set([
   "spam4.me",
   "tempinbox.com",
   "emailondeck.com",
-]);
+];
+
+function loadDisposableDomains() {
+  const set = new Set(CORE_DISPOSABLE_DOMAINS);
+  try {
+    const file = path.join(__dirname, "disposable-domains.txt");
+    const text = fs.readFileSync(file, "utf8");
+    for (const raw of text.split(/\r?\n/)) {
+      const line = raw.trim().toLowerCase();
+      if (line && !line.startsWith("#")) set.add(line);
+    }
+  } catch {
+    console.warn(
+      "[waitlist] disposable-domains.txt not found; using core baseline only. " +
+        "Run `node site/refresh-disposable-domains.mjs` to populate it.",
+    );
+  }
+  return set;
+}
+
+const DISPOSABLE_DOMAINS = loadDisposableDomains();
+console.log(`[waitlist] disposable-domain blocklist: ${DISPOSABLE_DOMAINS.size} domains`);
+
+// Optional MX-record check: verify the domain actually accepts mail before
+// accepting a signup. Opt-in via WAITLIST_MX_CHECK=1 (a DNS lookup adds latency
+// to the signup path). Deliberately fails OPEN: transient DNS errors or
+// timeouts accept the signup, so we never reject a legitimate address over a
+// flaky lookup. We only reject when the domain authoritatively does not exist
+// or publishes no way to receive mail. Results are cached to spare repeat work.
+const MX_CHECK_ENABLED = /^(1|true|yes)$/i.test(process.env.WAITLIST_MX_CHECK || "");
+const mxCache = new Map(); // domain -> { ok: boolean, at: number }
+const MX_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+
+async function domainAcceptsMail(domain) {
+  if (!MX_CHECK_ENABLED) return true;
+  const cached = mxCache.get(domain);
+  if (cached && Date.now() - cached.at < MX_CACHE_TTL_MS) return cached.ok;
+
+  let ok = true; // fail open by default
+  try {
+    const mx = await dns.resolveMx(domain);
+    if (mx && mx.length > 0) {
+      ok = true;
+    } else {
+      // No MX records: a host with an A/AAAA record can still receive mail
+      // (implicit MX), so only reject when there's no address record either.
+      try {
+        await dns.lookup(domain);
+        ok = true;
+      } catch {
+        ok = false;
+      }
+    }
+  } catch (err) {
+    // ENOTFOUND / NXDOMAIN = the domain does not exist -> reject. Any other
+    // error (timeout, SERVFAIL, network) -> fail open and accept.
+    ok = !(err && (err.code === "ENOTFOUND" || err.code === "NXDOMAIN"));
+  }
+  mxCache.set(domain, { ok, at: Date.now() });
+  return ok;
+}
 
 function clientIp(req) {
   // The site runs behind Replit's proxy, so the real client IP is in
@@ -203,6 +270,17 @@ async function handleWaitlist(req, res) {
       ok: false,
       error: "disposable_email",
       message: "Please use a permanent email address.",
+    });
+    return;
+  }
+  // Optional deliverability check: reject only domains that authoritatively
+  // cannot receive mail. Fails open, so legitimate addresses are never blocked
+  // by a transient DNS hiccup.
+  if (!(await domainAcceptsMail(domain))) {
+    sendJson(res, 422, {
+      ok: false,
+      error: "undeliverable_email",
+      message: "That email domain can't receive mail. Please check the address.",
     });
     return;
   }

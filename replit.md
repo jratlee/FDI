@@ -91,6 +91,19 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   a responsive, on-brand, `noindex` confirmation page. Invalid/used tokens get a
   generic "link no longer active" page (never reveals whether an email exists);
   the email is never logged. Deletion is idempotent.
+- Spam / bot defense on signup: a hidden `company` honeypot field, a per-IP
+  rate limit, and a disposable-email-domain blocklist. The blocklist is NOT a
+  hardcoded ~20-entry set anymore: `serve.mjs` loads a large, community-
+  maintained list from the bundled `site/disposable-domains.txt` at startup and
+  always merges in a `CORE_DISPOSABLE_DOMAINS` baseline (so it degrades to the
+  known-bad core if the file is missing). Refresh the bundled list with `node
+  site/refresh-disposable-domains.mjs` (`--dry-run` to preview); it fetches the
+  public disposable-email-domains blocklist (override with
+  `DISPOSABLE_DOMAINS_URL`), refuses to write a suspiciously small result, and
+  is safe to schedule. Optional deliverability gate: set `WAITLIST_MX_CHECK=1`
+  to also reject domains that authoritatively can't receive mail (MX then A/AAAA
+  lookup, 6h cache); it fails OPEN so transient DNS errors never block a real
+  address.
 - Retention: waitlist emails are not kept forever. `site/purge.mjs` hard-deletes
   signups older than the window that have NOT converted (converted = the email
   appears in `skillfoundry_entitlements`; the join is skipped if that table
