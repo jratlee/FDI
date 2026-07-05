@@ -1,6 +1,7 @@
 import { marked } from "marked";
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -347,7 +348,13 @@ function skillfoundry() {
       <div class="out"><div class="lbl">${outLbl}</div><div class="val">${outVal}</div></div>
     </article>`;
 
-  const tier = (name, title, model, price, feats, mid) => `
+  const tier = (name, title, model, price, feats, mid, cta) => {
+    const btnClass = mid ? "btn-primary" : "btn-ghost";
+    const foot = cta && cta.tier
+      ? `<button type="button" class="btn ${btnClass} js-buy" data-tier="${cta.tier}" data-fallback="#waitlist">${cta.label} <span class="arrow">→</span></button>
+         <p class="form-msg js-buy-msg" role="status" aria-live="polite"></p>`
+      : `<a class="btn ${btnClass}" href="#waitlist">Join the waitlist</a>`;
+    return `
     <article class="tier${mid ? " mid" : ""}">
       ${mid ? '<span class="pill">Most popular</span>' : ""}
       <span class="tname">${name}</span>
@@ -360,8 +367,9 @@ function skillfoundry() {
       ${price.note ? `<p class="tprice-note">${price.note}</p>` : ""}
       <p class="model">${model}</p>
       <ul>${feats.map((f) => `<li>${f}</li>`).join("")}</ul>
-      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Join the waitlist</a></div>
+      <div class="tier-foot">${foot}</div>
     </article>`;
+  };
 
   const body = `
 <section class="hero">
@@ -464,6 +472,7 @@ function skillfoundry() {
           "<code>/sf:</code> slash commands",
         ],
         false,
+        { tier: "tier1", label: "Buy now" },
       )}
       ${tier(
         "Tier 2 · Living Brain",
@@ -484,6 +493,7 @@ function skillfoundry() {
           "Team seats",
         ],
         true,
+        { tier: "tier2", label: "Subscribe" },
       )}
       ${tier(
         "Tier 3 · Advisory",
@@ -503,6 +513,7 @@ function skillfoundry() {
           "Quarterly strategy session",
         ],
         false,
+        { tier: "tier3", label: "Start retainer" },
       )}
     </div>
   </div>
@@ -826,6 +837,49 @@ const SITE_JS = `(function () {
       });
     });
   });
+
+  // Buy buttons — start Stripe Checkout for a tier. On any failure (checkout
+  // not live yet, network error) fall back to the waitlist so intent is kept.
+  var buys = document.querySelectorAll(".js-buy");
+  Array.prototype.forEach.call(buys, function (buy) {
+    var tier = buy.getAttribute("data-tier");
+    var fallback = buy.getAttribute("data-fallback") || "#waitlist";
+    var bmsg = buy.parentNode.querySelector(".js-buy-msg");
+    function setBuyMsg(text, state) {
+      if (!bmsg) return;
+      bmsg.textContent = text;
+      bmsg.classList.remove("is-ok", "is-error");
+      if (state) bmsg.classList.add(state);
+    }
+    function toWaitlist() {
+      var el = document.querySelector(fallback);
+      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      else window.location.hash = fallback;
+    }
+    buy.addEventListener("click", function () {
+      buy.disabled = true;
+      setBuyMsg("Opening secure checkout…", null);
+      fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier: tier })
+      }).then(function (res) {
+        return res.json().then(function (data) { return { status: res.status, data: data }; });
+      }).then(function (r) {
+        if (r.status === 200 && r.data && r.data.url) {
+          window.location.href = r.data.url;
+          return;
+        }
+        buy.disabled = false;
+        setBuyMsg((r.data && r.data.message) || "Checkout isn't live yet — join the waitlist below.", "is-error");
+        toWaitlist();
+      }).catch(function () {
+        buy.disabled = false;
+        setBuyMsg("Couldn't reach checkout — join the waitlist below.", "is-error");
+        toWaitlist();
+      });
+    });
+  });
 })();`;
 
 /* ---------------- build ---------------- */
@@ -867,10 +921,50 @@ function copyAssets() {
   return slideFiles;
 }
 
+// Build the gated Skillfoundry plugin package. It lives OUTSIDE dist/ (which is
+// fully public) so the only way to obtain it is a valid, active license key via
+// GET /api/skillfoundry/download. Uses the system `zip` CLI; if it's missing we
+// warn rather than fail the build (checkout/webhook still work; only the Tier 1
+// download would 503 until the package exists).
+function buildPluginZip() {
+  const srcDir = path.join(ROOT, "skillfoundry");
+  if (!fs.existsSync(srcDir)) {
+    console.warn("[build] skillfoundry/ not found — skipping plugin package");
+    return;
+  }
+  const outDir = path.join(__dirname, "private");
+  const outZip = path.join(outDir, "skillfoundry-plugin.zip");
+  mkdir(outDir);
+  rm(outZip);
+  try {
+    execFileSync(
+      "zip",
+      [
+        "-r",
+        "-q",
+        outZip,
+        "skillfoundry",
+        "-x",
+        "skillfoundry/examples/*",
+        "-x",
+        "*/node_modules/*",
+        "-x",
+        "*/.DS_Store",
+      ],
+      { cwd: ROOT, stdio: ["ignore", "ignore", "inherit"] },
+    );
+    const kb = Math.round(fs.statSync(outZip).size / 1024);
+    console.log(`[build] plugin package → ${path.relative(ROOT, outZip)} (${kb} KB)`);
+  } catch (err) {
+    console.warn("[build] plugin package build failed:", err.message);
+  }
+}
+
 function main() {
   rm(DIST);
   mkdir(DIST);
   const slideFiles = copyAssets();
+  buildPluginZip();
 
   const md = fs.readFileSync(
     path.join(EXPORTS, "linkedin-thesis-article.md"),

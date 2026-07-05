@@ -1,3 +1,4 @@
 - [FDI brand color & naming system](fdi-brand-color-system.md) — strict two-tone warm family (orange=logo only, amber accents); no teal/red; SDE demoted to "Growth Cartography" + Model/Method/Network.
 - [Creative export pipeline](creative-export-pipeline.md) — render FDI ad/channel HTML to exact-dim PNGs headlessly with Nix chromium + puppeteer-core via the vite URL.
 - [Top Call owned system & site forms](topcall-owned-system.md) — "Signal as Code" paid sibling to Skillfoundry (corpus/graph/MCP, compounding tiers); generic `js-capture` data-attr email forms.
+- [Skillfoundry commerce (Stripe)](skillfoundry-commerce.md) — env-secret Stripe on the plain-http site; DB-enforced idempotency (Pile pattern), gated download outside dist/, 402 subscription gate, graceful 503 degradation.

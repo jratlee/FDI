@@ -6,6 +6,20 @@ import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import { sendSignupEmails } from "./email.mjs";
+import {
+  TIERS,
+  CommerceError,
+  createCheckoutSession,
+  fulfillSession,
+  getEntitlementBySession,
+  constructEvent,
+  handleEvent,
+  validateKey,
+  createPortalSession,
+  getEntitlementByKey,
+  stripeConfigured,
+  storageConfigured as commerceStorage,
+} from "./commerce.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
@@ -452,6 +466,394 @@ ${table}`;
   res.end("404 Not Found");
 }
 
+/* ---------------- Skillfoundry commerce ---------------- */
+const PLUGIN_ZIP = path.join(__dirname, "private", "skillfoundry-plugin.zip");
+
+// Read the raw request body as a Buffer (needed for Stripe signature checks).
+function readRawBody(req, limit = 1024 * 1024) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    let over = false;
+    req.on("data", (chunk) => {
+      size += chunk.length;
+      if (size > limit) {
+        over = true;
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on("end", () =>
+      over ? reject(new Error("payload too large")) : resolve(Buffer.concat(chunks)),
+    );
+    req.on("error", reject);
+  });
+}
+
+function reqOrigin(req) {
+  const proto =
+    (req.headers["x-forwarded-proto"] || "").split(",")[0].trim() || "http";
+  const host = req.headers.host || `${HOST}:${PORT}`;
+  return `${proto}://${host}`;
+}
+
+async function handleCheckout(req, res) {
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method_not_allowed" });
+    return;
+  }
+  if (!stripeConfigured() || !commerceStorage()) {
+    sendJson(res, 503, {
+      ok: false,
+      error: "commerce_unavailable",
+      message: "Checkout isn't live yet. Join the waitlist and we'll email you.",
+    });
+    return;
+  }
+  let tierId;
+  try {
+    const raw = await readBody(req);
+    const parsed = raw ? JSON.parse(raw) : {};
+    tierId = String(parsed.tier || "").trim();
+  } catch {
+    sendJson(res, 400, { ok: false, error: "bad_request" });
+    return;
+  }
+  if (!TIERS[tierId]) {
+    sendJson(res, 400, { ok: false, error: "unknown_tier" });
+    return;
+  }
+  try {
+    const { url } = await createCheckoutSession({
+      tierId,
+      origin: reqOrigin(req),
+    });
+    sendJson(res, 200, { ok: true, url });
+  } catch (err) {
+    if (err instanceof CommerceError) {
+      sendJson(res, err.status, {
+        ok: false,
+        error: err.code,
+        message:
+          "Checkout isn't live yet. Join the waitlist and we'll email you.",
+      });
+      return;
+    }
+    console.error("[commerce] checkout failed:", err.message);
+    sendJson(res, 500, { ok: false, error: "server_error" });
+  }
+}
+
+async function handleStripeWebhook(req, res) {
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method_not_allowed" });
+    return;
+  }
+  const sig = req.headers["stripe-signature"];
+  if (!sig) {
+    sendJson(res, 400, { ok: false, error: "missing_signature" });
+    return;
+  }
+  let raw;
+  try {
+    raw = await readRawBody(req);
+  } catch {
+    sendJson(res, 400, { ok: false, error: "bad_request" });
+    return;
+  }
+  let event;
+  try {
+    event = constructEvent(raw, sig);
+  } catch (err) {
+    if (err instanceof CommerceError) {
+      sendJson(res, err.status, { ok: false, error: err.code });
+      return;
+    }
+    // Signature verification failed — reject.
+    console.error("[commerce] webhook signature failed:", err.message);
+    sendJson(res, 400, { ok: false, error: "invalid_signature" });
+    return;
+  }
+  try {
+    await handleEvent(event);
+    sendJson(res, 200, { received: true });
+  } catch (err) {
+    console.error("[commerce] webhook handler error:", err.message);
+    // 500 tells Stripe to retry (the ledger claim was released on failure).
+    sendJson(res, 500, { ok: false, error: "handler_error" });
+  }
+}
+
+async function handleValidate(req, res) {
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method_not_allowed" });
+    return;
+  }
+  if (!commerceStorage()) {
+    sendJson(res, 503, { ok: false, error: "storage_unavailable" });
+    return;
+  }
+  let key;
+  try {
+    const raw = await readBody(req);
+    const parsed = raw ? JSON.parse(raw) : {};
+    key = String(parsed.key || "").trim();
+  } catch {
+    sendJson(res, 400, { ok: false, error: "bad_request" });
+    return;
+  }
+  if (!key) {
+    sendJson(res, 400, { ok: false, error: "missing_key" });
+    return;
+  }
+  const result = await validateKey(key);
+  // The subscription gate is subscription-only: a Tier 1 perpetual LICENSE key
+  // must NOT pass here even when "active" — only Tier 2/3 subscription keys do.
+  const active = result.active && result.keyType === "subscription";
+  // 402 (payment required) is a clear, machine-actionable refusal for clients.
+  const status = active ? 200 : 402;
+  sendJson(res, status, {
+    ok: active,
+    active,
+    tier: result.tier || null,
+    status: result.status || "unknown",
+  });
+}
+
+// The Tier 2 protected run path. The latest gate logic stays server-side; the
+// thin client only gets a result after the subscription key validates active.
+async function handleRun(req, res) {
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method_not_allowed" });
+    return;
+  }
+  if (!commerceStorage()) {
+    sendJson(res, 503, { ok: false, error: "storage_unavailable" });
+    return;
+  }
+  let key;
+  let asset;
+  try {
+    const raw = await readBody(req);
+    const parsed = raw ? JSON.parse(raw) : {};
+    key = String(parsed.key || "").trim();
+    asset = String(parsed.asset || "").trim();
+  } catch {
+    sendJson(res, 400, { ok: false, error: "bad_request" });
+    return;
+  }
+  if (!key) {
+    sendJson(res, 400, { ok: false, error: "missing_key" });
+    return;
+  }
+  const result = await validateKey(key);
+  // Subscription-only gate: a Tier 1 perpetual LICENSE key must be refused here
+  // even if active — the server-side run path belongs to Tier 2/3 subscribers.
+  if (result.keyType && result.keyType !== "subscription") {
+    sendJson(res, 402, {
+      ok: false,
+      active: false,
+      error: "not_a_subscription",
+      message:
+        "This is a perpetual license key. The over-the-wire run requires a Living Brain (Tier 2) or Advisory (Tier 3) subscription.",
+    });
+    return;
+  }
+  if (!result.active || result.keyType !== "subscription") {
+    sendJson(res, 402, {
+      ok: false,
+      active: false,
+      error: "subscription_inactive",
+      message:
+        "This Skillfoundry subscription key is not active. Renew or update billing to continue.",
+    });
+    return;
+  }
+  // Entitlement gate passed. In this commerce-layer task the protected compute
+  // is a minimal stub (see task non-goals) — the point is that access is gated.
+  sendJson(res, 200, {
+    ok: true,
+    active: true,
+    tier: result.tier,
+    result: {
+      note: "Skillfoundry latest gate logic ran server-side (stub).",
+      assetChars: asset.length,
+      ranAt: new Date().toISOString(),
+    },
+  });
+}
+
+async function handlePortal(req, res) {
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method_not_allowed" });
+    return;
+  }
+  if (!stripeConfigured() || !commerceStorage()) {
+    sendJson(res, 503, { ok: false, error: "commerce_unavailable" });
+    return;
+  }
+  let key;
+  try {
+    const raw = await readBody(req);
+    const parsed = raw ? JSON.parse(raw) : {};
+    key = String(parsed.key || "").trim();
+  } catch {
+    sendJson(res, 400, { ok: false, error: "bad_request" });
+    return;
+  }
+  try {
+    const { url } = await createPortalSession({ key, origin: reqOrigin(req) });
+    sendJson(res, 200, { ok: true, url });
+  } catch (err) {
+    if (err instanceof CommerceError) {
+      sendJson(res, err.status, { ok: false, error: err.code });
+      return;
+    }
+    console.error("[commerce] portal failed:", err.message);
+    sendJson(res, 500, { ok: false, error: "server_error" });
+  }
+}
+
+async function handleDownload(req, res, urlObj) {
+  if (req.method !== "GET") {
+    res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("405 Method Not Allowed");
+    return;
+  }
+  const key = (urlObj.searchParams.get("key") || "").trim();
+  const row = key ? await getEntitlementByKey(key) : null;
+  const ok =
+    row && row.key_type === "license" && row.status === "active";
+  if (!ok) {
+    res.writeHead(403, {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end("403 — a valid, active Skillfoundry license key is required.");
+    return;
+  }
+  if (!fs.existsSync(PLUGIN_ZIP)) {
+    res.writeHead(503, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("503 — plugin package not built yet.");
+    return;
+  }
+  res.writeHead(200, {
+    "Content-Type": "application/zip",
+    "Content-Disposition": 'attachment; filename="skillfoundry-plugin.zip"',
+    "Cache-Control": "no-store",
+  });
+  fs.createReadStream(PLUGIN_ZIP).pipe(res);
+}
+
+function commercePage(body) {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Skillfoundry — Order confirmation | False Dawn Industries</title>
+<link rel="stylesheet" href="/site.css" />
+<style>
+  body{background:#0D0B08;color:#F0E8D5;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px 20px}
+  .card{max-width:560px;width:100%;background:#15120c;border:1px solid #2a2418;border-radius:16px;padding:40px}
+  .eyebrow{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#A8997B;margin:0 0 10px}
+  h1{font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.7rem;margin:0 0 14px;line-height:1.2}
+  p{line-height:1.6;color:#F0E8D5}
+  .muted{color:#A8997B}
+  .keybox{margin:22px 0;padding:16px 18px;background:#0D0B08;border:1px solid #2a2418;border-radius:10px}
+  .keylbl{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#A8997B;margin:0 0 6px}
+  .keyval{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:1.25rem;letter-spacing:.06em;color:#FFCB6B;word-break:break-all;margin:0}
+  .btn{display:inline-block;background:#FFB12B;color:#0D0B08;font-weight:600;text-decoration:none;padding:11px 18px;border-radius:9px;border:0;cursor:pointer;font-size:.95rem;margin:6px 8px 6px 0}
+  .btn.ghost{background:transparent;color:#FFB12B;border:1px solid #2a2418}
+  a{color:#FFB12B}
+</style></head><body><div class="card">${body}</div></body></html>`;
+}
+
+async function handleSuccess(req, res, urlObj) {
+  res.setHeader("Cache-Control", "no-store");
+  const sessionId = (urlObj.searchParams.get("session_id") || "").trim();
+  const back = `<p style="margin-top:26px"><a href="/skillfoundry">← Back to Skillfoundry</a></p>`;
+
+  if (!sessionId) {
+    res.writeHead(400, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(
+      commercePage(
+        `<p class="eyebrow">Skillfoundry</p><h1>Missing order reference</h1><p class="muted">We couldn't find a checkout session in this link.</p>${back}`,
+      ),
+    );
+    return;
+  }
+  if (!stripeConfigured() || !commerceStorage()) {
+    res.writeHead(503, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(
+      commercePage(
+        `<p class="eyebrow">Skillfoundry</p><h1>Checkout isn't live yet</h1><p class="muted">Commerce isn't configured on this deployment.</p>${back}`,
+      ),
+    );
+    return;
+  }
+
+  let outcome;
+  try {
+    outcome = await fulfillSession(sessionId);
+  } catch (err) {
+    console.error("[commerce] success fulfillment failed:", err.message);
+    // Fall back to a lookup in case the webhook already provisioned it.
+    const row = await getEntitlementBySession(sessionId).catch(() => null);
+    outcome = { paid: Boolean(row), entitlement: row, session: null };
+  }
+
+  if (!outcome.paid || !outcome.entitlement) {
+    res.writeHead(202, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(
+      commercePage(
+        `<p class="eyebrow">Skillfoundry</p><h1>Finishing your order…</h1><p class="muted">Your payment is being confirmed. Refresh this page in a moment — your key will appear here and land in your inbox.</p>${back}`,
+      ),
+    );
+    return;
+  }
+
+  const e = outcome.entitlement;
+  const isLicense = e.key_type === "license";
+  const keyLabel = isLicense ? "Your license key" : "Your subscription key";
+  const download = isLicense
+    ? `<a class="btn" href="/api/skillfoundry/download?key=${encodeURIComponent(e.key_value)}">Download the plugin</a>`
+    : "";
+  const manage = !isLicense
+    ? `<button class="btn ghost" id="manage" data-key="${esc(e.key_value)}">Manage subscription</button>`
+    : "";
+  const onboard = e.needs_onboarding
+    ? `<p class="muted" style="margin-top:18px">A strategist will reach out shortly to schedule your hands-on onboarding.</p>`
+    : "";
+  const lede = isLicense
+    ? "Thanks for your purchase. Your perpetual license key is below — keep it safe. Use it to download the plugin now or any time."
+    : "Thanks for subscribing. Your subscription key is below. The thin client sends it to our backend, which validates it before every run.";
+
+  const body = `<p class="eyebrow">Skillfoundry · Order confirmed</p>
+<h1>You're all set.</h1>
+<p>${lede}</p>
+<div class="keybox">
+  <p class="keylbl">${keyLabel}</p>
+  <p class="keyval">${esc(e.key_value)}</p>
+</div>
+${onboard}
+<div style="margin-top:8px">${download}${manage}</div>
+<p class="muted" style="margin-top:22px;font-size:.9rem">We've also emailed this to ${esc(e.email || "your inbox")}.</p>
+${back}
+<script>
+  var m=document.getElementById("manage");
+  if(m){m.addEventListener("click",function(){
+    m.disabled=true;
+    fetch("/api/portal",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({key:m.getAttribute("data-key")})})
+      .then(function(r){return r.json();})
+      .then(function(d){ if(d&&d.url){window.location.href=d.url;} else {m.disabled=false;m.textContent="Couldn't open portal — try again";}})
+      .catch(function(){m.disabled=false;m.textContent="Couldn't open portal — try again";});
+  });}
+</script>`;
+  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+  res.end(commercePage(body));
+}
+
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -510,6 +912,63 @@ const server = http.createServer((req, res) => {
   }
   if (rawPath === "/api/waitlist") {
     handleWaitlist(req, res);
+    return;
+  }
+  if (rawPath === "/api/checkout") {
+    handleCheckout(req, res).catch((err) => {
+      console.error("[commerce] checkout error:", err.message);
+      if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+  if (rawPath === "/api/stripe/webhook") {
+    handleStripeWebhook(req, res).catch((err) => {
+      console.error("[commerce] webhook error:", err.message);
+      if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+  if (rawPath === "/api/skillfoundry/validate") {
+    handleValidate(req, res).catch((err) => {
+      console.error("[commerce] validate error:", err.message);
+      if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+  if (rawPath === "/api/skillfoundry/run") {
+    handleRun(req, res).catch((err) => {
+      console.error("[commerce] run error:", err.message);
+      if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+  if (rawPath === "/api/skillfoundry/download") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleDownload(req, res, urlObj).catch((err) => {
+      console.error("[commerce] download error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
+    return;
+  }
+  if (rawPath === "/api/portal") {
+    handlePortal(req, res).catch((err) => {
+      console.error("[commerce] portal error:", err.message);
+      if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+  if (rawPath === "/skillfoundry/success") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleSuccess(req, res, urlObj).catch((err) => {
+      console.error("[commerce] success error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
     return;
   }
   if (rawPath === "/admin" || rawPath.startsWith("/admin/")) {

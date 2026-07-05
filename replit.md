@@ -30,7 +30,9 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   - `/field-guide` — the article + 3 inline visuals + inline deck viewer, deck
     PDF download, launch-bundle download, and a 13-slide thumbnail strip
   - `/skillfoundry` — three Signal-to-Value gates, Anthropic-standard modular
-    architecture, three-tier pricing ladder, and a waitlist email-capture CTA
+    architecture, three-tier pricing ladder with live Stripe checkout (Tier 1
+    "Buy now" one-time, Tier 2 "Subscribe" monthly; Tier 3 stays a waitlist CTA),
+    and a waitlist email-capture CTA
   - `/topcall` — Top Call ("Signal as Code"): a FREE prompt-pack lead magnet
     (email-capture that triggers the ZIP download), the three owned-system
     constructs (corpus / knowledge graph / MCP), Anthropic-standard architecture,
@@ -60,6 +62,32 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   `source` field (allow-listed `[a-z0-9._-]`, else `"site"`), and upserts both
   into the `waitlist_signups` Postgres table (`DATABASE_URL`) with `ON CONFLICT
   DO NOTHING`. Uses the `pg` client; returns `503` if no `DATABASE_URL` is set.
+- Skillfoundry commerce (Stripe) lives in `site/commerce.mjs` (self-contained:
+  own `pg` pool + lazy Stripe client, so it can later move to a standalone
+  backend). All credentials come from **env secrets**, never the Replit
+  connector: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, and
+  `SKILLFOUNDRY_TIER{1,2,3}_PRICE_ID`. Three tiers — Tier 1 one-time → perpetual
+  **license** key + gated download; Tier 2/3 subscription → **subscription** key
+  validated server-side (Tier 3 also flags manual onboarding, no self-serve
+  download). Checkout enables **Stripe Tax** (`automatic_tax`) and requires a
+  billing address. Routes on `serve.mjs`: `POST /api/checkout` (creates a
+  Checkout session), `POST /api/stripe/webhook` (raw-body signature-verified;
+  claim-first idempotency ledger in `stripe_processed_events`, releases the claim
+  on handler failure so Stripe retries), `GET /skillfoundry/success` (branded
+  page that fulfills the session idempotently and shows the key + download/portal),
+  `POST /api/skillfoundry/validate` (Tier 2 gate → `402` when inactive), `POST
+  /api/skillfoundry/run` (stub protected compute, `402` refusal if key inactive),
+  `GET /api/skillfoundry/download?key=` (streams the gated plugin zip only for an
+  active Tier 1 license), `POST /api/portal` (Stripe customer portal). Idempotency
+  is DB-enforced: unique index on `stripe_checkout_session_id` (partial unique on
+  `stripe_subscription_id`) in `skillfoundry_entitlements`, so a webhook/success
+  race yields exactly one key. Buyer gets a best-effort key email via Resend
+  (`sendEntitlementEmail`). Everything degrades gracefully — buy buttons fall back
+  to the waitlist and pages show "checkout isn't live yet" until secrets are set.
+  Founder setup: `skillfoundry/STRIPE_SETUP.md`. The gated plugin package is built
+  by `build.mjs` to `site/private/skillfoundry-plugin.zip` (OUTSIDE public `dist/`,
+  gitignored). Tier 2 thin client: `skillfoundry/client/thin-client.mjs`
+  (reads `SKILLFOUNDRY_KEY` + `SKILLFOUNDRY_API_URL`, POSTs the run endpoint).
 - Internal, token-gated signups view (NOT linked from public nav): `GET
   /admin/waitlist` shows a login form; on POST it timing-safe-compares the token
   against the `WAITLIST_ADMIN_TOKEN` secret and sets an httpOnly `wl_admin`
