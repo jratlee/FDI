@@ -1,0 +1,163 @@
+{
+  "asset": {
+    "title": "Build the Machine, Not the Ad",
+    "source": "exports/field-guide-launch/linkedin-thesis-article.md",
+    "word_count": 1050,
+    "audited_at": "2026-07-05T00:00:00Z"
+  },
+  "gates": [
+    {
+      "gate": "relevance",
+      "gate_name": "Market-Deficit Analyzer",
+      "framework": "Jobs-to-be-Done (Christensen, Competing Against Luck / HBR 2016)",
+      "score": 69,
+      "verdict": "REVISE",
+      "subscores": [
+        { "criterion": "defined audience & circumstance", "weight": 0.25, "points": 70 },
+        { "criterion": "job clarity (functional/emotional/social)", "weight": 0.30, "points": 65 },
+        { "criterion": "progress delivered", "weight": 0.25, "points": 60 },
+        { "criterion": "deficit vs. noise", "weight": 0.20, "points": 85 }
+      ],
+      "ranked_reasons": [
+        {
+          "rank": 1,
+          "severity": "high",
+          "finding": "The asset ends on the author's job, not the reader's — it asks for reach instead of delivering the reader's next progress.",
+          "evidence": "Follow False Dawn Industries to get each one the day it drops."
+        },
+        {
+          "rank": 2,
+          "severity": "medium",
+          "finding": "The emotional/social layer of the job is unspoken. The subtitle names a CMO, but the body never names the fear driving them (career exposure when the reach bet fails).",
+          "evidence": "For thirty years, marketing has been a bet on reach... That bet is over."
+        },
+        {
+          "rank": 3,
+          "severity": "low",
+          "finding": "Audience drifts from the named CMO to a generic 'you' mid-article, diluting the defined circumstance."
+        }
+      ],
+      "rewrites": [
+        {
+          "original": "Follow False Dawn Industries to get each one the day it drops, and pressure-test the thinking against real, working code at github.com/jratlee/FDI.",
+          "revised": "Before your next budget cycle, pick one marketing asset you could prove you own — a corpus, an identity, an interface an agent could call — and audit whether you actually own it. If you can't name one, that's your Q1. The working code and the next Field Guides are at github.com/jratlee/FDI.",
+          "rationale": "progress delivered — converts an author-serving reach ask into a concrete first action the reader takes Monday."
+        },
+        {
+          "original": "That bet is over, and most 2026 budgets haven't noticed yet.",
+          "revised": "That bet is over, and the CMO who renews it in 2026 is the one who has to explain the miss when it doesn't compound.",
+          "rationale": "job clarity (emotional/social) — names the career stakes, not just the market fact."
+        }
+      ]
+    },
+    {
+      "gate": "performance",
+      "gate_name": "Enterprise Valuation Gate",
+      "framework": "Brand equity (Aaker) + competitive positioning (Porter)",
+      "score": 73,
+      "verdict": "REVISE",
+      "subscores": [
+        { "criterion": "value-driver linkage", "weight": 0.30, "points": 60 },
+        { "criterion": "category-authority position", "weight": 0.25, "points": 90 },
+        { "criterion": "claim substantiation", "weight": 0.25, "points": 65 },
+        { "criterion": "risk-constraint architecture", "weight": 0.20, "points": 80 }
+      ],
+      "ranked_reasons": [
+        {
+          "rank": 1,
+          "severity": "high",
+          "finding": "The economic case is macro, not tied to a driver on the reader's own P&L. A CFO discounts industry totals; connect it to CAC, retention/LTV, or capital efficiency the reader controls.",
+          "evidence": "The world will spend $1.3 trillion on advertising in 2026."
+        },
+        {
+          "rank": 2,
+          "severity": "medium",
+          "finding": "Load-bearing stats are asserted, not sourced, which weakens the claim in a boardroom.",
+          "evidence": "the average digital ad earns about 2.5 seconds of active attention."
+        },
+        {
+          "rank": 3,
+          "severity": "low",
+          "finding": "Strength — category authority is genuinely differentiated and code-backed (Pile, Talk to NYC). Keep this; it is the asset's moat."
+        }
+      ],
+      "rewrites": [
+        {
+          "original": "Every quarter you spend buying commoditized reach is a quarter you didn't spend building the identity, the corpus, and the interfaces...",
+          "revised": "Every quarter you spend buying commoditized reach raises the CAC you can't lower and builds no asset you keep — while a corpus, an identity, and an agent-callable interface compound into retention you own.",
+          "rationale": "value-driver linkage — re-anchors the claim to CAC and retention, drivers a CFO already tracks."
+        }
+      ]
+    },
+    {
+      "gate": "signal",
+      "gate_name": "Adversarial Defense Matrix",
+      "framework": "GEO/AEO (Aggarwal et al., KDD 2024) + Google E-E-A-T + Schema.org",
+      "score": 77,
+      "verdict": "PASS",
+      "subscores": [
+        { "criterion": "LLM-tell removal", "weight": 0.30, "points": 75 },
+        { "criterion": "human-signal density", "weight": 0.30, "points": 90 },
+        { "criterion": "answer-engine structure", "weight": 0.25, "points": 60 },
+        { "criterion": "metadata & machine-legibility", "weight": 0.15, "points": 85 }
+      ],
+      "ranked_reasons": [
+        {
+          "rank": 1,
+          "severity": "high",
+          "finding": "The thesis is not extractable: an answer engine that lands here can't lift a single attributable sentence that states the claim, because it sits at paragraph 8.",
+          "evidence": "when reach is commoditized and platforms are opaque, the only durable marketing assets are the ones you own and can prove."
+        },
+        {
+          "rank": 2,
+          "severity": "medium",
+          "finding": "Citable numbers carry no citation, so no engine will attribute them to you (the GEO-proven lever is cited statistics).",
+          "evidence": "$1.3 trillion, 2.5 seconds."
+        },
+        {
+          "rank": 3,
+          "severity": "low",
+          "finding": "Strength — human-signal density is excellent: named thinkers, a dated thesis, two real shipped builds. This is what a model can't fabricate."
+        }
+      ],
+      "rewrites": [
+        {
+          "original": "The cost of making content just fell to zero. That's not the opportunity. That's the emergency.",
+          "revised": "The cost of making content just fell to zero. That's not the opportunity — it's the emergency. When reach is commoditized and ad platforms are opaque, the only durable marketing assets are the ones you own and can prove.",
+          "rationale": "answer-engine structure — front-loads the extractable, attributable thesis into the opening so a generative engine can quote it."
+        },
+        {
+          "original": "The world will spend $1.3 trillion on advertising in 2026, and the average digital ad earns about 2.5 seconds of active attention.",
+          "revised": "Global ad spend is forecast to pass $1.3 trillion in 2026 (WARC), while eye-tracking studies put active attention on the average digital ad at roughly 2.5 seconds (Ebiquity / Amplified Intelligence).",
+          "rationale": "answer-engine structure + metadata — cited statistics are the GEO-proven lever for being quoted as a source; also fixes Gate 2 substantiation."
+        }
+      ]
+    }
+  ],
+  "rollup": {
+    "composite_score": 72,
+    "ship_recommendation": "REVISE",
+    "top_moves": [
+      {
+        "rank": 1,
+        "gate": "relevance",
+        "move": "Replace the closing 'Follow False Dawn Industries' CTA — it serves the author's reach, not the reader's job. End on an action the CMO can take Monday."
+      },
+      {
+        "rank": 2,
+        "gate": "signal",
+        "move": "Attach an inline source to the two load-bearing stats ('$1.3 trillion,' '2.5 seconds of active attention'). One fix that also raises Gate 2 (defensibility) and Gate 3 (answer-engine citability)."
+      },
+      {
+        "rank": 3,
+        "gate": "relevance",
+        "move": "Surface the reader's emotional/career job early: the CMO who bet a 2026 budget on reach and now has to answer for it. Right now only the functional job is on the page."
+      },
+      {
+        "rank": 4,
+        "gate": "signal",
+        "move": "Front-load the one-sentence thesis so an answer engine can extract it; today it sits at paragraph 8, behind two thinkers' setups."
+      }
+    ]
+  }
+}

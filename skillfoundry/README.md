@@ -33,8 +33,10 @@ skillfoundry/
   commands/                    strategic-audit + one thin command per gate
   skills/                      the four rubrics (shared contract + three gates)
   schema/                      the deterministic output schema (JSON Schema)
+                               + validate-report.mjs (zero-dependency checker)
   server/mcp-server.mjs        zero-dependency stdio MCP server
   examples/                    dogfood: the FDI thesis article, audited
+                               (Markdown + machine-readable JSON)
 ```
 
 ## Install & run
@@ -106,6 +108,26 @@ printf '%s\n' \
   one; the audit is a proposal, not an auto-edit.
 
 See `examples/thesis-article-audit.md` for a full run on a real published asset.
+Its machine-readable twin is `examples/thesis-article-audit.json` — the same
+audit as a JSON report that automation can consume directly.
+
+## Machine-readable output
+
+Any Skillfoundry gate or the consolidated audit can emit JSON conforming to
+`schema/audit-report.schema.json` (ask the MCP tool/prompt for machine output).
+`examples/thesis-article-audit.json` is a checked-in, validated report teams can
+build and test against. Verify any report with the zero-dependency checker:
+
+```bash
+node schema/validate-report.mjs examples/thesis-article-audit.json
+# → VALID: ... conforms to ...   (exit 0; non-zero on any schema violation)
+
+node schema/validate-report.mjs path/to/your-report.json   # in CI
+```
+
+The checker needs only Node 18+ (no dependencies) and reports every violation —
+missing/unexpected properties, wrong types, out-of-range scores, bad enums, and
+wrong gate counts — so downstream automation can gate on a clean exit code.
 
 ## Clean-room provenance note
 
