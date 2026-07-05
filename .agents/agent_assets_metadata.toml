@@ -155,3 +155,15 @@ id = "LuKbIS9SnTbcVc4w-jT32"
 uri = "file://exports/field-guide-launch/viz-three-markets-1200x680.png"
 type = "image"
 title = "Rebuilt: Three Markets — marketing mechanics + new brand forms"
+
+[[outputs]]
+id = "aE7X2ZngGUl7vikid12sp"
+uri = "file://outreach/tier1-us-prospects.csv"
+type = "table"
+title = "SkillFoundry Tier 1 US prospects (20 real, named)"
+
+[[outputs]]
+id = "g-mawfquNYnSeWw_iSu2_"
+uri = "file://outreach/tier1-positioning-brief.md"
+type = "text"
+title = "Tier 1 positioning & pitch brief"
