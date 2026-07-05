@@ -19,6 +19,7 @@
   Array.prototype.forEach.call(forms, function (form) {
     var btn = form.querySelector("button[type=submit]");
     var input = form.querySelector("input[type=email]");
+    var honeypot = form.querySelector("input[name=company]");
     var msg = form.parentNode.querySelector(".form-msg");
     var source = form.getAttribute("data-source") || "site";
     var subject = form.getAttribute("data-subject") || "FDI waitlist";
@@ -56,7 +57,7 @@
       fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, source: source })
+        body: JSON.stringify({ email: email, source: source, company: (honeypot && honeypot.value) || "" })
       }).then(function (res) {
         return res.json().then(function (data) { return { status: res.status, data: data }; });
       }).then(function (r) {
@@ -68,8 +69,10 @@
           } else {
             setMsg(r.data.duplicate ? dupText : successText, "is-ok");
           }
+        } else if (r.status === 429) {
+          setMsg((r.data && r.data.message) || "Too many attempts. Please try again later.", "is-error");
         } else if (r.status === 422) {
-          setMsg("Please enter a valid email address.", "is-error");
+          setMsg((r.data && r.data.message) || "Please enter a valid email address.", "is-error");
           if (input) input.focus();
         } else {
           setMsg("Something went wrong — opening your email app instead.", "is-error");

@@ -180,6 +180,7 @@
       <p>Drop your email to join the waitlist. We'll reach out with early access, pricing, and the worked example — no spam.</p>
       <form class="waitlist js-capture" data-source="skillfoundry" data-subject="Skillfoundry waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Skillfoundry waitlist." novalidate>
         <label class="sr-only" for="wl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off" /></label></div>
         <input type="email" id="wl-email" name="email" placeholder="you@company.com" autocomplete="email" required />
         <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
       </form>

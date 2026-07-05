@@ -27,6 +27,11 @@ const lockup = (tag = "span") =>
 const GITHUB = "https://github.com/jratlee/FDI";
 const CONTACT = "hello@falsedawn.industries";
 
+/* honeypot: a hidden field bots fill but humans never see. Off-screen, not
+   display:none (some bots skip hidden inputs), with autocomplete disabled and
+   aria-hidden/tabindex so it's invisible to real users and assistive tech. */
+const HONEYPOT = `<div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off" /></label></div>`;
+
 function nav(active) {
   const link = (href, label, id) =>
     `<a href="${href}"${active === id ? ' aria-current="page"' : ""}>${label}</a>`;
@@ -511,6 +516,7 @@ function skillfoundry() {
       <p>Drop your email to join the waitlist. We'll reach out with early access, pricing, and the worked example — no spam.</p>
       <form class="waitlist js-capture" data-source="skillfoundry" data-subject="Skillfoundry waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Skillfoundry waitlist." novalidate>
         <label class="sr-only" for="wl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
         <input type="email" id="wl-email" name="email" placeholder="you@company.com" autocomplete="email" required />
         <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
       </form>
@@ -580,6 +586,7 @@ function topcall() {
         <p>Copilot/agent instructions, an executive-moves model, a source-authority policy, a no-paid-ingestion playbook, a search-query library, and worked output templates. Drop your email and the download starts immediately — no spam.</p>
         <form class="waitlist js-capture" data-source="topcall-prompt-pack" data-subject="Top Call prompt-pack" data-download="/assets/top-call-prompt-pack.zip" data-mail-body="Please send me the Top Call prompt-pack." novalidate style="margin-top:22px;">
           <label class="sr-only" for="tc-lm-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+          ${HONEYPOT}
           <input type="email" id="tc-lm-email" name="email" placeholder="you@company.com" autocomplete="email" required />
           <button class="btn btn-primary" type="submit">Email me the pack <span class="arrow">↓</span></button>
         </form>
@@ -711,6 +718,7 @@ function topcall() {
       <p>Drop your email to join the waitlist for the paid owned system. We'll reach out with early access, pricing, and a worked corpus — no spam.</p>
       <form class="waitlist js-capture" data-source="topcall" data-subject="Top Call waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Top Call waitlist." novalidate>
         <label class="sr-only" for="tc-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
         <input type="email" id="tc-email" name="email" placeholder="you@company.com" autocomplete="email" required />
         <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
       </form>
@@ -751,6 +759,7 @@ const SITE_JS = `(function () {
   Array.prototype.forEach.call(forms, function (form) {
     var btn = form.querySelector("button[type=submit]");
     var input = form.querySelector("input[type=email]");
+    var honeypot = form.querySelector("input[name=company]");
     var msg = form.parentNode.querySelector(".form-msg");
     var source = form.getAttribute("data-source") || "site";
     var subject = form.getAttribute("data-subject") || "FDI waitlist";
@@ -788,7 +797,7 @@ const SITE_JS = `(function () {
       fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, source: source })
+        body: JSON.stringify({ email: email, source: source, company: (honeypot && honeypot.value) || "" })
       }).then(function (res) {
         return res.json().then(function (data) { return { status: res.status, data: data }; });
       }).then(function (r) {
@@ -800,8 +809,10 @@ const SITE_JS = `(function () {
           } else {
             setMsg(r.data.duplicate ? dupText : successText, "is-ok");
           }
+        } else if (r.status === 429) {
+          setMsg((r.data && r.data.message) || "Too many attempts. Please try again later.", "is-error");
         } else if (r.status === 422) {
-          setMsg("Please enter a valid email address.", "is-error");
+          setMsg((r.data && r.data.message) || "Please enter a valid email address.", "is-error");
           if (input) input.focus();
         } else {
           setMsg("Something went wrong — opening your email app instead.", "is-error");

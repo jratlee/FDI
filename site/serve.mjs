@@ -4,6 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
+import { RateLimiterMemory } from "rate-limiter-flexible";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
@@ -16,6 +17,49 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const pool = process.env.DATABASE_URL
   ? new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 3 })
   : null;
+
+/* ---------------- abuse protection ---------------- */
+// Per-IP rate limit: a modest number of signup attempts per IP per hour.
+// In-memory store is fine for the single-instance Node server; can later be
+// pointed at Postgres/Redis without changing call sites.
+const waitlistLimiter = new RateLimiterMemory({
+  keyPrefix: "wl",
+  points: 8, // attempts allowed
+  duration: 60 * 60, // per hour (seconds)
+  blockDuration: 60 * 60, // stay blocked for an hour once exceeded
+});
+
+// Disposable / throwaway email domains we don't want on the list. Not
+// exhaustive — a light guard against the most common junk providers.
+const DISPOSABLE_DOMAINS = new Set([
+  "mailinator.com",
+  "guerrillamail.com",
+  "guerrillamail.info",
+  "sharklasers.com",
+  "grr.la",
+  "10minutemail.com",
+  "trashmail.com",
+  "yopmail.com",
+  "getnada.com",
+  "temp-mail.org",
+  "tempmail.com",
+  "throwawaymail.com",
+  "maildrop.cc",
+  "dispostable.com",
+  "fakeinbox.com",
+  "mailnesia.com",
+  "mohmal.com",
+  "spam4.me",
+  "tempinbox.com",
+  "emailondeck.com",
+]);
+
+function clientIp(req) {
+  // The site runs behind Replit's proxy, so the real client IP is in
+  // X-Forwarded-For (first hop). Fall back to the socket address.
+  const fwd = (req.headers["x-forwarded-for"] || "").split(",")[0].trim();
+  return fwd || req.socket?.remoteAddress || "unknown";
+}
 let dbReady = null;
 
 function ensureTable() {
@@ -74,20 +118,51 @@ async function handleWaitlist(req, res) {
     sendJson(res, 503, { ok: false, error: "storage_unavailable" });
     return;
   }
+  // Per-IP rate limit before doing any work.
+  try {
+    await waitlistLimiter.consume(clientIp(req));
+  } catch (rl) {
+    const retryMs = rl && typeof rl.msBeforeNext === "number" ? rl.msBeforeNext : 3600000;
+    const retrySec = Math.ceil(retryMs / 1000);
+    res.setHeader("Retry-After", String(retrySec));
+    sendJson(res, 429, {
+      ok: false,
+      error: "rate_limited",
+      message: "Too many attempts. Please try again later.",
+    });
+    return;
+  }
   let email;
   let source;
+  let honeypot;
   try {
     const raw = await readBody(req);
     const parsed = raw ? JSON.parse(raw) : {};
     email = String(parsed.email || "").trim().toLowerCase();
     source = String(parsed.source || "site").trim().slice(0, 64);
     if (!/^[a-z0-9][a-z0-9._-]*$/i.test(source)) source = "site";
+    // Honeypot: a hidden field real users never fill. Any value = a bot.
+    honeypot = String(parsed.company || "").trim();
   } catch {
     sendJson(res, 400, { ok: false, error: "bad_request" });
     return;
   }
+  if (honeypot) {
+    // Pretend success so bots get no useful signal; store nothing.
+    sendJson(res, 200, { ok: true, duplicate: false });
+    return;
+  }
   if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
     sendJson(res, 422, { ok: false, error: "invalid_email" });
+    return;
+  }
+  const domain = email.slice(email.lastIndexOf("@") + 1);
+  if (DISPOSABLE_DOMAINS.has(domain)) {
+    sendJson(res, 422, {
+      ok: false,
+      error: "disposable_email",
+      message: "Please use a permanent email address.",
+    });
     return;
   }
   try {
