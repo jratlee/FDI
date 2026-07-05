@@ -4,5 +4,6 @@ export const modules: ModuleMap = {
   "./components/mockups/brand-kit/BrandGuidelines.tsx": () => import("../components/mockups/brand-kit/BrandGuidelines.tsx"),
   "./components/mockups/brand-kit/BrandInAction.tsx": () => import("../components/mockups/brand-kit/BrandInAction.tsx"),
   "./components/mockups/brand-kit/ColorTypography.tsx": () => import("../components/mockups/brand-kit/ColorTypography.tsx"),
-  "./components/mockups/brand-kit/LogoConcepts.tsx": () => import("../components/mockups/brand-kit/LogoConcepts.tsx")
+  "./components/mockups/brand-kit/LogoConcepts.tsx": () => import("../components/mockups/brand-kit/LogoConcepts.tsx"),
+  "./components/mockups/competitive-analysis/SkillfoundryReport.tsx": () => import("../components/mockups/competitive-analysis/SkillfoundryReport.tsx")
 };

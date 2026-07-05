@@ -1,0 +1,238 @@
+{
+  "meta": {
+    "product": "SkillFoundry",
+    "vendor": "False Dawn Industries",
+    "category": "Strategic firewall for content (strategy as code)",
+    "subtitle": "Competitive Analysis & Positioning",
+    "date": "July 2026",
+    "asOf": "As of July 2026. Funding and pricing figures re-verified at build time; see Sources.",
+    "confidence": "All competitor pricing and funding re-verified July 2026. Profiles built partly from public review aggregators and vendor pricing pages are flagged where noted."
+  },
+  "positioning": {
+    "statement": "For content and comms teams who have automated execution but lost strategic oversight, SkillFoundry is a strategic firewall (strategy as code) that routes every asset through three opinionated gates before it ships. Unlike SaaS visibility dashboards you log into and rent per seat, SkillFoundry runs inside your own agent workflow, spans relevance, enterprise value, and algorithmic signal in a single pass, and can be owned outright with a perpetual license.",
+    "alternatives": [
+      "GEO / AEO visibility dashboards (Profound, Otterly, Peec, Scrunch, Athena)",
+      "AI content-optimization / SEO writing tools (Surfer SEO, Clearscope, MarketMuse, Writer)",
+      "PR measurement platforms owning the C-suite report (Muck Rack, Cision)",
+      "Do nothing: prompt ChatGPT / Claude directly, or hire a GEO agency"
+    ],
+    "attributes": [
+      "Runs inside the team's own agent workflow (MCP-native, local), not one more SaaS dashboard to log into",
+      "One firewall spanning three strategic gates (JTBD relevance, enterprise value, algorithmic signal) instead of three separate point tools",
+      "Perpetual-license ownership option, not per-seat rent",
+      "Gates content before it ships and returns a structured audit you can defend to the C-suite",
+      "Clean-room original gate logic, self-contained, no third-party lock-in"
+    ],
+    "value": "Restores strategic oversight over automated content before it publishes, in the workflow the team already uses, with a defensible C-suite audit, for the price of lunch rather than a per-seat SaaS contract.",
+    "bestFit": "Content and comms teams (and boutique agencies) that have automated execution but lost strategic oversight, are comfortable in MCP-compatible clients, and would rather own their tooling than rent a dashboard."
+  },
+  "recommendations": [
+    {
+      "title": "Own the \"runs in your stack, not another dashboard\" wedge",
+      "body": "Nearly every direct rival is a SaaS dashboard you log into and rent by the seat. SkillFoundry is the only strategic tool that runs inside the agent workflow the team already uses, via the open Model Context Protocol, and can be owned with a one-time license. Lead every conversation with in-workflow + ownership as the anti-SaaS play. MCP adoption is compounding fast (SDK downloads hit ~97M/month by March 2026), so this wedge widens over time."
+    },
+    {
+      "title": "Sell the firewall, not the tracker",
+      "body": "GEO dashboards measure visibility after content ships; Surfer scores drafts for classic search. SkillFoundry gates every asset before it ships and spans three strategic layers that rivals split across three product categories. Bundle the C-suite Performance Delta Log (Gate 2) that pure GEO trackers simply do not produce."
+    },
+    {
+      "title": "Attack on ownership at the low end and defensibility at the high end",
+      "body": "Against Profound's $399-$5,000/mo dashboards and $1,500-$50,000/mo GEO agencies, offer a $29 perpetual license (own vs rent) at entry. Against DIY prompting, offer a repeatable, versioned, auditable methodology instead of prompt drift living in a chat history. Concede enterprise compliance (SOC 2) as a roadmap item, not a fight to pick today."
+    }
+  ],
+  "competitors": [
+    {
+      "name": "Profound",
+      "url": "https://www.tryprofound.com/",
+      "arena": "GEO / AEO visibility (Gate 3, most direct)",
+      "stage": "Series C, ~$96M at ~$1B valuation (Feb 2026); NYC; founded 2024",
+      "pricing": "Starter $99/mo (ChatGPT only), Growth $399/mo, Agency custom, Enterprise ~$2,000-$5,000+/mo",
+      "positioning": "Enterprise Answer Engine Optimization: track and improve brand visibility across ChatGPT, Perplexity, Gemini and AI Overviews.",
+      "strengths": [
+        "Best-funded, enterprise category leader; the Profound Index leaderboard sets the AEO benchmark",
+        "Multi-engine share-of-voice, agent analytics, and SOC 2 compliance",
+        "Strong social proof: 4.6/5 on G2 across ~845 reviews"
+      ],
+      "weaknesses": [
+        "Consistently flagged as expensive; premium features gated behind custom enterprise plans",
+        "Data-heavy with a steep learning curve",
+        "A dashboard you log into and monitor, not a firewall that acts on content before it ships"
+      ],
+      "flag": ""
+    },
+    {
+      "name": "Surfer SEO",
+      "url": "https://surferseo.com/",
+      "arena": "AI content optimization / SEO writing (Gate 1)",
+      "stage": "Bootstrapped/profitable; 150k+ users",
+      "pricing": "Essential $99/mo ($79 annual), Scale $219/mo ($175 annual), Enterprise from $999/mo",
+      "positioning": "Data-driven on-page content editor: write and optimize content to rank in search.",
+      "strengths": [
+        "Large, loyal user base and an easy real-time content-scoring editor",
+        "Deep SERP-driven on-page guidance",
+        "Very high review scores (G2 ~4.8/5)"
+      ],
+      "weaknesses": [
+        "Price has risen 2-3x since 2023; the #1 complaint in reviews",
+        "Optimizes for classic ten-blue-links SEO, not AI answer engines",
+        "Keyword-density lens; AI-writing quality complaints; no C-suite reporting"
+      ],
+      "flag": ""
+    },
+    {
+      "name": "Muck Rack",
+      "url": "https://muckrack.com/",
+      "arena": "PR measurement to C-suite KPIs (Gate 2)",
+      "stage": "Profitable, PE-backed; established incumbent",
+      "pricing": "Closed, sales-led. Est. ~$5k/yr entry, $10-15k/yr mid, $25-50k+/yr enterprise",
+      "positioning": "Journalist database, media monitoring, and PR reporting that owns the comms-to-C-suite relationship.",
+      "strengths": [
+        "Owns the executive PR reporting relationship SkillFoundry wants to enter",
+        "Deep journalist database and media monitoring; 4.6/5 on G2",
+        "Trusted incumbent brand in enterprise comms"
+      ],
+      "weaknesses": [
+        "Opaque, expensive, annual-contract pricing",
+        "Not a content-optimization tool; AI-citation layer added late",
+        "Reporting is retrospective PR coverage, not pre-publish strategic gating"
+      ],
+      "flag": ""
+    },
+    {
+      "name": "Otterly.ai",
+      "url": "https://otterly.ai/pricing",
+      "arena": "Lightweight GEO visibility tracker (Gate 3, lighter)",
+      "stage": "Early-stage self-serve SaaS",
+      "pricing": "Lite $29/mo, Standard $189/mo, Premium $489/mo, Enterprise custom",
+      "positioning": "Clean, self-serve AI-search visibility: mentions, citations, and GEO audits for marketers and agencies.",
+      "strengths": [
+        "Cheapest credible entry point ($29/mo) with fast self-serve setup",
+        "GEO URL audits plus API/MCP access on higher tiers",
+        "Agency-friendly, transparent pricing"
+      ],
+      "weaknesses": [
+        "Tracking and monitoring only, no strategic firewall or pre-publish workflow",
+        "Low prompt limits on entry tiers",
+        "Still a dashboard, not embedded in the team's own workflow"
+      ],
+      "flag": "Profile built from vendor pricing page and review aggregators; limited independent enterprise reviews."
+    },
+    {
+      "name": "DIY prompting / GEO agency",
+      "url": "https://www.webfx.com/blog/ai/generative-engine-optimization-cost/",
+      "arena": "Do nothing (Dunford's #1 alternative)",
+      "stage": "N/A",
+      "pricing": "DIY: free (ChatGPT/Claude). Agency: $1,500-$50,000+/mo",
+      "positioning": "Prompt a general model directly for one-off advice, or outsource GEO/strategy to an agency retainer.",
+      "strengths": [
+        "DIY is free, flexible, and already in the team's hands",
+        "Agencies deliver full-service strategy and execution",
+        "No new tool to learn (DIY) or staff (agency)"
+      ],
+      "weaknesses": [
+        "DIY has no repeatable methodology, no audit trail, and drifts prompt to prompt",
+        "Neither produces a defensible, versioned C-suite artifact you own",
+        "Agencies are expensive recurring retainers; the methodology stays rented, not owned"
+      ],
+      "flag": ""
+    }
+  ],
+  "watchlist": [
+    "Peec AI, Scrunch ($250-300/mo), AthenaHQ ($2.2M YC seed) - other lightweight GEO trackers",
+    "Clearscope ($129-399/mo), MarketMuse (quote-based post-Siteimprove), Writer.com (enterprise) - content/SEO optimization",
+    "Cision - enterprise PR measurement incumbent adding AI-citation layers",
+    "Semrush / Ahrefs - SEO incumbents bolting on GEO/AEO toolkits (fastest route to commoditizing Gate 3 tracking)"
+  ],
+  "matrix": {
+    "columns": ["SkillFoundry", "Profound", "Surfer SEO", "Muck Rack", "Otterly.ai", "DIY / Agency"],
+    "rows": [
+      { "cap": "GEO / AEO visibility tracking", "w": 4, "cells": ["partial", "yes", "partial", "no", "yes", "partial"] },
+      { "cap": "Pre-publish JTBD relevance scoring", "w": 4, "cells": ["yes", "no", "partial", "no", "no", "partial"] },
+      { "cap": "C-suite KPI / performance reporting", "w": 5, "cells": ["yes", "partial", "no", "yes", "no", "partial"] },
+      { "cap": "Runs in-workflow (MCP-native / local)", "w": 5, "cells": ["yes", "no", "no", "no", "partial", "partial"] },
+      { "cap": "Perpetual license / ownership option", "w": 3, "cells": ["yes", "no", "no", "no", "no", "no"] },
+      { "cap": "One-pass multi-gate strategic firewall", "w": 4, "cells": ["yes", "no", "no", "no", "no", "no"] },
+      { "cap": "Human-signal / anti-AI-footprint tuning", "w": 3, "cells": ["yes", "partial", "no", "no", "no", "partial"] },
+      { "cap": "Enterprise compliance (SOC 2 etc.)", "w": 4, "cells": ["no", "yes", "partial", "yes", "partial", "no"] },
+      { "cap": "Self-serve low-cost entry", "w": 3, "cells": ["yes", "partial", "partial", "no", "yes", "yes"] }
+    ]
+  },
+  "positioningMap": {
+    "xLabel": "Delivery model",
+    "xLeft": "Log into a dashboard (rent)",
+    "xRight": "Runs in your stack (own)",
+    "yLabel": "Strategic scope",
+    "yBottom": "Point tool (one job)",
+    "yTop": "Strategic firewall (relevance to value to signal)",
+    "points": [
+      { "name": "SkillFoundry", "x": 0.82, "y": 0.86, "highlight": true },
+      { "name": "Profound", "x": 0.20, "y": 0.44 },
+      { "name": "Surfer SEO", "x": 0.18, "y": 0.22 },
+      { "name": "Muck Rack", "x": 0.24, "y": 0.58 },
+      { "name": "Otterly.ai", "x": 0.34, "y": 0.20 },
+      { "name": "DIY prompting", "x": 0.66, "y": 0.24 },
+      { "name": "GEO agency", "x": 0.16, "y": 0.72 }
+    ]
+  },
+  "whitespace": {
+    "gap": "No incumbent occupies the runs-in-your-stack + strategic-firewall quadrant. GEO tools track visibility after the fact; SEO tools score drafts for classic search; PR tools report coverage retrospectively; agencies rent you a methodology. Nobody gates content before it ships, across relevance + enterprise value + algorithmic signal, inside the team's own workflow, as software you can own.",
+    "kano": {
+      "basics": [
+        "Multi-engine GEO/AEO visibility tracking (Profound and Otterly have made this table stakes)",
+        "Real-time content scoring (Surfer normalized this for SEO)"
+      ],
+      "performance": [
+        "Breadth of engines covered and prompt volume",
+        "Citation-share accuracy and freshness of tracking"
+      ],
+      "delighters": [
+        "MCP-native, in-workflow execution instead of a separate dashboard",
+        "Perpetual-license ownership instead of per-seat rent",
+        "One-pass, three-gate audit ending in a defensible C-suite Performance Delta Log"
+      ],
+      "note": "Kano's warning applies: today's delighters become tomorrow's basics. As MCP adoption compounds, in-workflow delivery and ownership will become expected. SkillFoundry's window to own them as differentiators is now."
+    }
+  },
+  "actionPlan": [
+    {
+      "target": "vs Profound / Otterly (GEO dashboards)",
+      "action": "Lead demos with the pre-publish firewall and the C-suite Performance Delta Log, not with tracking. Frame their dashboards as the scoreboard and SkillFoundry as the thing that changes the score before content ships.",
+      "trap": "\"Great that you can see your AI visibility, but what actually changes the content before it ships? Is your team acting on a dashboard, or gating every asset inside the workflow they already use?\""
+    },
+    {
+      "target": "vs Surfer SEO / Clearscope (SEO content tools)",
+      "action": "Position Gate 3 (AEO/GEO structuring plus human-signal density) as the successor to keyword-density SEO, and remind buyers their price has climbed 2-3x while the search surface moved to answer engines.",
+      "trap": "\"Are you optimizing for ten blue links or for the answer engines that now cite sources? And does your content score survive being pasted into a C-suite deck?\""
+    },
+    {
+      "target": "vs DIY prompting / GEO agency",
+      "action": "Sell the perpetual license as an owned, versioned, repeatable methodology. Contrast it with prompt drift in a chat history (DIY) and $1,500-$50,000/mo rented retainers (agency).",
+      "trap": "\"Can you reproduce last quarter's strategic review, or does it live in someone's chat history? Do you own the methodology, or rent it every month?\""
+    }
+  ],
+  "sources": [
+    { "n": 1, "t": "Profound raises $96M Series C at $1B valuation (Fortune, Feb 24 2026)", "u": "https://fortune.com/2026/02/24/exclusive-as-ai-threatens-search-profound-raises-96-million-to-help-brands-stay-visible/" },
+    { "n": 2, "t": "Profound Series C announcement (vendor)", "u": "https://www.tryprofound.com/blog/profound-raises-96m-series-c" },
+    { "n": 3, "t": "Profound pricing", "u": "https://www.tryprofound.com/pricing" },
+    { "n": 4, "t": "Profound pricing breakdown (That Marketing Buddy, 2026)", "u": "https://thatmarketingbuddy.com/pricing/profound" },
+    { "n": 5, "t": "Profound review, ratings & complaints (Trakkr, 2026)", "u": "https://trakkr.ai/reviews/profound-review" },
+    { "n": 6, "t": "Profound reviews (G2)", "u": "https://www.g2.com/products/profound/reviews" },
+    { "n": 7, "t": "Surfer SEO pricing 2026 (eesel AI)", "u": "https://www.eesel.ai/blog/surfer-seo-pricing" },
+    { "n": 8, "t": "Surfer SEO reviews & complaints (Capterra)", "u": "https://www.capterra.com/p/218703/Surfer/reviews/" },
+    { "n": 9, "t": "Surfer SEO reviews (Trustpilot)", "u": "https://www.trustpilot.com/review/surferseo.com" },
+    { "n": 10, "t": "Muck Rack pricing guide 2026 (Prezly)", "u": "https://www.prezly.com/academy/muck-rack-pricing-guide" },
+    { "n": 11, "t": "Muck Rack pricing & real data (Vendr)", "u": "https://www.vendr.com/marketplace/muck-rack" },
+    { "n": 12, "t": "Muck Rack reviews (Capterra)", "u": "https://www.capterra.com/p/144527/Muck-Rack/reviews/" },
+    { "n": 13, "t": "Otterly.ai pricing", "u": "https://otterly.ai/pricing" },
+    { "n": 14, "t": "Otterly.ai review & pricing (Trakkr, 2026)", "u": "https://trakkr.ai/reviews/otterly-review" },
+    { "n": 15, "t": "GEO agency vs software cost 2026 (WebFX)", "u": "https://www.webfx.com/blog/ai/generative-engine-optimization-cost/" },
+    { "n": 16, "t": "MCP adoption statistics 2026", "u": "https://www.digitalapplied.com/blog/mcp-adoption-statistics-2026-model-context-protocol" },
+    { "n": 17, "t": "Clearscope pricing", "u": "https://www.clearscope.io/pricing" },
+    { "n": 18, "t": "MarketMuse pricing (post-Siteimprove)", "u": "https://www.marketmuse.com/pricing/" },
+    { "n": 19, "t": "Writer.com plans", "u": "https://writer.com/plans/" },
+    { "n": 20, "t": "Cision pricing guide 2026 (Prezly)", "u": "https://www.prezly.com/academy/cision-pricing" },
+    { "n": 21, "t": "Scrunch AI pricing (G2)", "u": "https://www.g2.com/products/scrunch-ai/pricing" },
+    { "n": 22, "t": "AthenaHQ funding profile (PitchBook)", "u": "https://pitchbook.com/profiles/company/759029-50" },
+    { "n": 23, "t": "Peec AI pricing", "u": "https://peec.ai/pricing" }
+  ]
+}

@@ -167,3 +167,9 @@ id = "g-mawfquNYnSeWw_iSu2_"
 uri = "file://outreach/tier1-positioning-brief.md"
 type = "text"
 title = "Tier 1 positioning & pitch brief"
+
+[[outputs]]
+id = "C552mCQeNxGBvcA1gpQuv"
+uri = "file://exports/skillfoundry-competitive-analysis/SkillFoundry-Competitive-Analysis.pdf"
+type = "pdf"
+title = "SkillFoundry Competitive Analysis (9-page report)"

@@ -3,3 +3,4 @@
 - [Top Call owned system & site forms](topcall-owned-system.md) — "Signal as Code" paid sibling to Skillfoundry (corpus/graph/MCP, compounding tiers); generic `js-capture` data-attr email forms.
 - [Skillfoundry commerce (Stripe)](skillfoundry-commerce.md) — env-secret Stripe on the plain-http site; DB-enforced idempotency (Pile pattern), gated download outside dist/, 402 subscription gate, graceful 503 degradation.
 - [Postgres parse-time table references](pg-parse-time-table-refs.md) — a to_regclass runtime guard can't protect a statement that names a missing table; check existence in JS first, then build SQL conditionally.
+- [PDF report generation](pdf-report-generation.md) — npm blocks jspdf; render HTML to PDF with vendored puppeteer-core + Nix chromium; shared ESM template gives PDF/React page parity; fixed-height pages clip overflow, so render each page to PNG and check.
