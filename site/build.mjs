@@ -407,7 +407,7 @@ function skillfoundry() {
     </div>
     <div class="arch">
       <div class="mod"><code>skills/</code><h4>Skills</h4><p>Markdown files encoding the prompt logic and reasoning for the Market-Deficit, Enterprise Valuation, and Adversarial Defense gates.</p></div>
-      <div class="mod"><code>commands/</code><h4>Commands</h4><p>Slash commands like <code>/sf:full-audit</code> chain the three gates, plus one command per gate to route local files straight from your terminal.</p></div>
+      <div class="mod"><code>commands/</code><h4>Commands</h4><p>Slash commands like <code>/skillfoundry:strategic-audit</code> chain the three gates, plus one command per gate to route local files straight from your terminal.</p></div>
       <div class="mod"><code>.mcp.json</code><h4>Connectors</h4><p>A connector definition that loads the plugin natively into MCP-compatible clients, existing workflows, CMS platforms, and design tools.</p></div>
     </div>
     <p class="flowline">Asset in &nbsp;→&nbsp; <b>Relevance</b> &nbsp;→&nbsp; <b>Performance</b> &nbsp;→&nbsp; <b>Algorithmic Signal</b> &nbsp;→&nbsp; deployable asset + three audits out</p>
