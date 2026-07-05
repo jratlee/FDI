@@ -691,7 +691,7 @@ function skillfoundry() {
       <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
       <h2>Get SkillFoundry the day it ships.</h2>
       <p>Drop your email to join the waitlist. We'll reach out with early access, pricing, and the worked example. No spam.</p>
-      <form class="waitlist js-capture" data-source="skillfoundry" data-subject="SkillFoundry waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the SkillFoundry waitlist." novalidate>
+      <form class="waitlist js-capture" data-source="skillfoundry" data-subject="SkillFoundry waitlist" data-success="Almost there. Check your inbox and click the confirmation link to join the waitlist." data-mail-body="Please add me to the SkillFoundry waitlist." novalidate>
         <label class="sr-only" for="wl-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
         <input type="email" id="wl-email" name="email" placeholder="you@company.com" autocomplete="email" required />
@@ -920,7 +920,7 @@ function topcall() {
       <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
       <h2>Get the Top Call owned system the day it ships.</h2>
       <p>Drop your email to join the waitlist for the paid owned system. We'll reach out with early access, pricing, and a worked corpus. No spam.</p>
-      <form class="waitlist js-capture" data-source="topcall" data-subject="Top Call waitlist" data-success="You're on the list. We'll reach out with early access." data-mail-body="Please add me to the Top Call waitlist." novalidate>
+      <form class="waitlist js-capture" data-source="topcall" data-subject="Top Call waitlist" data-success="Almost there. Check your inbox and click the confirmation link to join the waitlist." data-mail-body="Please add me to the Top Call waitlist." novalidate>
         <label class="sr-only" for="tc-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
         <input type="email" id="tc-email" name="email" placeholder="you@company.com" autocomplete="email" required />
@@ -967,7 +967,7 @@ const SITE_JS = `(function () {
     var msg = form.parentNode.querySelector(".form-msg");
     var source = form.getAttribute("data-source") || "site";
     var subject = form.getAttribute("data-subject") || "FDI waitlist";
-    var successText = form.getAttribute("data-success") || "You're on the list. We'll reach out with early access.";
+    var successText = form.getAttribute("data-success") || "Almost there. Check your inbox for a confirmation link to finish signing up.";
     var dupText = form.getAttribute("data-duplicate") || "You're already on the list. We'll be in touch.";
     var download = form.getAttribute("data-download") || "";
     var mailBody = form.getAttribute("data-mail-body") || ("Please add me to the " + source + " list.");
@@ -1275,7 +1275,7 @@ function conceptPage(key) {
       <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
       <h2>Get the ${c.h1} field guide the day it ships.</h2>
       <p>Drop your email to follow the series. We'll reach out when the ${c.h1} field guide and its working code are live. No spam.</p>
-      <form class="waitlist js-capture" data-source="${source}" data-subject="FDI series: ${c.h1}" data-success="You're on the list. We'll reach out as the series ships." data-mail-body="Please add me to the FDI ${c.h1} series waitlist." novalidate>
+      <form class="waitlist js-capture" data-source="${source}" data-subject="FDI series: ${c.h1}" data-success="Almost there. Check your inbox and click the confirmation link to finish signing up." data-mail-body="Please add me to the FDI ${c.h1} series waitlist." novalidate>
         <label class="sr-only" for="cp-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
         <input type="email" id="cp-email" name="email" placeholder="you@company.com" autocomplete="email" required />
@@ -1342,7 +1342,7 @@ function seriesPage() {
       <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
       <h2>Follow the FDI series.</h2>
       <p>Drop your email and we'll reach out as each field guide and its working code ship. No spam.</p>
-      <form class="waitlist js-capture" data-source="series" data-subject="FDI series waitlist" data-success="You're on the list. We'll reach out as the series ships." data-mail-body="Please add me to the FDI series waitlist." novalidate>
+      <form class="waitlist js-capture" data-source="series" data-subject="FDI series waitlist" data-success="Almost there. Check your inbox and click the confirmation link to finish signing up." data-mail-body="Please add me to the FDI series waitlist." novalidate>
         <label class="sr-only" for="series-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
         <input type="email" id="series-email" name="email" placeholder="you@company.com" autocomplete="email" required />
@@ -1525,7 +1525,7 @@ function roadmapPage() {
       <span class="eyebrow" style="justify-content:center;">Follow along</span>
       <h2>Watch the roadmap turn into shipped work.</h2>
       <p>Join the waitlist and we'll reach out as each milestone lands. No spam.</p>
-      <form class="waitlist js-capture" data-source="roadmap" data-subject="FDI roadmap follower" data-success="You're on the list. We'll reach out as milestones ship." data-mail-body="Please add me to the FDI roadmap updates list." novalidate>
+      <form class="waitlist js-capture" data-source="roadmap" data-subject="FDI roadmap follower" data-success="Almost there. Check your inbox and click the confirmation link to finish signing up." data-mail-body="Please add me to the FDI roadmap updates list." novalidate>
         <label class="sr-only" for="rm-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
         <input type="email" id="rm-email" name="email" placeholder="you@company.com" autocomplete="email" required />

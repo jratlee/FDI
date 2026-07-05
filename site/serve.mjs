@@ -6,7 +6,7 @@ import dns from "node:dns/promises";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { RateLimiterMemory, RateLimiterPostgres } from "rate-limiter-flexible";
-import { sendSignupEmails } from "./email.mjs";
+import { sendConfirmationRequest, sendWelcomeEmails } from "./email.mjs";
 import {
   TIERS,
   CommerceError,
@@ -176,6 +176,18 @@ function newUnsubToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
+// Double opt-in confirm tokens use the same opaque-hex shape as unsub tokens.
+function newConfirmToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+// How long a confirmation link stays valid. Default 7 days; override with
+// WAITLIST_CONFIRM_DAYS. A value of 0 or below falls back to the default.
+const CONFIRM_DAYS = (() => {
+  const n = Number(process.env.WAITLIST_CONFIRM_DAYS);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 7;
+})();
+
 // Give any pre-existing rows a deletion token so they can be unsubscribed too.
 // Done in JS (per-row crypto token) to avoid depending on a DB crypto extension.
 async function backfillTokens() {
@@ -203,10 +215,16 @@ function ensureTable() {
            created_at TIMESTAMPTZ NOT NULL DEFAULT now()
          );
          ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS unsub_token TEXT;
+         ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS confirm_token TEXT;
+         ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS confirm_sent_at TIMESTAMPTZ;
+         ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMPTZ;
          CREATE UNIQUE INDEX IF NOT EXISTS waitlist_signups_unsub_token_uniq
-           ON waitlist_signups (unsub_token);`,
+           ON waitlist_signups (unsub_token);
+         CREATE UNIQUE INDEX IF NOT EXISTS waitlist_signups_confirm_token_uniq
+           ON waitlist_signups (confirm_token);`,
       )
       .then(() => backfillTokens())
+      .then(() => grandfatherConfirmations())
       .then(() => true)
       .catch((err) => {
         console.error("[waitlist] table init failed:", err.message);
@@ -215,6 +233,19 @@ function ensureTable() {
       });
   }
   return dbReady;
+}
+
+// One-time grandfather: rows that predate double opt-in have no confirm_token
+// and no confirmed_at. They already went through the old (single opt-in) flow
+// and got a welcome email, so treat them as confirmed rather than suddenly
+// marking every historical signup "pending". This is safe to run repeatedly:
+// any genuinely pending row carries a confirm_token, so it is never touched.
+async function grandfatherConfirmations() {
+  await pool.query(
+    `UPDATE waitlist_signups
+        SET confirmed_at = created_at
+      WHERE confirmed_at IS NULL AND confirm_token IS NULL`,
+  );
 }
 
 function readBody(req, limit = 4096) {
@@ -311,22 +342,64 @@ async function handleWaitlist(req, res) {
   }
   try {
     await ensureTable();
+    // Double opt-in: a new signup lands as PENDING (confirmed_at IS NULL) with a
+    // fresh confirm token. The only mail it triggers is a "confirm your email"
+    // request; the welcome email is held until the link is clicked.
     const result = await pool.query(
-      `INSERT INTO waitlist_signups (email, source, unsub_token)
-       VALUES ($1, $2, $3)
+      `INSERT INTO waitlist_signups (email, source, unsub_token, confirm_token, confirm_sent_at)
+       VALUES ($1, $2, $3, $4, now())
        ON CONFLICT (email) DO NOTHING
-       RETURNING id, unsub_token`,
-      [email, source, newUnsubToken()],
+       RETURNING unsub_token, confirm_token`,
+      [email, source, newUnsubToken(), newConfirmToken()],
     );
     const isNew = result.rowCount > 0;
-    sendJson(res, 200, { ok: true, duplicate: !isNew });
-    // Best-effort welcome/notification email for genuinely new signups only.
-    // Runs after the response is sent and never blocks or fails the signup.
+
+    // Decide what (if anything) to email. For a brand-new row: send the confirm
+    // request. For a duplicate that is still UNCONFIRMED: refresh the token +
+    // expiry window and resend the confirm request (so a lost link is
+    // recoverable). For an already-confirmed duplicate: send nothing.
+    let mail = null;
     if (isNew) {
-      const token = result.rows[0].unsub_token;
-      const unsubscribeUrl = `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(token)}`;
-      sendSignupEmails({ email, source, unsubscribeUrl }).catch((err) =>
-        console.error("[waitlist] signup email error:", err.message),
+      mail = {
+        unsub_token: result.rows[0].unsub_token,
+        confirm_token: result.rows[0].confirm_token,
+      };
+    } else {
+      const existing = await pool.query(
+        `SELECT id, confirmed_at, unsub_token, confirm_token
+           FROM waitlist_signups WHERE email = $1`,
+        [email],
+      );
+      const row = existing.rows[0];
+      if (row && !row.confirmed_at) {
+        const confirmToken = row.confirm_token || newConfirmToken();
+        await pool.query(
+          `UPDATE waitlist_signups
+              SET confirm_token = $1, confirm_sent_at = now()
+            WHERE id = $2`,
+          [confirmToken, row.id],
+        );
+        mail = { unsub_token: row.unsub_token, confirm_token: confirmToken };
+      }
+    }
+
+    sendJson(res, 200, { ok: true, duplicate: !isNew });
+
+    // Best-effort confirmation email. Runs after the response is sent and never
+    // blocks or fails the signup.
+    if (mail && mail.confirm_token) {
+      const confirmUrl = `${reqOrigin(req)}/api/waitlist/confirm?token=${encodeURIComponent(mail.confirm_token)}`;
+      const unsubscribeUrl = mail.unsub_token
+        ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(mail.unsub_token)}`
+        : "";
+      sendConfirmationRequest({
+        email,
+        source,
+        confirmUrl,
+        unsubscribeUrl,
+        days: CONFIRM_DAYS,
+      }).catch((err) =>
+        console.error("[waitlist] confirmation email error:", err.message),
       );
     }
   } catch (err) {
@@ -338,11 +411,11 @@ async function handleWaitlist(req, res) {
 /* ---------------- self-serve deletion (unsubscribe) ---------------- */
 // Standalone, on-brand, mobile-first confirmation page. Uses the locked FDI
 // palette (Signal Orange is reserved for the logo mark, so accents are amber).
-function unsubscribeShell(body) {
+function unsubscribeShell(body, title = "Manage your email preferences — False Dawn Industries") {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Manage your email preferences — False Dawn Industries</title>
+<title>${title}</title>
 <style>
   :root{color-scheme:dark}
   *{box-sizing:border-box}
@@ -364,17 +437,143 @@ function unsubscribeShell(body) {
 </style></head><body><main class="card">${body}</main></body></html>`;
 }
 
-function unsubscribeRender(res, status, body) {
+function unsubscribeRender(res, status, body, title) {
   res.writeHead(status, {
     "Content-Type": "text/html; charset=utf-8",
     "Cache-Control": "no-store",
   });
-  res.end(unsubscribeShell(body));
+  res.end(unsubscribeShell(body, title));
 }
 
 // Tokens are 64 hex chars; accept a small range defensively without querying on
 // obviously malformed input.
 const UNSUB_TOKEN_RE = /^[a-f0-9]{32,128}$/i;
+
+/* ---------------- double opt-in: email confirmation ---------------- */
+// Clicking the link in the confirmation email lands here. We validate the
+// opaque token, mark the row confirmed (idempotently), and only then send the
+// welcome email + team notification. Reuses the on-brand, noindex shell.
+async function handleConfirm(req, res, urlObj) {
+  const CONFIRM_TITLE = "Confirm your email — False Dawn Industries";
+  const back = `<p class="muted" style="margin-top:22px"><a href="/">Return to False Dawn Industries</a></p>`;
+  if (req.method !== "GET") {
+    res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("405 Method Not Allowed");
+    return;
+  }
+  if (!pool) {
+    unsubscribeRender(
+      res,
+      503,
+      `<p class="eyebrow">Email confirmation</p><h1>Temporarily unavailable</h1><p class="muted">We can't confirm your email right now. Please try again later.</p>${back}`,
+      CONFIRM_TITLE,
+    );
+    return;
+  }
+
+  const token = (urlObj.searchParams.get("token") || "").trim();
+  const invalid = () =>
+    unsubscribeRender(
+      res,
+      400,
+      `<p class="eyebrow">Email confirmation</p><h1>Link no longer active</h1><p>This confirmation link is invalid or has already been used. If you signed up recently, request a fresh link by joining again.</p>${back}`,
+      CONFIRM_TITLE,
+    );
+
+  if (!UNSUB_TOKEN_RE.test(token)) {
+    invalid();
+    return;
+  }
+
+  let row;
+  try {
+    await ensureTable();
+    const result = await pool.query(
+      `SELECT id, email, source, confirmed_at, confirm_sent_at, unsub_token
+         FROM waitlist_signups WHERE confirm_token = $1`,
+      [token],
+    );
+    row = result.rows[0];
+  } catch (err) {
+    console.error("[confirm] lookup failed:", err.message);
+    unsubscribeRender(
+      res,
+      500,
+      `<p class="eyebrow">Email confirmation</p><h1>Something went wrong</h1><p class="muted">We couldn't confirm your email. Please try again later.</p>${back}`,
+      CONFIRM_TITLE,
+    );
+    return;
+  }
+
+  if (!row) {
+    invalid();
+    return;
+  }
+
+  // Already confirmed: idempotent, friendly acknowledgement.
+  if (row.confirmed_at) {
+    unsubscribeRender(
+      res,
+      200,
+      `<p class="eyebrow">Email confirmation</p><h1>You're already confirmed</h1><p>Your email is confirmed and you're on the list. There's nothing more to do.</p>${back}`,
+      CONFIRM_TITLE,
+    );
+    return;
+  }
+
+  // Expired link: confirm_sent_at older than the allowed window.
+  const sentAt = row.confirm_sent_at ? new Date(row.confirm_sent_at).getTime() : 0;
+  const ageMs = Date.now() - sentAt;
+  if (!sentAt || ageMs > CONFIRM_DAYS * 24 * 60 * 60 * 1000) {
+    unsubscribeRender(
+      res,
+      400,
+      `<p class="eyebrow">Email confirmation</p><h1>This link has expired</h1><p>Confirmation links are valid for ${CONFIRM_DAYS} days. Please <a href="/">sign up again</a> to get a fresh link.</p>${back}`,
+      CONFIRM_TITLE,
+    );
+    return;
+  }
+
+  // Mark confirmed. Guard on confirmed_at IS NULL so a double-click never fires
+  // the welcome email twice.
+  let confirmed = false;
+  try {
+    const upd = await pool.query(
+      `UPDATE waitlist_signups
+          SET confirmed_at = now()
+        WHERE id = $1 AND confirmed_at IS NULL
+        RETURNING id`,
+      [row.id],
+    );
+    confirmed = upd.rowCount > 0;
+  } catch (err) {
+    console.error("[confirm] update failed:", err.message);
+    unsubscribeRender(
+      res,
+      500,
+      `<p class="eyebrow">Email confirmation</p><h1>Something went wrong</h1><p class="muted">We couldn't confirm your email. Please try again later.</p>${back}`,
+      CONFIRM_TITLE,
+    );
+    return;
+  }
+
+  if (confirmed) {
+    const unsubscribeUrl = row.unsub_token
+      ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
+      : "";
+    // Welcome email + team notification only fire now, on a proven address.
+    sendWelcomeEmails({ email: row.email, source: row.source, unsubscribeUrl }).catch(
+      (err) => console.error("[confirm] welcome email error:", err.message),
+    );
+  }
+
+  unsubscribeRender(
+    res,
+    200,
+    `<p class="eyebrow">Email confirmation</p><h1>You're confirmed</h1><p>Thanks for confirming. Your email is verified and you're on the list. We'll be in touch.</p>${back}`,
+    CONFIRM_TITLE,
+  );
+}
 
 async function handleUnsubscribe(req, res, urlObj) {
   const back = `<p class="muted" style="margin-top:22px"><a href="/">Return to False Dawn Industries</a></p>`;
@@ -516,6 +715,9 @@ function adminShell(body) {
   th{color:#A8997B;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
   tr:hover td{background:#15120c}
   .tag{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.78rem;color:#FFCB6B}
+  .status{display:inline-block;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;border:1px solid #2a2418}
+  .status.ok{color:#FFCB6B;border-color:#E0920C}
+  .status.pending{color:#A8997B}
   .empty{color:#7A6A50;padding:40px 0}
   form.login{max-width:340px}
   label{display:block;font-size:.85rem;color:#A8997B;margin:0 0 6px}
@@ -571,7 +773,7 @@ async function fetchSignups(source = "") {
   await ensureTable();
   if (source) {
     const { rows } = await pool.query(
-      `SELECT email, source, created_at
+      `SELECT email, source, created_at, confirmed_at
          FROM waitlist_signups
         WHERE source = $1
         ORDER BY created_at DESC`,
@@ -580,7 +782,7 @@ async function fetchSignups(source = "") {
     return rows;
   }
   const { rows } = await pool.query(
-    `SELECT email, source, created_at
+    `SELECT email, source, created_at, confirmed_at
        FROM waitlist_signups
       ORDER BY created_at DESC`,
   );
@@ -726,14 +928,26 @@ async function handleAdmin(req, res, urlObj) {
       res.end("500 Server Error");
       return;
     }
-    const lines = ["email,source,created_at"];
+    const lines = ["email,source,created_at,status,confirmed_at"];
     for (const r of rows) {
       const ts =
         r.created_at instanceof Date
           ? r.created_at.toISOString()
           : String(r.created_at);
+      const confTs = r.confirmed_at
+        ? r.confirmed_at instanceof Date
+          ? r.confirmed_at.toISOString()
+          : String(r.confirmed_at)
+        : "";
+      const status = r.confirmed_at ? "confirmed" : "pending";
       lines.push(
-        [csvField(r.email), csvField(r.source), csvField(ts)].join(","),
+        [
+          csvField(r.email),
+          csvField(r.source),
+          csvField(ts),
+          csvField(status),
+          csvField(confTs),
+        ].join(","),
       );
     }
     const stamp = new Date().toISOString().slice(0, 10);
@@ -764,7 +978,7 @@ async function handleAdmin(req, res, urlObj) {
     try {
       await ensureTable();
       const result = await pool.query(
-        `SELECT email, source, created_at
+        `SELECT email, source, created_at, confirmed_at
            FROM waitlist_signups
           WHERE email = $1`,
         [email],
@@ -788,8 +1002,20 @@ async function handleAdmin(req, res, urlObj) {
       row.created_at instanceof Date
         ? row.created_at.toISOString()
         : String(row.created_at);
-    // Deliberately omits unsub_token — that is a credential, not user data.
-    const record = { email: row.email, source: row.source, created_at: ts };
+    const confTs = row.confirmed_at
+      ? row.confirmed_at instanceof Date
+        ? row.confirmed_at.toISOString()
+        : String(row.confirmed_at)
+      : null;
+    // Deliberately omits unsub_token/confirm_token — those are credentials,
+    // not user data.
+    const record = {
+      email: row.email,
+      source: row.source,
+      created_at: ts,
+      status: row.confirmed_at ? "confirmed" : "pending",
+      confirmed_at: confTs,
+    };
     const stamp = new Date().toISOString().slice(0, 10);
     res.writeHead(200, {
       "Content-Type": "application/json; charset=utf-8",
@@ -826,12 +1052,15 @@ async function handleAdmin(req, res, urlObj) {
               r.created_at instanceof Date
                 ? r.created_at.toISOString()
                 : String(r.created_at);
-            return `<tr><td>${esc(r.email)}</td><td class="tag">${esc(r.source || "")}</td><td>${esc(ts)}</td></tr>`;
+            const status = r.confirmed_at
+              ? `<span class="status ok">Confirmed</span>`
+              : `<span class="status pending">Pending</span>`;
+            return `<tr><td>${esc(r.email)}</td><td class="tag">${esc(r.source || "")}</td><td>${status}</td><td>${esc(ts)}</td></tr>`;
           })
           .join("")
       : "";
     const table = rows.length
-      ? `<table><thead><tr><th>Email</th><th>Source</th><th>Signed up</th></tr></thead><tbody>${bodyRows}</tbody></table>`
+      ? `<table><thead><tr><th>Email</th><th>Source</th><th>Status</th><th>Signed up</th></tr></thead><tbody>${bodyRows}</tbody></table>`
       : sourceFilter
         ? `<p class="empty">No signups for source "${esc(sourceFilter)}".</p>`
         : `<p class="empty">No signups yet.</p>`;
@@ -877,9 +1106,12 @@ async function handleAdmin(req, res, urlObj) {
     const csvHref = sourceFilter
       ? `/admin/waitlist.csv?source=${encodeURIComponent(sourceFilter)}`
       : "/admin/waitlist.csv";
-    const shownLabel = sourceFilter
+    const confirmedCount = rows.filter((r) => r.confirmed_at).length;
+    const pendingCount = rows.length - confirmedCount;
+    const base = sourceFilter
       ? `${rows.length} in "${esc(sourceFilter)}"`
       : `${rows.length} signup${rows.length === 1 ? "" : "s"}`;
+    const shownLabel = `${base} · ${confirmedCount} confirmed, ${pendingCount} pending`;
     const body = `<p class="eyebrow">Growth Cartography — Internal</p>
 <h1>Waitlist signups</h1>
 ${msg}
@@ -1350,6 +1582,17 @@ const server = http.createServer((req, res) => {
   }
   if (rawPath === "/api/waitlist") {
     handleWaitlist(req, res);
+    return;
+  }
+  if (rawPath === "/api/waitlist/confirm") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleConfirm(req, res, urlObj).catch((err) => {
+      console.error("[confirm] handler error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
     return;
   }
   if (rawPath === "/unsubscribe") {

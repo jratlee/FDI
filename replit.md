@@ -62,12 +62,30 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   `.definition` blocks and "as of 2026" freshness markers appear on product and
   concept pages; `build.mjs` emits `/llms.txt` (served `text/plain`) as an
   AI-crawler guide to the org, products, and series.
-- New signups trigger a best-effort transactional email via the **Resend**
-  integration (`site/email.mjs`, Replit Connectors proxy): a brand-styled,
-  source-aware welcome/confirmation to the subscriber and, if
-  `WAITLIST_NOTIFY_EMAIL` is set, a plain-text notification to the FDI team.
-  Mail sends only on genuinely new inserts (not duplicates), runs after the
-  HTTP response, and never blocks or fails a signup. Requires `RESEND_FROM`
+- Double opt-in (confirmed subscriptions): a new signup lands as **pending**
+  (`confirmed_at IS NULL`) with a per-signup `confirm_token` + `confirm_sent_at`.
+  The only mail it triggers is a brand-styled "Confirm your email" request
+  (`sendConfirmationRequest` in `site/email.mjs`) with a unique link to `GET
+  /api/waitlist/confirm?token=`. Clicking it marks the row confirmed
+  (idempotently, guarded on `confirmed_at IS NULL`) and only THEN sends the
+  welcome email + optional team notification (`sendWelcomeEmails`). Links expire
+  after `WAITLIST_CONFIRM_DAYS` days (default 7, computed off `confirm_sent_at`);
+  the confirm page (reuses the on-brand `noindex` unsubscribe shell) shows
+  distinct confirmed / already-confirmed / expired / invalid states and never
+  reveals whether an email exists. Re-signing up with a still-pending address
+  resends the confirmation and extends the window (keeps the same token);
+  re-signing up with an already-confirmed address sends nothing. Pre-double-opt-in
+  rows are grandfathered to confirmed once in `ensureTable` (safe/idempotent:
+  only rows with no `confirm_token` are touched). Form success copy now reads
+  "check your inbox for a confirmation link"; the admin view has a Status column
+  (Confirmed/Pending badges), a "N confirmed, M pending" summary, and the CSV +
+  single-record export carry `status` + `confirmed_at`.
+- Post-confirmation the subscriber gets a best-effort transactional welcome email
+  via the **Resend** integration (`site/email.mjs`, Replit Connectors proxy): a
+  brand-styled, source-aware welcome to the subscriber and, if
+  `WAITLIST_NOTIFY_EMAIL` is set, a plain-text notification to the FDI team (only
+  fired on confirmed, proven addresses). Mail runs after the HTTP response and
+  never blocks or fails a signup/confirm. Requires `RESEND_FROM`
   (an address on a Resend-verified domain, e.g. `FDI <hello@yourdomain>`); if
   unset, the confirmation is skipped and logged. Optional `RESEND_REPLY_TO`.
   Until a domain is verified in Resend, `RESEND_FROM` falls back to the Resend

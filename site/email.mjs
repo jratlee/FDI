@@ -88,6 +88,41 @@ function subscriberText({ heading, lead, product, unsubscribeUrl }) {
   return `${heading}\n\n${lead}\n\n\u2014 False Dawn Industries\n\nYou received this because you signed up for ${product} at False Dawn Industries.${unsub}`;
 }
 
+// Double opt-in: the first message a new signup receives. Asks them to click a
+// unique, expiring link to prove the address is theirs before we send anything
+// else. The welcome email only goes out once they confirm.
+function confirmHtml({ product, confirmUrl, unsubscribeUrl, days }) {
+  const unsub = unsubscribeUrl
+    ? `<br>Didn't sign up? You can safely ignore this email, or <a href="${unsubscribeUrl}" style="color:${C.amber};">remove this address</a>.`
+    : "Didn't sign up? You can safely ignore this email.";
+  return `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:${C.panel};border:1px solid ${C.border};border-radius:14px;overflow:hidden;">
+      <tr><td style="padding:32px 32px 8px;">
+        <p style="margin:0 0 20px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:${C.faded};">Growth Cartography</p>
+        <h1 style="margin:0 0 14px;font-family:'Space Grotesk',Arial,sans-serif;font-size:24px;line-height:1.2;color:${C.cream};">Confirm your email</h1>
+        <p style="margin:0 0 22px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${C.cream};">Please confirm your email address to finish joining ${product}. Click the button below and you're all set.</p>
+        <p style="margin:0 0 22px;"><a href="${confirmUrl}" style="display:inline-block;background:${C.amber};color:${C.bg};font-family:'Space Grotesk',Arial,sans-serif;font-weight:600;font-size:15px;text-decoration:none;padding:13px 24px;border-radius:10px;">Confirm my email</a></p>
+        <p style="margin:0 0 22px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:${C.faded};">This link expires in ${days} days. If the button doesn't work, copy and paste this link into your browser:<br><span style="color:${C.amberSoft};word-break:break-all;">${confirmUrl}</span></p>
+      </td></tr>
+      <tr><td style="padding:0 32px 32px;">
+        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:${C.faded};">\u2014 False Dawn Industries</p>
+      </td></tr>
+    </table>
+    <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.6;color:${C.faded};">You received this because this address was used to sign up for ${product} at False Dawn Industries.${unsub}</p>
+  </td></tr>
+</table>
+</body></html>`;
+}
+
+function confirmText({ product, confirmUrl, unsubscribeUrl, days }) {
+  const unsub = unsubscribeUrl
+    ? `\n\nDidn't sign up? You can safely ignore this email, or remove this address: ${unsubscribeUrl}`
+    : "\n\nDidn't sign up? You can safely ignore this email.";
+  return `Confirm your email\n\nPlease confirm your email address to finish joining ${product}. Open the link below and you're all set:\n\n${confirmUrl}\n\nThis link expires in ${days} days.\n\n\u2014 False Dawn Industries\n\nYou received this because this address was used to sign up for ${product} at False Dawn Industries.${unsub}`;
+}
+
 async function send(message) {
   // Fresh client per call — tokens expire, never cache. (Resend integration)
   const connectors = new ReplitConnectors();
@@ -197,14 +232,60 @@ export async function sendEntitlementEmail({
   }
 }
 
-// Fire-and-forget: send the subscriber confirmation and (optionally) a team
-// notification. Never throws — email is best-effort and must not break signup.
-export async function sendSignupEmails({ email, source, unsubscribeUrl }) {
+// Double opt-in step 1: ask a brand-new signup to confirm their address.
+// Fire-and-forget — never throws, so a mail hiccup never breaks the signup.
+// This is the ONLY message an unconfirmed signup receives; the welcome email
+// (below) is held back until they click the confirm link.
+export async function sendConfirmationRequest({
+  email,
+  source,
+  confirmUrl,
+  unsubscribeUrl,
+  days,
+}) {
+  const product = copyFor(source).product;
+  if (!FROM) {
+    console.warn(
+      "[email] RESEND_FROM not set — skipping confirmation request for",
+      email,
+    );
+    return;
+  }
+  const model = { product, confirmUrl, unsubscribeUrl, days };
+  try {
+    await send({
+      from: FROM,
+      to: [email],
+      subject: `Confirm your email for ${product}`,
+      html: confirmHtml(model),
+      text: confirmText(model),
+      ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+      // One-click unsubscribe (RFC 8058): even a pending signup can opt out
+      // before confirming, and it keeps us out of spam folders.
+      ...(unsubscribeUrl
+        ? {
+            headers: {
+              "List-Unsubscribe": `<${unsubscribeUrl}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
+          }
+        : {}),
+    });
+  } catch (err) {
+    console.error("[email] confirmation request failed:", err.message);
+  }
+}
+
+// Double opt-in step 2: once the address is confirmed, send the real welcome
+// to the subscriber and (optionally) notify the team. Firing team notification
+// here (not at signup) means the team only hears about proven, real addresses.
+// Never throws — email is best-effort and must not break the confirm flow.
+export async function sendWelcomeEmails({ email, source, unsubscribeUrl }) {
   const copy = { ...copyFor(source), unsubscribeUrl };
 
   if (!FROM) {
     console.warn(
-      "[email] RESEND_FROM not set — skipping subscriber confirmation for",
+      "[email] RESEND_FROM not set — skipping welcome email for",
       email,
     );
   } else {
@@ -228,7 +309,7 @@ export async function sendSignupEmails({ email, source, unsubscribeUrl }) {
           : {}),
       });
     } catch (err) {
-      console.error("[email] subscriber confirmation failed:", err.message);
+      console.error("[email] welcome email failed:", err.message);
     }
   }
 
@@ -237,8 +318,8 @@ export async function sendSignupEmails({ email, source, unsubscribeUrl }) {
       await send({
         from: FROM,
         to: [NOTIFY],
-        subject: `New ${copy.product} signup: ${email}`,
-        text: `New signup on False Dawn Industries.\n\nEmail:  ${email}\nSource: ${source}\nProduct: ${copy.product}\nTime:   ${new Date().toISOString()}`,
+        subject: `New confirmed ${copy.product} signup: ${email}`,
+        text: `New CONFIRMED signup on False Dawn Industries.\n\nEmail:  ${email}\nSource: ${source}\nProduct: ${copy.product}\nTime:   ${new Date().toISOString()}`,
         ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
       });
     } catch (err) {
