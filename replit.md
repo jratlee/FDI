@@ -19,6 +19,20 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
    bundle (article, images, deck PDF + slides), and the free Top Call prompt-pack
    lead magnet (`exports/top-call-lead-magnet/`, zipped to
    `exports/field-guide-launch/top-call-prompt-pack.zip`).
+5. **The MarCom Architecture Kit assets** (`exports/marcom-kit/`) — the new
+   flagship product ("Structure as code"): the Wedge Manifesto
+   (`wedge-manifesto.md`), the complete Tier 1 MarCom Foundation Playbook
+   (`playbook/`: Hourglass org blueprint, Use/Compose/Build calculator,
+   Riverbank governance templates, Audit to Kill checklist), Tier 2/3
+   fulfillment outlines (4-week fixed sprint, $1.5-2.5k Governance Risk Audit
+   bridge, white-label gated to the $399 Agency tier), and the kit's
+   data-handling posture doc. Free lead magnet lives in
+   `exports/marcom-kit-lead-magnet/` (zipped to
+   `exports/marcom-kit/fdi-marcom-starter-pack.zip`). Copy rules for all kit
+   assets: no em-dashes, no former-client names, softened risk claims plus a
+   not-legal-advice disclaimer, "Model C" terminology retired in favor of
+   Hourglass language, SkillFoundry framed as the Riverbank's running
+   enforcement engine.
 
 ## The public site (`site/`)
 - Lightweight, dependency-light static site. `build.mjs` renders the thesis
