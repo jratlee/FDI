@@ -1,0 +1,70 @@
+Here is the finalized Product Requirements Document (PRD), Pricing Ladder, and 90-Day Revenue Plan.
+This version strictly positions you as a **Scaled Communications and Digital Velocity Architect**. The product outcomes are specifically anchored in the actual services your ICP (Mid-Market Agency Presidents and CMOs) sells today (Brand Social, PR/Influencer, Reporting) and the emergent services they must sell tomorrow (GEO, Autonomous Marketplaces, Algorithmic Strategy) to protect their margins.
+### PRD: FDI Agentic MarCom Architecture Kit
+**1. Product Overview & Vision**
+The FDI Agentic MarCom Architecture Kit is a premium operational playbook and strategic advisory framework designed for communications and marketing leaders. It provides the exact structural blueprints required to transition an agency or in-house marketing team from manual, low-margin execution into high-velocity, agentic pods—without sacrificing brand safety or destroying their future talent pipeline.
+**2. Target Audience (ICP)**
+ * **Mid-Market PR & Ad Agency Presidents ($10M-$50M):** Leaders suffering from severe margin compression who know they need to automate core services (social, reporting, content) but are terrified of AI hallucinations ruining a client relationship.
+ * **Chief Marketing / Communications Officers (CMOs/CCOs):** Executives seeking to deploy AI across their digital marketing and crisis comms workflows but whose IT departments are failing to provide brand-safe governance.
+**3. Problem Statement**
+Agencies and CMOs are trying to adapt to an AI-first world by firing junior creatives and buying AI tools. This is a fatal mistake. AI dramatically increases execution speed, but legacy agency processes (50-person status meetings, slow legal reviews) choke that throughput, meaning margins don't actually improve. Furthermore, without a "Riverbank" of governance, autonomous agents pose an existential risk to brand safety and regulatory compliance (e.g., SEC violations).
+**4. Core Product Outcomes (Mapped to ICP Services)**
+ * **Outcome 1: High-Throughput Brand Safety (The Riverbank Framework):**
+   * *Applied to Today:* Secures **Brand Social and Digital Marketing** workflows. Provides "policy-as-code" guardrails so agencies can scale content volume 10x without risking off-brand or legally disastrous output.
+   * *Applied to Tomorrow:* Enables **Generative Engine Optimization (GEO) & Algorithmic Strategy**. Allows autonomous agents to programmatically bid and generate narratives across decentralized platforms safely.
+ * **Outcome 2: Margin Expansion via The "Hourglass" Talent Blueprint:**
+   * *Applied to Today:* Restructures **PR, Event, and Influencer** teams. Shifts execution to small pods of senior "expert generalists" augmented by AI, while preserving a lean junior pipeline to develop human "taste" and media relationships (avoiding the deskilling trap).
+   * *Applied to Tomorrow:* Prepares teams to orchestrate **Decentralized Community Management** (Web3/Marketplaces) where human judgment and empathy are the premium layer on top of automated community interactions.
+ * **Outcome 3: Process Defragmentation & Velocity:**
+   * *Applied to Today:* Automates **High-Throughput Reporting (QBRs, Earnings, Upfronts)**. Kills the bloated, multi-tiered human review process and replaces it with Shift-Left verification, immediately returning billable hours to the agency.
+ * **Outcome 4: The "Use, Compose, Build" MarTech Matrix:**
+   * *Applied to Both:* Stops CMOs and agencies from wasting millions trying to build proprietary AI models. Teaches them to 'Use' off-the-shelf AI for reporting, 'Compose' APIs for interactive digital builds, and only 'Build' for truly unique narrative IP.
+### The Pricing Ladder
+**Own the blueprints, subscribe to the evolution, or restructure with us.**
+#### Tier 1 · Perpetual
+**The MarCom Foundation Playbook**
+**$149 one-time** *(Launch price **$99** for early adopters)*
+A one-time purchase of frozen V1.0 operational playbooks, built for independent strategists and boutique agency owners to protect their margins today.
+ * Frozen V1.0 "Hourglass vs. Diamond" Agency Org Chart.
+ * The "Use, Compose, Build" MarTech economic calculator.
+ * Baseline Riverbank Governance templates (Prompt constraints for Brand Social, PR drafting, and Reporting).
+ * The "Audit to Kill" checklist for defragmenting bloated agency QBRs and status meetings.
+#### Tier 2 · Living Engine (Most Popular)
+**Continuous Velocity**
+**$199 /mo** *(Founding rate **$149/mo** · **$1,500/yr** annual · Agency Team Seats **$399/mo**)*
+Recurring subscription with over-the-wire updates as frontier models and algorithmic search platforms evolve. Designed for mid-market ops teams and in-house MarCom departments.
+ * **Everything in Perpetual, plus:**
+ * Continuous updates to Riverbank Guardrails as new platforms emerge (e.g., new constraints for Perplexity/GEO optimization).
+ * Access to the custom LLM backend for rapid "Agency Process Readiness" Scoring.
+ * Machine-readable policy-as-code snippets to enforce brand tone and legal compliance at the API gateway level.
+ * White-label rights to use the "Use, Compose, Build" matrix in client pitches.
+#### Tier 3 · Advisory
+**Agentic Agency Transformation Sprint**
+**$5,000 /mo** *(Limited to ~3 active clients · or a one-time **$10,000** Transformation Sprint)*
+The full Architecture Kit deployed by a dedicated strategic advisor. We restructure your agency's operating model so you can actually capture the margins AI promised you.
+ * **Everything in Living Engine, plus:**
+ * Dedicated strategist to run the "Audit to Kill" workshop with your executive leadership, immediately eliminating legacy SLA bottlenecks.
+ * Hands-on restructuring: Transitioning your teams into Model C pods (3-5 senior expert generalists executing high-volume digital marketing and PR via a shared AI platform).
+ * Custom-tuned Riverbank Guardrails specific to your agency's most regulated clients (FinTech, Healthcare).
+ * Private async channel for immediate architectural strategy on major client pitches.
+### Day-by-Day Revenue Plan to $5,000 Bi-Weekly by August 15th
+To hit your $10k/month run rate, the goal is to secure **two Tier 3 Retainers/Sprints** or **one $10k Tier 3 Sprint plus SaaS volume**.
+**Phase 1: Asset Productization (July 7 – July 13)**
+ * **July 7-8:** Draft your core Wedge Manifesto. The hook: *"AI is compressing your agency's margins because you are using 2019 review processes for 2026 throughput. You are suffocating your own velocity."*
+ * **July 9-10:** Build the Tier 1 "Foundation Playbook." Focus on high-value visual assets, specifically diagramming how an "Hourglass" pod executes an entire Brand Social or GEO campaign end-to-end.
+ * **July 11-12:** Configure your backend LLM to ingest an agency's current workflow documentation (e.g., their QBR process) and spit out a "Process Defragmentation Report."
+ * **July 13:** Finalize the landing page and checkout flow for the software tiers.
+**Phase 2: Network Activation & Outbound (July 14 – July 23)**
+ * **July 14:** Scrape a list of 15-20 Mid-Market Agency Presidents (focusing on PR, Digital, and Social) and Fortune 500 CCOs/CMOs you have prior connective tissue with.
+ * **July 15-16:** Run AI queries on these targets to identify recent agency acquisitions, major client wins, or signs of margin struggle (layoffs paired with AI press releases).
+ * **July 17-18:** Deploy personalized outreach. **The Pitch:** *"I noticed your recent push into AI tooling for your creative teams. Most agencies accidentally walk into a 'deskilling trap' or break brand-safety compliance by doing this. I run a sprint that installs the Riverbank architecture—securing your execution speed today and your strategic pipeline for 2030."*
+ * **July 19-23:** Run automated "Use vs. Compose vs. Build" workflow analyses for 2 warm leads. Send them over for free to prove they are over-complicating their MarTech stack.
+**Phase 3: Sales Consultations & Pitching (July 24 – August 2)**
+ * **July 24-26:** Conduct discovery calls. Lean heavily on your background: *"I managed the Beazley cyber breach response and Voyager's brand social. I know what happens when high-throughput content lacks governance."*
+ * **July 27-29:** Deliver a customized Governance Risk Audit to your hottest lead, proving their current QA layer cannot keep up with their AI generation speed.
+ * **July 30-August 2:** Send out official proposals for the $10,000 Transformation Sprint.
+**Phase 4: Closing & Fulfillment (August 3 – August 15)**
+ * **August 3-6:** Negotiate final scope and close your primary target.
+ * **August 7-10:** Onboard your first client. Run the C-Suite "Audit to Kill" workshop. Target a notoriously slow internal reporting process (like QBRs) and automate it immediately to establish authority.
+ * **August 11-14:** Architect their new marketing pods and set up the shared platform guardrails for their emergent GEO/Algorithmic campaigns.
+ * **August 15:** Your first two-week billing cycle hits. You have successfully engineered $5,000 in bi-weekly cash flow by solving the structural and economic crises created by AI in the MarCom sector.
