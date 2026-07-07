@@ -25,6 +25,7 @@ const EXPECTED_ROUTES = [
   "/",
   "/field-guide",
   "/skillfoundry",
+  "/marcom-kit",
   "/topcall",
   "/series",
   "/aggregated",

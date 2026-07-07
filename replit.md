@@ -52,6 +52,21 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
     `modelcontextprotocol.io`), three-tier pricing ladder with live Stripe
     checkout (Tier 1 "Buy now" one-time, Tier 2 "Subscribe" monthly; Tier 3 stays
     a waitlist CTA), a native `<details>` FAQ section, and a waitlist CTA
+  - `/marcom-kit` — the flagship MarCom Architecture Kit ("Structure as code"):
+    direct-answer `.definition`, FREE starter-pack lead magnet (`js-capture` +
+    `data-download` serving `/assets/fdi-marcom-starter-pack.zip`, source
+    `marcom-kit-starter`), three pillars (Hourglass / Use-Compose-Build /
+    Riverbank), today/tomorrow outcomes, three-tier ladder (T1 $149 one-time,
+    launch $99; T2 $199/mo, founding $149/mo, $1,500/yr, Agency $399/mo with
+    white-label rights gated to that tier only; T3 $5,000/mo ~3 clients or
+    $10,000 fixed 4-week sprint) plus the $1,500-2,500 Governance Risk Audit
+    bridge card, Product+FAQPage JSON-LD, native `<details>` FAQ, a visible
+    not-legal-advice disclaimer, and a data-handling FAQ where the LLM backend
+    is mentioned. All tier buttons are waitlist CTAs until the kit checkout task
+    lands. Homepage now leads with the kit as flagship (SkillFoundry recast as
+    the kit's enforcement engine); nav/footer/llms.txt list the kit first; each
+    concept page carries an "Own the structure" kit-branch section
+    (Aggregator-Resilient Org / Cross-Functional Graph Org / Agent-Ready Org).
   - `/topcall` — Top Call ("Signal as Code"): a FREE prompt-pack lead magnet
     (email-capture that triggers the ZIP download), the three owned-system
     constructs (corpus / knowledge graph / MCP), architecture built on the open

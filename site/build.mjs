@@ -64,10 +64,11 @@ function nav(active) {
     <a href="/" aria-label="False Dawn Industries home">${lockup()}</a>
     <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation">Menu</button>
     <nav class="nav-links" id="nav-links">
-      ${link("/field-guide", "Field Guide", "field-guide")}
+      ${link("/marcom-kit", "MarCom Kit", "marcom-kit")}
       ${link("/skillfoundry", "SkillFoundry", "skillfoundry")}
+      ${link("/field-guide", "Field Guide", "field-guide")}
       ${link("/#about", "About", "about")}
-      <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the waitlist</a>
+      <a class="btn btn-primary" href="/marcom-kit#waitlist">Join the waitlist</a>
     </nav>
   </div>
 </header>`;
@@ -84,8 +85,9 @@ function footer() {
       <div>
         <h5>Explore</h5>
         <ul>
-          <li><a href="/field-guide">Field Guide</a></li>
+          <li><a href="/marcom-kit">MarCom Architecture Kit</a></li>
           <li><a href="/skillfoundry">SkillFoundry</a></li>
+          <li><a href="/field-guide">Field Guide</a></li>
           <li><a href="/series">The Series</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
@@ -95,7 +97,7 @@ function footer() {
         <ul>
           <li><a href="${GITHUB}" rel="noopener">GitHub ↗</a></li>
           <li><a href="mailto:${CONTACT}">${CONTACT}</a></li>
-          <li><a href="/skillfoundry#waitlist">Join the waitlist</a></li>
+          <li><a href="/marcom-kit#waitlist">Join the waitlist</a></li>
         </ul>
       </div>
     </div>
@@ -226,8 +228,8 @@ function home() {
       <h1>Build the machine, <em>not the ad</em>.</h1>
       <p class="lede">The cost of making content just fell to zero. That is not the opportunity, it is the emergency. When reach is commoditized and platforms are black boxes, the only durable marketing assets are the ones you own and can prove.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="/field-guide">Read the Field Guide <span class="arrow">→</span></a>
-        <a class="btn btn-ghost" href="/skillfoundry">Explore SkillFoundry</a>
+        <a class="btn btn-primary" href="/marcom-kit">Explore the MarCom Kit <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/field-guide">Read the Field Guide</a>
       </div>
       <div class="hero-tags"><a href="/aggregated"><b>Aggregated</b></a><a href="/decentralized"><b>Decentralized</b></a><a href="/autonomous"><b>Autonomous</b></a></div>
     </div>
@@ -252,9 +254,15 @@ function home() {
     </div>
     <div class="grid cols-2">
       <article class="card featured">
-        <span class="pill">Product · Strategy as Code</span>
+        <span class="pill">Flagship · Structure as Code</span>
+        <h3>The MarCom Architecture Kit</h3>
+        <p>The blueprint for an AI-era marketing organization: the Hourglass org design, the Use, Compose, Build capability calculator, and the Riverbank governance system, shipped as a working kit instead of a slide deck. Structure as code.</p>
+        <div class="card-foot"><a class="link-arrow" href="/marcom-kit">See the kit <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">Product · Strategy as Code</span>
         <h3>SkillFoundry</h3>
-        <p>A strategic firewall for your content. Route any asset through three opinionated Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) as a plugin built on the open Model Context Protocol (MCP). Strategy as code.</p>
+        <p>The enforcement engine inside the kit: a strategic firewall that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) as a plugin built on the open Model Context Protocol (MCP). It is how the kit's Riverbank rules run on every asset, every day.</p>
         <div class="card-foot"><a class="link-arrow" href="/skillfoundry">See how it works <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
@@ -317,7 +325,7 @@ function home() {
       </a>
     </div>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="/skillfoundry#waitlist">Join the SkillFoundry waitlist <span class="arrow">→</span></a>
+      <a class="btn btn-primary" href="/marcom-kit#waitlist">Join the waitlist <span class="arrow">→</span></a>
       <a class="btn btn-ghost" href="mailto:${CONTACT}">Get in touch</a>
     </div>
   </div>
@@ -940,6 +948,309 @@ function topcall() {
   });
 }
 
+/* ---------------- MARCOM ARCHITECTURE KIT ---------------- */
+function marcomKit() {
+  const kitJsonLd = () => ({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: "FDI Agentic MarCom Architecture Kit",
+    url: `${SITE_URL}/marcom-kit`,
+    description:
+      "The FDI Agentic MarCom Architecture Kit is the blueprint for an AI-era marketing organization: the Hourglass org design, the Use, Compose, Build capability calculator, and the Riverbank governance system, shipped as a working kit of templates, calculators, and checklists.",
+    brand: { "@type": "Organization", name: "False Dawn Industries", url: `${SITE_URL}/` },
+    offers: {
+      "@type": "Offer",
+      price: "149.00",
+      priceCurrency: "USD",
+      description: "MarCom Foundation Playbook (Tier 1), one-time.",
+    },
+  });
+
+  const tier = (name, title, model, price, feats, mid) => `
+    <article class="tier${mid ? " mid" : ""}">
+      ${mid ? '<span class="pill">Most popular</span>' : ""}
+      <span class="tname">${name}</span>
+      <h3>${title}</h3>
+      <div class="tprice">
+        ${price.anchor ? `<span class="tprice-anchor">${price.anchor}</span>` : ""}
+        <span class="tprice-amt">${price.amount}</span>
+        ${price.unit ? `<span class="tprice-unit">${price.unit}</span>` : ""}
+      </div>
+      ${price.note ? `<p class="tprice-note">${price.note}</p>` : ""}
+      <p class="model">${model}</p>
+      <ul>${feats.map((f) => `<li>${f}</li>`).join("")}</ul>
+      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Join the waitlist <span class="arrow">→</span></a></div>
+    </article>`;
+
+  const pillar = (n, name, role, desc, outLbl, outVal) => `
+    <article class="gate">
+      <span class="gnum">Pillar ${n}</span>
+      <h3>${name}</h3>
+      <span class="role">${role}</span>
+      <p>${desc}</p>
+      <div class="out"><div class="lbl">${outLbl}</div><div class="val">${outVal}</div></div>
+    </article>`;
+
+  const faqs = [
+    {
+      q: "What is the FDI Agentic MarCom Architecture Kit?",
+      a: "The kit is the blueprint for an AI-era marketing organization: the Hourglass org design, the Use, Compose, Build capability calculator, and the Riverbank governance system, shipped as a working kit of templates, calculators, and checklists rather than a slide deck. It is built by False Dawn Industries.",
+    },
+    {
+      q: "How is the kit different from hiring a consultancy?",
+      a: "A consultancy sells you a deck and leaves. The kit is structure as code: editable blueprints, a scoring calculator, governance templates, and an audit checklist you run yourself, with SkillFoundry available as the running enforcement engine for the rules you set. Higher tiers add a fixed-scope sprint or a fractional architect retainer if you want hands-on help.",
+    },
+    {
+      q: "How much does the MarCom Architecture Kit cost?",
+      a: "Three tiers: the MarCom Foundation Playbook (Tier 1) from $149 one-time, the Living Architecture subscription (Tier 2) from $199 per month, and the Architecture Partner retainer (Tier 3) from $5,000 per month or a $10,000 fixed four-week sprint. A standalone Governance Risk Audit runs $1,500 to $2,500. Launch pricing is available to waitlist members.",
+    },
+    {
+      q: "Is the kit legal or compliance advice?",
+      a: "No. The kit provides organizational design frameworks, governance templates, and risk checklists as strategic guidance. It is not legal, compliance, or professional advice, and you should review regulated-industry decisions with your own counsel.",
+    },
+    {
+      q: "What does the kit do with my data?",
+      a: "The Tier 1 playbook is a set of documents and calculators you run entirely on your own machines; nothing is sent to FDI. Where a workflow touches an LLM backend, the kit's data-handling posture applies: you choose the model provider, your content is processed under your own accounts and keys, and FDI never stores or trains on your assets.",
+    },
+  ];
+
+  const body = `
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">The FDI flagship · As of ${AS_OF}</span>
+      <h1>The MarCom Architecture Kit: <em>structure as code</em>.</h1>
+      <p class="lede">AI did not just change marketing tools, it broke the marketing org chart. The kit is the blueprint for what replaces it: the Hourglass organization, a capability calculator that tells you what to use, compose, or build, and a governance Riverbank that keeps autonomous output inside the brand. Shipped as working documents, not a deck.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#starter-pack">Get the free starter pack <span class="arrow">↓</span></a>
+        <a class="btn btn-ghost" href="#pillars">See what is inside</a>
+      </div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>
+
+<section class="section" id="what">
+  <div class="wrap">
+    <p class="definition"><b>The FDI Agentic MarCom Architecture Kit is the blueprint for an AI-era marketing organization.</b> It packages the Hourglass org design, the Use, Compose, Build capability calculator, and the Riverbank governance system into editable templates, calculators, and checklists you run yourself, with SkillFoundry as the running enforcement engine for the rules you set. Built by False Dawn Industries. As of ${AS_OF}.</p>
+  </div>
+</section>
+
+<section class="section" id="starter-pack">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Free · The starter pack</span>
+      <h2>Start with the Use, Compose, Build starter.</h2>
+      <p>The free FDI MarCom Starter Pack contains a working slice of the kit: the Use, Compose, Build starter calculator and a Riverbank starter template, so you can score one capability and write one governance rule before you spend a dollar.</p>
+    </div>
+    <div class="grid cols-2">
+      <article class="card featured">
+        <span class="tag">The lead magnet</span>
+        <h3>FDI MarCom Starter Pack</h3>
+        <p>The Use, Compose, Build starter calculator, a Riverbank starter governance template, and a read-me that maps both onto the full kit. Drop your email and the download starts immediately. No spam.</p>
+        <form class="waitlist js-capture" data-source="marcom-kit-starter" data-subject="MarCom starter pack" data-download="/assets/fdi-marcom-starter-pack.zip" data-mail-body="Please send me the FDI MarCom starter pack." novalidate style="margin-top:22px;">
+          <label class="sr-only" for="mk-lm-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+          ${HONEYPOT}
+          <input type="email" id="mk-lm-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+          <button class="btn btn-primary" type="submit">Email me the pack <span class="arrow">↓</span></button>
+        </form>
+        <p class="form-msg" role="status" aria-live="polite"></p>
+        <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer a direct link? <a href="/assets/fdi-marcom-starter-pack.zip" download>Download the ZIP</a>.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Why structure first</span>
+        <h3>Tools do not fix a broken org chart</h3>
+        <p>Most teams bolt AI tools onto a factory-era structure and get faster chaos. The bottleneck is not the model, it is the shape of the team, the make-or-buy logic, and the absence of guardrails that machines can actually enforce.</p>
+        <p style="margin-top:16px;">The kit fixes the structure first: who sits where (Hourglass), what you build versus buy (Use, Compose, Build), and what may ship (the Riverbank). Then the tools compound instead of colliding.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="pillars">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Inside the kit</span>
+      <h2>Three pillars, one working playbook.</h2>
+      <p>The Tier 1 MarCom Foundation Playbook ships all three pillars as editable documents plus the Audit to Kill checklist that turns them into a quarterly operating rhythm.</p>
+    </div>
+    <div class="grid cols-3">
+      ${pillar(
+        1,
+        "The Hourglass Organization",
+        "The org blueprint",
+        "A staffing blueprint shaped like an hourglass: broad strategic direction on top, a narrow waist of human editors-in-chief, and a wide base of agentic execution. Includes role charters, reporting lines, and a migration path from the org you have today.",
+        "Ships as",
+        "Editable org blueprint + role charters",
+      )}
+      ${pillar(
+        2,
+        "Use, Compose, Build",
+        "The capability calculator",
+        "A scoring calculator that decides, per capability, whether you should use an off-the-shelf tool, compose existing pieces, or build owned infrastructure. Stops both over-buying SaaS and over-building vanity systems.",
+        "Ships as",
+        "Scoring calculator + decision log",
+      )}
+      ${pillar(
+        3,
+        "The Riverbank",
+        "The governance system",
+        "Governance templates that define the banks your autonomous output flows between: brand rules, escalation triggers, and kill criteria, written so both humans and agents can enforce them. SkillFoundry is the running enforcement engine for these rules.",
+        "Ships as",
+        "Governance templates + kill criteria",
+      )}
+    </div>
+    <p class="flowline" style="margin-top:40px;">Structure &nbsp;→&nbsp; <b>Hourglass</b> &nbsp;→&nbsp; <b>Use, Compose, Build</b> &nbsp;→&nbsp; <b>Riverbank</b> &nbsp;→&nbsp; audited every quarter with Audit to Kill</p>
+    <p class="flowline" style="margin-top:14px;color:var(--muted);">The kit provides strategic frameworks and templates. It is not legal, compliance, or professional advice; review regulated-industry decisions with your own counsel.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="outcomes">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">What changes</span>
+      <h2>Mapped from today to tomorrow.</h2>
+      <p>Each pillar replaces a familiar failure mode with an owned, auditable structure.</p>
+    </div>
+    <div class="grid cols-3">
+      <article class="card"><h3>Today: the pyramid</h3><p>Headcount stacked around manual production, AI bolted on at the edges, and a review process that cannot keep up with machine-speed output.</p></article>
+      <article class="card"><h3>Tomorrow: the Hourglass</h3><p>Strategy on top, a small human waist of editors-in-chief with real kill authority, and agentic execution underneath, each layer with a written charter.</p></article>
+      <article class="card"><h3>Every quarter: Audit to Kill</h3><p>A standing checklist that scores every capability, campaign, and tool against the Riverbank and retires what fails, so the structure stays lean instead of accreting.</p></article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The pricing ladder</span>
+      <h2>Own the blueprint, subscribe to it, or build it with us.</h2>
+      <p>Three tiers, from a one-time playbook to a fractional architecture partner. Prices are set, and checkout arrives in the commercialization phase, so join the waitlist to lock launch pricing.</p>
+    </div>
+    <p class="price-anchor">A boutique org-design engagement runs <b>$25,000 to $150,000</b>. The Foundation Playbook ships the same structural frameworks as editable working documents, for the price of a team lunch.</p>
+    <div class="price-grid">
+      ${tier(
+        "Tier 1 · Playbook",
+        "MarCom Foundation Playbook",
+        "One-time purchase of the complete foundation playbook.",
+        {
+          amount: "$149",
+          unit: "one-time",
+          note: "Launch price <b>$99</b> for early adopters.",
+        },
+        [
+          "Hourglass org blueprint + role charters",
+          "Use, Compose, Build calculator",
+          "Riverbank governance templates",
+          "Audit to Kill checklist",
+          "The Wedge Manifesto",
+          "Yours forever, edit everything",
+        ],
+        false,
+      )}
+      ${tier(
+        "Tier 2 · Living Architecture",
+        "Continuous Updates",
+        "Recurring subscription that keeps the blueprint current.",
+        {
+          amount: "$199",
+          unit: "/mo",
+          note: "Founding rate <b>$149/mo</b> · <b>$1,500/yr</b> annual · Agency Team <b>$399/mo</b> with white-label rights.",
+        },
+        [
+          "Everything in the Playbook, plus:",
+          "Quarterly framework updates",
+          "New templates as the field moves",
+          "Priority async Q&amp;A",
+          "Team seats",
+          "White-label rights on the Agency tier only",
+        ],
+        true,
+      )}
+      ${tier(
+        "Tier 3 · Architecture Partner",
+        "Fractional Architect",
+        "A retainer or fixed sprint with FDI as your fractional MarCom architect.",
+        {
+          amount: "$5,000",
+          unit: "/mo",
+          note: "Limited to ~3 clients · or a one-time <b>$10,000</b> fixed four-week sprint.",
+        },
+        [
+          "Everything in Living Architecture, plus:",
+          "Hands-on Hourglass migration",
+          "Custom Riverbank calibration",
+          "Fixed four-week sprint option",
+          "Direct line to FDI",
+        ],
+        false,
+      )}
+    </div>
+    <div class="grid cols-2" style="margin-top:28px;">
+      <article class="card">
+        <span class="tag">The bridge offer</span>
+        <h3>Governance Risk Audit · $1,500 to $2,500</h3>
+        <p>A fixed-scope, standalone audit of your current AI content operation against the Riverbank framework: where autonomous output can drift off-brand, which approvals are missing, and a prioritized fix list. Credited toward Tier 3 if you upgrade within 90 days.</p>
+        <div class="card-foot"><a class="link-arrow" href="#waitlist">Ask about the audit <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">The enforcement engine</span>
+        <h3>Runs with SkillFoundry</h3>
+        <p>The Riverbank defines the rules; <a href="/skillfoundry">SkillFoundry</a> enforces them at machine speed, routing every asset through the Relevance, Performance, and Algorithmic Signal gates before it ships. The kit works standalone, and compounds with the engine.</p>
+        <div class="card-foot"><a class="link-arrow" href="/skillfoundry">See SkillFoundry <span class="arrow">→</span></a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="faq">
+      ${faqs
+        .map(
+          (f) => `<details class="faq-item"><summary>${f.q}</summary><p>${f.a}</p></details>`,
+        )
+        .join("\n      ")}
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="waitlist">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
+      <h2>Get the MarCom Architecture Kit the day it ships.</h2>
+      <p>Drop your email to join the waitlist. We'll reach out with early access, launch pricing, and the starter pack walkthrough. No spam.</p>
+      <form class="waitlist js-capture" data-source="marcom-kit" data-subject="MarCom Kit waitlist" data-success="Almost there. Check your inbox and click the confirmation link to join the waitlist." data-mail-body="Please add me to the MarCom Architecture Kit waitlist." novalidate>
+        <label class="sr-only" for="mk-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="mk-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: "The MarCom Architecture Kit: Structure as Code | False Dawn Industries",
+    description:
+      "The FDI Agentic MarCom Architecture Kit is the blueprint for an AI-era marketing organization: the Hourglass org design, the Use, Compose, Build calculator, and the Riverbank governance system, shipped as a working kit. Get the free starter pack.",
+    active: "marcom-kit",
+    jsonLd: [kitJsonLd(), faqJsonLd(faqs)],
+    body,
+    canonical: `${SITE_URL}/marcom-kit`,
+  });
+}
+
 /* ---------------- client JS ---------------- */
 const SITE_JS = `(function () {
   var toggle = document.querySelector(".nav-toggle");
@@ -1095,6 +1406,14 @@ function copyAssets() {
     if (fs.existsSync(from)) copy(from, path.join(DIST, "assets", f));
   }
 
+  // MarCom Kit free starter pack (lead magnet)
+  const starterPack = path.join(ROOT, "exports", "marcom-kit", "fdi-marcom-starter-pack.zip");
+  if (fs.existsSync(starterPack)) {
+    copy(starterPack, path.join(DIST, "assets", "fdi-marcom-starter-pack.zip"));
+  } else {
+    console.warn("[build] fdi-marcom-starter-pack.zip not found, lead-magnet download will 404");
+  }
+
   // deck slides
   const slidesDir = path.join(EXPORTS, "deck-slides");
   const slideFiles = fs
@@ -1176,6 +1495,10 @@ const CONCEPTS = {
         p: 'Ben Thompson\'s <a href="https://stratechery.com/aggregation-theory/" target="_blank" rel="noopener">Aggregation Theory</a> maps this exactly: platforms that own demand commoditize the suppliers behind them and set the terms of discovery. The durable countermove is owning assets the aggregator cannot revoke.',
       },
     ],
+    kit: {
+      name: "The Aggregator-Resilient Org",
+      p: "In aggregated markets the org itself is the exposure: teams staffed around a single channel collapse when the algorithm turns. The MarCom Architecture Kit's Hourglass blueprint and Use, Compose, Build calculator structure the team around owned capabilities, so no aggregator rule change can zero out the operation.",
+    },
   },
   decentralized: {
     slug: "decentralized",
@@ -1199,6 +1522,10 @@ const CONCEPTS = {
         p: '<a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a> is the pattern in public: it turns scattered, independently maintained facts into one structured, queryable, citable knowledge graph that other systems build on instead of re-deriving from scratch.',
       },
     ],
+    kit: {
+      name: "The Cross-Functional Graph Org",
+      p: "In decentralized markets the org chart has to mirror the knowledge graph: small cross-functional pods connected by shared structure, not silos connected by meetings. The MarCom Architecture Kit's Hourglass design and Riverbank governance give those pods one set of rules and one citable source of truth to build on.",
+    },
   },
   autonomous: {
     slug: "autonomous",
@@ -1222,6 +1549,10 @@ const CONCEPTS = {
         p: 'The open <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol</a> is the pattern in public: it gives agents a verifiable interface to call tools and retrieve answers with their sources attached, rather than trusting unprovenanced text.',
       },
     ],
+    kit: {
+      name: "The Agent-Ready Org",
+      p: "In autonomous markets your organization is judged by machines: agents route budget to operations they can query and verify. The MarCom Architecture Kit's Riverbank writes your brand rules so agents can enforce them, and the Hourglass puts human kill authority exactly where machine-speed output needs it.",
+    },
   },
 };
 
@@ -1262,6 +1593,32 @@ function conceptPage(key) {
             `<article class="card"><h3>${pt.h}</h3><p>${pt.p}</p></article>`,
         )
         .join("\n      ")}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="own-the-structure">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Own the structure</span>
+      <h2>${c.kit.name}.</h2>
+      <p>Owning the assets is half the answer. The other half is an organization shaped to run them.</p>
+    </div>
+    <div class="grid cols-2">
+      <article class="card featured">
+        <span class="pill">The kit's branch for this market</span>
+        <h3>${c.kit.name}</h3>
+        <p>${c.kit.p}</p>
+        <div class="card-foot"><a class="link-arrow" href="/marcom-kit">See the MarCom Architecture Kit <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">Structure as code</span>
+        <h3>Blueprints, not slide decks</h3>
+        <p>The MarCom Architecture Kit ships the Hourglass org blueprint, the Use, Compose, Build capability calculator, and the Riverbank governance system as editable working documents, with a free starter pack to try before you buy.</p>
+        <div class="card-foot"><a class="link-arrow" href="/marcom-kit#starter-pack">Get the free starter pack <span class="arrow">→</span></a></div>
+      </article>
     </div>
   </div>
 </section>
@@ -1554,7 +1911,8 @@ function llmsTxt() {
 False Dawn Industries (FDI) publishes the Field Guide thesis and ships working products that let organizations own their place in AI-mediated markets.
 
 ## Products
-- SkillFoundry (${SITE_URL}/skillfoundry): a strategic firewall for content. A plugin built on the open Model Context Protocol (MCP) that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) and returns the optimized asset plus a structured audit.
+- The FDI Agentic MarCom Architecture Kit (${SITE_URL}/marcom-kit): the flagship. The blueprint for an AI-era marketing organization: the Hourglass org design, the Use, Compose, Build capability calculator, and the Riverbank governance system, shipped as a working kit of templates, calculators, and checklists. Structure as code. A free starter pack is available on the page.
+- SkillFoundry (${SITE_URL}/skillfoundry): the kit's running enforcement engine and a standalone strategic firewall for content. A plugin built on the open Model Context Protocol (MCP) that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) and returns the optimized asset plus a structured audit. Strategy as code.
 
 ## The Field Guide
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
@@ -1630,6 +1988,7 @@ function main() {
     fieldGuide({ ...parsed, bodyHtml }, slideFiles),
   );
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
+  fs.writeFileSync(path.join(DIST, "marcom-kit.html"), marcomKit());
   fs.writeFileSync(path.join(DIST, "topcall.html"), renderRoute("topcall", topcall));
   fs.writeFileSync(path.join(DIST, "series.html"), seriesPage());
   fs.writeFileSync(path.join(DIST, "aggregated.html"), conceptPage("aggregated"));
@@ -1642,7 +2001,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "llms.txt"), llmsTxt());
 
   console.log(
-    `[build] wrote 9 pages + llms.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 10 pages + llms.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 
