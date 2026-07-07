@@ -62,8 +62,10 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
     $10,000 fixed 4-week sprint) plus the $1,500-2,500 Governance Risk Audit
     bridge card, Product+FAQPage JSON-LD, native `<details>` FAQ, a visible
     not-legal-advice disclaimer, and a data-handling FAQ where the LLM backend
-    is mentioned. All tier buttons are waitlist CTAs until the kit checkout task
-    lands. Homepage now leads with the kit as flagship (SkillFoundry recast as
+    is mentioned. Kit checkout is wired end-to-end into the shared commerce
+    engine (see "MarCom Kit commerce" below) but the page buttons stay waitlist
+    CTAs until `KIT_CHECKOUT_LIVE` in `build.mjs` is flipped to true. Homepage
+    now leads with the kit as flagship (SkillFoundry recast as
     the kit's enforcement engine); nav/footer/llms.txt list the kit first; each
     concept page carries an "Own the structure" kit-branch section
     (Aggregator-Resilient Org / Cross-Functional Graph Org / Agent-Ready Org).
@@ -190,6 +192,29 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   by `build.mjs` to `site/private/skillfoundry-plugin.zip` (OUTSIDE public `dist/`,
   gitignored). Tier 2 thin client: `skillfoundry/client/thin-client.mjs`
   (reads `SKILLFOUNDRY_KEY` + `SKILLFOUNDRY_API_URL`, POSTs the run endpoint).
+- MarCom Kit commerce reuses the SAME engine in `commerce.mjs` (not a fork):
+  `PRODUCT_META` scopes the two product families (success/cancel/portal paths,
+  key prefixes SF1/SFS vs MK1/MKS) and every `TIERS` entry carries
+  `product`/`manualFulfillment`/`whiteLabel`. Kit tiers: `mk1` ($149 one-time →
+  license + gated playbook download), `mk2`/`mk2-annual`/`mk2-agency`
+  (subscriptions with download rights; ONLY `mk2-agency` sets
+  `white_label=true`), `mk3` retainer, `mk-sprint`, `mk-audit` (one-time or sub,
+  manual fulfillment: buyer gets a reference key, no self-serve download, and
+  the team gets a `sendPurchaseNotification` email via `WAITLIST_NOTIFY_EMAIL`).
+  Price-ID secrets: `MARCOMKIT_TIER1_PRICE_ID`,
+  `MARCOMKIT_TIER2_{MONTHLY,ANNUAL,AGENCY}_PRICE_ID`, `MARCOMKIT_TIER3_PRICE_ID`,
+  `MARCOMKIT_{SPRINT,AUDIT}_PRICE_ID` (setup doc:
+  `exports/marcom-kit/STRIPE_SETUP.md`, excluded from the buyer zip). The
+  entitlements table gained `product` (default 'skillfoundry') and `white_label`
+  columns; idempotency/webhook ledger is shared and unchanged. Routes:
+  `/marcom-kit/success` (product-aware shared success page) and `GET
+  /api/marcom-kit/download?key=` streaming `site/private/marcom-kit-playbook.zip`
+  (built by `buildKitZip()`, outside `dist/`, excludes the free starter pack)
+  for active `mk1`/`mk2*` keys only. Cross-product gates are strict: kit keys
+  are refused by SkillFoundry validate/run/download (402/403) and vice versa
+  (SF download now also requires `tier1`). Kit buy buttons render only when
+  `KIT_CHECKOUT_LIVE=true` in `build.mjs` (currently false → waitlist CTAs);
+  everything degrades gracefully when secrets are unset.
 - Internal, token-gated signups view (NOT linked from public nav): `GET
   /admin/waitlist` shows a login form; on POST it timing-safe-compares the token
   against the `WAITLIST_ADMIN_TOKEN` secret and sets an httpOnly `wl_admin`

@@ -1140,6 +1140,8 @@ ${dataRights}`;
 
 /* ---------------- Skillfoundry commerce ---------------- */
 const PLUGIN_ZIP = path.join(__dirname, "private", "skillfoundry-plugin.zip");
+// Gated MarCom Kit Tier 1 playbook package (built by build.mjs, outside dist/).
+const KIT_ZIP = path.join(__dirname, "private", "marcom-kit-playbook.zip");
 
 // Read the raw request body as a Buffer (needed for Stripe signature checks).
 function readRawBody(req, limit = 1024 * 1024) {
@@ -1280,9 +1282,13 @@ async function handleValidate(req, res) {
     return;
   }
   const result = await validateKey(key);
-  // The subscription gate is subscription-only: a Tier 1 perpetual LICENSE key
-  // must NOT pass here even when "active" — only Tier 2/3 subscription keys do.
-  const active = result.active && result.keyType === "subscription";
+  // The subscription gate is subscription-only AND SkillFoundry-only: a Tier 1
+  // perpetual LICENSE key must NOT pass here even when "active", and a MarCom
+  // Kit key never unlocks the SkillFoundry run path.
+  const active =
+    result.active &&
+    result.keyType === "subscription" &&
+    result.product === "skillfoundry";
   // 402 (payment required) is a clear, machine-actionable refusal for clients.
   const status = active ? 200 : 402;
   sendJson(res, status, {
@@ -1332,6 +1338,18 @@ async function handleRun(req, res) {
     return;
   }
   const result = await validateKey(key);
+  // Product gate first: only SkillFoundry keys may reach the SkillFoundry run
+  // path. A MarCom Kit key (any tier) is refused with the same 402 shape.
+  if (result.found && result.product !== "skillfoundry") {
+    sendJson(res, 402, {
+      ok: false,
+      active: false,
+      error: "wrong_product",
+      message:
+        "This key is not a Skillfoundry key. The run endpoint requires a Living Brain (Tier 2) or Advisory (Tier 3) Skillfoundry subscription.",
+    });
+    return;
+  }
   // Subscription-only gate: a Tier 1 perpetual LICENSE key must be refused here
   // even if active — the server-side run path belongs to Tier 2/3 subscribers.
   if (result.keyType && result.keyType !== "subscription") {
@@ -1419,8 +1437,14 @@ async function handleDownload(req, res, urlObj) {
   }
   const key = (urlObj.searchParams.get("key") || "").trim();
   const row = key ? await getEntitlementByKey(key) : null;
+  // SkillFoundry download: an active Tier 1 SkillFoundry license only. Kit
+  // keys (even active licenses) must never unlock this package.
   const ok =
-    row && row.key_type === "license" && row.status === "active";
+    row &&
+    row.key_type === "license" &&
+    row.status === "active" &&
+    (row.product || "skillfoundry") === "skillfoundry" &&
+    row.tier === "tier1";
   if (!ok) {
     res.writeHead(403, {
       "Content-Type": "text/plain; charset=utf-8",
@@ -1440,6 +1464,45 @@ async function handleDownload(req, res, urlObj) {
     "Cache-Control": "no-store",
   });
   fs.createReadStream(PLUGIN_ZIP).pipe(res);
+}
+
+// MarCom Kit gated playbook download. Unlocked by: an active Tier 1 kit
+// license (mk1) OR any active kit subscription that carries download rights
+// (mk2 / mk2-annual / mk2-agency). Sprint/audit order keys and Tier 3 do not
+// unlock a self-serve download; SkillFoundry keys never do.
+const KIT_DOWNLOAD_TIERS = new Set(["mk1", "mk2", "mk2-annual", "mk2-agency"]);
+async function handleKitDownload(req, res, urlObj) {
+  if (req.method !== "GET") {
+    res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("405 Method Not Allowed");
+    return;
+  }
+  const key = (urlObj.searchParams.get("key") || "").trim();
+  const row = key ? await getEntitlementByKey(key) : null;
+  const ok =
+    row &&
+    row.status === "active" &&
+    row.product === "marcom-kit" &&
+    KIT_DOWNLOAD_TIERS.has(row.tier);
+  if (!ok) {
+    res.writeHead(403, {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end("403 — a valid, active MarCom Architecture Kit key with download rights is required.");
+    return;
+  }
+  if (!fs.existsSync(KIT_ZIP)) {
+    res.writeHead(503, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("503 — playbook package not built yet.");
+    return;
+  }
+  res.writeHead(200, {
+    "Content-Type": "application/zip",
+    "Content-Disposition": 'attachment; filename="marcom-kit-playbook.zip"',
+    "Cache-Control": "no-store",
+  });
+  fs.createReadStream(KIT_ZIP).pipe(res);
 }
 
 function commercePage(body) {
@@ -1464,16 +1527,47 @@ function commercePage(body) {
 </style></head><body><div class="card">${body}</div></body></html>`;
 }
 
-async function handleSuccess(req, res, urlObj) {
+// Per-product presentation for the shared success page. `productHint` comes
+// from the route (/skillfoundry/success vs /marcom-kit/success) and only
+// drives the pre-entitlement states; once the row is loaded, its `product`
+// column is authoritative.
+const SUCCESS_META = {
+  skillfoundry: {
+    label: "Skillfoundry",
+    backHref: "/skillfoundry",
+    backText: "← Back to Skillfoundry",
+    downloadPath: "/api/skillfoundry/download",
+    downloadText: "Download the plugin",
+    licenseLede:
+      "Thanks for your purchase. Your perpetual license key is below — keep it safe. Use it to download the plugin now or any time.",
+    subLede:
+      "Thanks for subscribing. Your subscription key is below. The thin client sends it to our backend, which validates it before every run.",
+  },
+  "marcom-kit": {
+    label: "MarCom Architecture Kit",
+    backHref: "/marcom-kit",
+    backText: "← Back to the MarCom Architecture Kit",
+    downloadPath: "/api/marcom-kit/download",
+    downloadText: "Download the playbook",
+    licenseLede:
+      "Thanks for your purchase. Your license key is below. Keep it safe: use it to download the playbook package now or any time.",
+    subLede:
+      "Thanks for subscribing. Your subscription key is below. It unlocks the playbook download and every update we ship.",
+  },
+};
+
+async function handleSuccess(req, res, urlObj, productHint = "skillfoundry") {
   res.setHeader("Cache-Control", "no-store");
   const sessionId = (urlObj.searchParams.get("session_id") || "").trim();
-  const back = `<p style="margin-top:26px"><a href="/skillfoundry">← Back to Skillfoundry</a></p>`;
+  let sm = SUCCESS_META[productHint] || SUCCESS_META.skillfoundry;
+  const backLink = () =>
+    `<p style="margin-top:26px"><a href="${sm.backHref}">${sm.backText}</a></p>`;
 
   if (!sessionId) {
     res.writeHead(400, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
       commercePage(
-        `<p class="eyebrow">Skillfoundry</p><h1>Missing order reference</h1><p class="muted">We couldn't find a checkout session in this link.</p>${back}`,
+        `<p class="eyebrow">${sm.label}</p><h1>Missing order reference</h1><p class="muted">We couldn't find a checkout session in this link.</p>${backLink()}`,
       ),
     );
     return;
@@ -1482,7 +1576,7 @@ async function handleSuccess(req, res, urlObj) {
     res.writeHead(503, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
       commercePage(
-        `<p class="eyebrow">Skillfoundry</p><h1>Checkout isn't live yet</h1><p class="muted">Commerce isn't configured on this deployment.</p>${back}`,
+        `<p class="eyebrow">${sm.label}</p><h1>Checkout isn't live yet</h1><p class="muted">Commerce isn't configured on this deployment.</p>${backLink()}`,
       ),
     );
     return;
@@ -1502,29 +1596,33 @@ async function handleSuccess(req, res, urlObj) {
     res.writeHead(202, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
       commercePage(
-        `<p class="eyebrow">Skillfoundry</p><h1>Finishing your order…</h1><p class="muted">Your payment is being confirmed. Refresh this page in a moment — your key will appear here and land in your inbox.</p>${back}`,
+        `<p class="eyebrow">${sm.label}</p><h1>Finishing your order…</h1><p class="muted">Your payment is being confirmed. Refresh this page in a moment — your key will appear here and land in your inbox.</p>${backLink()}`,
       ),
     );
     return;
   }
 
   const e = outcome.entitlement;
+  // The stored product wins over the route hint (covers hand-edited URLs).
+  sm = SUCCESS_META[e.product] || sm;
   const isLicense = e.key_type === "license";
   const keyLabel = isLicense ? "Your license key" : "Your subscription key";
-  const download = isLicense
-    ? `<a class="btn" href="/api/skillfoundry/download?key=${encodeURIComponent(e.key_value)}">Download the plugin</a>`
+  const canDownload =
+    e.product === "marcom-kit"
+      ? KIT_DOWNLOAD_TIERS.has(e.tier)
+      : isLicense && e.tier === "tier1";
+  const download = canDownload
+    ? `<a class="btn" href="${sm.downloadPath}?key=${encodeURIComponent(e.key_value)}">${sm.downloadText}</a>`
     : "";
   const manage = !isLicense
     ? `<button class="btn ghost" id="manage" data-key="${esc(e.key_value)}">Manage subscription</button>`
     : "";
   const onboard = e.needs_onboarding
-    ? `<p class="muted" style="margin-top:18px">A strategist will reach out shortly to schedule your hands-on onboarding.</p>`
+    ? `<p class="muted" style="margin-top:18px">We will reach out shortly to schedule your hands-on onboarding.</p>`
     : "";
-  const lede = isLicense
-    ? "Thanks for your purchase. Your perpetual license key is below — keep it safe. Use it to download the plugin now or any time."
-    : "Thanks for subscribing. Your subscription key is below. The thin client sends it to our backend, which validates it before every run.";
+  const lede = isLicense ? sm.licenseLede : sm.subLede;
 
-  const body = `<p class="eyebrow">Skillfoundry · Order confirmed</p>
+  const body = `<p class="eyebrow">${sm.label} · Order confirmed</p>
 <h1>You're all set.</h1>
 <p>${lede}</p>
 <div class="keybox">
@@ -1534,7 +1632,7 @@ async function handleSuccess(req, res, urlObj) {
 ${onboard}
 <div style="margin-top:8px">${download}${manage}</div>
 <p class="muted" style="margin-top:22px;font-size:.9rem">We've also emailed this to ${esc(e.email || "your inbox")}.</p>
-${back}
+${backLink()}
 <script>
   var m=document.getElementById("manage");
   if(m){m.addEventListener("click",function(){
@@ -1671,6 +1769,17 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
+  if (rawPath === "/api/marcom-kit/download") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleKitDownload(req, res, urlObj).catch((err) => {
+      console.error("[commerce] kit download error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
+    return;
+  }
   if (rawPath === "/api/portal") {
     handlePortal(req, res).catch((err) => {
       console.error("[commerce] portal error:", err.message);
@@ -1678,9 +1787,20 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
+  if (rawPath === "/marcom-kit/success") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleSuccess(req, res, urlObj, "marcom-kit").catch((err) => {
+      console.error("[commerce] success error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
+    return;
+  }
   if (rawPath === "/skillfoundry/success") {
     const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
-    handleSuccess(req, res, urlObj).catch((err) => {
+    handleSuccess(req, res, urlObj, "skillfoundry").catch((err) => {
       console.error("[commerce] success error:", err.message);
       if (!res.headersSent) {
         res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });

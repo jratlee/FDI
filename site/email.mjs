@@ -162,6 +162,49 @@ const TIER_EMAIL = {
     heading: "Welcome to Advisory",
     lead: "Thanks for joining Skillfoundry Advisory. Your subscription key is below. A strategist will reach out shortly to schedule your hands-on onboarding — there is nothing to download.",
   },
+  /* ---- MarCom Architecture Kit (kit copy rules: no em-dashes) ---- */
+  mk1: {
+    product: "MarCom Architecture Kit — Foundation Playbook",
+    subject: "Your MarCom Foundation Playbook",
+    heading: "Your playbook is ready",
+    lead: "Thanks for buying the MarCom Foundation Playbook. Your license key is below. Keep it safe: use the download link on your confirmation page to get the complete playbook package any time.",
+  },
+  mk2: {
+    product: "MarCom Architecture Kit — Living Architecture",
+    subject: "Your Living Architecture subscription key",
+    heading: "Your subscription is live",
+    lead: "Thanks for subscribing to Living Architecture. Your subscription key is below. It unlocks the playbook download plus quarterly framework updates and new templates as they ship.",
+  },
+  "mk2-annual": {
+    product: "MarCom Architecture Kit — Living Architecture (annual)",
+    subject: "Your Living Architecture subscription key",
+    heading: "Your annual subscription is live",
+    lead: "Thanks for subscribing to Living Architecture on the annual plan. Your subscription key is below. It unlocks the playbook download plus quarterly framework updates and new templates as they ship.",
+  },
+  "mk2-agency": {
+    product: "MarCom Architecture Kit — Agency Team",
+    subject: "Your Agency Team subscription key",
+    heading: "Your Agency Team subscription is live",
+    lead: "Thanks for subscribing to the Agency Team tier. Your subscription key is below. It unlocks the playbook download, quarterly updates, team seats, and white-label rights, which are exclusive to this tier.",
+  },
+  mk3: {
+    product: "MarCom Architecture Kit — Architecture Partner",
+    subject: "Welcome to the Architecture Partner retainer",
+    heading: "Welcome aboard",
+    lead: "Thanks for starting the Architecture Partner retainer. Your subscription key is below. We will reach out shortly to schedule your kickoff and hands-on Hourglass migration. There is nothing to download.",
+  },
+  "mk-sprint": {
+    product: "MarCom Architecture Kit — Transformation Sprint",
+    subject: "Your Transformation Sprint is booked",
+    heading: "Your sprint is booked",
+    lead: "Thanks for booking the fixed four-week Transformation Sprint. Your order key is below for reference. We will reach out shortly to schedule the kickoff and scope the four weeks.",
+  },
+  "mk-audit": {
+    product: "MarCom Architecture Kit — Governance Risk Audit",
+    subject: "Your Governance Risk Audit is confirmed",
+    heading: "Your audit is confirmed",
+    lead: "Thanks for purchasing the Governance Risk Audit. Your order key is below for reference. We will reach out shortly to collect what we need and schedule the review. The full fee is credited toward Tier 3 if you upgrade within 90 days.",
+  },
 };
 
 function entitlementHtml({ heading, lead, product, key, keyType, needsOnboarding }) {
@@ -229,6 +272,26 @@ export async function sendEntitlementEmail({
     });
   } catch (err) {
     console.error("[email] entitlement email failed:", err.message);
+  }
+}
+
+// Manual-fulfillment purchases (retainer, sprint, audit) notify the team so a
+// human starts onboarding. Best-effort; never throws.
+export async function sendPurchaseNotification({ email, tierLabel, product, key }) {
+  if (!FROM || !NOTIFY) {
+    if (!FROM) console.warn("[email] RESEND_FROM not set — skipping purchase notification");
+    return;
+  }
+  try {
+    await send({
+      from: FROM,
+      to: [NOTIFY],
+      subject: `Manual fulfillment needed: ${tierLabel}`,
+      text: `A purchase that needs manual fulfillment just landed.\n\nProduct: ${product}\nTier:    ${tierLabel}\nBuyer:   ${email || "(no email on session)"}\nKey:     ${key}\nTime:    ${new Date().toISOString()}\n\nReach out to the buyer to start onboarding.`,
+      ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+    });
+  } catch (err) {
+    console.error("[email] purchase notification failed:", err.message);
   }
 }
 

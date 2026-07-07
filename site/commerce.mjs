@@ -21,40 +21,158 @@
 import crypto from "node:crypto";
 import Stripe from "stripe";
 import pg from "pg";
-import { sendEntitlementEmail } from "./email.mjs";
+import { sendEntitlementEmail, sendPurchaseNotification } from "./email.mjs";
 
 /* ---------------- tier configuration (from env) ---------------- */
 // The more valuable/updatable the IP, the more it stays server-side:
 //   Tier 1 · Perpetual  — one-time payment → perpetual LICENSE key + download.
 //   Tier 2 · Living Brain— subscription    → SUBSCRIPTION key (server-validated).
 //   Tier 3 · Advisory    — subscription    → SUBSCRIPTION key + manual onboarding.
+// Two product families share one entitlement store. `product` scopes each
+// entitlement (gates, downloads, and portal return URLs are per-product);
+// `manualFulfillment` flags purchases the founder must action by hand (the
+// team gets an email notification for those).
+export const PRODUCT_META = {
+  skillfoundry: {
+    name: "SkillFoundry",
+    successPath: "/skillfoundry/success",
+    cancelPath: "/skillfoundry#pricing",
+    returnPath: "/skillfoundry",
+    licensePrefix: "SF1",
+    subscriptionPrefix: "SFS",
+  },
+  "marcom-kit": {
+    name: "MarCom Architecture Kit",
+    successPath: "/marcom-kit/success",
+    cancelPath: "/marcom-kit#pricing",
+    returnPath: "/marcom-kit",
+    licensePrefix: "MK1",
+    subscriptionPrefix: "MKS",
+  },
+};
+
 export const TIERS = {
   tier1: {
     id: "tier1",
+    product: "skillfoundry",
     label: "Perpetual License",
     priceEnv: "SKILLFOUNDRY_TIER1_PRICE_ID",
     mode: "payment",
     keyType: "license",
     hasDownload: true,
     needsOnboarding: false,
+    manualFulfillment: false,
+    whiteLabel: false,
   },
   tier2: {
     id: "tier2",
+    product: "skillfoundry",
     label: "Living Brain",
     priceEnv: "SKILLFOUNDRY_TIER2_PRICE_ID",
     mode: "subscription",
     keyType: "subscription",
     hasDownload: false,
     needsOnboarding: false,
+    manualFulfillment: false,
+    whiteLabel: false,
   },
   tier3: {
     id: "tier3",
+    product: "skillfoundry",
     label: "Advisory Retainer",
     priceEnv: "SKILLFOUNDRY_TIER3_PRICE_ID",
     mode: "subscription",
     keyType: "subscription",
     hasDownload: false,
     needsOnboarding: true,
+    manualFulfillment: false,
+    whiteLabel: false,
+  },
+  /* ---- MarCom Architecture Kit ("Structure as code") ---- */
+  mk1: {
+    id: "mk1",
+    product: "marcom-kit",
+    label: "MarCom Foundation Playbook",
+    priceEnv: "MARCOMKIT_TIER1_PRICE_ID",
+    mode: "payment",
+    keyType: "license",
+    hasDownload: true,
+    needsOnboarding: false,
+    manualFulfillment: false,
+    whiteLabel: false,
+  },
+  mk2: {
+    id: "mk2",
+    product: "marcom-kit",
+    label: "Living Architecture (monthly)",
+    priceEnv: "MARCOMKIT_TIER2_MONTHLY_PRICE_ID",
+    mode: "subscription",
+    keyType: "subscription",
+    hasDownload: true,
+    needsOnboarding: false,
+    manualFulfillment: false,
+    whiteLabel: false,
+  },
+  "mk2-annual": {
+    id: "mk2-annual",
+    product: "marcom-kit",
+    label: "Living Architecture (annual)",
+    priceEnv: "MARCOMKIT_TIER2_ANNUAL_PRICE_ID",
+    mode: "subscription",
+    keyType: "subscription",
+    hasDownload: true,
+    needsOnboarding: false,
+    manualFulfillment: false,
+    whiteLabel: false,
+  },
+  "mk2-agency": {
+    id: "mk2-agency",
+    product: "marcom-kit",
+    label: "Living Architecture (Agency Team)",
+    priceEnv: "MARCOMKIT_TIER2_AGENCY_PRICE_ID",
+    mode: "subscription",
+    keyType: "subscription",
+    hasDownload: true,
+    needsOnboarding: false,
+    manualFulfillment: false,
+    // White-label rights are gated to the Agency tier ONLY (locked copy rule).
+    whiteLabel: true,
+  },
+  mk3: {
+    id: "mk3",
+    product: "marcom-kit",
+    label: "Architecture Partner (retainer)",
+    priceEnv: "MARCOMKIT_TIER3_PRICE_ID",
+    mode: "subscription",
+    keyType: "subscription",
+    hasDownload: false,
+    needsOnboarding: true,
+    manualFulfillment: true,
+    whiteLabel: false,
+  },
+  "mk-sprint": {
+    id: "mk-sprint",
+    product: "marcom-kit",
+    label: "Transformation Sprint (fixed four weeks)",
+    priceEnv: "MARCOMKIT_SPRINT_PRICE_ID",
+    mode: "payment",
+    keyType: "license",
+    hasDownload: false,
+    needsOnboarding: true,
+    manualFulfillment: true,
+    whiteLabel: false,
+  },
+  "mk-audit": {
+    id: "mk-audit",
+    product: "marcom-kit",
+    label: "Governance Risk Audit",
+    priceEnv: "MARCOMKIT_AUDIT_PRICE_ID",
+    mode: "payment",
+    keyType: "license",
+    hasDownload: false,
+    needsOnboarding: true,
+    manualFulfillment: true,
+    whiteLabel: false,
   },
 };
 
@@ -120,6 +238,10 @@ function ensureSchema() {
          CREATE UNIQUE INDEX IF NOT EXISTS skillfoundry_entitlements_sub_uniq
            ON skillfoundry_entitlements (stripe_subscription_id)
            WHERE stripe_subscription_id IS NOT NULL;
+         ALTER TABLE skillfoundry_entitlements
+           ADD COLUMN IF NOT EXISTS product TEXT NOT NULL DEFAULT 'skillfoundry';
+         ALTER TABLE skillfoundry_entitlements
+           ADD COLUMN IF NOT EXISTS white_label BOOLEAN NOT NULL DEFAULT false;
          CREATE TABLE IF NOT EXISTS stripe_processed_events (
            event_id TEXT PRIMARY KEY,
            event_type TEXT,
@@ -147,8 +269,10 @@ function keyGroup() {
   for (let i = 0; i < 4; i++) out += ALPHABET[bytes[i] % ALPHABET.length];
   return out;
 }
-function generateKey(keyType) {
-  const prefix = keyType === "license" ? "SF1" : "SFS";
+function generateKey(tier) {
+  const meta = PRODUCT_META[tier.product] || PRODUCT_META.skillfoundry;
+  const prefix =
+    tier.keyType === "license" ? meta.licensePrefix : meta.subscriptionPrefix;
   return `${prefix}-${keyGroup()}-${keyGroup()}-${keyGroup()}-${keyGroup()}`;
 }
 
@@ -163,6 +287,7 @@ export async function createCheckoutSession({ tierId, origin }) {
   const price = priceIdFor(tierId);
   if (!price) throw new CommerceError("tier_unconfigured", 503);
 
+  const meta = PRODUCT_META[tier.product];
   const base = (origin || "").replace(/\/+$/, "");
   const params = {
     mode: tier.mode,
@@ -170,17 +295,17 @@ export async function createCheckoutSession({ tierId, origin }) {
     automatic_tax: { enabled: true },
     billing_address_collection: "required",
     allow_promotion_codes: true,
-    metadata: { product: "skillfoundry", tier: tierId },
-    success_url: `${base}/skillfoundry/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${base}/skillfoundry#pricing`,
+    metadata: { product: tier.product, tier: tierId },
+    success_url: `${base}${meta.successPath}?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${base}${meta.cancelPath}`,
   };
   if (tier.mode === "payment") {
     // Need a customer + a captured payment_intent so refunds can be mapped back
     // to the license for deactivation.
     params.customer_creation = "always";
-    params.payment_intent_data = { metadata: { product: "skillfoundry", tier: tierId } };
+    params.payment_intent_data = { metadata: { product: tier.product, tier: tierId } };
   } else {
-    params.subscription_data = { metadata: { product: "skillfoundry", tier: tierId } };
+    params.subscription_data = { metadata: { product: tier.product, tier: tierId } };
   }
   const session = await stripe.checkout.sessions.create(params);
   return { url: session.url, id: session.id };
@@ -218,13 +343,13 @@ export async function provisionFromSession(session) {
       ? session.payment_intent
       : session.payment_intent?.id || null;
 
-  const key = generateKey(tier.keyType);
+  const key = generateKey(tier);
   const inserted = await pool.query(
     `INSERT INTO skillfoundry_entitlements
        (key_value, key_type, tier, status, email, stripe_customer_id,
         stripe_subscription_id, stripe_payment_intent_id,
-        stripe_checkout_session_id, needs_onboarding)
-     VALUES ($1,$2,$3,'active',$4,$5,$6,$7,$8,$9)
+        stripe_checkout_session_id, needs_onboarding, product, white_label)
+     VALUES ($1,$2,$3,'active',$4,$5,$6,$7,$8,$9,$10,$11)
      ON CONFLICT (stripe_checkout_session_id) DO NOTHING
      RETURNING *`,
     [
@@ -237,6 +362,8 @@ export async function provisionFromSession(session) {
       paymentIntentId,
       session.id,
       tier.needsOnboarding,
+      tier.product,
+      tier.whiteLabel,
     ],
   );
 
@@ -254,6 +381,18 @@ export async function provisionFromSession(session) {
         needsOnboarding: tier.needsOnboarding,
       }).catch((err) =>
         console.error("[commerce] entitlement email failed:", err.message),
+      );
+    }
+    // Manual-fulfillment purchases (retainer, sprint, audit) notify the team so
+    // the founder can start onboarding. Best-effort, never blocks provisioning.
+    if (tier.manualFulfillment) {
+      sendPurchaseNotification({
+        email,
+        tierLabel: tier.label,
+        product: tier.product,
+        key: row.key_value,
+      }).catch((err) =>
+        console.error("[commerce] purchase notification failed:", err.message),
       );
     }
   } else {
@@ -426,6 +565,8 @@ export async function validateKey(key) {
     active: row.status === "active",
     tier: row.tier,
     keyType: row.key_type,
+    product: row.product || "skillfoundry",
+    whiteLabel: Boolean(row.white_label),
     needsOnboarding: row.needs_onboarding,
     status: row.status,
   };
@@ -439,9 +580,10 @@ export async function createPortalSession({ key, origin }) {
   if (!row.stripe_customer_id)
     throw new CommerceError("no_customer", 400);
   const base = (origin || "").replace(/\/+$/, "");
+  const meta = PRODUCT_META[row.product] || PRODUCT_META.skillfoundry;
   const session = await stripe.billingPortal.sessions.create({
     customer: row.stripe_customer_id,
-    return_url: `${base}/skillfoundry`,
+    return_url: `${base}${meta.returnPath}`,
   });
   return { url: session.url };
 }

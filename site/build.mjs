@@ -33,6 +33,10 @@ const CONTACT = "hello@falsedawn.industries";
    route to the waitlist instead of the checkout flow. Flip to true once the
    purchase flow is proven in Stripe (see skillfoundry/STRIPE_SETUP.md). */
 const CHECKOUT_LIVE = false;
+/* MarCom Architecture Kit Stripe checkout: same pattern. While false, all kit
+   tier CTAs stay waitlist links. Flip to true once the kit purchase flow is
+   proven in Stripe (see exports/marcom-kit/STRIPE_SETUP.md). */
+const KIT_CHECKOUT_LIVE = false;
 const SITE_URL = "https://falsedawn.industries";
 const MCP_URL = "https://modelcontextprotocol.io";
 const AS_OF = "2026";
@@ -966,7 +970,23 @@ function marcomKit() {
     },
   });
 
-  const tier = (name, title, model, price, feats, mid) => `
+  // Same CTA pattern as the SkillFoundry tiers: when kit checkout is live the
+  // buttons start Stripe Checkout (with waitlist fallback via js-buy); until
+  // then every CTA is a waitlist link. `ctas` is a list so a card can carry a
+  // primary buy button plus secondary variants (annual, agency, sprint).
+  const tier = (name, title, model, price, feats, mid, ctas) => {
+    const btnClass = mid ? "btn-primary" : "btn-ghost";
+    const foot =
+      ctas && ctas.length && KIT_CHECKOUT_LIVE
+        ? ctas
+            .map(
+              (c, i) =>
+                `<button type="button" class="btn ${i === 0 ? btnClass : "btn-ghost"} js-buy" data-tier="${c.tier}" data-fallback="#waitlist">${c.label} <span class="arrow">→</span></button>`,
+            )
+            .join("\n         ") +
+          `\n         <p class="form-msg js-buy-msg" role="status" aria-live="polite"></p>`
+        : `<a class="btn ${btnClass}" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>`;
+    return `
     <article class="tier${mid ? " mid" : ""}">
       ${mid ? '<span class="pill">Most popular</span>' : ""}
       <span class="tname">${name}</span>
@@ -979,8 +999,9 @@ function marcomKit() {
       ${price.note ? `<p class="tprice-note">${price.note}</p>` : ""}
       <p class="model">${model}</p>
       <ul>${feats.map((f) => `<li>${f}</li>`).join("")}</ul>
-      <div class="tier-foot"><a class="btn ${mid ? "btn-primary" : "btn-ghost"}" href="#waitlist">Join the waitlist <span class="arrow">→</span></a></div>
+      <div class="tier-foot">${foot}</div>
     </article>`;
+  };
 
   const pillar = (n, name, role, desc, outLbl, outVal) => `
     <article class="gate">
@@ -1153,6 +1174,7 @@ function marcomKit() {
           "Yours forever, edit everything",
         ],
         false,
+        [{ tier: "mk1", label: "Buy the playbook" }],
       )}
       ${tier(
         "Tier 2 · Living Architecture",
@@ -1172,6 +1194,11 @@ function marcomKit() {
           "White-label rights on the Agency tier only",
         ],
         true,
+        [
+          { tier: "mk2", label: "Subscribe monthly" },
+          { tier: "mk2-annual", label: "Go annual" },
+          { tier: "mk2-agency", label: "Agency Team" },
+        ],
       )}
       ${tier(
         "Tier 3 · Architecture Partner",
@@ -1190,6 +1217,10 @@ function marcomKit() {
           "Direct line to FDI",
         ],
         false,
+        [
+          { tier: "mk3", label: "Start the retainer" },
+          { tier: "mk-sprint", label: "Book the sprint" },
+        ],
       )}
     </div>
     <div class="grid cols-2" style="margin-top:28px;">
@@ -1197,7 +1228,11 @@ function marcomKit() {
         <span class="tag">The bridge offer</span>
         <h3>Governance Risk Audit · $1,500 to $2,500</h3>
         <p>A fixed-scope, standalone audit of your current AI content operation against the Riverbank framework: where autonomous output can drift off-brand, which approvals are missing, and a prioritized fix list. Credited toward Tier 3 if you upgrade within 90 days.</p>
-        <div class="card-foot"><a class="link-arrow" href="#waitlist">Ask about the audit <span class="arrow">→</span></a></div>
+        ${
+          KIT_CHECKOUT_LIVE
+            ? `<div class="card-foot"><button type="button" class="btn btn-ghost js-buy" data-tier="mk-audit" data-fallback="#waitlist">Buy the audit <span class="arrow">→</span></button><p class="form-msg js-buy-msg" role="status" aria-live="polite"></p></div>`
+            : `<div class="card-foot"><a class="link-arrow" href="#waitlist">Ask about the audit <span class="arrow">→</span></a></div>`
+        }
       </article>
       <article class="card">
         <span class="tag">The enforcement engine</span>
@@ -1468,6 +1503,45 @@ function buildPluginZip() {
     console.log(`[build] plugin package → ${path.relative(ROOT, outZip)} (${kb} KB)`);
   } catch (err) {
     console.warn("[build] plugin package build failed:", err.message);
+  }
+}
+
+// Build the gated MarCom Kit Tier 1 playbook package from exports/marcom-kit.
+// Same posture as the SkillFoundry plugin: it lives OUTSIDE public dist/, so
+// the only way to obtain it is an active kit key via GET /api/marcom-kit/download.
+// The free starter-pack ZIP (the lead magnet) is excluded; it is served
+// publicly from /assets instead.
+function buildKitZip() {
+  const srcDir = path.join(ROOT, "exports", "marcom-kit");
+  if (!fs.existsSync(srcDir)) {
+    console.warn("[build] exports/marcom-kit/ not found, skipping kit package");
+    return;
+  }
+  const outDir = path.join(__dirname, "private");
+  const outZip = path.join(outDir, "marcom-kit-playbook.zip");
+  mkdir(outDir);
+  rm(outZip);
+  try {
+    execFileSync(
+      "zip",
+      [
+        "-r",
+        "-q",
+        outZip,
+        "marcom-kit",
+        "-x",
+        "marcom-kit/fdi-marcom-starter-pack.zip",
+        "-x",
+        "marcom-kit/STRIPE_SETUP.md",
+        "-x",
+        "*/.DS_Store",
+      ],
+      { cwd: path.join(ROOT, "exports"), stdio: ["ignore", "ignore", "inherit"] },
+    );
+    const kb = Math.round(fs.statSync(outZip).size / 1024);
+    console.log(`[build] kit package → ${path.relative(ROOT, outZip)} (${kb} KB)`);
+  } catch (err) {
+    console.warn("[build] kit package build failed:", err.message);
   }
 }
 
@@ -1974,6 +2048,7 @@ function main() {
   mkdir(DIST);
   const slideFiles = copyAssets();
   buildPluginZip();
+  buildKitZip();
 
   const md = fs.readFileSync(
     path.join(EXPORTS, "linkedin-thesis-article.md"),
