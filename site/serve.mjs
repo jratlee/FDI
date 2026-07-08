@@ -35,6 +35,17 @@ import {
   generateReport,
 } from "./defrag.mjs";
 import { renderReportHTML, renderReportPDF } from "./defrag-report.mjs";
+import {
+  STAGES,
+  SEGMENTS,
+  GOAL,
+  pipelineConfigured,
+  listTargets,
+  getTarget,
+  saveTarget,
+  deleteTarget,
+  pipelineStats,
+} from "./pipeline.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
@@ -978,6 +989,66 @@ async function handleAdmin(req, res, urlObj) {
     return;
   }
 
+  // Add or edit a pipeline target (authed).
+  if (req.method === "POST" && pathname === "/admin/pipeline/save") {
+    if (!isAdmin(req, urlObj)) {
+      loginPage(res, 401);
+      return;
+    }
+    let fields;
+    try {
+      const raw = await readBody(req, 16 * 1024);
+      fields = new URLSearchParams(raw);
+    } catch {
+      res.writeHead(303, { Location: "/admin/pipeline?msg=bad", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    try {
+      const id = await saveTarget(fields.get("id"), {
+        name: fields.get("name"),
+        org: fields.get("org"),
+        segment: fields.get("segment"),
+        stage: fields.get("stage"),
+        value_usd: fields.get("value_usd"),
+        next_action: fields.get("next_action"),
+        notes: fields.get("notes"),
+      });
+      res.writeHead(303, {
+        Location: `/admin/pipeline?msg=${id ? "saved" : "notfound"}`,
+        "Cache-Control": "no-store",
+      });
+      res.end();
+    } catch (err) {
+      const msg = err.message === "name_required" ? "noname" : "error";
+      if (msg === "error") console.error("[pipeline] save failed:", err.message);
+      res.writeHead(303, { Location: `/admin/pipeline?msg=${msg}`, "Cache-Control": "no-store" });
+      res.end();
+    }
+    return;
+  }
+
+  // Delete a pipeline target (authed).
+  if (req.method === "POST" && pathname === "/admin/pipeline/delete") {
+    if (!isAdmin(req, urlObj)) {
+      loginPage(res, 401);
+      return;
+    }
+    let removed2 = false;
+    try {
+      const raw = await readBody(req);
+      removed2 = await deleteTarget(new URLSearchParams(raw).get("id"));
+    } catch (err) {
+      console.error("[pipeline] delete failed:", err.message);
+    }
+    res.writeHead(303, {
+      Location: `/admin/pipeline?msg=${removed2 ? "deleted" : "notfound"}`,
+      "Cache-Control": "no-store",
+    });
+    res.end();
+    return;
+  }
+
   if (req.method !== "GET") {
     res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("405 Method Not Allowed");
@@ -1325,6 +1396,112 @@ ${history}`;
       "Cache-Control": "no-store",
     });
     res.end(pdf);
+    return;
+  }
+
+  // Revenue pipeline tracker: targets CRUD + funnel + goal progress.
+  if (pathname === "/admin/pipeline") {
+    if (!pipelineConfigured) {
+      res.writeHead(503, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+      res.end(adminShell(`<h1>Storage unavailable</h1><p style="color:#A8997B">No <code>DATABASE_URL</code> is configured.</p>`));
+      return;
+    }
+    let rows = [];
+    let stats = null;
+    let editRow = null;
+    try {
+      [rows, stats] = await Promise.all([listTargets(), pipelineStats()]);
+      const editId = urlObj.searchParams.get("edit");
+      if (editId) editRow = await getTarget(editId);
+    } catch (err) {
+      console.error("[pipeline] list failed:", err.message);
+      res.writeHead(500, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+      res.end(adminShell(`<h1>Query failed</h1><p style="color:#A8997B">${esc(err.message)}</p>`));
+      return;
+    }
+    const MSGS = {
+      saved: ["ok", "Target saved."],
+      deleted: ["ok", "Target deleted."],
+      notfound: ["warn", "No matching target found."],
+      noname: ["warn", "A name is required."],
+      bad: ["warn", "Bad request."],
+      error: ["warn", "Something went wrong. Try again."],
+    };
+    const msgKey = urlObj.searchParams.get("msg") || "";
+    const msg = MSGS[msgKey]
+      ? `<p class="notice ${MSGS[msgKey][0]}">${esc(MSGS[msgKey][1])}</p>`
+      : "";
+    const stageLabel = Object.fromEntries(STAGES);
+    const segLabel = Object.fromEntries(SEGMENTS);
+    const usd = (n) => `$${Number(n || 0).toLocaleString("en-US")}`;
+
+    // Goal progress line
+    const deadlinePassed = stats.daysLeft < 0;
+    const goal = `<div style="background:#15120c;border:1px solid #E0920C;border-radius:12px;padding:16px 20px;margin:0 0 20px">
+  <p class="eyebrow" style="margin:0 0 8px">Goal: ${esc(GOAL.label)} by ${esc(GOAL.deadline)}</p>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:baseline">
+    <span style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.5rem;font-weight:700;color:#FFCB6B">${usd(stats.closedValue)} closed</span>
+    <span class="count">of ${usd(GOAL.amount)} (${stats.pct}%) · ${usd(stats.openValue)} open in pipeline · ${deadlinePassed ? "deadline passed" : `${stats.daysLeft} days left`}</span>
+  </div>
+  <div style="background:#0D0B08;border-radius:999px;height:10px;margin-top:12px;overflow:hidden"><div style="background:#FFB12B;height:100%;width:${stats.pct}%"></div></div>
+</div>`;
+
+    // Funnel chips
+    const funnel = `<div class="chips">${STAGES.map(([slug, label]) => {
+      const s = stats.byStage[slug] || { count: 0, value: 0 };
+      return `<span class="chip">${esc(label)} <span class="n">${s.count}</span></span>`;
+    }).join("")}</div>`;
+
+    // Add / edit form
+    const f = editRow || {};
+    const opts = (pairs, sel) =>
+      pairs.map(([v, l]) => `<option value="${v}"${v === sel ? " selected" : ""}>${esc(l)}</option>`).join("");
+    const selStyle = `width:100%;box-sizing:border-box;background:#15120c;border:1px solid #2a2418;border-radius:8px;color:#F0E8D5;padding:10px 12px;font-size:.95rem;margin:0 0 14px`;
+    const form = `<form class="ops-form" method="POST" action="/admin/pipeline/save" style="max-width:720px">
+  ${editRow ? `<input type="hidden" name="id" value="${editRow.id}"><p class="notice warn">Editing: ${esc(editRow.name)} · <a href="/admin/pipeline">cancel</a></p>` : ""}
+  <div class="ops-row">
+    <div style="flex:1 1 220px"><label>Name</label><input name="name" maxlength="120" required value="${esc(f.name || "")}"></div>
+    <div style="flex:1 1 220px"><label>Organization</label><input name="org" maxlength="120" value="${esc(f.org || "")}"></div>
+  </div>
+  <div class="ops-row">
+    <div style="flex:1 1 160px"><label>Segment</label><select name="segment" style="${selStyle}">${opts(SEGMENTS, f.segment || "other")}</select></div>
+    <div style="flex:1 1 160px"><label>Stage</label><select name="stage" style="${selStyle}">${opts(STAGES, f.stage || "target")}</select></div>
+    <div style="flex:1 1 160px"><label>Value (USD)</label><input name="value_usd" type="number" min="0" step="1" value="${esc(f.value_usd ?? 0)}"></div>
+  </div>
+  <label>Next action</label><input name="next_action" maxlength="300" value="${esc(f.next_action || "")}" placeholder="e.g. Send Touch 2 on Thursday">
+  <label>Notes</label><textarea name="notes" rows="3" maxlength="4000" style="width:100%;box-sizing:border-box;background:#15120c;border:1px solid #2a2418;border-radius:8px;color:#F0E8D5;padding:10px 12px;font-size:.9rem;font-family:inherit;margin:0 0 14px">${esc(f.notes || "")}</textarea>
+  <button class="btn" type="submit">${editRow ? "Save changes" : "Add target"}</button>
+</form>`;
+
+    const table = rows.length
+      ? `<table><thead><tr><th>Name</th><th>Org</th><th>Segment</th><th>Stage</th><th>Value</th><th>Next action</th><th>Updated</th><th></th></tr></thead><tbody>${rows
+          .map((r) => {
+            const ts = r.updated_at instanceof Date ? r.updated_at.toISOString().slice(0, 10) : String(r.updated_at);
+            const st = r.stage === "closed" ? "ok" : r.stage === "lost" ? "pending" : "";
+            return `<tr><td>${esc(r.name)}</td><td>${esc(r.org)}</td><td class="tag">${esc(segLabel[r.segment] || r.segment)}</td><td><span class="status ${st}">${esc(stageLabel[r.stage] || r.stage)}</span></td><td>${usd(r.value_usd)}</td><td>${esc(r.next_action)}</td><td class="count">${esc(ts)}</td><td style="white-space:nowrap"><a href="/admin/pipeline?edit=${r.id}">Edit</a> · <form method="POST" action="/admin/pipeline/delete" style="display:inline" onsubmit="return confirm('Delete this target?')"><input type="hidden" name="id" value="${r.id}"><button class="btn danger" style="padding:2px 10px;font-size:.78rem" type="submit">Delete</button></form></td></tr>`;
+          })
+          .join("")}</tbody></table>`
+      : `<p class="empty">No targets yet. Add the first one above.</p>`;
+
+    const body = `<p class="eyebrow">Growth Cartography — Internal</p>
+<h1>Revenue pipeline</h1>
+<div class="bar">
+  <a href="/admin/waitlist">Waitlist signups</a>
+  <a href="/admin/defrag">Defrag reports</a>
+  <a href="/admin/logout" style="margin-left:auto">Log out</a>
+</div>
+${msg}
+${goal}
+${funnel}
+<h2 style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.15rem;margin:8px 0 14px">${editRow ? "Edit target" : "Add a target"}</h2>
+${form}
+<h2 style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.15rem;margin:36px 0 14px">Targets (${rows.length})</h2>
+${table}`;
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end(adminShell(body));
     return;
   }
 

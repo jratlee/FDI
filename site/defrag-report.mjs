@@ -33,7 +33,7 @@ const FONT_FACES = [
 ];
 
 let _embeddedFontCss = null;
-function embeddedFontCss() {
+export function embeddedFontCss() {
   if (_embeddedFontCss !== null) return _embeddedFontCss;
   const rules = [];
   for (const [family, weight, file] of FONT_FACES) {
@@ -156,11 +156,10 @@ function chromiumPath() {
   return _chromiumPath;
 }
 
-// Render the report to a PDF Buffer with headless chromium. Flowing Letter
-// pages (no fixed-height page divs), so long reports paginate naturally.
-export async function renderReportPDF(row) {
+// Print any self-contained HTML document to a PDF Buffer with headless
+// chromium. Flowing Letter pages, so long documents paginate naturally.
+export async function htmlToPDF(html) {
   const { default: puppeteer } = await import("puppeteer-core");
-  const html = renderReportHTML(row, "pdf");
   const browser = await puppeteer.launch({
     executablePath: chromiumPath(),
     headless: "new",
@@ -178,4 +177,9 @@ export async function renderReportPDF(row) {
   } finally {
     await browser.close();
   }
+}
+
+// Render a defrag report row to a PDF Buffer.
+export async function renderReportPDF(row) {
+  return htmlToPDF(renderReportHTML(row, "pdf"));
 }

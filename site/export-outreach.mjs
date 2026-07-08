@@ -1,0 +1,207 @@
+// Build the branded outreach-kit PDFs into exports/outreach-kit/:
+//   - fdi-marcom-kit-onepager.pdf         (one-page kit overview)
+//   - transformation-sprint-proposal.pdf  (fillable proposal template)
+// Run from the repo root: node site/export-outreach.mjs
+// Reuses the headless-chromium print pipeline from defrag-report.mjs.
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { embeddedFontCss, htmlToPDF } from "./defrag-report.mjs";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const OUT_DIR = path.join(__dirname, "..", "exports", "outreach-kit");
+
+/* Locked FDI brand tokens */
+const CSS = `
+${embeddedFontCss()}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --base:#0D0B08; --surface:#141009; --border:#2A2015; --hairline:#3A2D1C;
+  --cream:#F0E8D5; --faded:#A8997B; --muted:#7A6A50;
+  --amber:#FFB12B; --amber-press:#E0920C; --amber-glow:#FFCB6B;
+  --orange:#FF5E00;
+}
+body { background: var(--base); color: var(--cream);
+  font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.55;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.page { padding: 52px 56px 40px; }
+.eyebrow { font-family:'JetBrains Mono',monospace; font-size:9.5px;
+  letter-spacing:.26em; text-transform:uppercase; color:var(--faded); }
+h1 { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:27px;
+  line-height:1.12; letter-spacing:-.015em; margin:10px 0 6px; }
+h1 em { font-style:normal; color:var(--amber); }
+h2 { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px;
+  margin:22px 0 8px; color:var(--amber-glow); }
+p { color:var(--cream); margin:0 0 9px; }
+.lede { color:var(--faded); font-size:13px; }
+.mark { color: var(--orange); }
+.hdr { display:flex; justify-content:space-between; align-items:flex-start;
+  border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:20px; }
+.lockup { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.cards { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:12px 0 4px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.card .tag { font-family:'JetBrains Mono',monospace; font-size:8.5px;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--amber); }
+.card h3 { font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin:7px 0 5px; }
+.card p { color:var(--faded); font-size:10.5px; margin:0; }
+ul { margin:0 0 9px 16px; }
+li { color:var(--cream); margin-bottom:4px; }
+li b { color:var(--amber-glow); font-weight:600; }
+.ladder { width:100%; border-collapse:collapse; margin:6px 0 4px; font-size:11px; }
+.ladder th { font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--faded); text-align:left; padding:6px 10px;
+  border-bottom:1px solid var(--hairline); }
+.ladder td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.ladder .price { font-family:'Space Grotesk',sans-serif; font-weight:600; color:var(--amber); white-space:nowrap; }
+.foot { margin-top:18px; padding-top:12px; border-top:1px solid var(--border);
+  color:var(--muted); font-size:9px; line-height:1.5; }
+.fill { color:var(--amber-glow); font-family:'JetBrains Mono',monospace; font-size:11px; }
+.meta { display:grid; grid-template-columns:1fr 1fr; gap:4px 24px; background:var(--surface);
+  border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:14px 0 4px; font-size:11.5px; }
+.meta .k { color:var(--faded); }
+.week { display:flex; gap:12px; margin-bottom:8px; }
+.week .n { flex:none; width:52px; font-family:'JetBrains Mono',monospace; font-size:9px;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--amber); padding-top:2px; }
+.week p { font-size:11.5px; margin:0; }
+.week b { color:var(--amber-glow); }
+.callout { background:var(--surface); border:1px solid var(--amber-press); border-left:3px solid var(--amber);
+  border-radius:10px; padding:12px 16px; margin:10px 0; font-size:11.5px; }
+.sig { display:flex; gap:48px; margin-top:20px; font-size:11.5px; color:var(--faded); }
+.sig span { border-top:1px solid var(--hairline); padding-top:6px; min-width:220px; }
+`;
+
+const MARK = `<svg class="mark" width="14" height="14" viewBox="0 0 100 100" aria-hidden="true">
+<path d="M10 78 A45 45 0 0 1 90 78" fill="none" stroke="currentColor" stroke-width="9"/>
+<rect x="44" y="52" width="12" height="26" fill="currentColor"/></svg>`;
+
+function doc(title, body) {
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
+<style>${CSS}</style></head><body>${body}</body></html>`;
+}
+
+const header = (label) => `<div class="hdr">
+  <div><span class="eyebrow">Growth Cartography</span></div>
+  <div class="lockup">${MARK} False Dawn Industries</div>
+</div><span class="eyebrow">${label}</span>`;
+
+const DISCLAIMER = `This document describes risks to assess and candidates to
+consider; decisions and outcomes remain the client's. It is general guidance,
+not legal advice. False Dawn Industries. falsedawnindustries.com`;
+
+/* ---------------- one-pager ---------------- */
+const onePager = doc("The MarCom Architecture Kit", `<div class="page">
+${header("One-page overview, as of 2026")}
+<h1>The MarCom Architecture Kit: <em>structure as code</em></h1>
+<p class="lede">A complete operating structure for marketing organizations
+adopting AI, so the tools serve the org chart instead of quietly replacing it.</p>
+
+<h2>The problem it solves</h2>
+<p>AI is being adopted bottom-up, one seat at a time. Output rises while the
+apprenticeship layer that turns juniors into seniors quietly disappears, tool
+spend accumulates with no owner, and nobody can show the board an operating
+model. The risk is structural, and it compounds while it stays invisible.</p>
+
+<h2>The three pillars</h2>
+<div class="cards">
+  <div class="card"><span class="tag">Org shape</span><h3>The Hourglass</h3>
+  <p>An org blueprint that protects senior judgment and rebuilds the path from
+  junior to senior around AI-era work, instead of hollowing it out.</p></div>
+  <div class="card"><span class="tag">Tooling rule</span><h3>Use / Compose / Build</h3>
+  <p>A decision calculator that rules on every tool in the stack: adopt it,
+  assemble it from what you have, or build it. Sprawl ends here.</p></div>
+  <div class="card"><span class="tag">Governance</span><h3>The Riverbank</h3>
+  <p>Guardrail templates for AI-assisted work that legal and brand can live
+  with: review standards, disclosure rules, escalation paths.</p></div>
+</div>
+
+<h2>What is inside</h2>
+<ul>
+  <li><b>Foundation Playbook:</b> the full Tier 1 kit with the Hourglass
+  blueprint, the Use/Compose/Build calculator, and Riverbank templates.</li>
+  <li><b>Audit to Kill checklist:</b> a structured cull of tools, workflows,
+  and deliverables that AI has made redundant. Often self-funding.</li>
+  <li><b>Wedge Manifesto:</b> the argument, in writing, for restructuring
+  deliberately rather than absorbing AI ad hoc.</li>
+</ul>
+
+<h2>Ways to engage</h2>
+<table class="ladder">
+  <tr><th>Path</th><th>What happens</th><th>Investment</th></tr>
+  <tr><td><b>Kit (self-serve)</b></td><td>The complete playbook; your team
+  installs the structure at its own pace.</td><td class="price">from $149</td></tr>
+  <tr><td><b>Governance Risk Audit</b></td><td>Two-week structured review of
+  where current AI use may expose the org, delivered as a written report.
+  Fee credited toward the Sprint within 90 days.</td>
+  <td class="price">$1,500 to $2,500</td></tr>
+  <tr><td><b>Transformation Sprint</b></td><td>Fixed four weeks: map, design,
+  install, hand over. Ends with the structure live and the team briefed.</td>
+  <td class="price">$10,000 fixed</td></tr>
+</table>
+
+<div class="foot">${DISCLAIMER}</div>
+</div>`);
+
+/* ---------------- proposal template ---------------- */
+const proposal = doc("Transformation Sprint Proposal", `<div class="page">
+${header("Engagement proposal")}
+<h1>The Transformation Sprint: <em>four weeks, installed</em></h1>
+<div class="meta">
+  <div><span class="k">Prepared for:</span> <span class="fill">[Client, Company]</span></div>
+  <div><span class="k">Prepared by:</span> <span class="fill">[Your name], FDI</span></div>
+  <div><span class="k">Date:</span> <span class="fill">[Date]</span></div>
+  <div><span class="k">Valid for:</span> 30 days</div>
+</div>
+
+<h2>The situation</h2>
+<p class="lede"><span class="fill">[2-3 sentences in the client's own words
+from the discovery call: how AI shows up in the team today, what has no
+owner, and what triggered this conversation.]</span></p>
+
+<h2>The engagement, week by week</h2>
+<div class="week"><span class="n">Week 1</span><p><b>Map.</b> Tool, workflow,
+and review-practice inventory; interviews with <span class="fill">[N]</span>
+team leads. Output: current-state map and the Audit to Kill candidate list.</p></div>
+<div class="week"><span class="n">Week 2</span><p><b>Design.</b> Target
+Hourglass org shape, Use/Compose/Build ruling on the full stack, Riverbank
+guardrails adapted to your legal and brand constraints. Output: the blueprint,
+reviewed with you before anything changes.</p></div>
+<div class="week"><span class="n">Week 3</span><p><b>Install.</b> Governance
+templates adopted, review standards for AI-assisted work in place, kill-list
+decisions executed by your team with our support. Output: the structure, live.</p></div>
+<div class="week"><span class="n">Week 4</span><p><b>Brief and hand over.</b>
+Leadership briefing, team walkthrough, full artifact set handed over in
+editable form. Output: your team runs the structure without us.</p></div>
+
+<h2>Investment</h2>
+<p><b style="font-family:'Space Grotesk',sans-serif;font-size:16px;color:var(--amber)">$10,000, fixed.</b>
+Half on signing, half at the Week 2 blueprint review. Kickoff
+<span class="fill">[date]</span>, handover <span class="fill">[date]</span>.
+Scope is fixed to the deliverables above; changes are a new agreement.</p>
+
+<div class="callout"><b>A lighter first step, if preferred:</b> the Governance
+Risk Audit ($1,500 to $2,500 by team size) is a two-week structured review of
+where current AI use may expose the organization, delivered as a written
+report. The full audit fee is credited toward the Sprint within 90 days.</div>
+
+<h2>What this is not</h2>
+<p>No tool resale, no headcount recommendations delivered over your head, no
+open-ended consulting tail. The Sprint ends on
+<span class="fill">[end date]</span>.</p>
+
+<div class="sig"><span>Accepted by</span><span>Date</span></div>
+<div class="foot">${DISCLAIMER}</div>
+</div>`);
+
+const JOBS = [
+  ["fdi-marcom-kit-onepager.pdf", onePager],
+  ["transformation-sprint-proposal.pdf", proposal],
+];
+
+fs.mkdirSync(OUT_DIR, { recursive: true });
+for (const [file, html] of JOBS) {
+  const pdf = await htmlToPDF(html);
+  const out = path.join(OUT_DIR, file);
+  fs.writeFileSync(out, pdf);
+  console.log(`[outreach] wrote ${out} (${Math.round(pdf.length / 1024)} KB)`);
+}

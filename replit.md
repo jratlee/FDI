@@ -240,6 +240,21 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   puppeteer-core + Nix chromium, brand woff2 fonts base64-embedded), `POST
   /admin/defrag/delete`. Degrades gracefully: generation disabled with a notice
   if the AI env vars are unset.
+- Outreach kit (internal sales assets, NOT public): `exports/outreach-kit/`
+  holds the 3-touch email sequences (agency-president + CMO variants of the
+  Riverbank/deskilling pitch), discovery-call guide, and the Transformation
+  Sprint proposal source ($10,000 fixed 4-week, Governance Risk Audit
+  $1,500-2,500 fallback). `node site/export-outreach.mjs` renders the two
+  branded PDFs (kit one-pager + proposal template) via the shared
+  `htmlToPDF`/`embeddedFontCss` helpers now exported from
+  `site/defrag-report.mjs`. Copy rules: no em-dashes, no former-client names,
+  softened risk claims + not-legal-advice disclaimer.
+- Revenue pipeline tracker (internal, token-gated): `GET /admin/pipeline`
+  (same `WAITLIST_ADMIN_TOKEN` auth + noindex adminShell) with targets CRUD
+  (`POST /admin/pipeline/save|delete`; name, org, segment, stage, value USD,
+  next action, notes), funnel chips Target→Contacted→Discovery→Audit/Proposal→
+  Closed (+Lost), and a goal bar showing closed $ vs the $5,000 bi-weekly
+  Aug 15 2026 goal (`GOAL` in `site/pipeline.mjs`, table `pipeline_targets`).
 - Internal, token-gated signups view (NOT linked from public nav): `GET
   /admin/waitlist` shows a login form; on POST it timing-safe-compares the token
   against the `WAITLIST_ADMIN_TOKEN` secret and sets an httpOnly `wl_admin`
