@@ -23,6 +23,18 @@ import {
   stripeConfigured,
   storageConfigured as commerceStorage,
 } from "./commerce.mjs";
+import {
+  DEFRAG_LIMITS,
+  DefragError,
+  aiConfigured,
+  purgeExpiredReports,
+  countReportsToday,
+  listReports,
+  getReport,
+  deleteReport,
+  generateReport,
+} from "./defrag.mjs";
+import { renderReportHTML, renderReportPDF } from "./defrag-report.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "dist");
@@ -896,6 +908,76 @@ async function handleAdmin(req, res, urlObj) {
     return;
   }
 
+  // Generate a Process Defragmentation Report (authed, quota-capped).
+  if (req.method === "POST" && pathname === "/admin/defrag/generate") {
+    if (!isAdmin(req, urlObj)) {
+      loginPage(res, 401);
+      return;
+    }
+    let fields;
+    try {
+      // The workflow doc can be long; allow up to 128 KiB of form data.
+      const raw = await readBody(req, 128 * 1024);
+      fields = new URLSearchParams(raw);
+    } catch {
+      res.writeHead(303, { Location: "/admin/defrag?msg=toolong", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    try {
+      const id = await generateReport(pool, {
+        prospect: fields.get("prospect"),
+        note: fields.get("note"),
+        doc: fields.get("doc"),
+      });
+      res.writeHead(303, {
+        Location: `/admin/defrag/report?id=${id}`,
+        "Cache-Control": "no-store",
+      });
+      res.end();
+    } catch (err) {
+      if (err instanceof DefragError) {
+        res.writeHead(303, {
+          Location: `/admin/defrag?msg=err&detail=${encodeURIComponent(err.message)}`,
+          "Cache-Control": "no-store",
+        });
+        res.end();
+        return;
+      }
+      console.error("[defrag] generate failed:", err.message);
+      res.writeHead(303, { Location: "/admin/defrag?msg=error", "Cache-Control": "no-store" });
+      res.end();
+    }
+    return;
+  }
+
+  // Delete a stored report (per-report deletion, part of the data posture).
+  if (req.method === "POST" && pathname === "/admin/defrag/delete") {
+    if (!isAdmin(req, urlObj)) {
+      loginPage(res, 401);
+      return;
+    }
+    let id = "";
+    try {
+      const raw = await readBody(req);
+      id = new URLSearchParams(raw).get("id") || "";
+    } catch {
+      // fall through: treated as not found
+    }
+    let removed = false;
+    try {
+      removed = await deleteReport(pool, id);
+    } catch (err) {
+      console.error("[defrag] delete failed:", err.message);
+    }
+    res.writeHead(303, {
+      Location: `/admin/defrag?msg=${removed ? "deleted" : "notfound"}`,
+      "Cache-Control": "no-store",
+    });
+    res.end();
+    return;
+  }
+
   if (req.method !== "GET") {
     res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("405 Method Not Allowed");
@@ -1130,6 +1212,119 @@ ${dataRights}`;
       "Cache-Control": "no-store",
     });
     res.end(adminShell(body));
+    return;
+  }
+
+  // Defrag: submission form + report history
+  if (pathname === "/admin/defrag") {
+    let rows = [];
+    let usedToday = 0;
+    try {
+      await purgeExpiredReports(pool);
+      [rows, usedToday] = await Promise.all([listReports(pool), countReportsToday(pool)]);
+    } catch (err) {
+      console.error("[defrag] list failed:", err.message);
+    }
+    const MSGS = {
+      deleted: ["ok", "Report deleted."],
+      notfound: ["warn", "No matching report found."],
+      toolong: ["warn", "Submission too large. Trim the document and try again."],
+      error: ["warn", "Something went wrong. Try again."],
+    };
+    const msgKey = urlObj.searchParams.get("msg") || "";
+    let msg = MSGS[msgKey]
+      ? `<p class="notice ${MSGS[msgKey][0]}">${esc(MSGS[msgKey][1])}</p>`
+      : "";
+    if (msgKey === "err") {
+      const detail = String(urlObj.searchParams.get("detail") || "").slice(0, 300);
+      msg = `<p class="notice warn">${esc(detail || "Generation failed. Try again.")}</p>`;
+    }
+    const aiOk = aiConfigured();
+    const quotaLeft = Math.max(0, DEFRAG_LIMITS.DAILY_LIMIT - usedToday);
+    const history = rows.length
+      ? `<table><thead><tr><th>Prospect</th><th>Note</th><th>Score</th><th>Created</th><th></th></tr></thead><tbody>${rows
+          .map((r) => {
+            const ts = r.created_at instanceof Date ? r.created_at.toISOString().slice(0, 16).replace("T", " ") : String(r.created_at);
+            return `<tr><td>${esc(r.prospect)}</td><td class="tag">${esc(r.note || "")}</td><td>${esc(r.score ?? "")}</td><td>${esc(ts)}</td><td style="white-space:nowrap"><a href="/admin/defrag/report?id=${r.id}">View</a> · <a href="/admin/defrag/report.pdf?id=${r.id}">PDF</a> · <form method="POST" action="/admin/defrag/delete" style="display:inline" onsubmit="return confirm('Delete this report and its source document?')"><input type="hidden" name="id" value="${r.id}"><button class="btn danger" style="padding:2px 10px;font-size:.78rem" type="submit">Delete</button></form></td></tr>`;
+          })
+          .join("")}</tbody></table>`
+      : `<p class="empty">No reports yet.</p>`;
+    const body = `<p class="eyebrow">Growth Cartography — Internal</p>
+<h1>Process Defragmentation Reports</h1>
+<div class="bar">
+  <a href="/admin/waitlist">Waitlist signups</a>
+  <span class="count">${usedToday}/${DEFRAG_LIMITS.DAILY_LIMIT} generations used in the last 24h (${quotaLeft} left)</span>
+  <a href="/admin/logout" style="margin-left:auto">Log out</a>
+</div>
+${msg}
+${aiOk ? "" : `<p class="notice warn">AI backend not configured. Set the OpenAI integration secrets to enable generation.</p>`}
+<form class="ops-form" method="POST" action="/admin/defrag/generate" style="max-width:720px">
+  <label for="dg-prospect">Prospect / company name</label>
+  <input id="dg-prospect" name="prospect" type="text" maxlength="120" autocomplete="off" required>
+  <label for="dg-note">Internal note (optional, shows only in this list)</label>
+  <input id="dg-note" name="note" type="text" maxlength="200" autocomplete="off">
+  <label for="dg-doc">Workflow document (paste text, ${DEFRAG_LIMITS.MIN_DOC_CHARS} to ${DEFRAG_LIMITS.MAX_DOC_CHARS} characters)</label>
+  <textarea id="dg-doc" name="doc" rows="12" minlength="${DEFRAG_LIMITS.MIN_DOC_CHARS}" maxlength="${DEFRAG_LIMITS.MAX_DOC_CHARS}" required style="width:100%;box-sizing:border-box;background:#15120c;border:1px solid #2a2418;border-radius:8px;color:#F0E8D5;padding:10px 12px;font-size:.9rem;font-family:inherit;margin:0 0 14px"></textarea>
+  <p style="color:#7A6A50;font-size:.8rem;margin:0 0 14px">Data handling: the document is analyzed by an LLM backend, treated strictly as data, and never used to train models. The document and report are stored for ${DEFRAG_LIMITS.RETENTION_DAYS} days, then deleted automatically. You can delete any report immediately from the list below. The generated report is advisory and is not legal, financial, or compliance advice.</p>
+  <button class="btn" type="submit"${aiOk ? "" : " disabled"}>Generate report</button>
+  <span class="count" style="margin-left:12px">Takes up to a minute.</span>
+</form>
+<h2 style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.15rem;margin:36px 0 14px">Report history</h2>
+${history}`;
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end(adminShell(body));
+    return;
+  }
+
+  // Defrag: branded HTML report view
+  if (pathname === "/admin/defrag/report") {
+    const row = await getReport(pool, urlObj.searchParams.get("id"));
+    if (!row) {
+      res.writeHead(303, { Location: "/admin/defrag?msg=notfound", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    const toolbar = `<div style="position:sticky;top:0;background:#15120c;border-bottom:1px solid #2a2418;padding:10px 24px;display:flex;gap:18px;align-items:center;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px"><a style="color:#FFB12B" href="/admin/defrag">&larr; Back to reports</a><a style="color:#FFB12B" href="/admin/defrag/report.pdf?id=${row.id}">Download PDF</a></div>`;
+    const html = renderReportHTML(row, "web").replace("<body>", `<body>${toolbar}`);
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end(html);
+    return;
+  }
+
+  // Defrag: PDF export via headless chromium
+  if (pathname === "/admin/defrag/report.pdf") {
+    const row = await getReport(pool, urlObj.searchParams.get("id"));
+    if (!row) {
+      res.writeHead(303, { Location: "/admin/defrag?msg=notfound", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    let pdf;
+    try {
+      pdf = await renderReportPDF(row);
+    } catch (err) {
+      console.error("[defrag] pdf render failed:", err.message);
+      res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("500 PDF export failed");
+      return;
+    }
+    const slug = String(row.prospect || "report")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 40) || "report";
+    res.writeHead(200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="defrag-report-${slug}-${row.id}.pdf"`,
+      "Cache-Control": "no-store",
+    });
+    res.end(pdf);
     return;
   }
 

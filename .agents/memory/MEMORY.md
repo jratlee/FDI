@@ -5,5 +5,6 @@
 - [Skillfoundry commerce (Stripe)](skillfoundry-commerce.md) — env-secret Stripe on the plain-http site; DB-enforced idempotency (Pile pattern), gated download outside dist/, 402 subscription gate, graceful 503 degradation.
 - [Deploy scan phantom deps](deploy-security-scan-phantom-deps.md) — Replit deploy gate flags optional/dev/marker-gated Python transitives (e.g. plotly's fiona extra) that are never installed; fix by removing the pkg from requirements.txt, not pinning.
 - [Postgres parse-time table references](pg-parse-time-table-refs.md) — a to_regclass runtime guard can't protect a statement that names a missing table; check existence in JS first, then build SQL conditionally.
+- [gpt-5 reasoning token budget](gpt5-reasoning-token-budget.md) — gpt-5 burns hidden reasoning tokens from max_completion_tokens first; low caps return EMPTY content, not truncated JSON.
 - [PDF report generation](pdf-report-generation.md) — npm blocks jspdf; render HTML to PDF with vendored puppeteer-core + Nix chromium; shared ESM template gives PDF/React page parity; fixed-height pages clip overflow, so render each page to PNG and check.
 - [OSS research tooling](oss-research-tooling.md) — webSearch returns `searchAnswer` prose (not an array) w/ unreliable stars; Plan mode blocks `gh`/network shell; verify repos via unauthenticated github REST API in Build mode.
