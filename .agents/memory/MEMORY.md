@@ -7,4 +7,5 @@
 - [Postgres parse-time table references](pg-parse-time-table-refs.md) — a to_regclass runtime guard can't protect a statement that names a missing table; check existence in JS first, then build SQL conditionally.
 - [gpt-5 reasoning token budget](gpt5-reasoning-token-budget.md) — gpt-5 burns hidden reasoning tokens from max_completion_tokens first; low caps return EMPTY content, not truncated JSON.
 - [PDF report generation](pdf-report-generation.md) — npm blocks jspdf; render HTML to PDF with vendored puppeteer-core + Nix chromium; shared ESM template gives PDF/React page parity; fixed-height pages clip overflow, so render each page to PNG and check.
+- [Stripe Checkout e2e automation](stripe-checkout-e2e-automation.md) — headless test-mode purchases work; card fields in main frame post-accordion, automatic_tax needs full manual billing address.
 - [OSS research tooling](oss-research-tooling.md) — webSearch returns `searchAnswer` prose (not an array) w/ unreliable stars; Plan mode blocks `gh`/network shell; verify repos via unauthenticated github REST API in Build mode.

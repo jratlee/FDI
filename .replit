@@ -99,3 +99,6 @@ timeoutMs = 120000
 [userenv.shared]
 RESEND_FROM = "False Dawn Industries <onboarding@resend.dev>"
 WAITLIST_NOTIFY_EMAIL = "john@ratcliffe-lee.com"
+
+[userenv.development]
+DAVOSKIT_TIER1_PRICE_ID = "price_1TrNbuIr6q4Tm9bcIzcEhR8c"

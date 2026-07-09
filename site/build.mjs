@@ -37,6 +37,11 @@ const CHECKOUT_LIVE = false;
    tier CTAs stay waitlist links. Flip to true once the kit purchase flow is
    proven in Stripe (see exports/marcom-kit/STRIPE_SETUP.md). */
 const KIT_CHECKOUT_LIVE = false;
+/* Davos Decision Kit commerce demo: while true, an internal, noindex demo page
+   is emitted at /davos-kit-demo (never linked from public nav) so the checkout
+   flow can be screen-shared with a client. The buy button degrades to the
+   page's own waitlist form until Stripe secrets are set. */
+const DAVOS_DEMO = true;
 const SITE_URL = "https://falsedawn.industries";
 const MCP_URL = "https://modelcontextprotocol.io";
 const AS_OF = "2026";
@@ -1545,6 +1550,45 @@ function buildKitZip() {
   }
 }
 
+// Build the gated Davos Decision Kit package from exports/davos-decision-kit.
+// Same posture as the other gated packages: it lives OUTSIDE public dist/, so
+// the only way to obtain it is an active dk1 key via GET /api/davos-kit/download.
+// The pre-existing convenience zip inside the source dir is excluded (the
+// gated package IS the zip), as is the internal go-live checklist.
+function buildDavosZip() {
+  const srcDir = path.join(ROOT, "exports", "davos-decision-kit");
+  if (!fs.existsSync(srcDir)) {
+    console.warn("[build] exports/davos-decision-kit/ not found, skipping davos package");
+    return;
+  }
+  const outDir = path.join(__dirname, "private");
+  const outZip = path.join(outDir, "davos-decision-kit.zip");
+  mkdir(outDir);
+  rm(outZip);
+  try {
+    execFileSync(
+      "zip",
+      [
+        "-r",
+        "-q",
+        outZip,
+        "davos-decision-kit",
+        "-x",
+        "davos-decision-kit/davos-decision-kit.zip",
+        "-x",
+        "davos-decision-kit/GO_LIVE_CHECKLIST.md",
+        "-x",
+        "*/.DS_Store",
+      ],
+      { cwd: path.join(ROOT, "exports"), stdio: ["ignore", "ignore", "inherit"] },
+    );
+    const kb = Math.round(fs.statSync(outZip).size / 1024);
+    console.log(`[build] davos package → ${path.relative(ROOT, outZip)} (${kb} KB)`);
+  } catch (err) {
+    console.warn("[build] davos package build failed:", err.message);
+  }
+}
+
 /* ---------------- SERIES + CONCEPT PAGES ---------------- */
 const CONCEPTS = {
   aggregated: {
@@ -2037,6 +2081,65 @@ function holdingPage({ title, active }) {
   });
 }
 
+/* ---------------- DAVOS KIT DEMO PAGE (internal, noindex) ---------------- */
+// Never linked from public nav or the footer. Emitted only while DAVOS_DEMO is
+// true so the commerce flow can be screen-shared with a client.
+function davosDemoPage() {
+  const body = `${nav("davos-kit-demo")}
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">Internal demo · Not a public page</span>
+      <h1>The Davos Decision Kit</h1>
+      <p class="lede">A self-serve decision system for executives weighing a Davos week: a weighted go or no-go scorecard, a twelve-month runway, a budget calculator with public-range estimates, and meeting-request templates. One-time purchase, instant download, license key emailed on checkout.</p>
+      <div class="hero-cta">
+        <button type="button" class="btn btn-primary js-buy" data-tier="dk1" data-fallback="#waitlist">Buy the kit · $199 launch <span class="arrow">→</span></button>
+        <a class="btn btn-ghost" href="#inside">See what's inside</a>
+      </div>
+      <p class="form-msg js-buy-msg" role="status" aria-live="polite"></p>
+      <p style="color:var(--muted);font-size:13px;margin-top:10px;">$299 list, $199 launch price. Secure Stripe checkout with tax calculated at purchase. If checkout is not live yet, the button falls back to the waitlist below.</p>
+    </div>
+  </div>
+</section>
+<section class="wrap section" id="inside">
+  <span class="eyebrow">What's inside</span>
+  <h2>Five working documents, one decision.</h2>
+  <div class="grid cols-2">
+    <article class="card"><h3>Go/No-Go Scorecard</h3><p>Six weighted factors, scoring guidance, and thresholds that resolve to a clear recommendation tier plus a one-page recommendation you can put in front of a board.</p></article>
+    <article class="card"><h3>Twelve-Month Runway</h3><p>A month-by-month plan working back from the January week: when side-event lists close, when calendars fill, and what to do each month so the week is earned, not improvised.</p></article>
+    <article class="card"><h3>Budget Calculator</h3><p>Line-by-line low and high estimates built from public ranges, three scenario profiles, and a total range you can defend in a budget review.</p></article>
+    <article class="card"><h3>Visibility Plan Templates</h3><p>Meeting-request scripts, a model week, and follow-up cadences ready to instantiate for your own targets.</p></article>
+  </div>
+  <p style="color:var(--muted);font-size:13px;margin-top:18px;">The kit is an independent product of False Dawn Industries. It is not affiliated with or endorsed by the World Economic Forum. All costs are public-range estimates. Nothing in the kit is legal or financial advice.</p>
+</section>
+<section class="cta" id="waitlist">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
+      <h2>Not ready to buy? Get launch updates.</h2>
+      <p>Drop your email and we will reach out with launch pricing and the worked example. No spam.</p>
+      <form class="waitlist js-capture" data-source="davos-kit-demo" data-subject="Davos Decision Kit waitlist" data-success="Almost there. Check your inbox and click the confirmation link to join the waitlist." data-mail-body="Please add me to the Davos Decision Kit waitlist." novalidate>
+        <label class="sr-only" for="dk-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="dk-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: "Davos Decision Kit (demo) | False Dawn Industries",
+    description:
+      "Internal demo page for the Davos Decision Kit commerce flow.",
+    active: "davos-kit-demo",
+    body,
+    canonical: `${SITE_URL}/davos-kit-demo`,
+    noindex: true,
+  });
+}
+
 function renderRoute(active, builder) {
   return GATED.has(active)
     ? holdingPage({ title: "Coming soon | False Dawn Industries", active })
@@ -2049,6 +2152,7 @@ function main() {
   const slideFiles = copyAssets();
   buildPluginZip();
   buildKitZip();
+  buildDavosZip();
 
   const md = fs.readFileSync(
     path.join(EXPORTS, "linkedin-thesis-article.md"),
@@ -2073,6 +2177,9 @@ function main() {
   );
   fs.writeFileSync(path.join(DIST, "autonomous.html"), conceptPage("autonomous"));
   fs.writeFileSync(path.join(DIST, "roadmap.html"), renderRoute("roadmap", roadmapPage));
+  if (DAVOS_DEMO) {
+    fs.writeFileSync(path.join(DIST, "davos-kit-demo.html"), davosDemoPage());
+  }
   fs.writeFileSync(path.join(DIST, "llms.txt"), llmsTxt());
 
   console.log(

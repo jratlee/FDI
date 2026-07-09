@@ -257,9 +257,25 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   `davos-decision-kit.zip`). The FDI proposal to Heather Kernahan
   ($7,500 fixed + $2,500 commerce add-on; alt $5,000 + 20% rev share 12mo)
   lives at `exports/outreach-kit/davos-kit-proposal.md` with a branded PDF
-  rendered by `site/export-outreach.mjs`. Copy rules: no em-dashes, no WEF
-  affiliation claims, all costs framed as public-range estimates,
-  not-legal/financial-advice disclaimers.
+  rendered by `site/export-outreach.mjs` (which also renders
+  `davos-kit-expertise-map.md/pdf`, the TCB expertise-insertion map; the shared
+  outreach DISCLAIMER reads "not legal or financial advice"). The kit ships
+  with a fully worked fictional example (`worked-example.md`, Solvra: scorecard
+  70/100 conditional go, lined budget, condensed runway, instantiated script)
+  and an internal `GO_LIVE_CHECKLIST.md` (excluded from the buyer zip).
+- Davos Kit commerce demo: product `davoskit` / tier `dk1` (key prefix DK1) is
+  wired into the shared engine in `commerce.mjs` (`DAVOSKIT_TIER1_PRICE_ID`
+  secret; $199 test price). `build.mjs` builds
+  `site/private/davos-decision-kit.zip` via `buildDavosZip()` (outside `dist/`,
+  excludes the checklist + convenience zip) and, while `DAVOS_DEMO=true`, emits
+  the noindex, unlinked demo page `/davos-kit-demo` (js-buy dk1 with waitlist
+  fallback, capture source `davos-kit-demo`). Routes: `/davos-kit/success`
+  (shared product-aware success page) and `GET /api/davos-kit/download?key=`
+  (active dk1 license only). Cross-product gates verified: DK1 keys are 403 on
+  SkillFoundry/kit downloads and 402 on SF validate; checkout returns 503
+  `tier_unconfigured` with waitlist fallback when the price ID is unset.
+  A full Stripe test-mode purchase was verified end to end (card 4242 →
+  success page key → gated download).
 - Revenue pipeline tracker (internal, token-gated): `GET /admin/pipeline`
   (same `WAITLIST_ADMIN_TOKEN` auth + noindex adminShell) with targets CRUD
   (`POST /admin/pipeline/save|delete`; name, org, segment, stage, value USD,

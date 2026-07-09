@@ -88,7 +88,7 @@ const header = (label) => `<div class="hdr">
 
 const DISCLAIMER = `This document describes risks to assess and candidates to
 consider; decisions and outcomes remain the client's. It is general guidance,
-not legal advice. False Dawn Industries. falsedawnindustries.com`;
+not legal or financial advice. False Dawn Industries. falsedawnindustries.com`;
 
 /* ---------------- one-pager ---------------- */
 const onePager = doc("The MarCom Architecture Kit", `<div class="page">
@@ -262,10 +262,91 @@ delivery, and the kit is yours outright.</p>
 <div class="foot">${DISCLAIMER}</div>
 </div>`);
 
+/* ---------------- Davos Kit expertise-insertion map ---------------- */
+const expertiseRow = (when, fdi, tcb, why, time) => `<tr>
+  <td><b>${when}</b></td><td>${fdi}</td><td>${tcb}</td><td>${why}</td>
+  <td class="price">${time}</td></tr>`;
+
+const davosExpertiseMap = doc("Davos Decision Kit: Expertise Map", `<style>
+.xmap .ladder { font-size:9.5px; }
+.xmap .ladder td { padding:6px 8px; }
+.xmap li { font-size:11px; margin-bottom:3px; }
+.xmap .callout { margin:8px 0; padding:10px 14px; }
+.xmap h2 { margin:14px 0 6px; }
+</style><div class="page xmap">
+${header("Build plan · expertise insertion map")}
+<h1>Where your team's expertise <em>goes in</em></h1>
+<p class="lede">The kit's credibility is your expertise. FDI provides the
+structure: the scoring math, the document architecture, the packaging, the
+commerce plumbing. Your team provides the truth: what the ranges really are,
+when the calendars really fill, which scripts really get replies. This page
+maps every insertion point in the 2 to 3 week build.</p>
+
+<div class="callout"><b>Total time required from your team: about 4 to 6
+hours across the build.</b> One scheduled session; everything else is async
+and fits between meetings.</div>
+
+<table class="ladder">
+  <tr><th>When</th><th>What FDI brings</th><th>What TCB inserts</th><th>Why it matters</th><th>Your time</th></tr>
+  ${expertiseRow(
+    "Week 1: working session (the big one)",
+    "Draft scorecard with six weighted factors, draft budget lines from public ranges, draft twelve-month runway.",
+    "Weights and thresholds validated against real client outcomes; budget ranges corrected from your ground truth; runway timing corrected (when side-event lists really close, when calendars really fill); your voice on the badge question.",
+    "Wrong weights produce confident wrong answers. Public ranges without practitioner correction read like a blog post, not senior advice.",
+    "90 to 120 min",
+  )}
+  ${expertiseRow(
+    "Week 1: async",
+    "Script skeletons, briefing-doc structure, model-week grid, follow-up cadence.",
+    "Real, anonymized patterns: the framings that get replies, the model week as your practice actually runs it, the cadence you have seen convert.",
+    "Scripts are the part buyers copy verbatim. Your patterns are the product.",
+    "60 to 90 min",
+  )}
+  ${expertiseRow(
+    "Week 2: red-line pass",
+    "The full revised kit, incorporating everything above.",
+    "A red-line for anything that overpromises, conflicts with your advisory positioning, or leaks proprietary method you want kept behind the advisory door.",
+    "The kit must qualify buyers for advisory, not replace it. You decide where that line sits.",
+    "60 to 90 min",
+  )}
+  ${expertiseRow(
+    "Week 2: sign-off",
+    "Final packaged kit, launch copy, product page draft.",
+    "A yes or a short punch list.",
+    "Nothing ships under your brand without your final word.",
+    "15 to 30 min",
+  )}
+  ${expertiseRow(
+    "Week 3 (optional): commerce check",
+    "Checkout, gated download, and email capture wired and tested end to end.",
+    "One test purchase walkthrough on a screen share.",
+    "You see exactly what a buyer sees before a buyer sees it.",
+    "30 min",
+  )}
+</table>
+
+<h2>Why the insertions are structured this way</h2>
+<ul>
+  <li><b>One big session, not many small ones.</b> Live conversation is
+  concentrated in Week 1; everything else is async.</li>
+  <li><b>FDI drafts first, your team corrects.</b> Correcting takes a fraction
+  of authoring. Your hours go where they are irreplaceable: judgment, ranges,
+  and voice.</li>
+  <li><b>The red-line is a veto, not a rewrite.</b> By Week 2 the kit already
+  reflects your input; the red-line catches what only you can catch.</li>
+  <li><b>Nothing proprietary leaves without consent.</b> Anything close to
+  your advisory method stays out of the kit until you explicitly put it in.</li>
+</ul>
+
+<div class="foot">${DISCLAIMER} The kit makes no claim of WEF affiliation and
+frames all costs as public ranges.</div>
+</div>`);
+
 const JOBS = [
   ["fdi-marcom-kit-onepager.pdf", onePager],
   ["transformation-sprint-proposal.pdf", proposal],
   ["davos-kit-proposal.pdf", davosProposal],
+  ["davos-kit-expertise-map.pdf", davosExpertiseMap],
 ];
 
 fs.mkdirSync(OUT_DIR, { recursive: true });

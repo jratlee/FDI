@@ -49,6 +49,16 @@ export const PRODUCT_META = {
     licensePrefix: "MK1",
     subscriptionPrefix: "MKS",
   },
+  // Davos Decision Kit: the client-demo product family (feature-flagged demo
+  // page, never in public nav). One tier, one-time purchase, gated download.
+  davoskit: {
+    name: "Davos Decision Kit",
+    successPath: "/davos-kit/success",
+    cancelPath: "/davos-kit-demo",
+    returnPath: "/davos-kit-demo",
+    licensePrefix: "DK1",
+    subscriptionPrefix: "DKS",
+  },
 };
 
 export const TIERS = {
@@ -160,6 +170,19 @@ export const TIERS = {
     hasDownload: false,
     needsOnboarding: true,
     manualFulfillment: true,
+    whiteLabel: false,
+  },
+  /* ---- Davos Decision Kit (client commerce demo) ---- */
+  dk1: {
+    id: "dk1",
+    product: "davoskit",
+    label: "Davos Decision Kit",
+    priceEnv: "DAVOSKIT_TIER1_PRICE_ID",
+    mode: "payment",
+    keyType: "license",
+    hasDownload: true,
+    needsOnboarding: false,
+    manualFulfillment: false,
     whiteLabel: false,
   },
   "mk-audit": {

@@ -1514,6 +1514,8 @@ ${table}`;
 const PLUGIN_ZIP = path.join(__dirname, "private", "skillfoundry-plugin.zip");
 // Gated MarCom Kit Tier 1 playbook package (built by build.mjs, outside dist/).
 const KIT_ZIP = path.join(__dirname, "private", "marcom-kit-playbook.zip");
+// Gated Davos Decision Kit package (built by build.mjs, outside dist/).
+const DAVOS_ZIP = path.join(__dirname, "private", "davos-decision-kit.zip");
 
 // Read the raw request body as a Buffer (needed for Stripe signature checks).
 function readRawBody(req, limit = 1024 * 1024) {
@@ -1877,6 +1879,44 @@ async function handleKitDownload(req, res, urlObj) {
   fs.createReadStream(KIT_ZIP).pipe(res);
 }
 
+// Davos Decision Kit gated download. Unlocked ONLY by an active dk1 license.
+// SkillFoundry and MarCom Kit keys never unlock this package, and a Davos key
+// never unlocks theirs (the product column is the gate).
+async function handleDavosDownload(req, res, urlObj) {
+  if (req.method !== "GET") {
+    res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("405 Method Not Allowed");
+    return;
+  }
+  const key = (urlObj.searchParams.get("key") || "").trim();
+  const row = key ? await getEntitlementByKey(key) : null;
+  const ok =
+    row &&
+    row.key_type === "license" &&
+    row.status === "active" &&
+    row.product === "davoskit" &&
+    row.tier === "dk1";
+  if (!ok) {
+    res.writeHead(403, {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+    res.end("403 — a valid, active Davos Decision Kit license key is required.");
+    return;
+  }
+  if (!fs.existsSync(DAVOS_ZIP)) {
+    res.writeHead(503, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("503 — kit package not built yet.");
+    return;
+  }
+  res.writeHead(200, {
+    "Content-Type": "application/zip",
+    "Content-Disposition": 'attachment; filename="davos-decision-kit.zip"',
+    "Cache-Control": "no-store",
+  });
+  fs.createReadStream(DAVOS_ZIP).pipe(res);
+}
+
 function commercePage(body) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1925,6 +1965,17 @@ const SUCCESS_META = {
       "Thanks for your purchase. Your license key is below. Keep it safe: use it to download the playbook package now or any time.",
     subLede:
       "Thanks for subscribing. Your subscription key is below. It unlocks the playbook download and every update we ship.",
+  },
+  davoskit: {
+    label: "Davos Decision Kit",
+    backHref: "/davos-kit-demo",
+    backText: "← Back to the Davos Decision Kit",
+    downloadPath: "/api/davos-kit/download",
+    downloadText: "Download the kit",
+    licenseLede:
+      "Thanks for your purchase. Your license key is below. Keep it safe: use it to download the Davos Decision Kit now or any time.",
+    subLede:
+      "Thanks for subscribing. Your subscription key is below.",
   },
 };
 
@@ -1982,7 +2033,9 @@ async function handleSuccess(req, res, urlObj, productHint = "skillfoundry") {
   const canDownload =
     e.product === "marcom-kit"
       ? KIT_DOWNLOAD_TIERS.has(e.tier)
-      : isLicense && e.tier === "tier1";
+      : e.product === "davoskit"
+        ? isLicense && e.tier === "dk1"
+        : isLicense && e.tier === "tier1";
   const download = canDownload
     ? `<a class="btn" href="${sm.downloadPath}?key=${encodeURIComponent(e.key_value)}">${sm.downloadText}</a>`
     : "";
@@ -2152,6 +2205,17 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
+  if (rawPath === "/api/davos-kit/download") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleDavosDownload(req, res, urlObj).catch((err) => {
+      console.error("[commerce] davos download error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
+    return;
+  }
   if (rawPath === "/api/portal") {
     handlePortal(req, res).catch((err) => {
       console.error("[commerce] portal error:", err.message);
@@ -2162,6 +2226,17 @@ const server = http.createServer((req, res) => {
   if (rawPath === "/marcom-kit/success") {
     const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
     handleSuccess(req, res, urlObj, "marcom-kit").catch((err) => {
+      console.error("[commerce] success error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
+    return;
+  }
+  if (rawPath === "/davos-kit/success") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleSuccess(req, res, urlObj, "davoskit").catch((err) => {
       console.error("[commerce] success error:", err.message);
       if (!res.headersSent) {
         res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });
