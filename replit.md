@@ -261,7 +261,24 @@ Section map: [The public site](#the-public-site-site) ·
   `site/private/davos-decision-kit.zip` via `buildDavosZip()` (outside `dist/`,
   excludes the checklist + convenience zip) and, while `DAVOS_DEMO=true`, emits
   the noindex, unlinked demo page `/davos-kit-demo` (js-buy dk1 with waitlist
-  fallback, capture source `davos-kit-demo`). Routes: `/davos-kit/success`
+  fallback, capture source `davos-kit-demo`).
+- The demo page is now a **password-gated, client-custom presentation for The
+  Content Bureau** (framed as the custom build FDI proposes for TCB, not a
+  retail FDI product): single header (the shared `page()` shell), Solvra
+  worked-example visuals (score bars, budget range bars, 90-day runway
+  timeline, TCB insertion steps), five real end-user-journey screenshots
+  (`site/src/assets/davos-demo/journey-*.png`, captured from the live flow
+  incl. a real Stripe test purchase), proposal terms, live dk1 buy button.
+- Gate (in `serve.mjs`): the `DAVOS_DEMO_PASSWORD` secret guards
+  `/davos-kit-demo`, `/davos-kit-demo.html`, AND `/assets/davos-demo/*`.
+  Routing matches on the DECODED path (percent-encoded variants like
+  `/%64avos-kit-demo` cannot bypass into the static resolver). Correct POST →
+  httpOnly `dk_demo` cookie = HMAC-sha256 of a fixed label keyed by the
+  password (Path=/, SameSite=Strict, 12h, Secure behind https); wrong/absent →
+  on-brand 401 gate page; secret unset → 503 "not available" page. Gated
+  responses are `no-store, private` + `X-Robots-Tag: noindex`; unauth asset
+  requests 404. `parseCookies` tolerates malformed percent-encoding (no crash).
+  Revocation = rotate the secret (token is derived from it). Routes: `/davos-kit/success`
   (shared product-aware success page) and `GET /api/davos-kit/download?key=`
   (active dk1 license only). Cross-product gates verified: DK1 keys are 403 on
   SkillFoundry/kit downloads and 402 on SF validate; checkout returns 503
