@@ -1463,6 +1463,14 @@ function copyAssets() {
   for (const f of slideFiles)
     copy(path.join(slidesDir, f), path.join(DIST, "assets", "deck-slides", f));
 
+  // Davos demo end-user journey screenshots (private page assets)
+  const davosShots = path.join(SRC, "assets", "davos-demo");
+  if (fs.existsSync(davosShots)) {
+    for (const f of fs.readdirSync(davosShots).filter((f) => f.endsWith(".png"))) {
+      copy(path.join(davosShots, f), path.join(DIST, "assets", "davos-demo", f));
+    }
+  }
+
   // static: css, js, favicon
   copy(path.join(SRC, "site.css"), path.join(DIST, "site.css"));
   fs.writeFileSync(path.join(DIST, "site.js"), SITE_JS);
@@ -2081,48 +2089,294 @@ function holdingPage({ title, active }) {
   });
 }
 
-/* ---------------- DAVOS KIT DEMO PAGE (internal, noindex) ---------------- */
-// Never linked from public nav or the footer. Emitted only while DAVOS_DEMO is
-// true so the commerce flow can be screen-shared with a client.
+/* ---------------- DAVOS KIT DEMO PAGE (private, password-gated) ---------------- */
+// A private, client-facing demonstration of the custom build FDI proposes for
+// The Content Bureau. Never linked from public nav or the footer, noindex, and
+// served ONLY behind the DAVOS_DEMO_PASSWORD gate in serve.mjs. Emitted while
+// DAVOS_DEMO is true.
+
+// Solvra worked-example data (fictional; see exports/davos-decision-kit/worked-example.md)
+const SOLVRA_FACTORS = [
+  { n: 1, name: "Strategic visibility goals", weight: 5, score: 4, got: 20, max: 25, why: "Two live, named objectives (Series D raise, EU policy position) depend on audiences that gather that week." },
+  { n: 2, name: "Audience fit", weight: 4, score: 3, got: 12, max: 20, why: "The right categories attend, but warm paths exist to only 4 of a draft top-20 list today." },
+  { n: 3, name: "Story readiness", weight: 4, score: 3, got: 12, max: 20, why: "A defensible point of view exists internally but is barely published: one byline, no anchor report." },
+  { n: 4, name: "Budget reality", weight: 3, score: 4, got: 12, max: 15, why: "The promenade-only range fits inside the existing events budget, but consumes the full contingency." },
+  { n: 5, name: "Calendar cost", weight: 2, score: 4, got: 8, max: 10, why: "January 2027 is protectable now; the raise process may compress December." },
+  { n: 6, name: "Alternatives comparison", weight: 2, score: 3, got: 6, max: 10, why: "A Brussels dinner series plus one climate-finance event is comparable for the policy goal at roughly half the cost." },
+];
+
+const SOLVRA_BUDGET = [
+  { line: "WEF badge or membership", low: 0, high: 0, note: "Deliberate no-badge decision" },
+  { line: "Side-event access", low: 0, high: 6000, note: "Two climate-finance houses, one policy dinner" },
+  { line: "Lodging (2 people, 5 nights)", low: 8000, high: 22000, note: "Village high end vs down-valley" },
+  { line: "Travel", low: 3500, high: 9000, note: "Amsterdam to Zurich x2 plus transfers" },
+  { line: "Ground logistics", low: 700, high: 2500, note: "Transport, winter gear, contingency" },
+  { line: "Hosted moments", low: 0, high: 0, note: "None in this scenario" },
+  { line: "Content and design", low: 2000, high: 8000, note: "Briefing docs, one-pagers, talk track" },
+  { line: "PR and advance support", low: 800, high: 10000, note: "Brokering and outreach; internal time at the low end" },
+];
+
+const SOLVRA_RUNWAY = [
+  { days: "Days 1 to 15", label: "Decide and position", detail: "Circulate the one-page recommendation. Name the single point of view. Audit the CEO's public footprint: the gap is the anchor report." },
+  { days: "Days 16 to 45", label: "Publish and map", detail: "Commission the anchor report with a named analyst. Place a flagship byline. Build the 40-to-60-person target list." },
+  { days: "Days 46 to 75", label: "Build access", detail: "Convert the target list to warm paths through the board and investors. Goal: 7+ warm paths into the top 20." },
+  { days: "Days 76 to 90", label: "Re-score", detail: "Rerun the scorecard with fresh evidence. At 75+ move to the full runway. Below 75, redirect the envelope to the Brussels series." },
+];
+
+const TCB_INSERTIONS = [
+  { when: "Week 1", what: "The working session", time: "90 to 120 min", fdi: "Draft scorecard, budget lines from public ranges, draft runway", tcb: "Validate weights and thresholds against real client outcomes. Correct ranges and calendar timing from ground truth." },
+  { when: "Week 1", what: "Async follow-ups", time: "60 to 90 min", fdi: "Script skeletons, briefing-doc structure, model-week grid", tcb: "Real, anonymized patterns: which framings get replies, the model week as your practice actually runs it." },
+  { when: "Week 2", what: "The red-line pass", time: "60 to 90 min", fdi: "The full revised kit", tcb: "Veto anything that overpromises, conflicts with advisory positioning, or leaks proprietary method." },
+  { when: "Week 2", what: "Sign-off", time: "15 to 30 min", fdi: "Final packaged kit, launch copy, product page draft", tcb: "A yes or a short punch list. Nothing ships under your brand without your final word." },
+  { when: "Week 3", what: "Commerce check (add-on)", time: "30 min", fdi: "Checkout, gated download, and email capture wired and tested", tcb: "One test purchase walkthrough on a screen share. You see what a buyer sees first." },
+];
+
+const usd = (n) => "$" + n.toLocaleString("en-US");
+
+function solvraScoreboard() {
+  const rows = SOLVRA_FACTORS.map(
+    (f) => `<div class="sb-row">
+      <div class="sb-meta"><span class="sb-name">${f.n}. ${f.name}</span><span class="sb-w">weight x${f.weight}</span><span class="sb-val">${f.got} / ${f.max}</span></div>
+      <div class="sb-track"><div class="sb-fill" style="width:${Math.round((f.got / f.max) * 100)}%"></div></div>
+      <p class="sb-why">${f.why}</p>
+    </div>`,
+  ).join("\n");
+  return `<div class="scoreboard">
+    <div class="sb-total">
+      <div class="sb-total-num">70<span>/100</span></div>
+      <div class="sb-total-label"><span class="pill">Conditional go</span><p>Per the scorecard rule: fix the lowest-scoring high-weight factors (warm paths, story readiness), re-score in 60 days, commit only at 75 or above.</p></div>
+    </div>
+    ${rows}
+  </div>`;
+}
+
+function solvraBudgetBars() {
+  const scale = 22000; // largest single line high
+  const rows = SOLVRA_BUDGET.map((b) => {
+    const lo = Math.round((b.low / scale) * 100);
+    const hi = Math.max(Math.round((b.high / scale) * 100), b.high > 0 ? 3 : 0);
+    return `<div class="bb-row">
+      <div class="bb-meta"><span class="bb-name">${b.line}</span><span class="bb-range">${b.high === 0 ? "$0" : `${usd(b.low)} to ${usd(b.high)}`}</span></div>
+      <div class="bb-track">${b.high === 0 ? '<span class="bb-zero">zero by design</span>' : `<div class="bb-band" style="left:${lo}%;width:${Math.max(hi - lo, 3)}%"></div>`}</div>
+      <p class="bb-note">${b.note}</p>
+    </div>`;
+  }).join("\n");
+  return `<div class="budgetbars">
+    ${rows}
+    <div class="bb-total"><span>Total envelope</span><b>${usd(15000)} to ${usd(57500)}</b><span class="bb-total-note">Reserve, do not spend; release only on a Go re-score. Hidden time line: ~$30,000 of internal preparation at a loaded executive-day value of $5,000.</span></div>
+  </div>`;
+}
+
+function solvraTimeline() {
+  return `<ol class="runway">
+    ${SOLVRA_RUNWAY.map(
+      (p, i) => `<li class="rw-phase">
+      <span class="rw-days">${p.days}</span>
+      <span class="rw-dot" aria-hidden="true"></span>
+      <h4>${p.label}</h4>
+      <p>${p.detail}</p>
+    </li>`,
+    ).join("\n")}
+  </ol>`;
+}
+
+function tcbInsertionSteps() {
+  return `<ol class="steps">
+    ${TCB_INSERTIONS.map(
+      (s, i) => `<li class="step">
+      <div class="step-hd"><span class="step-num">${i + 1}</span><div><span class="step-when">${s.when} · ${s.time}</span><h4>${s.what}</h4></div></div>
+      <p><b>FDI brings:</b> ${s.fdi}</p>
+      <p><b>TCB inserts:</b> ${s.tcb}</p>
+    </li>`,
+    ).join("\n")}
+  </ol>
+  <p class="steps-total">Total time required from the TCB team: about 4 to 6 hours across the 2 to 3 week build. FDI drafts first, your team corrects; nothing proprietary leaves without consent.</p>`;
+}
+
+/* End-user journey screenshots. Only rendered if the captures exist in
+   site/src/assets/davos-demo/ (copied to /assets/davos-demo/ by copyAssets). */
+const DEMO_SHOTS = [
+  { file: "journey-1-product-page.png", title: "1 · The product page", cap: "The buyer lands on the kit page (shown here under the FDI demo brand; the real build ships under TCB's brand) and clicks Buy the kit." },
+  { file: "journey-2-checkout.png", title: "2 · Secure checkout", cap: "Stripe Checkout collects card and billing address; tax is calculated automatically at purchase." },
+  { file: "journey-3-success-key.png", title: "3 · The license key", cap: "The success page issues the buyer's license key instantly and emails a copy for safekeeping." },
+  { file: "journey-4-download.png", title: "4 · The gated download", cap: "The key unlocks the kit zip. The download is served only to an active license, never from a public URL." },
+  { file: "journey-5-documents.png", title: "5 · The delivered documents", cap: "Inside the zip: the scorecard, runway, calculator, templates, and worked example, ready to run in a 45-minute session." },
+];
+
+function demoJourney() {
+  const dir = path.join(SRC, "assets", "davos-demo");
+  const available = DEMO_SHOTS.filter((s) => fs.existsSync(path.join(dir, s.file)));
+  if (!available.length) return "";
+  const figs = available
+    .map(
+      (s) => `<figure class="shot">
+      <img src="/assets/davos-demo/${s.file}" alt="${s.title.replace(/^\d+ · /, "")}" loading="lazy" />
+      <figcaption><b>${s.title}</b> ${s.cap}</figcaption>
+    </figure>`,
+    )
+    .join("\n");
+  return `<section class="wrap section" id="journey">
+  <div class="section-hd">
+    <span class="eyebrow">The buyer's journey</span>
+    <h2>What the end user actually sees.</h2>
+    <p>Real screenshots from the working build: from landing on the page to opening the delivered documents. This is the flow the $2,500 commerce add-on wires into TCB's own site.</p>
+  </div>
+  <div class="shots">${figs}</div>
+</section>`;
+}
+
 function davosDemoPage() {
-  const body = `${nav("davos-kit-demo")}
-<section class="hero">
+  const body = `<section class="hero">
   <div class="wrap hero-inner">
     <div class="hero-copy">
-      <span class="eyebrow">Internal demo · Not a public page</span>
-      <h1>The Davos Decision Kit</h1>
-      <p class="lede">A self-serve decision system for executives weighing a Davos week: a weighted go or no-go scorecard, a twelve-month runway, a budget calculator with public-range estimates, and meeting-request templates. One-time purchase, instant download, license key emailed on checkout.</p>
+      <span class="eyebrow">Private demonstration · Prepared for The Content Bureau</span>
+      <h1>The <em>Davos Decision Kit</em>: a custom build for TCB.</h1>
+      <p class="lede">This is not an FDI product for sale. It is a working demonstration of the kit False Dawn Industries proposes to build for The Content Bureau: a self-serve decision system, delivered under TCB's brand, in TCB's voice, that monetizes the gap between your free Davos Curious briefing and five-figure advisory.</p>
       <div class="hero-cta">
-        <button type="button" class="btn btn-primary js-buy" data-tier="dk1" data-fallback="#waitlist">Buy the kit · $199 launch <span class="arrow">→</span></button>
-        <a class="btn btn-ghost" href="#inside">See what's inside</a>
+        <a class="btn btn-primary" href="#solvra">See it working <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#demo">Try the live checkout</a>
       </div>
-      <p class="form-msg js-buy-msg" role="status" aria-live="polite"></p>
-      <p style="color:var(--muted);font-size:13px;margin-top:10px;">$299 list, $199 launch price. Secure Stripe checkout with tax calculated at purchase. If checkout is not live yet, the button falls back to the waitlist below.</p>
+      <p style="color:var(--muted);font-size:13px;margin-top:24px;">Everything on this page is built and running today. The example buyer, Solvra, is fictional. All costs are public-range estimates. Nothing here is legal or financial advice, and the kit claims no affiliation with or endorsement by the World Economic Forum.</p>
     </div>
   </div>
 </section>
-<section class="wrap section" id="inside">
-  <span class="eyebrow">What's inside</span>
-  <h2>Five working documents, one decision.</h2>
-  <div class="grid cols-2">
-    <article class="card"><h3>Go/No-Go Scorecard</h3><p>Six weighted factors, scoring guidance, and thresholds that resolve to a clear recommendation tier plus a one-page recommendation you can put in front of a board.</p></article>
-    <article class="card"><h3>Twelve-Month Runway</h3><p>A month-by-month plan working back from the January week: when side-event lists close, when calendars fill, and what to do each month so the week is earned, not improvised.</p></article>
-    <article class="card"><h3>Budget Calculator</h3><p>Line-by-line low and high estimates built from public ranges, three scenario profiles, and a total range you can defend in a budget review.</p></article>
-    <article class="card"><h3>Visibility Plan Templates</h3><p>Meeting-request scripts, a model week, and follow-up cadences ready to instantiate for your own targets.</p></article>
+
+<section class="wrap section" id="gap">
+  <div class="section-hd">
+    <span class="eyebrow">The gap</span>
+    <h2>Your Davos practice has two doors. The buyers live between them.</h2>
+    <p>The free door, the Davos Curious briefing, leaves the attendee with notes, not a system. The big door, high-touch advisory, is a five-figure first step. The kit is the middle door: it monetizes the curious who never convert, qualifies the ones who will, and hands you a warm, pre-educated pipeline. The people who buy a $199 decision kit and then decide to go are exactly the people who need advisory.</p>
   </div>
-  <p style="color:var(--muted);font-size:13px;margin-top:18px;">The kit is an independent product of False Dawn Industries. It is not affiliated with or endorsed by the World Economic Forum. All costs are public-range estimates. Nothing in the kit is legal or financial advice.</p>
+  <div class="grid cols-3">
+    <article class="card"><span class="tag">Door 1 · Free</span><h3>The briefing</h3><p>Generous and effective, but the attendee leaves with notes. No system, no next step, no revenue.</p></article>
+    <article class="card featured"><span class="tag">The middle door · $299, $199 launch</span><h3>The Decision Kit</h3><p>A one-time purchase, instantly downloadable. Every document ends at the same next step: book a strategy session with TCB.</p></article>
+    <article class="card"><span class="tag">Door 2 · Advisory</span><h3>High-touch engagement</h3><p>The right answer for committed clients, and exactly where kit buyers who score a Go end up.</p></article>
+  </div>
 </section>
+<hr class="divider" />
+
+<section class="wrap section" id="inside">
+  <div class="section-hd">
+    <span class="eyebrow">What FDI builds</span>
+    <h2>Five working documents, one decision.</h2>
+    <p>Drafted by FDI from the structure below, corrected by your team's ground truth, delivered in editable form under TCB's brand. Your team's names and voice; our system and production.</p>
+  </div>
+  <div class="grid cols-2">
+    <article class="card"><span class="num">01</span><h3>Go/No-Go Scorecard</h3><p>Six weighted factors and thresholds that resolve to a board-defensible go, conditional go, or no-go, plus a five-line recommendation page.</p></article>
+    <article class="card"><span class="num">02</span><h3>Twelve-Month Runway</h3><p>The month-by-month plan working backward from the January week: decide, position, publish, build access, sharpen, lock, prepare, execute, convert.</p></article>
+    <article class="card"><span class="num">03</span><h3>Budget Calculator</h3><p>Line-by-line low and high estimates from public ranges, the hidden time line, and three scenario totals from promenade-only to badged.</p></article>
+    <article class="card"><span class="num">04</span><h3>Visibility Plan Templates</h3><p>Meeting-request scripts, the one-page-per-day briefing doc, a model high-impact week, and the follow-up system where the ROI lives.</p></article>
+    <article class="card" style="grid-column:1/-1;"><span class="num">05</span><h3>The worked example</h3><p>A fully worked fictional buyer (Solvra, below) running the entire kit end to end, so every purchaser sees exactly what good looks like before their own 45-minute session.</p></article>
+  </div>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="solvra">
+  <div class="section-hd">
+    <span class="eyebrow">The product, working</span>
+    <h2>Solvra runs the kit.</h2>
+    <p>Solvra is a fictional Series C climate-fintech (~180 people, Amsterdam) weighing Davos January 2027 ahead of a Q3 raise. Here is the kit's actual output, visualized. Any resemblance to a real company or person is coincidental.</p>
+  </div>
+
+  <h3 class="viz-hd">Step 1 · The scorecard: six weighted factors, one defensible answer</h3>
+  ${solvraScoreboard()}
+
+  <h3 class="viz-hd">Step 2 · The budget: a lined, carryable range instead of "roughly fifty grand?"</h3>
+  <p class="viz-sub">Promenade-only scenario, two people, five nights, no badge, no hosted moment. Public-range estimates as of the 2026 cycle.</p>
+  ${solvraBudgetBars()}
+
+  <h3 class="viz-hd">Step 3 · The runway, condensed to Solvra's next 90 days</h3>
+  ${solvraTimeline()}
+
+  <h3 class="viz-hd">Step 4 · One meeting-request script, instantiated</h3>
+  <blockquote class="script">
+    <p class="script-sub">Subject: Intro to Dr. Elin Sørheim ahead of January?</p>
+    <p>Pieter, I will be in Davos the week of January 18 and Dr. Sørheim is at the top of my list. We are both working on carbon-market settlement integrity; I published our "Missing Layer" report on exactly this. Would you be open to a two-line introduction? Happy to send you the note to forward.</p>
+    <footer>The template forced the ask to wait until the anchor report existed to reference. Script quality is downstream of runway discipline, which is the kit's core argument.</footer>
+  </blockquote>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="process">
+  <div class="section-hd">
+    <span class="eyebrow">The build process</span>
+    <h2>Where TCB's expertise goes in.</h2>
+    <p>The kit's credibility is your expertise. FDI provides the structure: the scoring math, the document architecture, the packaging, the commerce plumbing. Your team provides the truth: what the ranges really are, when the calendars really fill, which scripts really get replies.</p>
+  </div>
+  ${tcbInsertionSteps()}
+</section>
+<hr class="divider" />
+
+${demoJourney()}
+<hr class="divider" />
+
+<section class="wrap section" id="terms">
+  <div class="section-hd">
+    <span class="eyebrow">The proposal</span>
+    <h2>Scope, timeline, and investment.</h2>
+    <p>Two to three weeks from working session to delivered kit. All assets in editable form under TCB's brand, yours outright. No open-ended consulting tail: the engagement ends at delivery.</p>
+  </div>
+  <div class="price-grid">
+    <div class="tier mid">
+      <span class="tname">The build</span>
+      <h3>Product, packaging, launch copy</h3>
+      <div class="tprice"><span class="tprice-amt">$7,500</span><span class="tprice-unit">fixed</span></div>
+      <p class="model">Half on signing, half on delivery.</p>
+      <ul>
+        <li>Week 1: working session; FDI drafts all five assets plus read-me and packaging</li>
+        <li>Week 2: your review pass; FDI revises, finalizes launch copy, delivers the packaged kit</li>
+        <li>Launch copy: product page, launch email, two social posts</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <span class="tname">Add-on</span>
+      <h3>Commerce plumbing</h3>
+      <div class="tprice"><span class="tprice-amt">$2,500</span><span class="tprice-unit">optional week 3</span></div>
+      <p class="model">Exactly what this page demonstrates, wired into your site.</p>
+      <ul>
+        <li>Checkout, license keys, gated download</li>
+        <li>Email capture and buyer notifications</li>
+        <li>Tested end to end before launch</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <span class="tname">Alternative structure</span>
+      <h3>Shared upside</h3>
+      <div class="tprice"><span class="tprice-amt">$5,000</span><span class="tprice-unit">+ 20% of kit revenue, 12 months</span></div>
+      <p class="model">If preferred: lower fixed fee, shared outcome.</p>
+      <ul>
+        <li>Same scope and timeline as the fixed build</li>
+        <li>Suggested buyer pricing: $299 one-time, $199 launch</li>
+        <li>Low enough for a corporate card, high enough to signal senior advice</li>
+      </ul>
+    </div>
+  </div>
+  <p style="color:var(--muted);font-size:13px;margin-top:18px;">This page is a demonstration of a proposal, not a contract. No claim of WEF affiliation appears in any asset; all cost figures are framed as public ranges; nothing in the kit is legal or financial advice.</p>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="demo">
+  <div class="section-hd">
+    <span class="eyebrow">Live demo</span>
+    <h2>The commerce flow, running now.</h2>
+    <p>This button drives the same engine the add-on delivers: a real Stripe test-mode checkout that issues a license key, sends the buyer email, and unlocks the gated download. Use test card 4242 4242 4242 4242 with any future expiry.</p>
+  </div>
+  <button type="button" class="btn btn-primary js-buy" data-tier="dk1" data-fallback="#waitlist">Run the demo purchase · $199 <span class="arrow">→</span></button>
+  <p class="form-msg js-buy-msg" role="status" aria-live="polite"></p>
+  <p style="color:var(--muted);font-size:13px;margin-top:10px;">Test mode: no real card is charged. If checkout is not configured in this environment, the button falls back to the contact form below.</p>
+</section>
+
 <section class="cta" id="waitlist">
   <div class="wrap section">
     <div class="cta-box">
-      <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
-      <h2>Not ready to buy? Get launch updates.</h2>
-      <p>Drop your email and we will reach out with launch pricing and the worked example. No spam.</p>
-      <form class="waitlist js-capture" data-source="davos-kit-demo" data-subject="Davos Decision Kit waitlist" data-success="Almost there. Check your inbox and click the confirmation link to join the waitlist." data-mail-body="Please add me to the Davos Decision Kit waitlist." novalidate>
+      <span class="eyebrow" style="justify-content:center;">Next step</span>
+      <h2>Ready to put your name on it?</h2>
+      <p>Leave an email and FDI will follow up on the proposal, or write us directly.</p>
+      <form class="waitlist js-capture" data-source="davos-kit-demo" data-subject="Davos Decision Kit proposal" data-success="Thanks. Check your inbox for a confirmation link and we will follow up on the proposal." data-mail-body="Following up on the Davos Decision Kit proposal." novalidate>
         <label class="sr-only" for="dk-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
         <input type="email" id="dk-email" name="email" placeholder="you@company.com" autocomplete="email" required />
-        <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+        <button class="btn btn-primary" type="submit">Follow up with me <span class="arrow">→</span></button>
       </form>
       <p class="form-msg" role="status" aria-live="polite"></p>
       <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
@@ -2130,9 +2384,9 @@ function davosDemoPage() {
   </div>
 </section>`;
   return page({
-    title: "Davos Decision Kit (demo) | False Dawn Industries",
+    title: "Davos Decision Kit · A custom build for The Content Bureau | False Dawn Industries",
     description:
-      "Internal demo page for the Davos Decision Kit commerce flow.",
+      "Private demonstration of the Davos Decision Kit custom build proposed for The Content Bureau.",
     active: "davos-kit-demo",
     body,
     canonical: `${SITE_URL}/davos-kit-demo`,

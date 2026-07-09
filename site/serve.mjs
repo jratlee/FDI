@@ -668,6 +668,132 @@ async function handleUnsubscribe(req, res, urlObj) {
   );
 }
 
+/* ---------------- Davos demo page: password gate ---------------- */
+// The private client demo at /davos-kit-demo is a static build artifact, but
+// it must never be reachable without the DAVOS_DEMO_PASSWORD secret. The gate
+// intercepts BOTH the clean route and the .html file before static serving.
+// After a correct entry, a derived session token (HMAC of a fixed label keyed
+// by the password, so the cookie never carries the password itself) is set as
+// an httpOnly cookie (Path=/, so the gated screenshot assets also receive it).
+const DAVOS_PASSWORD = process.env.DAVOS_DEMO_PASSWORD || "";
+
+function davosSessionToken() {
+  return crypto
+    .createHmac("sha256", DAVOS_PASSWORD)
+    .update("davos-demo-gate-v1")
+    .digest("hex");
+}
+
+function davosCookieAttrs(req) {
+  const proto =
+    (req.headers["x-forwarded-proto"] || "").split(",")[0].trim() || "http";
+  const secure = proto === "https" ? " Secure;" : "";
+  // Path=/ so the browser also sends the cookie for the gated screenshot
+  // assets under /assets/davos-demo/ (a /davos-kit-demo scope would not).
+  return `Path=/; HttpOnly; SameSite=Strict;${secure}`;
+}
+
+function hasDavosAccess(req) {
+  if (!DAVOS_PASSWORD) return false;
+  const supplied = parseCookies(req).dk_demo || "";
+  return supplied ? timingSafeEqual(supplied, davosSessionToken()) : false;
+}
+
+function davosGateShell(inner) {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Private demonstration · False Dawn Industries</title>
+<style>
+  :root{color-scheme:dark}
+  body{margin:0;background:#0D0B08;color:#F0E8D5;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .box{max-width:420px;width:100%;background:#141009;border:1px solid #2A2015;border-radius:14px;padding:40px 36px}
+  .eyebrow{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:#A8997B;margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  .eyebrow::before{content:"";width:22px;border-top:2px solid #FFB12B}
+  h1{font-family:'Space Grotesk',system-ui,sans-serif;font-size:1.45rem;margin:0 0 10px;letter-spacing:-.01em}
+  p{color:#A8997B;font-size:.92rem;line-height:1.6;margin:0 0 22px}
+  label{display:block;font-size:.85rem;color:#A8997B;margin:0 0 6px}
+  input{width:100%;box-sizing:border-box;background:#1C160D;border:1px solid #3A2D1C;border-radius:8px;color:#F0E8D5;padding:11px 13px;font-size:1rem;margin:0 0 16px}
+  input:focus{border-color:#FFB12B;outline:none}
+  .btn{display:inline-block;width:100%;box-sizing:border-box;text-align:center;background:#FFB12B;color:#1a1206;font-family:'Space Grotesk',system-ui,sans-serif;font-weight:600;padding:12px 16px;border-radius:8px;border:0;cursor:pointer;font-size:.95rem}
+  .btn:hover{background:#FFCB6B}
+  .err{color:#E0920C;font-size:.85rem;margin:0 0 16px}
+  .foot{color:#7A6A50;font-size:.78rem;margin:22px 0 0}
+</style></head><body><div class="box">${inner}</div></body></html>`;
+}
+
+function davosGatePage(res, status, error) {
+  const inner = `<p class="eyebrow">Private demonstration</p>
+<h1>This page is access-protected.</h1>
+<p>A working demonstration prepared for a specific client. Enter the access code you were given to continue.</p>
+${error ? `<p class="err">${esc(error)}</p>` : ""}
+<form method="POST" action="/davos-kit-demo">
+  <label for="dk-pass">Access code</label>
+  <input id="dk-pass" name="password" type="password" autocomplete="off" autofocus required>
+  <button class="btn" type="submit">Enter</button>
+</form>
+<p class="foot">False Dawn Industries · Growth Cartography</p>`;
+  res.writeHead(status, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow",
+  });
+  res.end(davosGateShell(inner));
+}
+
+function serveDavosDemoFile(res) {
+  const file = path.join(DIST, "davos-kit-demo.html");
+  if (!fs.existsSync(file)) {
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("404 Not Found");
+    return;
+  }
+  res.writeHead(200, {
+    "Content-Type": "text/html; charset=utf-8",
+    // Never cache the gated page (shared caches must not hold a copy).
+    "Cache-Control": "no-store, private",
+    "X-Robots-Tag": "noindex, nofollow",
+  });
+  fs.createReadStream(file).pipe(res);
+}
+
+async function handleDavosDemo(req, res) {
+  if (!DAVOS_PASSWORD) {
+    res.writeHead(503, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Robots-Tag": "noindex, nofollow",
+    });
+    res.end(
+      davosGateShell(
+        `<p class="eyebrow">Private demonstration</p><h1>Not available.</h1><p>This demonstration is not currently enabled. Set the access secret to activate it.</p>`,
+      ),
+    );
+    return;
+  }
+  if (req.method === "POST") {
+    const raw = await readBody(req, 4096).catch(() => "");
+    const params = new URLSearchParams(String(raw));
+    const supplied = params.get("password") || "";
+    if (supplied && timingSafeEqual(supplied, DAVOS_PASSWORD)) {
+      res.writeHead(303, {
+        Location: "/davos-kit-demo",
+        "Set-Cookie": `dk_demo=${davosSessionToken()}; ${davosCookieAttrs(req)} Max-Age=43200`,
+        "Cache-Control": "no-store",
+      });
+      res.end();
+      return;
+    }
+    davosGatePage(res, 401, "That code did not work. Check it and try again.");
+    return;
+  }
+  if (hasDavosAccess(req)) {
+    serveDavosDemoFile(res);
+    return;
+  }
+  davosGatePage(res, 401);
+}
+
 /* ---------------- admin: view + export signups ---------------- */
 function timingSafeEqual(a, b) {
   const ab = Buffer.from(String(a));
@@ -684,7 +810,15 @@ function parseCookies(req) {
     if (idx === -1) continue;
     const k = part.slice(0, idx).trim();
     const v = part.slice(idx + 1).trim();
-    if (k) out[k] = decodeURIComponent(v);
+    if (k) {
+      // Malformed percent-encoding in a cookie value must never throw
+      // (parseCookies runs on public routes); fall back to the raw value.
+      try {
+        out[k] = decodeURIComponent(v);
+      } catch {
+        out[k] = v;
+      }
+    }
   }
   return out;
 }
@@ -2122,8 +2256,9 @@ function resolveFile(urlPath) {
 
 const server = http.createServer((req, res) => {
   const rawPath = (req.url || "/").split("?")[0].split("#")[0];
+  let decodedPath;
   try {
-    decodeURIComponent(rawPath);
+    decodedPath = decodeURIComponent(rawPath);
   } catch {
     res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("400 Bad Request");
@@ -2254,6 +2389,45 @@ const server = http.createServer((req, res) => {
         res.end("500 Server Error");
       }
     });
+    return;
+  }
+  // Davos gate routes on the DECODED path so percent-encoded variants
+  // (e.g. /%64avos-kit-demo, /davos-kit-demo%2ehtml) cannot slip past the
+  // gate into the static resolver, which also decodes. The demo's journey
+  // screenshots under /assets/davos-demo/ are gated the same way.
+  if (decodedPath === "/davos-kit-demo" || decodedPath === "/davos-kit-demo.html") {
+    handleDavosDemo(req, res).catch((err) => {
+      console.error("[davos-demo] gate error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
+    return;
+  }
+  if (decodedPath.startsWith("/assets/davos-demo/")) {
+    if (!hasDavosAccess(req)) {
+      res.writeHead(404, {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store",
+      });
+      res.end("404 Not Found");
+      return;
+    }
+    // Authed: serve directly with no-store (never the long-cache static
+    // headers, so shared caches can't replay a gated image to anon users).
+    const assetFile = resolveFile(req.url || "/");
+    if (!assetFile) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("404 Not Found");
+      return;
+    }
+    res.writeHead(200, {
+      "Content-Type": MIME[path.extname(assetFile).toLowerCase()] || "application/octet-stream",
+      "Cache-Control": "no-store, private",
+      "X-Robots-Tag": "noindex, nofollow",
+    });
+    fs.createReadStream(assetFile).pipe(res);
     return;
   }
   if (rawPath === "/admin" || rawPath.startsWith("/admin/")) {
