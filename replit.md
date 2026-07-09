@@ -249,6 +249,17 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   `htmlToPDF`/`embeddedFontCss` helpers now exported from
   `site/defrag-report.mjs`. Copy rules: no em-dashes, no former-client names,
   softened risk claims + not-legal-advice disclaimer.
+- Davos Decision Kit (client-facing product build, NOT public): a low-cost
+  front-door product designed for The Content Bureau's Davos practice, modeled
+  on the SkillFoundry Tier 1 pattern ($299 one-time, $199 launch). Source
+  assets in `exports/davos-decision-kit/` (Go/No-Go Scorecard, Twelve-Month
+  Runway, Budget Calculator, Visibility Plan Templates, README; zipped to
+  `davos-decision-kit.zip`). The FDI proposal to Heather Kernahan
+  ($7,500 fixed + $2,500 commerce add-on; alt $5,000 + 20% rev share 12mo)
+  lives at `exports/outreach-kit/davos-kit-proposal.md` with a branded PDF
+  rendered by `site/export-outreach.mjs`. Copy rules: no em-dashes, no WEF
+  affiliation claims, all costs framed as public-range estimates,
+  not-legal/financial-advice disclaimers.
 - Revenue pipeline tracker (internal, token-gated): `GET /admin/pipeline`
   (same `WAITLIST_ADMIN_TOKEN` auth + noindex adminShell) with targets CRUD
   (`POST /admin/pipeline/save|delete`; name, org, segment, stage, value USD,

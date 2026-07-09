@@ -1,6 +1,7 @@
 // Build the branded outreach-kit PDFs into exports/outreach-kit/:
 //   - fdi-marcom-kit-onepager.pdf         (one-page kit overview)
 //   - transformation-sprint-proposal.pdf  (fillable proposal template)
+//   - davos-kit-proposal.pdf              (Davos Decision Kit proposal)
 // Run from the repo root: node site/export-outreach.mjs
 // Reuses the headless-chromium print pipeline from defrag-report.mjs.
 import fs from "node:fs";
@@ -193,9 +194,78 @@ open-ended consulting tail. The Sprint ends on
 <div class="foot">${DISCLAIMER}</div>
 </div>`);
 
+/* ---------------- Davos Decision Kit proposal ---------------- */
+const davosProposal = doc("Davos Decision Kit Proposal", `<div class="page">
+${header("Engagement proposal")}
+<h1>The Davos Decision Kit: <em>a front door to the practice</em></h1>
+<div class="meta">
+  <div><span class="k">Prepared for:</span> Heather Kernahan, The Content Bureau</div>
+  <div><span class="k">Prepared by:</span> <span class="fill">[Your name], FDI</span></div>
+  <div><span class="k">Date:</span> <span class="fill">[Date]</span></div>
+  <div><span class="k">Valid for:</span> 30 days</div>
+</div>
+
+<h2>The gap</h2>
+<p class="lede">Your Davos practice has two doors today. The free door: the
+Davos Curious briefing, generous and effective, but it leaves the attendee
+with notes, not a system. The big door: high-touch advisory, the right answer
+for committed clients but a five-figure first step. Between them is nothing,
+and that gap is where most of your audience lives.</p>
+
+<h2>The product</h2>
+<p>A self-serve, one-time-purchase decision system, downloadable the moment
+someone buys. Four working assets built from your team's expertise, delivered
+under your brand:</p>
+<div class="cards">
+  <div class="card"><span class="tag">Decide</span><h3>Go/No-Go Scorecard</h3>
+  <p>A weighted framework producing a board-defensible go or no-go
+  recommendation in one 45-minute session.</p></div>
+  <div class="card"><span class="tag">Plan</span><h3>Twelve-Month Runway + Budget Calculator</h3>
+  <p>The month-by-month plan working backward from January, and a cost
+  worksheet with realistic public-range estimates.</p></div>
+  <div class="card"><span class="tag">Execute</span><h3>Visibility Plan Templates</h3>
+  <p>Meeting-request scripts, briefing docs, a model high-impact week, and
+  the follow-up system where the ROI lives.</p></div>
+</div>
+<p>Every asset ends at the same next step: book a strategy session with your
+team. The kit monetizes the curious who never convert, qualifies the ones who
+will, and hands you a warm, pre-educated pipeline.</p>
+
+<div class="callout"><b>Suggested buyer pricing:</b> $299 one-time, $199 at
+launch. Low enough for a corporate card without approval, high enough to
+signal senior advice. It sits between the free briefing and advisory and
+never competes with either.</div>
+
+<h2>Scope and timeline</h2>
+<div class="week"><span class="n">Week 1</span><p><b>Transfer and draft.</b>
+One working session with your team; FDI drafts all four assets plus the kit
+read-me and packaging.</p></div>
+<div class="week"><span class="n">Week 2</span><p><b>Revise and deliver.</b>
+Your review pass; FDI revises, finalizes launch copy (product page, launch
+email, two social posts), and delivers the packaged kit in editable form.</p></div>
+<div class="week"><span class="n">Week 3</span><p><b>Optional add-on.</b>
+Commerce plumbing: checkout, gated download, and email capture wired into
+your site, tested end to end.</p></div>
+
+<h2>Investment</h2>
+<p><b style="font-family:'Space Grotesk',sans-serif;font-size:16px;color:var(--amber)">$7,500, fixed</b>
+for the product, packaging, and launch copy. Half on signing, half on
+delivery. Commerce plumbing add-on: $2,500. Alternative structure if
+preferred: $5,000 fixed plus 20 percent of kit revenue for 12 months.</p>
+
+<h2>What this is not</h2>
+<p>No claim of WEF affiliation in any asset; all cost figures framed as
+public ranges. No open-ended consulting tail: the engagement ends at
+delivery, and the kit is yours outright.</p>
+
+<div class="sig"><span>Accepted by</span><span>Date</span></div>
+<div class="foot">${DISCLAIMER}</div>
+</div>`);
+
 const JOBS = [
   ["fdi-marcom-kit-onepager.pdf", onePager],
   ["transformation-sprint-proposal.pdf", proposal],
+  ["davos-kit-proposal.pdf", davosProposal],
 ];
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
