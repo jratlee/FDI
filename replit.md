@@ -2,7 +2,7 @@
 
 ## Overview
 False Dawn Industries is building the thesis of **owned marketing systems** for
-aggregated, decentralized, and autonomous markets. This repo holds three things:
+aggregated, decentralized, and autonomous markets. This repo holds five things:
 
 1. **The public marketing site** (`site/`) — the FDI umbrella homepage, the
    Field Guide (thesis article + visuals + launch deck), the SkillFoundry
@@ -34,7 +34,17 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
    Hourglass language, SkillFoundry framed as the Riverbank's running
    enforcement engine.
 
+Section map: [The public site](#the-public-site-site) ·
+[Waitlist, email & data rights](#waitlist-email--data-rights) ·
+[Commerce (shared Stripe engine)](#commerce-shared-stripe-engine) ·
+[Internal admin tools](#internal-admin-tools-token-gated) ·
+[Sales & product export assets](#sales--product-export-assets-not-public) ·
+[Workflows & deployment](#workflows--deployment) ·
+[Brand rules](#brand-rules-locked)
+
 ## The public site (`site/`)
+
+### Pages & build
 - Lightweight, dependency-light static site. `build.mjs` renders the thesis
   markdown (`exports/field-guide-launch/linkedin-thesis-article.md`) with `marked`,
   folds the inline visuals + captions into `<figure>`s, copies the launch assets
@@ -78,7 +88,19 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   - `/aggregated`, `/decentralized`, `/autonomous` — one-pager concept pages,
     each a direct-answer definition + pattern/answer/proof cards + a waitlist CTA
     with a per-page source tag (`series-aggregated`, etc.)
-- Brand/copy conventions (locked): all visible product copy uses "SkillFoundry"
+- Build: `node site/build.mjs`. Serve: `node site/serve.mjs` (PORT env, default 5000).
+- `serve.mjs` is a Node static server (correct MIME types, long-cache headers
+  for `/fonts` + `/assets`, clean extensionless routing) plus a single dynamic
+  route: `POST /api/waitlist` validates the email, sanitizes the optional
+  `source` field (allow-listed `[a-z0-9._-]`, else `"site"`), and upserts both
+  into the `waitlist_signups` Postgres table (`DATABASE_URL`) with `ON CONFLICT
+  DO NOTHING`. Uses the `pg` client; returns `503` if no `DATABASE_URL` is set.
+- The site reuses the locked FDI brand tokens/fonts but has its own scrollable
+  stylesheet (`site/src/site.css`) — it does NOT import the ad system's fixed
+  100vh/overflow-hidden `brand.css`.
+
+### Brand/copy conventions (locked)
+- All visible product copy uses "SkillFoundry"
   (the `/skillfoundry` URL and `skillfoundry/` dir stay lowercase); every waitlist
   CTA and every waitlist-style pricing-tier button reads "Join the waitlist". The
   SkillFoundry Tier 1/2/3 buttons are the ONE exception: they drive live Stripe
@@ -87,13 +109,26 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   the checkout flow breaks. No em-dashes anywhere in `build.mjs`/`site.css`
   (sentences are rewritten instead); MCP is described as an open standard and the
   site never claims Anthropic affiliation or endorsement.
-- GEO / AI-search visibility: `page()` injects JSON-LD `<script>` blocks
+
+### GEO / AI-search visibility
+- `page()` injects JSON-LD `<script>` blocks
   (Organization on `/`, SoftwareApplication + FAQPage on `/skillfoundry`, Article
   on `/field-guide`, a per-concept FAQPage on the concept pages); direct-answer
   `.definition` blocks and "as of 2026" freshness markers appear on product and
   concept pages; `build.mjs` emits `/llms.txt` (served `text/plain`) as an
   AI-crawler guide to the org, products, and series.
-- Double opt-in (confirmed subscriptions): a new signup lands as **pending**
+
+## Waitlist, email & data rights
+
+### Email-capture forms
+- All email-capture forms use one generic handler: any `form.js-capture` with
+  `data-source` (waitlist tag), `data-subject`/`data-mail-body` (mailto fallback),
+  optional `data-download` (success triggers a file download instead of a "you're
+  on the list" message), and a sibling `.form-msg` for inline status. POSTs to
+  `/api/waitlist` (durable Postgres), with `mailto:` fallback on failure.
+
+### Double opt-in (confirmed subscriptions)
+- A new signup lands as **pending**
   (`confirmed_at IS NULL`) with a per-signup `confirm_token` + `confirm_sent_at`.
   The only mail it triggers is a brand-styled "Confirm your email" request
   (`sendConfirmationRequest` in `site/email.mjs`) with a unique link to `GET
@@ -111,6 +146,8 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   "check your inbox for a confirmation link"; the admin view has a Status column
   (Confirmed/Pending badges), a "N confirmed, M pending" summary, and the CSV +
   single-record export carry `status` + `confirmed_at`.
+
+### Transactional email (Resend)
 - Post-confirmation the subscriber gets a best-effort transactional welcome email
   via the **Resend** integration (`site/email.mjs`, Replit Connectors proxy): a
   brand-styled, source-aware welcome to the subscriber and, if
@@ -125,12 +162,9 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   recipient return a 403 that's caught and logged (team notifications to the
   owner still work). Swap `RESEND_FROM` to a verified-domain address to enable
   confirmations for all subscribers.
-- All email-capture forms use one generic handler: any `form.js-capture` with
-  `data-source` (waitlist tag), `data-subject`/`data-mail-body` (mailto fallback),
-  optional `data-download` (success triggers a file download instead of a "you're
-  on the list" message), and a sibling `.form-msg` for inline status. POSTs to
-  `/api/waitlist` (durable Postgres), with `mailto:` fallback on failure.
-- Self-serve deletion (data-subject rights): every `waitlist_signups` row carries
+
+### Self-serve deletion (data-subject rights)
+- Every `waitlist_signups` row carries
   an unguessable per-signup `unsub_token` (64 hex chars, generated on insert;
   pre-existing rows backfilled in `ensureTable`). The subscriber confirmation
   email includes a one-click "Remove me from the list" link plus RFC 8058
@@ -140,7 +174,9 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   a responsive, on-brand, `noindex` confirmation page. Invalid/used tokens get a
   generic "link no longer active" page (never reveals whether an email exists);
   the email is never logged. Deletion is idempotent.
-- Spam / bot defense on signup: a hidden `company` honeypot field, a per-IP
+
+### Spam / bot defense
+- Signup defense: a hidden `company` honeypot field, a per-IP
   rate limit, and a disposable-email-domain blocklist. The blocklist is NOT a
   hardcoded ~20-entry set anymore: `serve.mjs` loads a large, community-
   maintained list from the bundled `site/disposable-domains.txt` at startup and
@@ -153,19 +189,19 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   to also reject domains that authoritatively can't receive mail (MX then A/AAAA
   lookup, 6h cache); it fails OPEN so transient DNS errors never block a real
   address.
-- Retention: waitlist emails are not kept forever. `site/purge.mjs` hard-deletes
+
+### Retention
+- Waitlist emails are not kept forever. `site/purge.mjs` hard-deletes
   signups older than the window that have NOT converted (converted = the email
   appears in `skillfoundry_entitlements`; the join is skipped if that table
   doesn't exist). Window is `WAITLIST_RETENTION_DAYS` (default 730 = ~24 months;
   a value of 0 or below is rejected and falls back to the default as a safety).
   Run `node site/purge.mjs` (or `--dry-run` to report the count only); logs counts
   and the window only, never emails. Safe to schedule.
-- `serve.mjs` is a Node static server (correct MIME types, long-cache headers
-  for `/fonts` + `/assets`, clean extensionless routing) plus a single dynamic
-  route: `POST /api/waitlist` validates the email, sanitizes the optional
-  `source` field (allow-listed `[a-z0-9._-]`, else `"site"`), and upserts both
-  into the `waitlist_signups` Postgres table (`DATABASE_URL`) with `ON CONFLICT
-  DO NOTHING`. Uses the `pg` client; returns `503` if no `DATABASE_URL` is set.
+
+## Commerce (shared Stripe engine)
+
+### SkillFoundry commerce
 - SkillFoundry commerce (Stripe) lives in `site/commerce.mjs` (self-contained:
   own `pg` pool + lazy Stripe client, so it can later move to a standalone
   backend). All credentials come from **env secrets**, never the Replit
@@ -192,6 +228,8 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   by `build.mjs` to `site/private/skillfoundry-plugin.zip` (OUTSIDE public `dist/`,
   gitignored). Tier 2 thin client: `skillfoundry/client/thin-client.mjs`
   (reads `SKILLFOUNDRY_KEY` + `SKILLFOUNDRY_API_URL`, POSTs the run endpoint).
+
+### MarCom Kit commerce
 - MarCom Kit commerce reuses the SAME engine in `commerce.mjs` (not a fork):
   `PRODUCT_META` scopes the two product families (success/cancel/portal paths,
   key prefixes SF1/SFS vs MK1/MKS) and every `TIERS` entry carries
@@ -215,8 +253,27 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   (SF download now also requires `tier1`). Kit buy buttons render only when
   `KIT_CHECKOUT_LIVE=true` in `build.mjs` (currently false → waitlist CTAs);
   everything degrades gracefully when secrets are unset.
-- Process Defragmentation Report generator (internal, token-gated, NOT public):
-  `site/defrag.mjs` (LLM engine + Postgres storage) and `site/defrag-report.mjs`
+
+### Davos Kit commerce demo
+- Davos Kit commerce demo: product `davoskit` / tier `dk1` (key prefix DK1) is
+  wired into the shared engine in `commerce.mjs` (`DAVOSKIT_TIER1_PRICE_ID`
+  secret; $199 test price). `build.mjs` builds
+  `site/private/davos-decision-kit.zip` via `buildDavosZip()` (outside `dist/`,
+  excludes the checklist + convenience zip) and, while `DAVOS_DEMO=true`, emits
+  the noindex, unlinked demo page `/davos-kit-demo` (js-buy dk1 with waitlist
+  fallback, capture source `davos-kit-demo`). Routes: `/davos-kit/success`
+  (shared product-aware success page) and `GET /api/davos-kit/download?key=`
+  (active dk1 license only). Cross-product gates verified: DK1 keys are 403 on
+  SkillFoundry/kit downloads and 402 on SF validate; checkout returns 503
+  `tier_unconfigured` with waitlist fallback when the price ID is unset.
+  A full Stripe test-mode purchase was verified end to end (card 4242 →
+  success page key → gated download). Flip-live steps:
+  `exports/davos-decision-kit/GO_LIVE_CHECKLIST.md`.
+
+## Internal admin tools (token-gated)
+
+### Process Defragmentation Report generator (NOT public)
+- `site/defrag.mjs` (LLM engine + Postgres storage) and `site/defrag-report.mjs`
   (branded HTML template + headless-chromium PDF). Owner pastes a prospect's
   workflow doc at `GET /admin/defrag` (same `WAITLIST_ADMIN_TOKEN` auth/cookie
   as the waitlist admin); `POST /admin/defrag/generate` calls the Replit
@@ -240,48 +297,16 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   puppeteer-core + Nix chromium, brand woff2 fonts base64-embedded), `POST
   /admin/defrag/delete`. Degrades gracefully: generation disabled with a notice
   if the AI env vars are unset.
-- Outreach kit (internal sales assets, NOT public): `exports/outreach-kit/`
-  holds the 3-touch email sequences (agency-president + CMO variants of the
-  Riverbank/deskilling pitch), discovery-call guide, and the Transformation
-  Sprint proposal source ($10,000 fixed 4-week, Governance Risk Audit
-  $1,500-2,500 fallback). `node site/export-outreach.mjs` renders the two
-  branded PDFs (kit one-pager + proposal template) via the shared
-  `htmlToPDF`/`embeddedFontCss` helpers now exported from
-  `site/defrag-report.mjs`. Copy rules: no em-dashes, no former-client names,
-  softened risk claims + not-legal-advice disclaimer.
-- Davos Decision Kit (client-facing product build, NOT public): a low-cost
-  front-door product designed for The Content Bureau's Davos practice, modeled
-  on the SkillFoundry Tier 1 pattern ($299 one-time, $199 launch). Source
-  assets in `exports/davos-decision-kit/` (Go/No-Go Scorecard, Twelve-Month
-  Runway, Budget Calculator, Visibility Plan Templates, README; zipped to
-  `davos-decision-kit.zip`). The FDI proposal to Heather Kernahan
-  ($7,500 fixed + $2,500 commerce add-on; alt $5,000 + 20% rev share 12mo)
-  lives at `exports/outreach-kit/davos-kit-proposal.md` with a branded PDF
-  rendered by `site/export-outreach.mjs` (which also renders
-  `davos-kit-expertise-map.md/pdf`, the TCB expertise-insertion map; the shared
-  outreach DISCLAIMER reads "not legal or financial advice"). The kit ships
-  with a fully worked fictional example (`worked-example.md`, Solvra: scorecard
-  70/100 conditional go, lined budget, condensed runway, instantiated script)
-  and an internal `GO_LIVE_CHECKLIST.md` (excluded from the buyer zip).
-- Davos Kit commerce demo: product `davoskit` / tier `dk1` (key prefix DK1) is
-  wired into the shared engine in `commerce.mjs` (`DAVOSKIT_TIER1_PRICE_ID`
-  secret; $199 test price). `build.mjs` builds
-  `site/private/davos-decision-kit.zip` via `buildDavosZip()` (outside `dist/`,
-  excludes the checklist + convenience zip) and, while `DAVOS_DEMO=true`, emits
-  the noindex, unlinked demo page `/davos-kit-demo` (js-buy dk1 with waitlist
-  fallback, capture source `davos-kit-demo`). Routes: `/davos-kit/success`
-  (shared product-aware success page) and `GET /api/davos-kit/download?key=`
-  (active dk1 license only). Cross-product gates verified: DK1 keys are 403 on
-  SkillFoundry/kit downloads and 402 on SF validate; checkout returns 503
-  `tier_unconfigured` with waitlist fallback when the price ID is unset.
-  A full Stripe test-mode purchase was verified end to end (card 4242 →
-  success page key → gated download).
+
+### Revenue pipeline tracker
 - Revenue pipeline tracker (internal, token-gated): `GET /admin/pipeline`
   (same `WAITLIST_ADMIN_TOKEN` auth + noindex adminShell) with targets CRUD
   (`POST /admin/pipeline/save|delete`; name, org, segment, stage, value USD,
   next action, notes), funnel chips Target→Contacted→Discovery→Audit/Proposal→
   Closed (+Lost), and a goal bar showing closed $ vs the $5,000 bi-weekly
   Aug 15 2026 goal (`GOAL` in `site/pipeline.mjs`, table `pipeline_targets`).
+
+### Waitlist admin view
 - Internal, token-gated signups view (NOT linked from public nav): `GET
   /admin/waitlist` shows a login form; on POST it timing-safe-compares the token
   against the `WAITLIST_ADMIN_TOKEN` secret and sets an httpOnly `wl_admin`
@@ -300,10 +325,38 @@ aggregated, decentralized, and autonomous markets. This repo holds three things:
   never logs the email), and `GET /admin/waitlist/record?email=` streams a single
   person's record as a JSON attachment for a data-access request (email, source,
   created_at only; the `unsub_token` is treated as a credential and excluded).
-- Build: `node site/build.mjs`. Serve: `node site/serve.mjs` (PORT env, default 5000).
-- The site reuses the locked FDI brand tokens/fonts but has its own scrollable
-  stylesheet (`site/src/site.css`) — it does NOT import the ad system's fixed
-  100vh/overflow-hidden `brand.css`.
+
+## Sales & product export assets (NOT public)
+
+### Outreach kit
+- Outreach kit (internal sales assets, NOT public): `exports/outreach-kit/`
+  holds the 3-touch email sequences (agency-president + CMO variants of the
+  Riverbank/deskilling pitch), discovery-call guide, and the Transformation
+  Sprint proposal source ($10,000 fixed 4-week, Governance Risk Audit
+  $1,500-2,500 fallback). `node site/export-outreach.mjs` renders the two
+  branded PDFs (kit one-pager + proposal template) via the shared
+  `htmlToPDF`/`embeddedFontCss` helpers now exported from
+  `site/defrag-report.mjs`. Copy rules: no em-dashes, no former-client names,
+  softened risk claims + not-legal-advice disclaimer.
+
+### Davos Decision Kit
+- Davos Decision Kit (client-facing product build, NOT public): a low-cost
+  front-door product designed for The Content Bureau's Davos practice, modeled
+  on the SkillFoundry Tier 1 pattern ($299 one-time, $199 launch). Source
+  assets in `exports/davos-decision-kit/` (Go/No-Go Scorecard, Twelve-Month
+  Runway, Budget Calculator, Visibility Plan Templates, README; zipped to
+  `davos-decision-kit.zip`). The FDI proposal to Heather Kernahan
+  ($7,500 fixed + $2,500 commerce add-on; alt $5,000 + 20% rev share 12mo)
+  lives at `exports/outreach-kit/davos-kit-proposal.md` with a branded PDF
+  rendered by `site/export-outreach.mjs` (which also renders
+  `davos-kit-expertise-map.md/pdf`, the TCB expertise-insertion map; the shared
+  outreach DISCLAIMER reads "not legal or financial advice"). The kit ships
+  with a fully worked fictional example (`worked-example.md`, Solvra: scorecard
+  70/100 conditional go, lined budget, condensed runway, instantiated script)
+  and an internal `GO_LIVE_CHECKLIST.md` (excluded from the buyer zip). Copy
+  rules: no em-dashes, no WEF affiliation claims, all costs framed as
+  public-range estimates, not-legal/financial-advice disclaimers. Commerce
+  wiring for the kit is documented under "Davos Kit commerce demo" above.
 
 ## Workflows & deployment
 - Workflow **Start application** builds then serves the site on port 5000
@@ -335,4 +388,5 @@ JetBrains Mono (labels). Lead with the FDI master brand + the "Growth
 Cartography" eyebrow.
 
 ## User preferences
-- (none recorded yet)
+- Reorganize `replit.md` for clarity but never trim content from it; the user
+  does not want to risk context loss.
