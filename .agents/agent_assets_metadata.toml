@@ -173,3 +173,21 @@ id = "C552mCQeNxGBvcA1gpQuv"
 uri = "file://exports/skillfoundry-competitive-analysis/SkillFoundry-Competitive-Analysis.pdf"
 type = "pdf"
 title = "SkillFoundry Competitive Analysis (9-page report)"
+
+[[outputs]]
+id = "AWm1nuC63Zj06KB3GMRHj"
+uri = "file://exports/outreach-kit/davos-kit-proposal.pdf"
+type = "pdf"
+title = "Davos Kit Proposal (PDF)"
+
+[[outputs]]
+id = "BQ2t0cHe7iRHL_k8wH37o"
+uri = "file://exports/outreach-kit/davos-kit-expertise-map.pdf"
+type = "pdf"
+title = "Expertise Insertion Map (PDF)"
+
+[[outputs]]
+id = "P43-_4sl5vTOXS-yX18HI"
+uri = "file://exports/davos-decision-kit/worked-example.md"
+type = "text"
+title = "Worked Example (Solvra)"
