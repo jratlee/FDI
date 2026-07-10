@@ -32,6 +32,10 @@ args = "audit-report"
 task = "workflow.run"
 args = "site-links-outbound"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "davos-gate"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -77,17 +81,16 @@ args = "node site/link-check.mjs"
 [workflows.workflow.metadata]
 outputType = "console"
 
-[[ports]]
-localPort = 5000
-externalPort = 80
+[[workflows.workflow]]
+name = "davos-gate"
+author = "agent"
 
-[[ports]]
-localPort = 5101
-externalPort = 3001
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node site/gate-check.mjs"
 
-[[ports]]
-localPort = 23636
-externalPort = 3000
+[workflows.workflow.metadata]
+isValidation = true
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -106,3 +109,7 @@ WAITLIST_NOTIFY_EMAIL = "john@ratcliffe-lee.com"
 
 [userenv.development]
 DAVOSKIT_TIER1_PRICE_ID = "price_1TrNbuIr6q4Tm9bcIzcEhR8c"
+
+[[ports]]
+localPort = 5091
+externalPort = 3000

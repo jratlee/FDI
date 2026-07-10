@@ -275,7 +275,10 @@ Section map: [The public site](#the-public-site-site) ·
   dashed "Roadmap" kicker naming a possible hosted chat advisor on
   contentbureau.com as a later, out-of-scope iteration; the shipped kit's
   `start-here-ai-prompts.md` mirrors the advanced setups in an "If you have a
-  paid plan" section), collaborative build framing (TCB and FDI align on the documents,
+  paid plan" section; the buyer zip also ships a pre-built Claude Skill
+  folder `claude-skill/davos-decision-advisor/` whose `documents/` copies are
+  regenerated from the canonical kit docs by `buildDavosZip()` each build and
+  gitignored, so they can never drift), collaborative build framing (TCB and FDI align on the documents,
   substance is mostly TCB input, FDI drafts then validates/refines with TCB;
   FDI's job is the system build and product wiring), five real
   end-user-journey screenshots
@@ -297,7 +300,13 @@ Section map: [The public site](#the-public-site-site) ·
   `tier_unconfigured` with waitlist fallback when the price ID is unset.
   A full Stripe test-mode purchase was verified end to end (card 4242 →
   success page key → gated download). Flip-live steps:
-  `exports/davos-decision-kit/GO_LIVE_CHECKLIST.md`.
+  `exports/davos-decision-kit/GO_LIVE_CHECKLIST.md`. Upkeep tooling:
+  `site/capture-davos-journey.mjs` recaptures the journey-1 screenshot
+  headlessly (journey 2-4 need a manual Stripe test purchase; journey-5 is a
+  document mock), and `site/gate-check.mjs` (validation step `davos-gate`)
+  boots the server on a throwaway port and asserts the gate holds
+  (401/404/percent-encoded bypass/cookie/no-store/noindex, 503 when the
+  secret is unset).
 
 ## Internal admin tools (token-gated)
 

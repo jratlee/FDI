@@ -3,3 +3,4 @@ __pycache__/
 site/private/
 site/dist/
 node_modules/
+exports/davos-decision-kit/claude-skill/davos-decision-advisor/documents/

@@ -1573,6 +1573,25 @@ function buildDavosZip() {
   const outZip = path.join(outDir, "davos-decision-kit.zip");
   mkdir(outDir);
   rm(outZip);
+  // Refresh the Claude Skill's document copies from the canonical kit files
+  // so the pre-built skill folder can never drift from the shipped documents.
+  const skillDocsDir = path.join(
+    srcDir, "claude-skill", "davos-decision-advisor", "documents",
+  );
+  const SKILL_DOCS = [
+    "go-no-go-scorecard.md",
+    "budget-calculator.md",
+    "twelve-month-runway.md",
+    "visibility-plan-templates.md",
+    "worked-example.md",
+  ];
+  if (fs.existsSync(path.dirname(skillDocsDir))) {
+    rm(skillDocsDir);
+    mkdir(skillDocsDir);
+    for (const f of SKILL_DOCS) {
+      fs.copyFileSync(path.join(srcDir, f), path.join(skillDocsDir, f));
+    }
+  }
   try {
     execFileSync(
       "zip",
@@ -2200,7 +2219,7 @@ const DEMO_SHOTS = [
   { file: "journey-2-checkout.png", title: "2 · Secure checkout", cap: "Stripe Checkout collects card and billing address; tax is calculated automatically at purchase." },
   { file: "journey-3-success-key.png", title: "3 · The license key", cap: "The success page issues the buyer's license key instantly and emails a copy for safekeeping." },
   { file: "journey-4-download.png", title: "4 · The gated download", cap: "The key unlocks the kit zip. The download is served only to an active license, never from a public URL." },
-  { file: "journey-5-documents.png", title: "5 · The delivered documents", cap: "Inside the zip: the scorecard, runway, calculator, templates, and worked example, ready to run in a 45-minute session." },
+  { file: "journey-5-documents.png", title: "5 · The delivered documents", cap: "Inside the zip: the scorecard, runway, calculator, templates, and worked example, plus the Start Here AI prompt sheet and a pre-built Claude Skill folder, ready to run in a 45-minute session." },
 ];
 
 function demoJourney() {
@@ -2323,7 +2342,7 @@ ${demoJourney()}
   <h3 class="viz-hd">Advanced applications: for buyers on paid AI plans</h3>
   <p class="viz-sub">The kit is plain markdown, so it climbs the capability ladder with the buyer. Everything below is a buyer-side option using tools they already pay for; none of it requires anything from TCB. Feature names and availability vary by vendor and plan.</p>
   <div class="grid cols-2">
-    <article class="card"><span class="tag">Claude Pro / Max / Team</span><h3>Package it as a Skill, work it in Cowork</h3><p>Beyond Projects, Claude supports Skills: a folder holding an instruction file plus the kit documents that Claude loads on demand across the Claude apps, Claude Code, and Cowork. In Cowork, the buyer drops the kit folder into a session and Claude works the documents against their real files: scoring the scorecard from their strategy memo, or filling the budget calculator directly from their draft spreadsheet.</p></article>
+    <article class="card"><span class="tag">Claude Pro / Max / Team</span><h3>A pre-built Skill ships in the zip</h3><p>Beyond Projects, Claude supports Skills, and the kit ships one ready-made: a folder holding the advisor instruction file plus the five documents, so installing it is one drag where the buyer's plan supports Skills. Claude then loads the Davos advisor on demand across the Claude apps, Claude Code, and Cowork. In Cowork, the buyer drops the same folder into a session and Claude works the documents against their real files: scoring the scorecard from their strategy memo, or filling the budget calculator from their draft spreadsheet.</p></article>
     <article class="card"><span class="tag">Microsoft 365 Copilot</span><h3>A shared team agent in Teams and Office</h3><p>Beyond Notebooks, buyers on Microsoft 365 Copilot can use the agent builder or Copilot Studio to create a declarative "Davos Advisor" agent grounded in the kit documents, shared with the whole comms team inside Teams and Office. A simple flow can send runway reminders on schedule, so the twelve-month plan pings the team instead of waiting to be opened.</p></article>
     <article class="card"><span class="tag">ChatGPT Plus / Team</span><h3>A custom GPT for the whole team</h3><p>Instead of a personal Project, the buyer builds a custom GPT from the kit documents and the Start Here instructions, then shares it with their team (or keeps it private). Everyone gets the same advisor with the same grounding, and the kit's next-step language, book a strategy session with TCB, is baked into every conversation.</p></article>
     <article class="card"><span class="tag">Or any similar system</span><h3>Plain markdown goes anywhere</h3><p>Gemini (Gems), Notion AI, or an enterprise RAG stack: any tool that accepts reference documents can run the kit. Feature names and availability vary by vendor and plan, but the format never blocks the buyer. That is the point of shipping text instead of an app.</p></article>

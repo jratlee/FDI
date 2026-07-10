@@ -15,6 +15,7 @@ One-time purchase. Yours forever. Launch price $199 (regular $299).
 | `budget-calculator.md` | A cost worksheet with realistic public-range estimates so you price the trip before you commit |
 | `visibility-plan-templates.md` | Meeting-request scripts, a briefing-doc template, a model high-impact week, and the follow-up system |
 | `start-here-ai-prompts.md` | Copy-paste prompts that turn the kit into an interactive AI advisor in ChatGPT, Claude, or Copilot |
+| `claude-skill/davos-decision-advisor/` | A ready-made Claude Skill folder: drop it into Claude's skills and it becomes your Davos decision advisor (paid Claude plans, where skills are supported) |
 
 ## How to use the kit
 

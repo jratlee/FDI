@@ -61,13 +61,14 @@ back to it all year: in March, ask what the runway says March is for.
 Feature names and availability vary by vendor and plan; check your tool's
 current documentation. The kit is plain markdown, so it works in all of them.
 
-**Claude Pro, Max, or Team.** Beyond Projects, Claude supports Skills: create
-a folder with a short instruction file (tell Claude it is your Davos decision
-advisor and should work from these documents) plus the five kit files, and
-Claude loads it on demand across the Claude apps, Claude Code, and Cowork. In
-Cowork, drop the kit folder into a session and let Claude work the documents
-against your real files, for example filling the budget calculator from your
-draft spreadsheet.
+**Claude Pro, Max, or Team.** Beyond Projects, Claude supports Skills, and
+this kit ships one pre-built: the `claude-skill/davos-decision-advisor/`
+folder already contains the instruction file and the five kit documents. Drop
+that folder into Claude's skills (where your plan supports them) and Claude
+loads your Davos decision advisor on demand across the Claude apps, Claude
+Code, and Cowork. In Cowork, drop the same folder into a session and let
+Claude work the documents against your real files, for example filling the
+budget calculator from your draft spreadsheet.
 
 **Microsoft 365 Copilot.** Beyond Notebooks, use the agent builder or Copilot
 Studio to create a "Davos Advisor" agent grounded in the kit documents and
