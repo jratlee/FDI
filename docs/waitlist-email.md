@@ -13,9 +13,15 @@ spam defense, and retention. Summary lives in `replit.md`.
 ## Double opt-in (confirmed subscriptions)
 - A new signup lands as **pending**
   (`confirmed_at IS NULL`) with a per-signup `confirm_token` + `confirm_sent_at`.
-  The only mail it triggers is a brand-styled "Confirm your email" request
-  (`sendConfirmationRequest` in `site/email.mjs`) with a unique link to `GET
-  /api/waitlist/confirm?token=`. Clicking it marks the row confirmed
+  Subscriber-facing, the only mail it triggers is a brand-styled "Confirm your
+  email" request (`sendConfirmationRequest` in `site/email.mjs`) with a unique
+  link to `GET /api/waitlist/confirm?token=`. In addition, a brand-new pending
+  row (and ONLY a brand-new row, never duplicate/resend paths) fires an
+  immediate plain-text team notification to `WAITLIST_NOTIFY_EMAIL`
+  (`sendPendingSignupNotification`), clearly labeled "pending confirmation";
+  because it goes to the owner's own address it delivers even while
+  `RESEND_FROM` is the Resend shared test sender. Clicking the confirm link
+  marks the row confirmed
   (idempotently, guarded on `confirmed_at IS NULL`) and only THEN sends the
   welcome email + optional team notification (`sendWelcomeEmails`). Links expire
   after `WAITLIST_CONFIRM_DAYS` days (default 7, computed off `confirm_sent_at`);
@@ -34,8 +40,10 @@ spam defense, and retention. Summary lives in `replit.md`.
 - Post-confirmation the subscriber gets a best-effort transactional welcome email
   via the **Resend** integration (`site/email.mjs`, Replit Connectors proxy): a
   brand-styled, source-aware welcome to the subscriber and, if
-  `WAITLIST_NOTIFY_EMAIL` is set, a plain-text notification to the FDI team (only
-  fired on confirmed, proven addresses). Mail runs after the HTTP response and
+  `WAITLIST_NOTIFY_EMAIL` is set, a plain-text "confirmed" notification to the
+  FDI team (the earlier "pending confirmation" notification fires at signup
+  time; the two are clearly labeled so there is no confusion). Mail runs after
+  the HTTP response and
   never blocks or fails a signup/confirm. Requires `RESEND_FROM`
   (an address on a Resend-verified domain, e.g. `FDI <hello@yourdomain>`); if
   unset, the confirmation is skipped and logged. Optional `RESEND_REPLY_TO`

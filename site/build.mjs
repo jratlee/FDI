@@ -13,7 +13,26 @@ const EXPORTS = path.join(ROOT, "exports", "field-guide-launch");
 const FONTS = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "fonts");
 
 /* ---------------- helpers ---------------- */
-const rm = (p) => fs.rmSync(p, { recursive: true, force: true });
+const rm = (p) => {
+  /* Tolerant of concurrent builds (several workflows run build.mjs at startup):
+     another process re-creating files mid-delete raises ENOTEMPTY/EBUSY. Retry
+     with backoff and, for those race-class codes only, warn and continue on
+     final failure instead of crashing the whole build. Any other error
+     (permissions, corruption, bad path) still throws so real problems surface. */
+  const RACE_CODES = new Set(["ENOTEMPTY", "EBUSY", "EPERM"]);
+  for (let attempt = 0; ; attempt++) {
+    try {
+      fs.rmSync(p, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
+      return;
+    } catch (err) {
+      if (!RACE_CODES.has(err.code)) throw err;
+      if (attempt >= 4) {
+        console.warn(`[build] warn: could not remove ${p} (${err.code}); continuing`);
+        return;
+      }
+    }
+  }
+};
 const mkdir = (p) => fs.mkdirSync(p, { recursive: true });
 const copy = (from, to) => {
   mkdir(path.dirname(to));

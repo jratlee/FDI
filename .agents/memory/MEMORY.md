@@ -10,4 +10,5 @@
 - [Stripe Checkout e2e automation](stripe-checkout-e2e-automation.md) — headless test-mode purchases work; card fields in main frame post-accordion, automatic_tax needs full manual billing address.
 - [Route guards on decoded paths](path-gate-decoded-routing.md) — auth gates bypassable via percent-encoding unless matched on the decoded path; gate the page's assets too, no-store, try/catch cookie decode.
 - [replit.md split into docs/](replit-md-docs-split.md) — replit.md is a compact index; deep detail lives in docs/*.md; update the docs file, not just the index, when facts change.
+- [Concurrent build workflow race](concurrent-build-workflow-race.md) — several workflows run the site build at once; shared delete/recreate dirs must tolerate ENOTEMPTY/EBUSY races, rethrow the rest.
 - [OSS research tooling](oss-research-tooling.md) — webSearch returns `searchAnswer` prose (not an array) w/ unreliable stars; Plan mode blocks `gh`/network shell; verify repos via unauthenticated github REST API in Build mode.

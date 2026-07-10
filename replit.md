@@ -69,8 +69,11 @@ Full page-by-page detail: `docs/public-site.md`.
 ## Waitlist, email & data rights — summary
 One generic `form.js-capture` email-capture handler (data-attrs for source,
 mailto fallback, optional download-on-success). Signups are double opt-in:
-pending until the emailed confirm link is clicked; only then welcome/team
-emails fire (Resend via `site/email.mjs`; `RESEND_FROM` still on the shared
+pending until the emailed confirm link is clicked; only then welcome +
+"confirmed" team emails fire. A brand-new pending signup (never
+duplicates/resends) also fires an immediate "pending confirmation" team
+notification to `WAITLIST_NOTIFY_EMAIL`, which delivers even on the test
+sender (Resend via `site/email.mjs`; `RESEND_FROM` still on the shared
 test sender until a domain is verified, so subscriber mail 403s except to the
 account owner). Every row has an `unsub_token`; one-click `/unsubscribe`
 hard-delete with RFC 8058 headers. Spam defense: honeypot + per-IP rate limit

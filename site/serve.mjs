@@ -6,7 +6,11 @@ import dns from "node:dns/promises";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { RateLimiterMemory, RateLimiterPostgres } from "rate-limiter-flexible";
-import { sendConfirmationRequest, sendWelcomeEmails } from "./email.mjs";
+import {
+  sendConfirmationRequest,
+  sendWelcomeEmails,
+  sendPendingSignupNotification,
+} from "./email.mjs";
 import { runAudit } from "../skillfoundry/engine/audit.mjs";
 import { validateReport } from "../skillfoundry/schema/validate.mjs";
 import {
@@ -409,6 +413,14 @@ async function handleWaitlist(req, res) {
     }
 
     sendJson(res, 200, { ok: true, duplicate: !isNew });
+
+    // Immediate team heads-up for brand-new signups only (not duplicates or
+    // confirm-resend paths). Best-effort, after the response.
+    if (isNew) {
+      sendPendingSignupNotification({ email, source }).catch((err) =>
+        console.error("[waitlist] pending-signup notification error:", err.message),
+      );
+    }
 
     // Best-effort confirmation email. Runs after the response is sent and never
     // blocks or fails the signup.

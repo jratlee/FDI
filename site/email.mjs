@@ -339,6 +339,31 @@ export async function sendConfirmationRequest({
   }
 }
 
+// Immediate heads-up to the team when a brand-new signup lands (still
+// PENDING confirmation). Sent only for new rows, never on duplicate/resend
+// paths, so the team sees each address at most once at this stage. This goes
+// to the owner's own address, so it works even while RESEND_FROM is the
+// Resend shared test sender (which can't deliver to other recipients).
+// Never throws — best-effort like all other mail.
+export async function sendPendingSignupNotification({ email, source }) {
+  if (!FROM || !NOTIFY) {
+    if (!FROM) console.warn("[email] RESEND_FROM not set — skipping pending-signup notification");
+    return;
+  }
+  const copy = copyFor(source);
+  try {
+    await send({
+      from: FROM,
+      to: [NOTIFY],
+      subject: `New waitlist signup (pending confirmation): ${email}`,
+      text: `New signup on False Dawn Industries — PENDING email confirmation.\n\nEmail:  ${email}\nSource: ${source}\nProduct: ${copy.product}\nTime:   ${new Date().toISOString()}\n\nA separate "confirmed" notification follows if they click the confirmation link.`,
+      ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+    });
+  } catch (err) {
+    console.error("[email] pending-signup notification failed:", err.message);
+  }
+}
+
 // Double opt-in step 2: once the address is confirmed, send the real welcome
 // to the subscriber and (optionally) notify the team. Firing team notification
 // here (not at signup) means the team only hears about proven, real addresses.
