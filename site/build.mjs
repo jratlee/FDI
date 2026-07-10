@@ -82,10 +82,17 @@ const AS_OF = "2026";
    exports/field-guide-launch/citations-and-originality.md). Reused inline so
    headline claims carry a checkable citation. */
 const CITE = {
+  /* WARC Dec 2025 forecast: $1.19trn in 2025 growing 9.1% in 2026 = ~$1.30trn. */
   adspend:
     "https://www.warc.com/en/article/warc-global-ad-forecasts-upgraded-but-growth-concentrated-within-big-tech-9ed8089870e64fbe84b6bf2b1f8d6442",
-  attention: "https://www.dentsu.com/us/en/attention-economy",
-  belief: "https://www.ynharari.com/book/sapiens-2/",
+  /* Dr Karen Nelson-Field's attention-memory threshold (her company Amplified
+     is the primary source): 2.5s of active attention is where an ad starts to
+     stick in memory, and ~85% of digital ads never reach it. */
+  attention:
+    "https://www.amplified.co/insight/why-does-the-attention-memory-threshold-matter",
+  /* ynharari.com/book/sapiens-2/ silently redirects to the 21 Lessons page;
+     /book/sapiens/ is the real Sapiens page. */
+  belief: "https://www.ynharari.com/book/sapiens/",
 };
 
 /* Small superscript source link rendered after a factual claim. */
@@ -281,7 +288,7 @@ function home() {
 <section class="statband" aria-label="The paradox funding modern marketing">
   <div class="wrap">
     <div class="stat"><div class="k"><span class="amber">$1.3T</span></div><div class="l">what the world will spend on advertising in 2026 ${cite(CITE.adspend, "WARC global ad forecast, Dec 2025")}</div></div>
-    <div class="stat"><div class="k">2.5s</div><div class="l">active attention the average digital ad actually earns ${cite(CITE.attention, "Dentsu Attention Economy / Lumen Research")}</div></div>
+    <div class="stat"><div class="k">2.5s</div><div class="l">of active attention before an ad even starts to stick in memory. Most digital ads never get there ${cite(CITE.attention, "Dr Karen Nelson-Field / Amplified, the attention-memory threshold")}</div></div>
     <div class="stat"><div class="k">70,000<span class="amber">yrs</span></div><div class="l">humans have coordinated around shared belief, and identity is still the bridge ${cite(CITE.belief, "Yuval Noah Harari, Sapiens")}</div></div>
   </div>
 </section>

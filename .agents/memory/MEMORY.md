@@ -12,3 +12,4 @@
 - [replit.md split into docs/](replit-md-docs-split.md) — replit.md is a compact index; deep detail lives in docs/*.md; update the docs file, not just the index, when facts change.
 - [Concurrent build workflow race](concurrent-build-workflow-race.md) — several workflows run the site build at once; shared delete/recreate dirs must tolerate ENOTEMPTY/EBUSY races, rethrow the rest.
 - [OSS research tooling](oss-research-tooling.md) — webSearch returns `searchAnswer` prose (not an array) w/ unreliable stars; Plan mode blocks `gh`/network shell; verify repos via unauthenticated github REST API in Build mode.
+- [Citation link verification](citation-link-verification.md) — 200 via `curl -L` can hide wrong-page redirects; verify effective URL + grep the figure (digits AND spelled-out) before trusting a citation.
