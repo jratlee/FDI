@@ -7,7 +7,8 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
 - Lightweight, dependency-light static site. `build.mjs` renders the thesis
   markdown (`exports/field-guide-launch/linkedin-thesis-article.md`) with `marked`,
   folds the inline visuals + captions into `<figure>`s, copies the launch assets
-  and self-hosted fonts, and emits eight pages plus `/llms.txt` to `site/dist/`:
+  and self-hosted fonts, and emits eight pages plus `/llms.txt`, `/sitemap.xml`,
+  and `/robots.txt` to `site/dist/`:
   - `/` — homepage (hero, stat band, product line, proof builds, about). Eyebrow
     is just "Growth Cartography"; product-line label is "The FDI Operating
     System"; the featured pair is SkillFoundry and Top Call; the three homepage
@@ -86,3 +87,17 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
   `.definition` blocks and "as of 2026" freshness markers appear on product and
   concept pages; `build.mjs` emits `/llms.txt` (served `text/plain`) as an
   AI-crawler guide to the org, products, and series.
+
+## Crawler discovery: sitemap.xml + robots.txt
+- `build.mjs` also emits `/sitemap.xml` (served `application/xml`) and
+  `/robots.txt` (served `text/plain`). The sitemap lists only the indexable
+  public routes (`SITEMAP_ROUTES`, derived from the full page list minus
+  anything in `GATED`); gated holding pages and the private, noindex
+  `/davos-kit-demo` are deliberately excluded. Every URL carries one shared
+  `<lastmod>` date computed from the newest mtime of the real content inputs
+  (`build.mjs`, `site.css`, the thesis article markdown), not the build
+  timestamp, so deploys never falsely signal fresh content. `robots.txt`
+  allows all crawling and points at both the sitemap and `/llms.txt`.
+  `check.mjs` fails the deploy gate if either file is missing, if any sitemap
+  `<loc>` is off-domain or does not resolve to a built page, or if
+  `robots.txt` loses its `Sitemap:` line.

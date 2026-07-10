@@ -111,6 +111,33 @@ for (const route of EXPECTED_ROUTES) {
 /* 1b. the /llms.txt AI-crawler guide is present */
 if (!resolveFile("/llms.txt")) fail("missing /llms.txt AI-crawler guide");
 
+/* 1c. crawler discovery files: sitemap.xml + robots.txt */
+const SITE_URL = "https://falsedawn.industries";
+const sitemapPath = path.join(DIST, "sitemap.xml");
+if (!fs.existsSync(sitemapPath)) {
+  fail("missing /sitemap.xml");
+} else {
+  const xml = fs.readFileSync(sitemapPath, "utf8");
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  if (locs.length === 0) fail("sitemap.xml contains no <loc> entries");
+  for (const loc of locs) {
+    if (!loc.startsWith(`${SITE_URL}/`)) {
+      fail(`sitemap.xml <loc> is not on ${SITE_URL}: ${loc}`);
+      continue;
+    }
+    const route = loc.slice(SITE_URL.length) || "/";
+    if (!resolveFile(route)) fail(`sitemap.xml lists unresolvable route: ${route}`);
+  }
+}
+const robotsPath = path.join(DIST, "robots.txt");
+if (!fs.existsSync(robotsPath)) {
+  fail("missing /robots.txt");
+} else {
+  const robots = fs.readFileSync(robotsPath, "utf8");
+  if (!robots.includes(`Sitemap: ${SITE_URL}/sitemap.xml`))
+    fail("robots.txt does not point at the sitemap");
+}
+
 /* 2. deck PDF + 13 slides present */
 const deckPdf = path.join(DIST, "assets", "fdi-field-guide-deck.pdf");
 if (!fs.existsSync(deckPdf)) fail("missing deck PDF: /assets/fdi-field-guide-deck.pdf");

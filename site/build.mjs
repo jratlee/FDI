@@ -2127,6 +2127,68 @@ function holdingPage({ title, active }) {
   });
 }
 
+/* ---------------- crawler discovery: sitemap.xml + robots.txt ----------------
+ * Indexable public routes only: gated holding pages and the private
+ * /davos-kit-demo page are noindex, so they are deliberately left out of the
+ * sitemap. "" is the homepage (renders as SITE_URL/). */
+const SITEMAP_ROUTES = [
+  "",
+  "field-guide",
+  "skillfoundry",
+  "marcom-kit",
+  "topcall",
+  "series",
+  "aggregated",
+  "decentralized",
+  "autonomous",
+  "roadmap",
+].filter((r) => !GATED.has(r));
+
+/* One honest lastmod for all pages: every page is regenerated from build.mjs
+ * (plus the stylesheet and the Field Guide article source), so the newest
+ * mtime of those inputs is when the site content last actually changed.
+ * Using the build timestamp instead would falsely signal freshness on every
+ * deploy. */
+function lastModDate() {
+  const sources = [
+    fileURLToPath(import.meta.url),
+    path.join(SRC, "site.css"),
+    path.join(EXPORTS, "linkedin-thesis-article.md"),
+  ];
+  let latest = 0;
+  for (const f of sources) {
+    try {
+      latest = Math.max(latest, fs.statSync(f).mtimeMs);
+    } catch {
+      /* missing source file: fall through to the others */
+    }
+  }
+  return new Date(latest || Date.now()).toISOString().slice(0, 10);
+}
+
+function sitemapXml() {
+  const lastmod = lastModDate();
+  const urls = SITEMAP_ROUTES.map(
+    (r) =>
+      `  <url>\n    <loc>${SITE_URL}/${r}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`,
+  ).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>
+`;
+}
+
+function robotsTxt() {
+  return `User-agent: *
+Allow: /
+
+Sitemap: ${SITE_URL}/sitemap.xml
+
+# Guide for AI crawlers and LLMs: ${SITE_URL}/llms.txt
+`;
+}
+
 /* ---------------- DAVOS KIT DEMO PAGE (private, password-gated) ---------------- */
 // A private, client-facing demonstration of the custom build FDI proposes for
 // The Content Bureau. Never linked from public nav or the footer, noindex, and
@@ -2504,9 +2566,11 @@ function main() {
     fs.writeFileSync(path.join(DIST, "davos-kit-demo.html"), davosDemoPage());
   }
   fs.writeFileSync(path.join(DIST, "llms.txt"), llmsTxt());
+  fs.writeFileSync(path.join(DIST, "sitemap.xml"), sitemapXml());
+  fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 10 pages + llms.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 10 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 

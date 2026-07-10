@@ -43,7 +43,8 @@ touching that area):**
 - `docs/export-assets.md` — outreach kit, Davos Decision Kit source assets + proposal
 
 ## The public site (`site/`) — summary
-Dependency-light static site. `build.mjs` emits ten pages + `/llms.txt` to
+Dependency-light static site. `build.mjs` emits ten pages + `/llms.txt` +
+`/sitemap.xml` (indexable routes only, honest lastmod) + `/robots.txt` to
 `site/dist/`: `/` (homepage, kit-first flagship framing), `/field-guide`,
 `/skillfoundry`, `/marcom-kit`, `/topcall`, `/series`, `/aggregated`,
 `/decentralized`, `/autonomous`, plus the gated `/davos-kit-demo` while
