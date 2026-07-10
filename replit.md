@@ -45,7 +45,10 @@ touching that area):**
 ## The public site (`site/`) — summary
 Dependency-light static site. `build.mjs` emits ten pages + `/llms.txt` +
 `/sitemap.xml` (indexable routes only, honest lastmod) + `/robots.txt` to
-`site/dist/`: `/` (homepage, kit-first flagship framing), `/field-guide`,
+`site/dist/`. Optional `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION`
+env vars bake search-console ownership meta tags into every page head at
+build time (not secrets; runbook in `docs/public-site.md`). Pages:
+`/` (homepage, kit-first flagship framing), `/field-guide`,
 `/skillfoundry`, `/marcom-kit`, `/topcall`, `/series`, `/aggregated`,
 `/decentralized`, `/autonomous`, plus the gated `/davos-kit-demo` while
 `DAVOS_DEMO=true`. Build: `node site/build.mjs`; serve: `node site/serve.mjs`

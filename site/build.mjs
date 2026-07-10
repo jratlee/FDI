@@ -62,6 +62,19 @@ const KIT_CHECKOUT_LIVE = false;
    page's own waitlist form until Stripe secrets are set. */
 const DAVOS_DEMO = true;
 const SITE_URL = "https://falsedawn.industries";
+/* Search-console ownership verification (Task: register with Google Search
+   Console + Bing Webmaster Tools). Set these env vars in the deployment to
+   the content values from Google Search Console ("HTML tag" method) and Bing
+   Webmaster Tools ("Meta tag" / HTML meta option); the tags are then baked
+   into every page head at build time so verification survives rebuilds. They
+   are NOT secrets: the values are public in the served HTML by design. When
+   unset (e.g. local dev), no tag is emitted. */
+const GOOGLE_SITE_VERIFICATION = (process.env.GOOGLE_SITE_VERIFICATION || "")
+  .trim()
+  .replace(/["<>]/g, "");
+const BING_SITE_VERIFICATION = (process.env.BING_SITE_VERIFICATION || "")
+  .trim()
+  .replace(/["<>]/g, "");
 const MCP_URL = "https://modelcontextprotocol.io";
 const AS_OF = "2026";
 
@@ -156,7 +169,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<meta na
 <meta property="og:description" content="${description}" />
 <meta property="og:image" content="/assets/li-article-header-1200x627.png" />
 <meta name="twitter:card" content="summary_large_image" />
-${canonical ? `<link rel="canonical" href="${canonical}" />` : ""}
+${GOOGLE_SITE_VERIFICATION ? `<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />\n` : ""}${BING_SITE_VERIFICATION ? `<meta name="msvalidate.01" content="${BING_SITE_VERIFICATION}" />\n` : ""}${canonical ? `<link rel="canonical" href="${canonical}" />` : ""}
 ${ld}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preload" as="font" type="font/woff2" href="/fonts/space-grotesk-600-latin.woff2" crossorigin />

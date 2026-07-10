@@ -101,3 +101,27 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
   `check.mjs` fails the deploy gate if either file is missing, if any sitemap
   `<loc>` is off-domain or does not resolve to a built page, or if
   `robots.txt` loses its `Sitemap:` line.
+
+## Search-console registration (Google Search Console + Bing Webmaster Tools)
+- `build.mjs` reads two optional env vars, `GOOGLE_SITE_VERIFICATION` and
+  `BING_SITE_VERIFICATION`, and when set bakes the matching ownership meta
+  tags (`google-site-verification` / `msvalidate.01`) into every page head at
+  build time, so verification survives every rebuild and redeploy. The values
+  are NOT secrets (they are public in the served HTML by design), so plain
+  deployment env vars are fine. When unset (e.g. local dev) no tag is
+  emitted. Values are trimmed and stripped of `"` `<` `>` before injection.
+- Owner runbook (one-time, ~5 minutes each):
+  1. **Google**: search.google.com/search-console → Add property →
+     "URL prefix" `https://falsedawn.industries/` → choose the **HTML tag**
+     method → copy only the `content="..."` value → set it as the
+     `GOOGLE_SITE_VERIFICATION` env var on the deployment → redeploy → click
+     Verify. Then Sitemaps → submit `https://falsedawn.industries/sitemap.xml`.
+  2. **Bing**: www.bing.com/webmasters → Add site → either "Import from
+     Google Search Console" (fastest, no tag needed) or the **HTML Meta Tag**
+     method → copy the `content="..."` value → set `BING_SITE_VERIFICATION`
+     → redeploy → Verify. Then Sitemaps → submit the same sitemap URL.
+  3. After a few days, confirm in coverage/indexing reports that the 8
+     indexable pages appear and that the noindex pages (gated holding pages,
+     `/davos-kit-demo`) do not.
+- Alternative: both consoles also accept DNS TXT verification (no code or
+  redeploy involved); the env-var tags are just the zero-DNS option.
