@@ -114,3 +114,7 @@ DAVOSKIT_TIER1_PRICE_ID = "price_1TrNbuIr6q4Tm9bcIzcEhR8c"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 5091
+externalPort = 3001
