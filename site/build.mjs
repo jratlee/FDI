@@ -2259,7 +2259,7 @@ function davosDemoPage() {
   <div class="section-hd">
     <span class="eyebrow">What FDI builds</span>
     <h2>Five working documents, one decision.</h2>
-    <p>Drafted by FDI from the structure below, corrected by your team's ground truth, delivered in editable form under TCB's brand. Your team's names and voice; our system and production.</p>
+    <p>TCB and FDI align together on what these working documents should be, and the substance is mostly all TCB input: your ranges, your calendars, your scripts, your judgment. FDI drafts the five documents from that input, then works with your team to validate and refine each one until it is your final product. FDI's real job here is the system build and the product wiring; the expertise inside the documents is yours.</p>
   </div>
   <div class="grid cols-2">
     <article class="card"><span class="num">01</span><h3>Go/No-Go Scorecard</h3><p>Six weighted factors and thresholds that resolve to a board-defensible go, conditional go, or no-go, plus a five-line recommendation page.</p></article>
@@ -2301,13 +2301,32 @@ function davosDemoPage() {
   <div class="section-hd">
     <span class="eyebrow">The build process</span>
     <h2>Where TCB's expertise goes in.</h2>
-    <p>The kit's credibility is your expertise. FDI provides the structure: the scoring math, the document architecture, the packaging, the commerce plumbing. Your team provides the truth: what the ranges really are, when the calendars really fill, which scripts really get replies.</p>
+    <p>The kit's credibility is your expertise, so the working documents are defined together and filled with mostly TCB input: what the ranges really are, when the calendars really fill, which scripts really get replies. FDI drafts, your team validates and refines, and FDI handles the part that is genuinely ours: the scoring math, the document architecture, the packaging, and the commerce plumbing.</p>
   </div>
   ${tcbInsertionSteps()}
 </section>
 <hr class="divider" />
 
 ${demoJourney()}
+<hr class="divider" />
+
+<section class="wrap section" id="ai-advisor">
+  <div class="section-hd">
+    <span class="eyebrow">After the download</span>
+    <h2>The kit becomes an AI advisor, not a folder of files.</h2>
+    <p>The documents are plain text on purpose: the most portable format there is for AI assistants. The buyer does not install anything. They load the kit into the AI tool they already use and it turns from worksheets into an interactive advisor that interviews them, scores them, and plans with them. A Start Here prompt sheet ships in the zip so this works with zero prompting skill.</p>
+  </div>
+  <div class="grid cols-2">
+    <article class="card"><span class="tag">Step 6 · Load it in</span><h3>Upload once, keep it all year</h3><p>ChatGPT (Projects), Claude (Projects), and Microsoft Copilot (Notebooks) all let the buyer upload reference files once so they stay attached to every future conversation. The buyer uploads the five documents to one project, names it "Davos Advisor," and returns to it for twelve months. The quick path also works: drag one document into any chat and paste the matching prompt from the Start Here sheet.</p></article>
+    <article class="card"><span class="tag">Step 7 · Work the system</span><h3>The kit interviews the buyer</h3><p>Each document ships with a copy-paste prompt. The scorecard prompt makes the AI interview the buyer one criterion at a time, then calculate the weighted score and draft the five-line board recommendation. The runway prompt compresses the twelve months to the time the buyer actually has. The buyer's answers stay in their own AI account, not on anyone's server.</p></article>
+  </div>
+  <div class="chat-demo">
+    <p class="chat-demo-hd">What that looks like in practice (Solvra, in their own AI workspace):</p>
+    <div class="chat-msg chat-user"><span class="chat-who">Solvra</span><p>It's the first week of October. We scored a 70, conditional go. What does the runway say we should be doing right now?</p></div>
+    <div class="chat-msg chat-ai"><span class="chat-who">Davos Advisor (their AI, running the kit)</span><p>With a conditional go in October you are on the condensed runway, not the twelve-month one. The three urgent items: 1) lock accommodation this week, October pricing is the last sane window; 2) your anchor report has to publish by mid-November or your meeting-request scripts have nothing to reference; 3) start the top-ten conversation list now, because badge-holder calendars fill from late November. Want me to build the week-by-week version through January?</p></div>
+    <p class="chat-demo-note">Illustrative exchange based on the kit's actual runway and scorecard logic. Every answer is grounded in the documents TCB validated, in TCB's voice.</p>
+  </div>
+</section>
 <hr class="divider" />
 
 <section class="wrap section" id="terms">

@@ -14,6 +14,7 @@ One-time purchase. Yours forever. Launch price $199 (regular $299).
 | `twelve-month-runway.md` | The month-by-month plan, working backward from the January week |
 | `budget-calculator.md` | A cost worksheet with realistic public-range estimates so you price the trip before you commit |
 | `visibility-plan-templates.md` | Meeting-request scripts, a briefing-doc template, a model high-impact week, and the follow-up system |
+| `start-here-ai-prompts.md` | Copy-paste prompts that turn the kit into an interactive AI advisor in ChatGPT, Claude, or Copilot |
 
 ## How to use the kit
 

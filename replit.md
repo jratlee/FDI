@@ -266,7 +266,13 @@ Section map: [The public site](#the-public-site-site) ·
   Content Bureau** (framed as the custom build FDI proposes for TCB, not a
   retail FDI product): single header (the shared `page()` shell), Solvra
   worked-example visuals (score bars, budget range bars, 90-day runway
-  timeline, TCB insertion steps), five real end-user-journey screenshots
+  timeline, TCB insertion steps), an "After the download" AI-advisor section
+  (buyer journey steps 6/7: load the kit into ChatGPT/Claude/Copilot projects,
+  work it as an interactive advisor, with a labeled illustrative chat
+  exchange), collaborative build framing (TCB and FDI align on the documents,
+  substance is mostly TCB input, FDI drafts then validates/refines with TCB;
+  FDI's job is the system build and product wiring), five real
+  end-user-journey screenshots
   (`site/src/assets/davos-demo/journey-*.png`, captured from the live flow
   incl. a real Stripe test purchase), proposal terms, live dk1 buy button.
 - Gate (in `serve.mjs`): the `DAVOS_DEMO_PASSWORD` secret guards
