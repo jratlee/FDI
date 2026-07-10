@@ -1,7 +1,7 @@
 # Blueprint 01: The Hourglass Org Design
 ### Hourglass vs. Diamond, and how a five-person pod runs an entire campaign
 
-**FDI Agentic MarCom Architecture Kit, Foundation Playbook V1.0. As of 2026.**
+**FDI MarCom OS, Foundation Playbook V1.0. As of 2026.**
 
 ---
 

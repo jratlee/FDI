@@ -1,6 +1,6 @@
-# The MarCom Foundation Playbook (V1.0, frozen)
+# The MarCom OS Foundation Playbook (V1.0, frozen)
 
-**FDI Agentic MarCom Architecture Kit, Tier 1**
+**FDI MarCom OS, Tier 1**
 **False Dawn Industries. As of 2026.**
 
 This is the one-time-purchase edition of the kit: four operational blueprints for moving an agency or in-house MarCom team from manual, low-margin execution to governed, high-velocity pods without walking into the deskilling trap or shipping ungoverned AI output.

@@ -1,4 +1,4 @@
-# Data Handling Posture: FDI Agentic MarCom Architecture Kit
+# Data Handling Posture: FDI MarCom OS
 ### What we do and do not do with client and prospect material
 
 **False Dawn Industries. As of 2026. This posture governs the kit's hosted services (readiness scoring, the Process Defragmentation Report) and all advisory engagements.**

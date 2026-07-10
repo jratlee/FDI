@@ -1,4 +1,4 @@
-# MarCom Architecture Kit: Stripe setup
+# MarCom OS: Stripe setup
 
 The kit reuses the SkillFoundry commerce engine (`site/commerce.mjs`). One
 entitlement store, one webhook, one checkout endpoint; kit purchases are scoped

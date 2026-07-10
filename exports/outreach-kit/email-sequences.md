@@ -1,6 +1,6 @@
 # FDI Outreach Email Sequences
 
-Three-touch sequences for the MarCom Architecture Kit / Transformation Sprint
+Three-touch sequences for MarCom OS / Transformation Sprint
 pitch. Two variants: agency president and in-house CMO. The owner sends these
 personally; nothing here is automated.
 
@@ -75,7 +75,7 @@ Last note from me. If restructuring around AI is not a live question at
 
 If it becomes one, two ways in:
 
-1. The MarCom Architecture Kit, a self-serve playbook with the org blueprint,
+1. MarCom OS, a self-serve playbook with the org blueprint,
    tooling calculator, and governance templates.
 2. A fixed four-week Transformation Sprint where we install the structure
    with your leadership team directly.
@@ -147,7 +147,7 @@ timing is yours.
 
 When it becomes one, two ways in:
 
-1. The MarCom Architecture Kit, a self-serve playbook with the org blueprint,
+1. MarCom OS, a self-serve playbook with the org blueprint,
    tooling calculator, and governance templates.
 2. A fixed four-week Transformation Sprint where we install the structure
    with your team directly. If you want a lighter first step, we also run a

@@ -1,7 +1,7 @@
 # Blueprint 04: The Audit to Kill Checklist
 ### Defragmenting QBRs, status meetings, and the review layers that eat your margin
 
-**FDI Agentic MarCom Architecture Kit, Foundation Playbook V1.0. As of 2026.**
+**FDI MarCom OS, Foundation Playbook V1.0. As of 2026.**
 
 ---
 

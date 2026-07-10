@@ -27,7 +27,7 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
     `modelcontextprotocol.io`), three-tier pricing ladder with live Stripe
     checkout (Tier 1 "Buy now" one-time, Tier 2 "Subscribe" monthly; Tier 3 stays
     a waitlist CTA), a native `<details>` FAQ section, and a waitlist CTA
-  - `/marcom-kit` — the flagship MarCom Architecture Kit ("Structure as code"):
+  - `/marcom-kit` — the flagship MarCom OS ("Structure as code"):
     direct-answer `.definition`, FREE starter-pack lead magnet (`js-capture` +
     `data-download` serving `/assets/fdi-marcom-starter-pack.zip`, source
     `marcom-kit-starter`), three pillars (Hourglass / Use-Compose-Build /

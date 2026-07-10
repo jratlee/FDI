@@ -1,7 +1,7 @@
 # Blueprint 02: The Use, Compose, Build Matrix
 ### An economic calculator for every MarTech and AI decision your team will face this year
 
-**FDI Agentic MarCom Architecture Kit, Foundation Playbook V1.0. As of 2026.**
+**FDI MarCom OS, Foundation Playbook V1.0. As of 2026.**
 
 ---
 
@@ -61,7 +61,7 @@ Sixty minutes, once per quarter, and any time a five-figure tool decision surfac
 3. For anything currently in the wrong posture, write the migration line: what it moves to, by when, who owns it (15 minutes).
 4. Total the reallocated spend (5 minutes). This number typically funds the entire kit-driven restructuring with room to spare.
 
-A one-page starter version of this worksheet ships in the free FDI MarCom Starter Pack; this full edition adds the honest-accounting model and the worked service-line examples. Living Engine subscribers additionally get the white-label edition for use in client pitches (Agency tier).
+A one-page starter version of this worksheet ships in the free FDI MarCom OS Starter Pack; this full edition adds the honest-accounting model and the worked service-line examples. Living Engine subscribers additionally get the white-label edition for use in client pitches (Agency tier).
 
 ---
 

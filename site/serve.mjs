@@ -1658,7 +1658,7 @@ ${table}`;
 
 /* ---------------- Skillfoundry commerce ---------------- */
 const PLUGIN_ZIP = path.join(__dirname, "private", "skillfoundry-plugin.zip");
-// Gated MarCom Kit Tier 1 playbook package (built by build.mjs, outside dist/).
+// Gated MarCom OS Tier 1 playbook package (built by build.mjs, outside dist/).
 const KIT_ZIP = path.join(__dirname, "private", "marcom-kit-playbook.zip");
 // Gated Davos Decision Kit package (built by build.mjs, outside dist/).
 const DAVOS_ZIP = path.join(__dirname, "private", "davos-decision-kit.zip");
@@ -1803,8 +1803,8 @@ async function handleValidate(req, res) {
   }
   const result = await validateKey(key);
   // The subscription gate is subscription-only AND SkillFoundry-only: a Tier 1
-  // perpetual LICENSE key must NOT pass here even when "active", and a MarCom
-  // Kit key never unlocks the SkillFoundry run path.
+  // perpetual LICENSE key must NOT pass here even when "active", and a
+  // MarCom OS key never unlocks the SkillFoundry run path.
   const active =
     result.active &&
     result.keyType === "subscription" &&
@@ -1859,7 +1859,7 @@ async function handleRun(req, res) {
   }
   const result = await validateKey(key);
   // Product gate first: only SkillFoundry keys may reach the SkillFoundry run
-  // path. A MarCom Kit key (any tier) is refused with the same 402 shape.
+  // path. A MarCom OS key (any tier) is refused with the same 402 shape.
   if (result.found && result.product !== "skillfoundry") {
     sendJson(res, 402, {
       ok: false,
@@ -1986,7 +1986,7 @@ async function handleDownload(req, res, urlObj) {
   fs.createReadStream(PLUGIN_ZIP).pipe(res);
 }
 
-// MarCom Kit gated playbook download. Unlocked by: an active Tier 1 kit
+// MarCom OS gated playbook download. Unlocked by: an active Tier 1 kit
 // license (mk1) OR any active kit subscription that carries download rights
 // (mk2 / mk2-annual / mk2-agency). Sprint/audit order keys and Tier 3 do not
 // unlock a self-serve download; SkillFoundry keys never do.
@@ -2009,7 +2009,7 @@ async function handleKitDownload(req, res, urlObj) {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-store",
     });
-    res.end("403 — a valid, active MarCom Architecture Kit key with download rights is required.");
+    res.end("403 — a valid, active MarCom OS key with download rights is required.");
     return;
   }
   if (!fs.existsSync(KIT_ZIP)) {
@@ -2026,7 +2026,7 @@ async function handleKitDownload(req, res, urlObj) {
 }
 
 // Davos Decision Kit gated download. Unlocked ONLY by an active dk1 license.
-// SkillFoundry and MarCom Kit keys never unlock this package, and a Davos key
+// SkillFoundry and MarCom OS keys never unlock this package, and a Davos key
 // never unlocks theirs (the product column is the gate).
 async function handleDavosDownload(req, res, urlObj) {
   if (req.method !== "GET") {
@@ -2102,9 +2102,9 @@ const SUCCESS_META = {
       "Thanks for subscribing. Your subscription key is below. The thin client sends it to our backend, which validates it before every run.",
   },
   "marcom-kit": {
-    label: "MarCom Architecture Kit",
+    label: "MarCom OS",
     backHref: "/marcom-kit",
-    backText: "← Back to the MarCom Architecture Kit",
+    backText: "← Back to MarCom OS",
     downloadPath: "/api/marcom-kit/download",
     downloadText: "Download the playbook",
     licenseLede:

@@ -31,8 +31,8 @@ Full detail for the three product families riding the shared Stripe engine in
   gitignored). Tier 2 thin client: `skillfoundry/client/thin-client.mjs`
   (reads `SKILLFOUNDRY_KEY` + `SKILLFOUNDRY_API_URL`, POSTs the run endpoint).
 
-## MarCom Kit commerce
-- MarCom Kit commerce reuses the SAME engine in `commerce.mjs` (not a fork):
+## MarCom OS commerce
+- MarCom OS commerce reuses the SAME engine in `commerce.mjs` (not a fork):
   `PRODUCT_META` scopes the two product families (success/cancel/portal paths,
   key prefixes SF1/SFS vs MK1/MKS) and every `TIERS` entry carries
   `product`/`manualFulfillment`/`whiteLabel`. Kit tiers: `mk1` ($149 one-time →

@@ -42,7 +42,7 @@ export const PRODUCT_META = {
     subscriptionPrefix: "SFS",
   },
   "marcom-kit": {
-    name: "MarCom Architecture Kit",
+    name: "MarCom OS",
     successPath: "/marcom-kit/success",
     cancelPath: "/marcom-kit#pricing",
     returnPath: "/marcom-kit",
@@ -98,11 +98,11 @@ export const TIERS = {
     manualFulfillment: false,
     whiteLabel: false,
   },
-  /* ---- MarCom Architecture Kit ("Structure as code") ---- */
+  /* ---- MarCom OS ("Structure as code") ---- */
   mk1: {
     id: "mk1",
     product: "marcom-kit",
-    label: "MarCom Foundation Playbook",
+    label: "MarCom OS Foundation Playbook",
     priceEnv: "MARCOMKIT_TIER1_PRICE_ID",
     mode: "payment",
     keyType: "license",

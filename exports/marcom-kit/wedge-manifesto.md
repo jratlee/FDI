@@ -2,7 +2,7 @@
 ### The Bottleneck Shift, and why 2019 review processes are eating the margins AI promised your agency
 
 **A manifesto from False Dawn Industries (FDI)**
-**Product line: the FDI Agentic MarCom Architecture Kit ("Structure as code")**
+**Product line: MarCom OS ("Structure as code")**
 **Audience: Mid-Market PR and Ad Agency Presidents, CMOs, and CCOs**
 **As of 2026.**
 
@@ -63,7 +63,7 @@ We are not saying fire people faster. The deskilling trap is real and this kit i
 
 ## The offer
 
-The FDI Agentic MarCom Architecture Kit ships in three forms: a one-time Foundation Playbook (the frozen blueprints in this kit), a Living Engine subscription (continuously updated guardrails and readiness scoring as the platforms move), and a hands-on Transformation Sprint (we restructure it with you, in a fixed four-week engagement). A paid Governance Risk Audit is available as a standalone diagnostic if you want proof against your own workflows before committing to anything larger.
+MarCom OS ships in three forms: a one-time Foundation Playbook (the frozen blueprints in this kit), a Living Engine subscription (continuously updated guardrails and readiness scoring as the platforms move), and a hands-on Transformation Sprint (we restructure it with you, in a fixed four-week engagement). A paid Governance Risk Audit is available as a standalone diagnostic if you want proof against your own workflows before committing to anything larger.
 
 The window is not generous. Every quarter you run 2026 throughput through a 2019 process, the margin goes to whoever restructured first.
 

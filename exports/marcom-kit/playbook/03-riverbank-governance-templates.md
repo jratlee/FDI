@@ -1,7 +1,7 @@
 # Blueprint 03: Baseline Riverbank Governance Templates
 ### Prompt constraints for brand social, PR drafting, and reporting, written to be enforced
 
-**FDI Agentic MarCom Architecture Kit, Foundation Playbook V1.0. As of 2026.**
+**FDI MarCom OS, Foundation Playbook V1.0. As of 2026.**
 
 ---
 

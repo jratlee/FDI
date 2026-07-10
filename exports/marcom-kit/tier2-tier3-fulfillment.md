@@ -1,7 +1,7 @@
 # Tier 2 and Tier 3 Fulfillment Outlines
 ### Living Engine, Transformation Sprint, and the Governance Risk Audit bridge
 
-**FDI Agentic MarCom Architecture Kit. Internal fulfillment doc, not customer-facing copy. As of 2026.**
+**FDI MarCom OS. Internal fulfillment doc, not customer-facing copy. As of 2026.**
 
 These are structural outlines, not full builds. Tier 1 (the Foundation Playbook) ships complete; the tiers below are defined here so pricing, checkout, and sales assets can reference exact scope, and so the founder knows what each sale commits.
 

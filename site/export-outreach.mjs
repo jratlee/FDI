@@ -91,9 +91,9 @@ consider; decisions and outcomes remain the client's. It is general guidance,
 not legal or financial advice. False Dawn Industries. falsedawnindustries.com`;
 
 /* ---------------- one-pager ---------------- */
-const onePager = doc("The MarCom Architecture Kit", `<div class="page">
+const onePager = doc("MarCom OS", `<div class="page">
 ${header("One-page overview, as of 2026")}
-<h1>The MarCom Architecture Kit: <em>structure as code</em></h1>
+<h1>MarCom OS: <em>structure as code</em></h1>
 <p class="lede">A complete operating structure for marketing organizations
 adopting AI, so the tools serve the org chart instead of quietly replacing it.</p>
 

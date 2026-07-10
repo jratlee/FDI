@@ -1,7 +1,7 @@
 # The Use, Compose, Build Starter Worksheet
 ### Ten minutes to the right posture on any AI or MarTech decision
 
-**Free edition, from the FDI Agentic MarCom Architecture Kit. As of 2026.**
+**Free edition, from MarCom OS. As of 2026.**
 
 ---
 
@@ -41,4 +41,4 @@ If the number still makes sense, you may genuinely have a BUILD case. They exist
 
 ---
 
-*The full calculator in the MarCom Foundation Playbook adds the weighted scoring model, the complete honest-accounting worksheet, and worked verdicts across the whole agency service line. Operating guidance, not financial or legal advice. Copyright 2026 False Dawn Industries.*
+*The full calculator in the MarCom OS Foundation Playbook adds the weighted scoring model, the complete honest-accounting worksheet, and worked verdicts across the whole agency service line. Operating guidance, not financial or legal advice. Copyright 2026 False Dawn Industries.*

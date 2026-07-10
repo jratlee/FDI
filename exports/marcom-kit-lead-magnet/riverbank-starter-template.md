@@ -1,7 +1,7 @@
 # The Riverbank Starter Template: Brand Social
 ### One paste-ready governance block for AI content throughput
 
-**Free edition, from the FDI Agentic MarCom Architecture Kit. As of 2026.**
+**Free edition, from MarCom OS. As of 2026.**
 
 ---
 

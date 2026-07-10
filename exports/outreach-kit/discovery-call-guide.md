@@ -50,7 +50,7 @@ Listen for the four buying signals:
 
 Present as a today/tomorrow map, not a menu:
 
-- **Today, self-serve:** the MarCom Architecture Kit. Playbook, org
+- **Today, self-serve:** MarCom OS. Playbook, org
   blueprint, calculator, governance templates. For teams that will do the
   work themselves.
 - **Today, guided:** the Governance Risk Audit ($1,500 to $2,500). A

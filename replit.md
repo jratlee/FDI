@@ -19,9 +19,13 @@ aggregated, decentralized, and autonomous markets. This repo holds five things:
    bundle (article, images, deck PDF + slides), and the free Top Call prompt-pack
    lead magnet (`exports/top-call-lead-magnet/`, zipped to
    `exports/field-guide-launch/top-call-prompt-pack.zip`).
-5. **The MarCom Architecture Kit assets** (`exports/marcom-kit/`) — the
-   flagship product ("Structure as code"): the Wedge Manifesto
-   (`wedge-manifesto.md`), the complete Tier 1 MarCom Foundation Playbook
+5. **The MarCom OS assets** (`exports/marcom-kit/`) — the
+   flagship product ("Structure as code"; renamed from "MarCom Architecture
+   Kit" / "MarCom Kit" to **MarCom OS** in July 2026 across all customer- and
+   crawler-visible copy; the `/marcom-kit` URL, directory names, zip
+   filenames, env secret names, key prefixes MK1/MKS, and DB `product`
+   values deliberately keep the old identifiers): the Wedge Manifesto
+   (`wedge-manifesto.md`), the complete Tier 1 MarCom OS Foundation Playbook
    (`playbook/`: Hourglass org blueprint, Use/Compose/Build calculator,
    Riverbank governance templates, Audit to Kill checklist), Tier 2/3
    fulfillment outlines (4-week fixed sprint, $1.5-2.5k Governance Risk Audit
@@ -38,7 +42,7 @@ aggregated, decentralized, and autonomous markets. This repo holds five things:
 touching that area):**
 - `docs/public-site.md` — pages, build/serve, contact const, GEO/JSON-LD/llms.txt
 - `docs/waitlist-email.md` — capture forms, double opt-in, Resend, unsubscribe/deletion, spam defense, retention
-- `docs/commerce.md` — shared Stripe engine: SkillFoundry, MarCom Kit, Davos demo + password gate
+- `docs/commerce.md` — shared Stripe engine: SkillFoundry, MarCom OS, Davos demo + password gate
 - `docs/admin-tools.md` — defrag report generator, pipeline tracker, waitlist admin
 - `docs/export-assets.md` — outreach kit, Davos Decision Kit source assets + proposal
 
@@ -91,7 +95,7 @@ All three product families ride ONE engine in `site/commerce.mjs` (own `pg`
 pool + lazy Stripe client; all credentials are env secrets, never the Replit
 connector; DB-enforced idempotency; graceful 503/waitlist degradation when
 secrets are unset). Products: **SkillFoundry** (sf tiers, live checkout labels,
-gated plugin zip), **MarCom Kit** (mk tiers incl. white-label `mk2-agency`;
+gated plugin zip), **MarCom OS** (mk tiers incl. white-label `mk2-agency`;
 buttons stay waitlist CTAs until `KIT_CHECKOUT_LIVE=true` in `build.mjs` —
 currently false), **Davos Kit demo** (dk1, $199 Stripe TEST price; live buy
 button on the password-gated `/davos-kit-demo` page for The Content Bureau;
