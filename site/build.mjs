@@ -28,7 +28,7 @@ const lockup = (tag = "span") =>
 const GITHUB = "https://github.com/jratlee/FDI";
 const GITHUB_USER = "https://github.com/jratlee";
 const LINKEDIN_USER = "https://www.linkedin.com/in/jratlee";
-const CONTACT = "hello@falsedawn.industries";
+const CONTACT = "john@ratcliffe-lee.com";
 /* SkillFoundry Stripe checkout is not live yet: while false, the tier CTAs
    route to the waitlist instead of the checkout flow. Flip to true once the
    purchase flow is proven in Stripe (see skillfoundry/STRIPE_SETUP.md). */
@@ -307,7 +307,7 @@ function home() {
       </article>
       <article class="card">
         <span class="tag">Build · Decentralized &amp; Autonomous</span>
-        <h3>Talk to NYC</h3>
+        <h3><a href="https://github.com/jratlee/nyc-chat" target="_blank" rel="noopener">Talk to NYC</a></h3>
         <p>A Hybrid GraphRAG system that turns thousands of scattered legal XML files into one citable knowledge graph, answering with both meaning and structure, section numbers attached, exposed through an MCP server other agents can query directly.</p>
       </article>
     </div>
@@ -321,7 +321,7 @@ function home() {
     <div class="section-hd">
       <span class="eyebrow">About FDI</span>
       <h2>Belief lives in culture. Trust lives in experience. Identity is the bridge.</h2>
-      <p>False Dawn Industries is building the thesis that when reach is commoditized and platforms are opaque, persistent identity, legible to machines, portable across communities, and verifiable by agents, becomes the ultimate infrastructure.</p>
+      <p>Reach is commoditized; platforms are opaque. False Dawn Industries builds the systems that let a brand do what a person does: show up with one consistent, coherent identity in every new space, legible to machines, portable across communities, and verifiable by agents.</p>
     </div>
     <div class="social-badges">
       <a class="social-badge" href="${LINKEDIN_USER}" target="_blank" rel="noopener">
