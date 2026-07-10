@@ -2,7 +2,15 @@
 
 ## Overview
 False Dawn Industries is building the thesis of **owned marketing systems** for
-aggregated, decentralized, and autonomous markets. This repo holds five things:
+aggregated, decentralized, and autonomous markets. The three series concepts
+are defined as (sharpened July 2026, reflected across the live site):
+- **Aggregated**: marketing within today's platforms (Meta, Google, TikTok)
+  plus what is not yet understood about AI platforms like ChatGPT.
+- **Decentralized**: marketing within crypto-powered decentralized networks.
+- **Autonomous**: agents transacting with agents, and the dynamics and growth
+  curve as those marketplaces scale toward the size of Meta and Google today.
+
+This repo holds five things:
 
 1. **The public marketing site** (`site/`) — the FDI umbrella homepage, the
    Field Guide (thesis article + visuals + launch deck), the SkillFoundry

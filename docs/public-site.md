@@ -43,7 +43,7 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
     now leads with the kit as flagship (SkillFoundry recast as
     the kit's enforcement engine); nav/footer/llms.txt list the kit first; each
     concept page carries an "Own the structure" kit-branch section
-    (Aggregator-Resilient Org / Cross-Functional Graph Org / Agent-Ready Org).
+    (Aggregator-Resilient Org / Network-Native Org / Agent-Ready Org).
   - `/topcall` — Top Call ("Signal as Code"): a FREE prompt-pack lead magnet
     (email-capture that triggers the ZIP download), the three owned-system
     constructs (corpus / knowledge graph / MCP), architecture built on the open

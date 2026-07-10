@@ -128,7 +128,7 @@ function footer() {
     <div class="footer-grid">
       <div>
         ${lockup()}
-        <p class="blurb">Owned marketing systems for aggregated, decentralized, and autonomous markets.</p>
+        <p class="blurb">Owned marketing systems for aggregated, decentralized, and autonomous markets. We map the machine that decides who gets seen and build the tools to own your place in it.</p>
       </div>
       <div>
         <h5>Explore</h5>
@@ -274,7 +274,7 @@ function home() {
     <div>
       <span class="eyebrow">Growth Cartography</span>
       <h1>Build the machine, <em>not the ad</em>.</h1>
-      <p class="lede">The cost of making content just fell to zero. That is not the opportunity, it is the emergency. When reach is commoditized and platforms are black boxes, the only durable marketing assets are the ones you own and can prove.</p>
+      <p class="lede">Owned marketing systems for aggregated, decentralized, and autonomous markets. We map the machine that decides who gets seen and build the tools to own your place in it.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="/marcom-kit">Explore MarCom OS <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="/field-guide">Read the Field Guide</a>
@@ -322,7 +322,7 @@ function home() {
       <article class="card">
         <span class="tag">The series</span>
         <h3>Aggregated · Decentralized · Autonomous</h3>
-        <p>Three more field guides map the market structures reshaping discovery, knowledge, and machine-to-machine commerce, each grounded in real, working code.</p>
+        <p>Three more field guides map the markets reshaping marketing: today's platforms and the AI platforms whose rules are not yet understood, crypto-powered decentralized networks, and agent-to-agent marketplaces scaling toward the size of Meta and Google today.</p>
         <div class="card-foot"><a class="link-arrow" href="/series">See the series <span class="arrow">→</span></a></div>
       </article>
     </div>
@@ -1662,17 +1662,17 @@ const CONCEPTS = {
     eyebrow: "The series · Aggregated markets",
     h1: "Aggregated",
     lede:
-      "When discovery is mediated by a handful of aggregators, attention pools where the algorithm points. The durable move is to own a corpus and an identity the aggregator cannot revoke.",
+      "Marketing within today's platforms: Meta, Google, TikTok. And now the AI platforms like ChatGPT, where the rules for who gets seen are not yet understood.",
     definition:
-      "An aggregated market is one where a few intermediaries sit between makers and audiences and set the terms of discovery. In aggregated markets, the winning strategy is owning assets (a corpus, a provenance trail, a persistent identity) that keep their value if the aggregator changes the rules.",
+      "An aggregated market is one where a few platforms (Meta, Google, TikTok) sit between makers and audiences and set the terms of discovery. Aggregated marketing is marketing within those platforms, plus the newest aggregators, AI platforms like ChatGPT, where how visibility is earned is not yet understood. The winning strategy is owning assets (a corpus, a provenance trail, a persistent identity) that keep their value when any platform changes the rules.",
     points: [
       {
         h: "The pattern",
-        p: "Reach is commoditized and gatekept at the same time. You can make infinite content for near-zero cost, yet who sees it is decided by a black box you do not control.",
+        p: "Reach is commoditized and gatekept at the same time. You can make infinite content for near-zero cost, yet who sees it is decided by a black box you do not control. The AI platforms repeat the pattern with even less visibility into the rules.",
       },
       {
         h: "The FDI answer",
-        p: "Build owned systems whose value does not depend on any single channel: a graded corpus, verifiable provenance, and an identity legible to both people and agents.",
+        p: "Master the platforms you can measure, and instrument the ones you cannot yet. Build owned systems whose value does not depend on any single channel: a graded corpus, verifiable provenance, and an identity legible to both people and machines.",
       },
       {
         h: "In the wild",
@@ -1689,26 +1689,26 @@ const CONCEPTS = {
     eyebrow: "The series · Decentralized markets",
     h1: "Decentralized",
     lede:
-      "Knowledge and community are fragmenting across countless surfaces. Structure, not scale, is what makes a scattered corpus usable and citable.",
+      "Marketing within crypto-powered decentralized networks, where the participants own the rails and no single company sets the terms of discovery.",
     definition:
-      "A decentralized market is one where audiences, knowledge, and trust are spread across many independent surfaces rather than one platform. In decentralized markets, the winning strategy is turning scattered sources into one structured, citable knowledge graph.",
+      "A decentralized market is one where the network itself is owned by its participants: crypto-powered protocols, tokens, and onchain communities instead of one platform's feed. Decentralized marketing is marketing within those networks, and the winning strategy is a persistent, verifiable identity and corpus that travel across them.",
     points: [
       {
         h: "The pattern",
-        p: "There is no single feed to win. Value lives in the relationships between sources, and those relationships are lost every time they are re-derived from scratch.",
+        p: "There is no single feed to win and no platform to petition. Discovery, reputation, and reach run on protocols and communities that the participants themselves own and govern.",
       },
       {
         h: "The FDI answer",
-        p: "Preserve structure. Write every source and relationship into a persistent knowledge graph so meaning compounds instead of evaporating.",
+        p: "Show up onchain the way a strong brand shows up anywhere: one consistent, verifiable identity and corpus that communities and protocols can check for themselves, portable across every network you enter.",
       },
       {
         h: "In the wild",
-        p: '<a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a> is the pattern in public: it turns scattered, independently maintained facts into one structured, queryable, citable knowledge graph that other systems build on instead of re-deriving from scratch.',
+        p: 'Protocols like <a href="https://www.farcaster.xyz" target="_blank" rel="noopener">Farcaster</a> (decentralized social) and <a href="https://ens.domains" target="_blank" rel="noopener">ENS</a> (portable onchain identity) are the pattern in public: the network and the identity layer belong to the participants, and reputation travels with the account instead of being locked inside one company\'s platform.',
       },
     ],
     kit: {
-      name: "The Cross-Functional Graph Org",
-      p: "In decentralized markets the org chart has to mirror the knowledge graph: small cross-functional pods connected by shared structure, not silos connected by meetings. MarCom OS's Hourglass design and Riverbank governance give those pods one set of rules and one citable source of truth to build on.",
+      name: "The Network-Native Org",
+      p: "In decentralized markets the org has to operate across many participant-owned networks at once, without a platform playbook to follow. MarCom OS's Hourglass design and Riverbank governance give the team one set of brand rules and one source of truth that hold in every network it shows up in.",
     },
   },
   autonomous: {
@@ -1716,17 +1716,17 @@ const CONCEPTS = {
     eyebrow: "The series · Autonomous markets",
     h1: "Autonomous",
     lede:
-      "Agents are becoming the buyers, readers, and routers. The durable asset is an interface they can query and verify, with source, tier, and confidence attached to every answer.",
+      "Agents transacting with agents. The question that matters is the dynamics: what the growth curve looks like as agent marketplaces scale toward the size of Meta and Google today.",
     definition:
-      "An autonomous market is one where software agents discover, evaluate, and transact on behalf of people. In autonomous markets, the winning strategy is exposing verifiable interfaces (built on the open Model Context Protocol) that agents can trust and cite.",
+      "An autonomous market is one where software agents discover, evaluate, and transact with other agents on behalf of people. Autonomous marketing is marketing to and through those agents, and the strategic question is the dynamics: how selection, pricing, and reputation behave as agent marketplaces scale toward the size of Meta and Google today.",
     points: [
       {
         h: "The pattern",
-        p: "Machine-to-machine discovery and commerce need machine-readable trust. An answer with no provenance is worthless to an agent that has to defend it.",
+        p: "When agents transact with agents, marketplace loops (selection, pricing, reputation) run at machine speed with no human in the middle. Small early advantages compound fast as the marketplace grows.",
       },
       {
         h: "The FDI answer",
-        p: "Expose your corpus through a verifiable interface built on the open Model Context Protocol (MCP), so every answer carries its source, tier, and confidence.",
+        p: "Model the growth curve before the marketplaces mature, and build the assets agents can verify along the way: a graded corpus with provenance, exposed through open interfaces like the Model Context Protocol (MCP), so every answer carries its source, tier, and confidence.",
       },
       {
         h: "In the wild",
@@ -1849,7 +1849,7 @@ function seriesPage() {
     <div>
       <span class="eyebrow">The series · As of ${AS_OF}</span>
       <h1>Aggregated. Decentralized. <em>Autonomous.</em></h1>
-      <p class="lede">Three market structures are reshaping discovery, knowledge, and machine-to-machine commerce. The FDI series maps each one and ships the working code that proves the thesis.</p>
+      <p class="lede">Three market structures are reshaping marketing: today's platforms and the AI platforms whose rules are not yet understood, crypto-powered decentralized networks, and agent-to-agent marketplaces scaling toward the size of Meta and Google. The FDI series maps each one and ships the working code that proves the thesis.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="/field-guide">Read the Field Guide <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="#waitlist">Follow the series</a>
@@ -1896,7 +1896,7 @@ function seriesPage() {
   return page({
     title: "The FDI Series | Aggregated, Decentralized, Autonomous",
     description:
-      "The FDI series maps three market structures reshaping discovery, knowledge, and machine-to-machine commerce: aggregated, decentralized, and autonomous, each grounded in working code.",
+      "The FDI series maps three market structures reshaping marketing: aggregated (today's platforms plus AI platforms like ChatGPT), decentralized (crypto-powered networks), and autonomous (agents transacting with agents), each grounded in working code.",
     active: "series",
     body,
     canonical: `${SITE_URL}/series`,
@@ -2102,9 +2102,9 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
 
 ## The series
-- Aggregated markets (${SITE_URL}/aggregated): a few intermediaries set the terms of discovery; own assets that survive rule changes.
-- Decentralized markets (${SITE_URL}/decentralized): knowledge is scattered; turn it into one structured, citable knowledge graph.
-- Autonomous markets (${SITE_URL}/autonomous): agents transact; expose verifiable MCP interfaces they can trust and cite.
+- Aggregated markets (${SITE_URL}/aggregated): marketing within today's platforms (Meta, Google, TikTok) plus what is not yet understood about AI platforms like ChatGPT; own assets that survive rule changes.
+- Decentralized markets (${SITE_URL}/decentralized): marketing within crypto-powered decentralized networks; a verifiable identity and corpus that travel across participant-owned networks.
+- Autonomous markets (${SITE_URL}/autonomous): agents transacting with agents; the dynamics and growth curve as those marketplaces scale toward the size of Meta and Google today.
 
 ## Notes
 - Model Context Protocol (MCP) is an open standard documented at ${MCP_URL}. FDI is not affiliated with or endorsed by Anthropic.
