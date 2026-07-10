@@ -269,7 +269,13 @@ Section map: [The public site](#the-public-site-site) ·
   timeline, TCB insertion steps), an "After the download" AI-advisor section
   (buyer journey steps 6/7: load the kit into ChatGPT/Claude/Copilot projects,
   work it as an interactive advisor, with a labeled illustrative chat
-  exchange), collaborative build framing (TCB and FDI align on the documents,
+  exchange; an "Advanced applications" card grid for paid AI plans: Claude
+  Skills/Cowork, Microsoft 365 Copilot agent builder/Copilot Studio, ChatGPT
+  custom GPTs, plain-markdown catch-all, all hedged as plan-dependent; a
+  dashed "Roadmap" kicker naming a possible hosted chat advisor on
+  contentbureau.com as a later, out-of-scope iteration; the shipped kit's
+  `start-here-ai-prompts.md` mirrors the advanced setups in an "If you have a
+  paid plan" section), collaborative build framing (TCB and FDI align on the documents,
   substance is mostly TCB input, FDI drafts then validates/refines with TCB;
   FDI's job is the system build and product wiring), five real
   end-user-journey screenshots

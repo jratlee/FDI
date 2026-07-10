@@ -56,6 +56,31 @@ back to it all year: in March, ask what the runway says March is for.
 > Solvra's as I describe it, and tell me where my scorecard, budget, and
 > runway are likely to differ and why.
 
+## If you have a paid plan: advanced setups
+
+Feature names and availability vary by vendor and plan; check your tool's
+current documentation. The kit is plain markdown, so it works in all of them.
+
+**Claude Pro, Max, or Team.** Beyond Projects, Claude supports Skills: create
+a folder with a short instruction file (tell Claude it is your Davos decision
+advisor and should work from these documents) plus the five kit files, and
+Claude loads it on demand across the Claude apps, Claude Code, and Cowork. In
+Cowork, drop the kit folder into a session and let Claude work the documents
+against your real files, for example filling the budget calculator from your
+draft spreadsheet.
+
+**Microsoft 365 Copilot.** Beyond Notebooks, use the agent builder or Copilot
+Studio to create a "Davos Advisor" agent grounded in the kit documents and
+share it with your team inside Teams and Office. A simple scheduled flow can
+send runway reminders so the plan comes to you.
+
+**ChatGPT Plus or Team.** Build a custom GPT from the kit documents and the
+prompts above, then share it with your team so everyone gets the same advisor
+with the same grounding.
+
+**Anything similar.** Gemini (Gems), Notion AI, or your company's own AI
+stack: any tool that accepts reference documents can run the kit.
+
 ## One rule
 
 The AI works from the documents, and the documents work from your answers.
