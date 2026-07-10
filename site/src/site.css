@@ -377,6 +377,9 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; color: var(--cream); lin
 .chat-user .chat-who { color: var(--amber-glow); }
 .chat-ai { margin-right: auto; background: var(--base); }
 .chat-demo-note { color: var(--muted); font-size: 13px; margin: 14px 0 0; }
+.roadmap-kicker { margin-top: 26px; border: 1px dashed var(--hairline); border-radius: 12px; padding: 20px 24px; max-width: 52em; }
+.roadmap-kicker p { color: var(--faded); font-size: 14.5px; line-height: 1.65; margin: 10px 0 0; }
+.roadmap-kicker a { color: var(--amber-glow); }
 
 .script { margin: 18px 0 0; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 14px; background: var(--surface); padding: 26px 30px; max-width: 46em; }
 .script-sub { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--amber); margin: 0 0 14px; }

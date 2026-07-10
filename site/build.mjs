@@ -2326,6 +2326,10 @@ ${demoJourney()}
     <div class="chat-msg chat-ai"><span class="chat-who">Davos Advisor (their AI, running the kit)</span><p>With a conditional go in October you are on the condensed runway, not the twelve-month one. The three urgent items: 1) lock accommodation this week, October pricing is the last sane window; 2) your anchor report has to publish by mid-November or your meeting-request scripts have nothing to reference; 3) start the top-ten conversation list now, because badge-holder calendars fill from late November. Want me to build the week-by-week version through January?</p></div>
     <p class="chat-demo-note">Illustrative exchange based on the kit's actual runway and scorecard logic. Every answer is grounded in the documents TCB validated, in TCB's voice.</p>
   </div>
+  <aside class="roadmap-kicker">
+    <span class="tag">Roadmap · A possible later iteration</span>
+    <p>Version one deliberately meets buyers inside the AI tools they already use: zero build cost, and their answers stay in their own account. If the kit proves demand, a natural next step is a hosted chat advisor living on <a href="https://contentbureau.com/" rel="noopener">contentbureau.com</a> itself: the same documents behind a TCB-branded chat, with every conversation becoming a qualified lead for the advisory practice. Not in this proposal's scope or price; on the table when the numbers say so.</p>
+  </aside>
 </section>
 <hr class="divider" />
 
