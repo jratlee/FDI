@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI — Field Guide 002 Deck · Aggregated</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  /* Deck overrides: brand.css locks body to 100vh for ads; the deck scrolls */
+  html, body { width: auto; height: auto; overflow: visible; background: #060504; }
+
+  @page { size: 1920px 1080px; margin: 0; }
+
+  .slide {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    background: var(--base); page-break-after: always; break-after: page;
+    font-family: 'Inter', sans-serif; color: var(--cream);
+  }
+  @media screen { .slide { margin: 0 auto 24px; } }
+
+  /* ---- shared chrome ---- */
+  .s-top { position: absolute; top: 72px; left: 96px; right: 96px;
+    display: flex; align-items: center; justify-content: space-between; }
+  .s-top .lockup { font-size: 30px; }
+  .s-top .corner { font-family: 'JetBrains Mono', monospace; font-size: 17px;
+    letter-spacing: .22em; color: var(--muted); text-transform: uppercase; text-align: right; }
+  .s-foot { position: absolute; bottom: 72px; left: 96px; right: 96px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+  .cite { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .08em;
+    color: var(--muted); line-height: 1.6; text-transform: uppercase; }
+  .cite b { color: var(--faded); font-weight: 500; }
+  .cite a { color: var(--amber); font-weight: 500; text-decoration: none;
+    border-bottom: 1px solid rgba(255,177,43,.4); transition: border-color .15s ease; }
+  .cite a:hover { border-bottom-color: var(--amber); }
+  .pageno { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .18em;
+    color: var(--muted); white-space: nowrap; }
+  .gridline-v { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px solid rgba(58,45,28,.45); }
+  .gridline-h { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid rgba(58,45,28,.45); }
+
+  /* ---- TPL/TITLE ---- */
+  .tpl-title .body { position: absolute; left: 96px; right: 96px; top: 300px; }
+  .tpl-title .eyebrow { font-size: 21px; margin-bottom: 52px; }
+  .tpl-title .headline { font-size: 116px; max-width: 15em; }
+  .tpl-title .subline { font-size: 30px; margin-top: 46px; max-width: 33em; }
+
+  /* ---- TPL/SECTION ---- */
+  .tpl-section .index { position: absolute; right: 64px; bottom: -84px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 620px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 2px rgba(58,45,28,.9); user-select: none; }
+  .tpl-section .body { position: absolute; left: 96px; top: 380px; max-width: 1100px; }
+  .tpl-section .eyebrow { font-size: 21px; margin-bottom: 48px; }
+  .tpl-section .headline { font-size: 128px; }
+  .tpl-section .subline { font-size: 31px; margin-top: 42px; }
+
+  /* ---- TPL/BIG-STAT ---- */
+  .tpl-stat .body { position: absolute; left: 96px; right: 96px; top: 240px; }
+  .tpl-stat .kicker { font-size: 21px; }
+  .tpl-stat .statrow { display: flex; align-items: stretch; gap: 96px; margin-top: 84px; }
+  .tpl-stat .stat { flex: 1; border-left: 3px solid var(--amber); padding-left: 56px; }
+  .tpl-stat .stat.dim { border-left-color: var(--hairline); }
+  .tpl-stat .num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 216px;
+    line-height: .95; letter-spacing: -.03em; color: var(--amber); white-space: nowrap; }
+  .tpl-stat .stat.dim .num { color: var(--faded); }
+  .tpl-stat .lbl { font-family: 'Inter', sans-serif; font-size: 29px; color: var(--faded);
+    margin-top: 34px; line-height: 1.45; max-width: 17em; }
+  .tpl-stat .headline { font-size: 58px; margin-top: 8px; max-width: 20em; }
+
+  /* ---- TPL/QUOTE ---- */
+  .tpl-quote .rule { position: absolute; left: 96px; top: 250px; width: 128px; height: 0;
+    border-top: 4px solid var(--amber); }
+  .tpl-quote .qmark { position: absolute; left: 90px; top: 120px; font-family: 'Space Grotesk', sans-serif;
+    font-size: 300px; line-height: 1; color: rgba(255,177,43,.14); user-select: none; }
+  .tpl-quote .q { position: absolute; left: 96px; right: 130px; top: 306px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 51px; line-height: 1.34;
+    letter-spacing: -.01em; color: var(--cream); }
+  .tpl-quote .q em { font-style: normal; color: var(--amber); }
+  .tpl-quote .attr { position: absolute; left: 96px; bottom: 130px; font-family: 'JetBrains Mono', monospace;
+    font-size: 19px; letter-spacing: .18em; text-transform: uppercase; color: var(--faded); }
+
+  /* ---- TPL/TABLE ---- */
+  .tpl-table .body { position: absolute; left: 96px; right: 96px; top: 210px; }
+  .tpl-table .headline { font-size: 66px; margin-top: 26px; }
+  .tpl-table table { width: 100%; margin-top: 64px; border-collapse: collapse; }
+  .tpl-table th { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    text-transform: uppercase; text-align: left; padding: 0 32px 26px 0; font-weight: 500; }
+  .tpl-table th.old { color: var(--muted); }
+  .tpl-table th.new { color: var(--amber); }
+  .tpl-table td { font-family: 'Space Grotesk', sans-serif; font-size: 37px; padding: 27px 32px 27px 0;
+    border-top: 1px solid var(--border); vertical-align: top; width: 50%; }
+  .tpl-table td.old { color: var(--muted); }
+  .tpl-table td.new { color: var(--cream); }
+  .tpl-table td.new::before { content: "→ "; color: var(--amber); font-family: 'JetBrains Mono', monospace;
+    font-size: 30px; }
+
+  /* ---- TPL/LIST (imperatives grid) ---- */
+  .tpl-list .body { position: absolute; left: 96px; right: 96px; top: 200px; }
+  .tpl-list .headline { font-size: 64px; margin-top: 26px; }
+  .tpl-list .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; margin-top: 58px; }
+  .tpl-list .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 38px 40px; min-height: 240px; }
+  .tpl-list .card .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; color: var(--amber);
+    letter-spacing: .2em; }
+  .tpl-list .card h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 31px;
+    color: var(--cream); margin-top: 18px; line-height: 1.15; }
+  .tpl-list .card p { font-size: 20.5px; color: var(--faded); margin-top: 16px; line-height: 1.5; }
+
+  /* ---- TPL/COLUMNS ---- */
+  .tpl-cols .body { position: absolute; left: 96px; right: 96px; top: 230px; }
+  .tpl-cols .headline { font-size: 64px; margin-top: 26px; max-width: 17em; }
+  .tpl-cols .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-top: 76px; }
+  .tpl-cols .col { padding: 0 56px; border-left: 1px solid var(--hairline); }
+  .tpl-cols .col:first-child { padding-left: 0; border-left: 0; }
+  .tpl-cols .col .tag { font-family: 'JetBrains Mono', monospace; font-size: 18px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--amber); }
+  .tpl-cols .col h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 41px;
+    color: var(--cream); margin-top: 24px; line-height: 1.14; }
+  .tpl-cols .col p { font-size: 22.5px; color: var(--faded); margin-top: 22px; line-height: 1.55; }
+
+  /* ---- TPL/CTA ---- */
+  .tpl-cta { text-align: center; }
+  .tpl-cta .body { position: absolute; left: 160px; right: 160px; top: 268px; }
+  .tpl-cta .mark { margin: 0 auto; height: 96px; width: 96px; }
+  .tpl-cta .headline { font-size: 96px; margin-top: 56px; }
+  .tpl-cta .subline { font-size: 29px; margin: 38px auto 0; max-width: 30em; }
+  .tpl-cta .pill { display: inline-block; margin-top: 62px; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 30px; color: #0D0B08; background: var(--amber);
+    padding: 26px 64px; border-radius: 999px; letter-spacing: .01em; }
+  .tpl-cta .sys { position: absolute; left: 96px; right: 96px; bottom: 72px;
+    display: flex; align-items: center; justify-content: center; gap: 26px; }
+  .tpl-cta .sys .chip { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 18px; }
+  .tpl-cta .sys .lead { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--faded); }
+  .tpl-cta .ctarow { margin-top: 56px; display: flex; flex-direction: column; align-items: center; }
+  .tpl-cta .ctarow .pill { margin-top: 0; }
+  .tpl-cta .pillsub { font-family: 'JetBrains Mono', monospace; font-size: 17px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted); margin-top: 22px; }
+  .tpl-cta .ghlink { margin-top: 42px; font-family: 'JetBrains Mono', monospace; font-size: 23px;
+    letter-spacing: .03em; color: var(--faded); }
+  .tpl-cta .ghlink b { color: var(--amber); font-weight: 700; }
+
+  /* ---- TPL/SOURCES ---- */
+  .tpl-sources .body { position: absolute; left: 96px; right: 96px; top: 148px; }
+  .tpl-sources .headline { font-size: 64px; margin-top: 16px; }
+  .tpl-sources .srcgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 72px; margin-top: 32px; }
+  .tpl-sources .src { display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 22px; }
+  .tpl-sources .src .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    color: var(--amber); padding-top: 8px; }
+  .tpl-sources .src .meta { min-width: 0; }
+  .tpl-sources .src .org { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 33px;
+    line-height: 1.14; }
+  .tpl-sources .src .org a { color: var(--cream); text-decoration: none;
+    border-bottom: 1px solid rgba(255,177,43,.4); transition: border-color .15s ease; }
+  .tpl-sources .src .org a:hover { border-bottom-color: var(--amber); }
+  .tpl-sources .src .claim { font-size: 21px; color: var(--faded); margin-top: 14px; line-height: 1.45; }
+  .tpl-sources .src .url { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .04em;
+    margin-top: 16px; }
+  .tpl-sources .src .url a { color: var(--amber); text-decoration: none; }
+  .tpl-sources .src .url a:hover { text-decoration: underline; }
+  /* borrowed-framework attributions (distinct from the verified data sources above) */
+  .tpl-sources .attrib { margin-top: 26px; }
+  .tpl-sources .attrib .lbl { font-family: 'JetBrains Mono', monospace; font-size: 16.5px;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .tpl-sources .attrib .items { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 72px; margin-top: 16px; }
+  .tpl-sources .attrib .item { display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+  .tpl-sources .attrib .item .n { font-family: 'JetBrains Mono', monospace; font-size: 19px;
+    letter-spacing: .2em; color: var(--amber); }
+  .tpl-sources .attrib .item .txt { font-size: 21px; color: var(--faded); line-height: 1.45; }
+  .tpl-sources .attrib .item .txt b { color: var(--cream); font-weight: 500; }
+  .tpl-sources .attrib .item .txt a { color: var(--amber); text-decoration: none; }
+  .tpl-sources .attrib .item .txt a:hover { text-decoration: underline; }
+
+  /* definition card (Disillusionomics) */
+  .defcard { margin-top: 72px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 64px 72px; max-width: 1420px; }
+  .defcard .word { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 88px;
+    color: var(--cream); letter-spacing: -.01em; }
+  .defcard .phon { font-family: 'JetBrains Mono', monospace; font-size: 22px; color: var(--muted);
+    margin-top: 14px; letter-spacing: .06em; }
+  .defcard .def { font-size: 33px; color: var(--faded); line-height: 1.5; margin-top: 40px; max-width: 34em; }
+  .defcard .def em { font-style: normal; color: var(--amber); }
+</style>
+</head>
+
+<!-- ============ 01 · TPL/TITLE ============ -->
+<section class="slide tpl-title" id="s1">
+  <div class="gridline-v" style="left: 1493px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/TITLE · 01/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Growth Cartography · Field Guide 002 · Aggregated</div>
+    <h1 class="headline">The model decides if you exist.</h1>
+    <p class="subline">Marketing inside the aggregated market: three platforms that price your reach, and the answer layer arriving above them that decides whether you appear at all.</p>
+  </div>
+  <div class="s-foot">
+    <div class="cite"><b>False Dawn Industries</b> · Field Guide 002 · 2026</div>
+    <div class="pageno">FDI-FG-002</div>
+  </div>
+</section>
+
+<!-- ============ 02 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s2">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 02/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">The 2026 forecast: not a market, a toll system</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">62.3%</div>
+        <div class="lbl">of worldwide digital ad spending goes to just three platforms: Meta, Google, Amazon</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">$243.5B</div>
+        <div class="lbl">Meta's forecast ad revenue, passing Google ($239.5B) for the first time</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Source · <a href="https://www.emarketer.com/press-releases/meta-to-surpass-google-in-digital-ad-revenues-for-first-time-ever/" target="_blank" rel="noopener"><b>eMarketer</b> worldwide digital ad forecast, 2026</a> · forecast, not actuals</div>
+    <div class="pageno">02</div>
+  </div>
+</section>
+
+<!-- ============ 03 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s3">
+  <div class="index">01</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 03/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part one</div>
+    <h1 class="headline">The half you live in</h1>
+    <p class="subline">Rented reach, priced by the landlord: what the platforms' own numbers say about who controls distribution.</p>
+  </div>
+</section>
+
+<!-- ============ 04 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s4">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 04/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">Organic reach: the audience you built is not a channel</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">1.65%</div>
+        <div class="lbl">of followers see the average Facebook page post organically. Instagram: 3.50%</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">0.3%</div>
+        <div class="lbl">of TikTok views come from the Following feed. The For You algorithm delivers 85.1%</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://www.socialinsider.io/blog/social-media-reach/" target="_blank" rel="noopener"><b>Socialinsider</b> 2025 reach benchmarks</a> · <a href="https://quso.ai/research/how-the-tiktok-algorithm-works" target="_blank" rel="noopener"><b>quso.ai</b> 31,059-post traffic-source study</a></div>
+    <div class="pageno">04</div>
+  </div>
+</section>
+
+<!-- ============ 05 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s5">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 05/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">So you pay. And the platform sets the price, quarter by quarter</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">+9%</div>
+        <div class="lbl">Meta's average price per ad, full-year 2025, while impressions grew 12%</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">$196B</div>
+        <div class="lbl">Meta's 2025 ad revenue, up 22% in one year. Price, volume, and placement: all their levers</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Source · <a href="https://www.prnewswire.com/news-releases/meta-reports-fourth-quarter-and-full-year-2025-results-302673127.html" target="_blank" rel="noopener"><b>Meta</b> Q4 and full-year 2025 results</a> · nuance: <a href="https://tinuiti.com/research-insights/research/digital-ads-benchmark-report-q3-2025/" target="_blank" rel="noopener"><b>Tinuiti</b> Q3 2025 benchmarks</a></div>
+    <div class="pageno">05</div>
+  </div>
+</section>
+
+<!-- ============ 06 · TPL/PULL-QUOTE ============ -->
+<section class="slide tpl-quote" id="s6">
+  <div class="qmark">&ldquo;</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/PULL-QUOTE · 06/13</div>
+  </div>
+  <div class="rule"></div>
+  <p class="q">You're a business, you come to us, you tell us what your objective is, <em>you connect to your bank account</em>, you don't need any creative, you don't need any targeting demographic, you don't need any measurement, except to be able to <em>read the results that we spit out</em>.</p>
+  <div class="attr">— Mark Zuckerberg on the end state of Meta advertising · Stratechery interview, May 2025</div>
+  <div class="s-foot">
+    <div class="cite">Source · <a href="https://stratechery.com/2025/an-interview-with-meta-ceo-mark-zuckerberg-about-ai-and-the-evolution-of-social-media/" target="_blank" rel="noopener"><b>Stratechery</b> (Ben Thompson), May 2025</a> · quote via <a href="https://www.mi-3.com.au/05-05-2025/zuckerberg-calls-end-creative-agencies-humans-results-hunting-ai" target="_blank" rel="noopener">Mi3</a></div>
+    <div class="pageno">06</div>
+  </div>
+</section>
+
+<!-- ============ 07 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s7">
+  <div class="index">02</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 07/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part two</div>
+    <h1 class="headline">The half arriving now</h1>
+    <p class="subline">The same machine, one layer up: a model now stands at discovery itself, before a single ad dollar is spent.</p>
+  </div>
+</section>
+
+<!-- ============ 08 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s8">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 08/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">The answer layer absorbs the click</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">~60%</div>
+        <div class="lbl">of searches now end without a click to any website</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">~1%</div>
+        <div class="lbl">of users click a source cited inside an AI summary when one appears</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://www.bain.com/insights/goodbye-clicks-hello-ai-zero-click-search-redefines-marketing/" target="_blank" rel="noopener"><b>Bain &amp; Company</b></a> · <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/" target="_blank" rel="noopener"><b>Pew Research Center</b>, Jul 2025</a></div>
+    <div class="pageno">08</div>
+  </div>
+</section>
+
+<!-- ============ 09 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s9">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 09/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">The wreckage is measurable, and the fight is in court</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">-33%</div>
+        <div class="lbl">global publisher traffic from Google, in the year to November 2025</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">85%</div>
+        <div class="lbl">of brand mentions in AI answers come from third-party pages, not your own domain</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://reutersinstitute.politics.ox.ac.uk/journalism-media-and-technology-trends-and-predictions-2026" target="_blank" rel="noopener"><b>Reuters Institute</b> / Chartbeat</a> · <a href="https://www.airops.com/blog/ai-visibility-index" target="_blank" rel="noopener"><b>AirOps</b> AI Visibility Index</a> · Chegg and Penske v. Google filings</div>
+    <div class="pageno">09</div>
+  </div>
+</section>
+
+<!-- ============ 10 · TPL/TABLE ============ -->
+<section class="slide tpl-table" id="s10">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/TABLE · 10/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Recalibrate for the aggregated market</div>
+    <h1 class="headline">What you rent vs what you own</h1>
+    <table>
+      <tr><th class="old">Rented from the aggregator</th><th class="new">Owned by the brand</th></tr>
+      <tr><td class="old">Reach the model prices</td><td class="new">An identity the model recognizes</td></tr>
+      <tr><td class="old">Followers the feed ignores</td><td class="new">A corpus machines can retrieve and cite</td></tr>
+      <tr><td class="old">Rankings that reset weekly</td><td class="new">Verifiable ground truth, kept fresh</td></tr>
+      <tr><td class="old">Impressions</td><td class="new">Citations and AI share of voice</td></tr>
+      <tr><td class="old">An ad account</td><td class="new">An interface other machines can query</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 11 · TPL/LIST ============ -->
+<section class="slide tpl-list" id="s11">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/LIST · 11/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">The CMO action plan</div>
+    <h1 class="headline">Six moves for the aggregated market</h1>
+    <div class="grid">
+      <div class="card"><div class="n">01</div><h3>Build the owned corpus</h3><p>One structured, verifiable body of answers about what you sell, priced, sourced, and current.</p></div>
+      <div class="card"><div class="n">02</div><h3>Structure it for machines</h3><p>Schema, clean headings, stable URLs. Retrieval favors content built to be quoted.</p></div>
+      <div class="card"><div class="n">03</div><h3>Keep it fresh</h3><p>Stale pages lose citations. Treat the corpus like a product with a release cycle, not a brochure.</p></div>
+      <div class="card"><div class="n">04</div><h3>Earn off-site validation</h3><p>Most AI mentions come from third-party pages. Reviews, communities, and press feed the model's trust.</p></div>
+      <div class="card"><div class="n">05</div><h3>Measure AI share of voice</h3><p>Track how often models mention and cite you. It is the new distribution metric, and it moves weekly.</p></div>
+      <div class="card"><div class="n">06</div><h3>Expose a queryable interface</h3><p>Let models ground answers in your verified data at query time, so they cite your facts, not a summary of you.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 · TPL/SOURCES ============ -->
+<section class="slide tpl-sources" id="s12">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SOURCES · 12/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Every figure, one place to check</div>
+    <h1 class="headline">Sources &amp; methodology</h1>
+    <div class="srcgrid">
+      <div class="src">
+        <div class="n">01</div>
+        <div class="meta">
+          <div class="org"><a href="https://www.emarketer.com/press-releases/meta-to-surpass-google-in-digital-ad-revenues-for-first-time-ever/" target="_blank" rel="noopener">eMarketer · 2026 digital ad forecast</a></div>
+          <div class="claim">62.3% triopoly share; Meta $243.5B passes Google $239.5B (forecast)</div>
+          <div class="url"><a href="https://www.emarketer.com/press-releases/meta-to-surpass-google-in-digital-ad-revenues-for-first-time-ever/" target="_blank" rel="noopener">emarketer.com ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">02</div>
+        <div class="meta">
+          <div class="org"><a href="https://www.prnewswire.com/news-releases/meta-reports-fourth-quarter-and-full-year-2025-results-302673127.html" target="_blank" rel="noopener">Meta · Q4 and full-year 2025 results</a></div>
+          <div class="claim">Ad revenue $196.2B (+22%); price per ad +9%; impressions +12%</div>
+          <div class="url"><a href="https://www.prnewswire.com/news-releases/meta-reports-fourth-quarter-and-full-year-2025-results-302673127.html" target="_blank" rel="noopener">prnewswire.com ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">03</div>
+        <div class="meta">
+          <div class="org"><a href="https://www.socialinsider.io/blog/social-media-reach/" target="_blank" rel="noopener">Socialinsider · 2025 reach benchmarks</a></div>
+          <div class="claim">Organic reach per post: Facebook 1.65%, Instagram 3.50%</div>
+          <div class="url"><a href="https://www.socialinsider.io/blog/social-media-reach/" target="_blank" rel="noopener">socialinsider.io ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">04</div>
+        <div class="meta">
+          <div class="org"><a href="https://quso.ai/research/how-the-tiktok-algorithm-works" target="_blank" rel="noopener">quso.ai · TikTok traffic-source study</a></div>
+          <div class="claim">31,059 posts: For You 85.1% of views, Following feed ~0.3%</div>
+          <div class="url"><a href="https://quso.ai/research/how-the-tiktok-algorithm-works" target="_blank" rel="noopener">quso.ai ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">05</div>
+        <div class="meta">
+          <div class="org"><a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/" target="_blank" rel="noopener">Pew Research Center · AI summaries study</a></div>
+          <div class="claim">58% hit an AI summary in a month; ~1% click a cited source</div>
+          <div class="url"><a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/" target="_blank" rel="noopener">pewresearch.org ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">06</div>
+        <div class="meta">
+          <div class="org"><a href="https://www.bain.com/insights/goodbye-clicks-hello-ai-zero-click-search-redefines-marketing/" target="_blank" rel="noopener">Bain &amp; Company · zero-click research</a></div>
+          <div class="claim">~60% of searches end without a click; organic traffic down 15-25%</div>
+          <div class="url"><a href="https://www.bain.com/insights/goodbye-clicks-hello-ai-zero-click-search-redefines-marketing/" target="_blank" rel="noopener">bain.com ↗</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="attrib">
+      <div class="lbl">Borrowed frameworks · credited in full</div>
+      <div class="items">
+        <div class="item">
+          <div class="n">A</div>
+          <div class="txt"><b>Aggregation Theory</b> and the May 2025 Zuckerberg interview are Ben Thompson's, via <a href="https://stratechery.com/2025/an-interview-with-meta-ceo-mark-zuckerberg-about-ai-and-the-evolution-of-social-media/" target="_blank" rel="noopener">Stratechery</a>.</div>
+        </div>
+        <div class="item">
+          <div class="n">B</div>
+          <div class="txt">Publisher-traffic decline (~a third, year to Nov 2025) via <b>Reuters Institute / Chartbeat</b>; third-party citation share via <b>AirOps</b>; Andromeda scale via <b>Engineering at Meta</b>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Method · every headline figure verified claim-by-claim against primary sources · July 2026 · forecasts labeled as forecasts</div>
+    <div class="pageno">12</div>
+  </div>
+</section>
+
+<!-- ============ 13 · TPL/CTA ============ -->
+<section class="slide tpl-cta" id="s13">
+  <div class="body">
+    <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    <h1 class="headline">Give the machine something of yours to find.</h1>
+    <p class="subline">You cannot own the model or the auction. You can own who you are and what you know, in a form machines can verify. Next in the series: Decentralized, then Autonomous.</p>
+    <div class="ctarow">
+      <div class="pill">Follow FDI on LinkedIn</div>
+      <div class="pillsub">Every field guide, the day it drops</div>
+      <div class="ghlink">Pressure-test the thinking in working code → <b>github.com/jratlee/FDI</b></div>
+    </div>
+  </div>
+  <div class="sys">
+    <span class="lead">Built on the FDI slide system</span>
+    <span class="chip">Title</span><span class="chip">Section</span><span class="chip">Big-Stat</span>
+    <span class="chip">Pull-Quote</span><span class="chip">Table</span><span class="chip">Columns</span>
+    <span class="chip">List</span><span class="chip">Sources</span><span class="chip">CTA</span>
+  </div>
+</section>
+
+</body>
+</html>

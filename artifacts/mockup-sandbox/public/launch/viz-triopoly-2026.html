@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI — Triopoly 2026</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html,body{height:auto;}
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:3.1vw 3.4vw 2.6vw;}
+  .head{margin-bottom:2.2vw;}
+  .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.26em;
+    color:var(--faded);font-size:1.02vw;display:flex;align-items:center;gap:.9em;margin-bottom:1vw;}
+  .keyb::before{content:"";width:1.8em;height:0;border-top:2px solid var(--amber);}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
+    font-size:2.55vw;letter-spacing:-.015em;line-height:1.08;}
+  .htitle em{font-style:normal;color:var(--amber);}
+  .chart{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1.7vw;max-width:78vw;}
+  .row{display:flex;align-items:center;gap:1.6vw;}
+  .rname{flex:0 0 12vw;font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--cream);
+    font-size:1.7vw;text-align:right;}
+  .rname small{display:block;font-family:'JetBrains Mono',monospace;font-weight:400;
+    color:var(--muted);font-size:.85vw;letter-spacing:.08em;margin-top:.2vw;}
+  .track{flex:1;height:3.1vw;background:var(--surface);border:1px solid var(--border);
+    border-radius:.3vw;position:relative;overflow:hidden;}
+  .bar{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#E0920C,#FFB12B);}
+  .bar.dim{background:var(--muted);opacity:.55;}
+  .rval{flex:0 0 14vw;font-family:'JetBrains Mono',monospace;color:var(--amber);
+    font-size:1.55vw;font-weight:700;letter-spacing:-.01em;}
+  .rval small{color:var(--faded);font-weight:400;font-size:1vw;margin-left:.5em;}
+  .row.rest .rval{color:var(--faded);font-weight:400;}
+  .foot{margin-top:2vw;display:flex;align-items:baseline;justify-content:space-between;
+    border-top:1px solid var(--border);padding-top:1.2vw;}
+  .takeaway{font-family:'Inter',sans-serif;color:var(--cream);font-size:1.25vw;}
+  .takeaway b{color:var(--amber);font-weight:600;}
+  .src{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:.9vw;letter-spacing:.06em;}
+</style>
+</head>
+<body>
+<div class="ad"><div class="wrap">
+  <div class="head">
+    <div class="keyb">The aggregated market · 2026 forecast</div>
+    <div class="htitle">Three platforms, <em>62.3%</em> of the world's digital ad spending</div>
+  </div>
+  <div class="chart">
+    <div class="row">
+      <div class="rname">Meta<small>passes Google for the first time</small></div>
+      <div class="track"><div class="bar" style="width:89.3%"></div></div>
+      <div class="rval">$243.5B<small>26.8%</small></div>
+    </div>
+    <div class="row">
+      <div class="rname">Google<small>&nbsp;</small></div>
+      <div class="track"><div class="bar" style="width:88.0%"></div></div>
+      <div class="rval">$239.5B<small>26.4%</small></div>
+    </div>
+    <div class="row">
+      <div class="rname">Amazon<small>&nbsp;</small></div>
+      <div class="track"><div class="bar" style="width:30.0%"></div></div>
+      <div class="rval">$82.1B<small>~9%</small></div>
+    </div>
+    <div class="row rest">
+      <div class="rname" style="color:var(--faded);font-weight:400;">Everyone else<small>every other platform on earth</small></div>
+      <div class="track"><div class="bar dim" style="width:100%"></div></div>
+      <div class="rval">37.7%<small>combined</small></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="takeaway">Not a market. <b>A toll system with three booths</b>, and the combined share is still rising through 2028.</div>
+    <div class="src">Source · eMarketer worldwide digital ad forecast, 2026</div>
+  </div>
+</div></div>
+</body>
+</html>

@@ -10,6 +10,7 @@ const DIST = path.join(__dirname, "dist");
 const SRC = path.join(__dirname, "src");
 
 const EXPORTS = path.join(ROOT, "exports", "field-guide-launch");
+const EXPORTS002 = path.join(ROOT, "exports", "field-guide-002-aggregated");
 const FONTS = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "fonts");
 
 /* ---------------- helpers ---------------- */
@@ -157,7 +158,7 @@ function footer() {
 </footer>`;
 }
 
-function page({ title, description, active, body, canonical, jsonLd, noindex }) {
+function page({ title, description, active, body, canonical, jsonLd, noindex, ogImage }) {
   const ld = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])
     .map(
       (obj) =>
@@ -174,7 +175,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<meta na
 <meta property="og:type" content="website" />
 <meta property="og:title" content="${title}" />
 <meta property="og:description" content="${description}" />
-<meta property="og:image" content="/assets/li-article-header-1200x627.png" />
+<meta property="og:image" content="${ogImage || "/assets/li-article-header-1200x627.png"}" />
 <meta name="twitter:card" content="summary_large_image" />
 ${GOOGLE_SITE_VERIFICATION ? `<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />\n` : ""}${BING_SITE_VERIFICATION ? `<meta name="msvalidate.01" content="${BING_SITE_VERIFICATION}" />\n` : ""}${canonical ? `<link rel="canonical" href="${canonical}" />` : ""}
 ${ld}
@@ -249,21 +250,21 @@ const faqJsonLd = (faqs) => ({
   })),
 });
 
-const articleJsonLd = ({ headline, description }) => ({
+const articleJsonLd = ({ headline, description, image, route, datePublished }) => ({
   "@context": "https://schema.org",
   "@type": "Article",
   headline,
   description,
-  image: `${SITE_URL}/assets/li-article-header-1200x627.png`,
+  image: `${SITE_URL}${image || "/assets/li-article-header-1200x627.png"}`,
   author: { "@type": "Organization", name: "False Dawn Industries", url: `${SITE_URL}/` },
   publisher: {
     "@type": "Organization",
     name: "False Dawn Industries",
     logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.svg` },
   },
-  datePublished: "2026-07-01",
-  dateModified: `${AS_OF}-07-01`,
-  mainEntityOfPage: `${SITE_URL}/field-guide`,
+  datePublished: datePublished || "2026-07-01",
+  dateModified: datePublished || `${AS_OF}-07-01`,
+  mainEntityOfPage: `${SITE_URL}${route || "/field-guide"}`,
 });
 
 /* ---------------- HOME ---------------- */
@@ -428,11 +429,11 @@ function renderArticleBody(bodyMd) {
   return html;
 }
 
-function slidesStrip(slideFiles) {
+function slidesStrip(slideFiles, dir = "deck-slides") {
   return slideFiles
     .map(
       (f, i) =>
-        `<a href="/assets/deck-slides/${f}" target="_blank" rel="noopener" aria-label="Open slide ${i + 1} full size"><img src="/assets/deck-slides/${f}" alt="Field Guide deck, slide ${i + 1}" loading="lazy" /></a>`,
+        `<a href="/assets/${dir}/${f}" target="_blank" rel="noopener" aria-label="Open slide ${i + 1} full size"><img src="/assets/${dir}/${f}" alt="Field Guide deck, slide ${i + 1}" loading="lazy" /></a>`,
     )
     .join("\n");
 }
@@ -473,6 +474,25 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       ${slidesStrip(slideFiles)}
     </div>
   </div>
+</section>
+
+<section class="section" id="next-guide">
+  <div class="wrap">
+    <div class="grid cols-2">
+      <article class="card featured">
+        <span class="pill">Next in the series</span>
+        <h3>Field Guide 002 · Aggregated: The Model Decides If You Exist</h3>
+        <p>Three platforms take 62.3% of the world's digital ad spending, organic reach is a rounding error, and an answer layer above the platforms now absorbs the click. The second guide maps the aggregated market in both halves.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide-002">Read Field Guide 002 <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">The market one-pager</span>
+        <h3>Aggregated markets, mapped</h3>
+        <p>The short version: the definition, the pattern, and the FDI answer for markets where a few platforms sit between makers and audiences and set the terms of discovery.</p>
+        <div class="card-foot"><a class="link-arrow" href="/aggregated">See the one-pager <span class="arrow">→</span></a></div>
+      </article>
+    </div>
+  </div>
 </section>`;
   const fgDescription =
     "The FDI thesis on owned marketing systems for aggregated, decentralized, and autonomous markets, with the launch deck, visuals, and working-code proof.";
@@ -486,6 +506,81 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
     }),
     body,
     canonical: `${SITE_URL}/field-guide`,
+  });
+}
+
+function fieldGuide002({ title, subtitle, attribution, bodyHtml }, slideFiles) {
+  const body = `
+<article class="article">
+  <div class="wrap">
+    <div class="article-head">
+      <span class="eyebrow">Growth Cartography · Field Guide 002 · Aggregated</span>
+      <h1>${title}</h1>
+      <p class="sub">${subtitle}</p>
+      <p class="byline">${attribution}</p>
+    </div>
+    <div class="article-cover">
+      <img src="/assets/fg002-cover-1200x627.png" alt="False Dawn Industries Field Guide 002: The model decides if you exist. Aggregated markets." width="1200" height="627" />
+    </div>
+    <div class="prose">
+      ${bodyHtml}
+    </div>
+  </div>
+</article>
+
+<section class="deck section" id="deck">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The deck</span>
+      <h2>Field Guide 002: the aggregated market in 13 slides</h2>
+      <p>The full deck, built on the reusable FDI slide system. View it inline, download the PDF, or browse the slides.</p>
+    </div>
+    <div class="deck-frame">
+      <iframe src="/assets/fdi-field-guide-002-deck.pdf#view=FitH" title="FDI Field Guide 002 deck (PDF)" loading="lazy"></iframe>
+    </div>
+    <div class="deck-actions">
+      <a class="btn btn-primary" href="/assets/fdi-field-guide-002-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+    </div>
+    <div class="slides-strip">
+      ${slidesStrip(slideFiles, "deck-slides-002")}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="prev-guide">
+  <div class="wrap">
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">Start of the series</span>
+        <h3>Field Guide 001: Build the Machine, Not the Ad</h3>
+        <p>The general case: when content is free to make and platforms are opaque, the only durable marketing assets are the ones you own and can prove.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide">Read the thesis <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">The market one-pager</span>
+        <h3>Aggregated markets, mapped</h3>
+        <p>The short version of this guide: the definition, the pattern, and the FDI answer for markets where a few platforms set the terms of discovery.</p>
+        <div class="card-foot"><a class="link-arrow" href="/aggregated">See the one-pager <span class="arrow">→</span></a></div>
+      </article>
+    </div>
+  </div>
+</section>`;
+  const description =
+    "Three platforms take 62% of digital ad spend, organic reach is a rounding error, and AI answers absorb the click. The response: own your identity and corpus.";
+  return page({
+    title: "The Aggregated Market: Field Guide 002 | False Dawn Industries",
+    description,
+    active: "field-guide",
+    jsonLd: articleJsonLd({
+      headline: "The Model Decides If You Exist",
+      description,
+      image: "/assets/fg002-cover-1200x627.png",
+      route: "/field-guide-002",
+      datePublished: "2026-07-13",
+    }),
+    body,
+    canonical: `${SITE_URL}/field-guide-002`,
+    ogImage: "/assets/fg002-cover-1200x627.png",
   });
 }
 
@@ -1502,6 +1597,28 @@ function copyAssets() {
   for (const f of slideFiles)
     copy(path.join(slidesDir, f), path.join(DIST, "assets", "deck-slides", f));
 
+  // Field Guide 002 (Aggregated) images + deck
+  const assetFiles002 = [
+    "fg002-cover-1200x627.png",
+    "viz-triopoly-2026-1200x680.png",
+    "viz-reach-collapse-1200x640.png",
+    "viz-answer-layer-1200x700.png",
+    "fdi-field-guide-002-deck.pdf",
+  ];
+  for (const f of assetFiles002) {
+    const from = path.join(EXPORTS002, f);
+    if (fs.existsSync(from)) copy(from, path.join(DIST, "assets", f));
+  }
+  const slidesDir002 = path.join(EXPORTS002, "deck-slides");
+  const slideFiles002 = fs.existsSync(slidesDir002)
+    ? fs
+        .readdirSync(slidesDir002)
+        .filter((f) => f.endsWith(".png"))
+        .sort()
+    : [];
+  for (const f of slideFiles002)
+    copy(path.join(slidesDir002, f), path.join(DIST, "assets", "deck-slides-002", f));
+
   // Davos demo end-user journey screenshots (private page assets)
   const davosShots = path.join(SRC, "assets", "davos-demo");
   if (fs.existsSync(davosShots)) {
@@ -1516,7 +1633,7 @@ function copyAssets() {
   const favicon = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "favicon.svg");
   if (fs.existsSync(favicon)) copy(favicon, path.join(DIST, "favicon.svg"));
 
-  return slideFiles;
+  return { slideFiles, slideFiles002 };
 }
 
 // Build the gated Skillfoundry plugin package. It lives OUTSIDE dist/ (which is
@@ -1668,15 +1785,34 @@ const CONCEPTS = {
     points: [
       {
         h: "The pattern",
-        p: "Reach is commoditized and gatekept at the same time. You can make infinite content for near-zero cost, yet who sees it is decided by a black box you do not control. The AI platforms repeat the pattern with even less visibility into the rules.",
+        p: 'Three platforms are forecast to take <a href="https://www.emarketer.com/press-releases/meta-to-surpass-google-in-digital-ad-revenues-for-first-time-ever/" target="_blank" rel="noopener">62.3% of worldwide digital ad spending in 2026</a> (eMarketer), with Meta passing Google for the first time. Meanwhile the reach you thought you owned is a rounding error: the average Facebook page post reaches about <a href="https://www.socialinsider.io/blog/social-media-reach/" target="_blank" rel="noopener">1.65% of followers organically</a>, and on TikTok the Following feed delivers roughly 0.3% of views while the For You algorithm delivers 85.1%.',
+      },
+      {
+        h: "The squeeze",
+        p: 'Paying does not restore control. Meta\'s own <a href="https://www.prnewswire.com/news-releases/meta-reports-fourth-quarter-and-full-year-2025-results-302673127.html" target="_blank" rel="noopener">full-year 2025 results</a> report the average price per ad up 9% while impressions grew 12%. And the same structure is arriving one layer up: about <a href="https://www.bain.com/insights/goodbye-clicks-hello-ai-zero-click-search-redefines-marketing/" target="_blank" rel="noopener">60% of searches now end with no click</a> (Bain), and only about <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/" target="_blank" rel="noopener">1% of users click a source cited in an AI summary</a> (Pew Research Center).',
       },
       {
         h: "The FDI answer",
-        p: "Master the platforms you can measure, and instrument the ones you cannot yet. Build owned systems whose value does not depend on any single channel: a graded corpus, verifiable provenance, and an identity legible to both people and machines.",
+        p: 'Master the platforms you can measure, and instrument the ones you cannot yet. Build owned systems whose value does not depend on any single channel: a graded corpus, verifiable provenance, and an identity legible to both people and machines. Ben Thompson\'s <a href="https://stratechery.com/aggregation-theory/" target="_blank" rel="noopener">Aggregation Theory</a> maps the trap; the durable countermove is owning assets the aggregator cannot revoke.',
+      },
+    ],
+    guide: {
+      href: "/field-guide-002",
+      label: "Read Field Guide 002",
+      note: "The Aggregated field guide is live: the full article, three data visuals, and the 13-slide deck.",
+    },
+    faqs: [
+      {
+        q: "Who controls digital ad spending in 2026?",
+        a: "eMarketer forecasts that Meta, Google, and Amazon will take a combined 62.3% of worldwide digital ad spending in 2026, with Meta at $243.5 billion passing Google at $239.5 billion in ad revenue for the first time.",
       },
       {
-        h: "In the wild",
-        p: 'Ben Thompson\'s <a href="https://stratechery.com/aggregation-theory/" target="_blank" rel="noopener">Aggregation Theory</a> maps this exactly: platforms that own demand commoditize the suppliers behind them and set the terms of discovery. The durable countermove is owning assets the aggregator cannot revoke.',
+        q: "What is average organic reach on Facebook, Instagram, and TikTok?",
+        a: "Socialinsider's 2025 benchmarks put average organic reach per post at about 1.65% of followers on Facebook and 3.50% on Instagram. On TikTok, a 31,059-post traffic-source study by quso.ai found the For You algorithm delivers 85.1% of views while the Following feed delivers roughly 0.3%.",
+      },
+      {
+        q: "How is AI search changing marketing?",
+        a: "Bain finds roughly 60% of searches now end without a click to any website, and Pew Research Center found only about 1% of users click a source cited inside an AI summary. Discovery is moving behind AI answer layers, which is why FDI recommends owning a corpus and identity that models can retrieve, verify, and cite.",
       },
     ],
     kit: {
@@ -1751,8 +1887,11 @@ function conceptPage(key) {
       <h1>${c.h1}, <em>owned</em>.</h1>
       <p class="lede">${c.lede}</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
-        <a class="btn btn-ghost" href="/field-guide">Read the Field Guide</a>
+        ${c.guide
+          ? `<a class="btn btn-primary" href="${c.guide.href}">${c.guide.label} <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#waitlist">Join the waitlist</a>`
+          : `<a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/field-guide">Read the Field Guide</a>`}
       </div>
       <div class="hero-tags"><a href="/aggregated"${key === "aggregated" ? ' aria-current="page"' : ""}><b>Aggregated</b></a><a href="/decentralized"${key === "decentralized" ? ' aria-current="page"' : ""}><b>Decentralized</b></a><a href="/autonomous"${key === "autonomous" ? ' aria-current="page"' : ""}><b>Autonomous</b></a></div>
     </div>
@@ -1813,8 +1952,11 @@ function conceptPage(key) {
   <div class="wrap section">
     <div class="cta-box">
       <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
-      <h2>Get the ${c.h1} field guide the day it ships.</h2>
-      <p>Drop your email to follow the series. We'll reach out when the ${c.h1} field guide and its working code are live. No spam.</p>
+      ${c.guide
+        ? `<h2>The ${c.h1} field guide is live. Get the next one first.</h2>
+      <p>${c.guide.note} Drop your email to follow the series and we'll reach out the day the next guide ships. No spam.</p>`
+        : `<h2>Get the ${c.h1} field guide the day it ships.</h2>
+      <p>Drop your email to follow the series. We'll reach out when the ${c.h1} field guide and its working code are live. No spam.</p>`}
       <form class="waitlist js-capture" data-source="${source}" data-subject="FDI series: ${c.h1}" data-success="Almost there. Check your inbox and click the confirmation link to finish signing up." data-mail-body="Please add me to the FDI ${c.h1} series waitlist." novalidate>
         <label class="sr-only" for="cp-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
@@ -1832,6 +1974,7 @@ function conceptPage(key) {
     active: "series",
     jsonLd: faqJsonLd([
       { q: `What is a ${c.h1.toLowerCase()} market?`, a: c.definition },
+      ...(c.faqs || []),
     ]),
     body,
     canonical: `${SITE_URL}/${c.slug}`,
@@ -2100,9 +2243,10 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 
 ## The Field Guide
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
+- The Model Decides If You Exist (${SITE_URL}/field-guide-002): Field Guide 002 on the aggregated market. Three platforms are forecast to take 62.3% of worldwide digital ad spending in 2026 (eMarketer), organic reach is a rounding error, and AI answer layers absorb the click; the response is owning an identity and corpus machines can retrieve, verify, and cite. Includes three data visuals and a 13-slide deck.
 
 ## The series
-- Aggregated markets (${SITE_URL}/aggregated): marketing within today's platforms (Meta, Google, TikTok) plus what is not yet understood about AI platforms like ChatGPT; own assets that survive rule changes.
+- Aggregated markets (${SITE_URL}/aggregated): marketing within today's platforms (Meta, Google, TikTok) plus what is not yet understood about AI platforms like ChatGPT; own assets that survive rule changes. Field Guide 002 covers this market in full.
 - Decentralized markets (${SITE_URL}/decentralized): marketing within crypto-powered decentralized networks; a verifiable identity and corpus that travel across participant-owned networks.
 - Autonomous markets (${SITE_URL}/autonomous): agents transacting with agents; the dynamics and growth curve as those marketplaces scale toward the size of Meta and Google today.
 
@@ -2154,6 +2298,7 @@ function holdingPage({ title, active }) {
 const SITEMAP_ROUTES = [
   "",
   "field-guide",
+  "field-guide-002",
   "skillfoundry",
   "marcom-kit",
   "topcall",
@@ -2174,6 +2319,7 @@ function lastModDate() {
     fileURLToPath(import.meta.url),
     path.join(SRC, "site.css"),
     path.join(EXPORTS, "linkedin-thesis-article.md"),
+    path.join(EXPORTS002, "field-guide-002-article.md"),
   ];
   let latest = 0;
   for (const f of sources) {
@@ -2554,7 +2700,7 @@ function renderRoute(active, builder) {
 function main() {
   rm(DIST);
   mkdir(DIST);
-  const slideFiles = copyAssets();
+  const { slideFiles, slideFiles002 } = copyAssets();
   buildPluginZip();
   buildKitZip();
   buildDavosZip();
@@ -2566,10 +2712,21 @@ function main() {
   const parsed = parseArticle(md);
   const bodyHtml = renderArticleBody(parsed.body);
 
+  const md002 = fs.readFileSync(
+    path.join(EXPORTS002, "field-guide-002-article.md"),
+    "utf8",
+  );
+  const parsed002 = parseArticle(md002);
+  const bodyHtml002 = renderArticleBody(parsed002.body);
+
   fs.writeFileSync(path.join(DIST, "index.html"), home());
   fs.writeFileSync(
     path.join(DIST, "field-guide.html"),
     fieldGuide({ ...parsed, bodyHtml }, slideFiles),
+  );
+  fs.writeFileSync(
+    path.join(DIST, "field-guide-002.html"),
+    fieldGuide002({ ...parsed002, bodyHtml: bodyHtml002 }, slideFiles002),
   );
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
   fs.writeFileSync(path.join(DIST, "marcom-kit.html"), marcomKit());
@@ -2590,7 +2747,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 10 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 11 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 

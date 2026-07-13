@@ -24,6 +24,7 @@ const DIST = path.join(__dirname, "dist");
 const EXPECTED_ROUTES = [
   "/",
   "/field-guide",
+  "/field-guide-002",
   "/skillfoundry",
   "/marcom-kit",
   "/topcall",
@@ -138,9 +139,12 @@ if (!fs.existsSync(robotsPath)) {
     fail("robots.txt does not point at the sitemap");
 }
 
-/* 2. deck PDF + 13 slides present */
+/* 2. deck PDFs + 13 slides present for each guide */
 const deckPdf = path.join(DIST, "assets", "fdi-field-guide-deck.pdf");
 if (!fs.existsSync(deckPdf)) fail("missing deck PDF: /assets/fdi-field-guide-deck.pdf");
+const deckPdf002 = path.join(DIST, "assets", "fdi-field-guide-002-deck.pdf");
+if (!fs.existsSync(deckPdf002))
+  fail("missing deck PDF: /assets/fdi-field-guide-002-deck.pdf");
 
 const slidesDir = path.join(DIST, "assets", "deck-slides");
 const slideCount = fs.existsSync(slidesDir)
@@ -148,6 +152,13 @@ const slideCount = fs.existsSync(slidesDir)
   : 0;
 if (slideCount !== EXPECTED_SLIDES) {
   fail(`expected ${EXPECTED_SLIDES} deck slides, found ${slideCount}`);
+}
+const slidesDir002 = path.join(DIST, "assets", "deck-slides-002");
+const slideCount002 = fs.existsSync(slidesDir002)
+  ? fs.readdirSync(slidesDir002).filter((f) => f.endsWith(".png")).length
+  : 0;
+if (slideCount002 !== EXPECTED_SLIDES) {
+  fail(`expected ${EXPECTED_SLIDES} Field Guide 002 deck slides, found ${slideCount002}`);
 }
 
 /* 3. every referenced /assets, /fonts, and internal link resolves */
@@ -186,5 +197,5 @@ if (errors.length) {
 }
 
 console.log(
-  `\n[check] OK — ${EXPECTED_ROUTES.length} routes, ${slideCount} slides, ${refCount} references all resolve.`,
+  `\n[check] OK — ${EXPECTED_ROUTES.length} routes, ${slideCount}+${slideCount002} slides, ${refCount} references all resolve.`,
 );
