@@ -285,6 +285,31 @@ Hard copy rules (source: `replit.md`):
 | Ads / fixed creatives | `artifacts/mockup-sandbox/public/ads/brand.css` | 100vw x 100vh fixed, overflow hidden, latin+latin-ext, `font-display: block` |
 | Brand boards / mockups | `brand-kit/_group.css` custom properties (same hex values, `--bg-*`/`--text-*`/`--accent-*` names) | Tailwind-based preview components |
 
+## 9. Social visual layout rules (locked)
+
+Rules for every social/newsletter visual (1200x1500 portrait, 1280x720 cover,
+and any feed-bound export). Rationale: these images are mostly seen at ~350px
+wide in a mobile feed, so they must pass the thumbnail test.
+
+- **One oversized hero element per image.** A giant stat (18-22vw), a bold
+  claim headline (6-7.5vw), or a single dominant diagram. Never a grid of
+  equal-weight cards with no focal point.
+- **Minimum type sizes at 1200px wide** (1vw = 12px): hero claim >= 5.5vw;
+  row/item titles >= 3vw; supporting lines >= 2vw and used sparingly; only
+  decorative kickers/eyebrows may go below 1.6vw.
+- **Word budget:** aim for <= 60 words per image; supporting lines one short
+  sentence max; cut body copy before shrinking type.
+- **Fill the frame.** No stretched empty cards and no dead bottom third:
+  content blocks use flex fill (`flex:1` + `justify-content:space-evenly`)
+  and the footer pins to the bottom edge.
+- **brand.css gotchas:** inside `.ad`, the class `hero` is reserved for the
+  absolute-positioned photo slot (use `big`/`lead` instead), and `.ad .foot`
+  sets its own margins, so page-level foot overrides need `.ad .wrap .foot`
+  specificity.
+- Verify every export by viewing the PNG scaled down before shipping.
+
+---
+
 The distributable brand package (tokens, fonts, logos, boards, starter demo)
 lives at `exports/fdi-brand-package/` and is zipped to
 `exports/fdi-brand-package.zip`. `tokens.json` there is in W3C design-tokens
