@@ -187,6 +187,7 @@ ${ld}
 <link rel="stylesheet" href="/site.css" />
 </head>
 <body>
+<div class="watermark" aria-hidden="true">${MARK}</div>
 ${nav(active)}
 <main id="main">
 ${body}
