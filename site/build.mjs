@@ -11,6 +11,7 @@ const SRC = path.join(__dirname, "src");
 
 const EXPORTS = path.join(ROOT, "exports", "field-guide-launch");
 const EXPORTS002 = path.join(ROOT, "exports", "field-guide-002-aggregated");
+const EXPORTSPT02 = path.join(ROOT, "exports", "performance-thinking-02");
 const FONTS = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "fonts");
 
 /* ---------------- helpers ---------------- */
@@ -137,6 +138,7 @@ function footer() {
           <li><a href="/marcom-kit">MarCom OS</a></li>
           <li><a href="/skillfoundry">SkillFoundry</a></li>
           <li><a href="/field-guide">Field Guide</a></li>
+          <li><a href="/fdcp">The FDCP Report</a></li>
           <li><a href="/series">The Series</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
@@ -581,6 +583,81 @@ function fieldGuide002({ title, subtitle, attribution, bodyHtml }, slideFiles) {
     body,
     canonical: `${SITE_URL}/field-guide-002`,
     ogImage: "/assets/fg002-cover-1200x627.png",
+  });
+}
+
+function fdcpPage({ title, subtitle, attribution, bodyHtml }, slideFiles) {
+  const body = `
+<article class="article">
+  <div class="wrap">
+    <div class="article-head">
+      <span class="eyebrow">Growth Cartography · Performance Thinking · The FDCP</span>
+      <h1>${title}</h1>
+      <p class="sub">${subtitle}</p>
+      <p class="byline">${attribution}</p>
+    </div>
+    <div class="article-cover">
+      <img src="/assets/fdcp-cover-1280x720.png" alt="False Dawn Industries Performance Thinking: the Forward-Deployed Communications Professional. One operator, a fleet of agents, ownership of the whole workflow." width="1280" height="720" />
+    </div>
+    <div class="prose">
+      ${bodyHtml}
+    </div>
+  </div>
+</article>
+
+<section class="deck section" id="deck">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The deck</span>
+      <h2>The FDCP argument in 12 slides</h2>
+      <p>The full deck, built on the reusable FDI slide system. View it inline, download the PDF, or browse the slides.</p>
+    </div>
+    <div class="deck-frame">
+      <iframe src="/assets/fdi-fdcp-deck.pdf#view=FitH" title="FDI FDCP deck (PDF)" loading="lazy"></iframe>
+    </div>
+    <div class="deck-actions">
+      <a class="btn btn-primary" href="/assets/fdi-fdcp-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+    </div>
+    <div class="slides-strip">
+      ${slidesStrip(slideFiles, "deck-slides-fdcp")}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="related">
+  <div class="wrap">
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">The thesis</span>
+        <h3>Field Guide 001: Build the Machine, Not the Ad</h3>
+        <p>The general case: when content is free to make and platforms are opaque, the only durable marketing assets are the ones you own and can prove.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide">Read the thesis <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">The market</span>
+        <h3>Autonomous markets, mapped</h3>
+        <p>The market the FDCP is built for: agents transacting with agents, and the growth curve as those marketplaces scale toward the size of Meta and Google today.</p>
+        <div class="card-foot"><a class="link-arrow" href="/autonomous">See the one-pager <span class="arrow">→</span></a></div>
+      </article>
+    </div>
+  </div>
+</section>`;
+  const description =
+    "The Forward-Deployed Communications Professional: the operator role for agent-mediated markets. One person, a fleet of agents, and ownership of the whole workflow.";
+  return page({
+    title: "The Forward-Deployed Communicator | False Dawn Industries",
+    description,
+    active: "field-guide",
+    jsonLd: articleJsonLd({
+      headline: "The Forward-Deployed Communicator",
+      description,
+      image: "/assets/fdcp-cover-1280x720.png",
+      route: "/fdcp",
+      datePublished: "2026-07-15",
+    }),
+    body,
+    canonical: `${SITE_URL}/fdcp`,
+    ogImage: "/assets/fdcp-cover-1280x720.png",
   });
 }
 
@@ -1619,6 +1696,30 @@ function copyAssets() {
   for (const f of slideFiles002)
     copy(path.join(slidesDir002, f), path.join(DIST, "assets", "deck-slides-002", f));
 
+  // Performance Thinking 02 (FDCP) images + deck
+  const assetFilesFdcp = [
+    "fdcp-cover-1280x720.png",
+    "viz-fdcp-pod-1200x1500.png",
+    "viz-four-dimensions-1200x1500.png",
+    "viz-proof-stack-order-1200x1500.png",
+    "viz-m2m-agentcards-1200x1500.png",
+  ];
+  for (const f of assetFilesFdcp) {
+    const from = path.join(EXPORTSPT02, "images", f);
+    if (fs.existsSync(from)) copy(from, path.join(DIST, "assets", f));
+  }
+  const fdcpPdf = path.join(EXPORTSPT02, "fdi-fdcp-deck.pdf");
+  if (fs.existsSync(fdcpPdf)) copy(fdcpPdf, path.join(DIST, "assets", "fdi-fdcp-deck.pdf"));
+  const slidesDirFdcp = path.join(EXPORTSPT02, "deck-slides");
+  const slideFilesFdcp = fs.existsSync(slidesDirFdcp)
+    ? fs
+        .readdirSync(slidesDirFdcp)
+        .filter((f) => f.endsWith(".png"))
+        .sort()
+    : [];
+  for (const f of slideFilesFdcp)
+    copy(path.join(slidesDirFdcp, f), path.join(DIST, "assets", "deck-slides-fdcp", f));
+
   // Davos demo end-user journey screenshots (private page assets)
   const davosShots = path.join(SRC, "assets", "davos-demo");
   if (fs.existsSync(davosShots)) {
@@ -1633,7 +1734,7 @@ function copyAssets() {
   const favicon = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "favicon.svg");
   if (fs.existsSync(favicon)) copy(favicon, path.join(DIST, "favicon.svg"));
 
-  return { slideFiles, slideFiles002 };
+  return { slideFiles, slideFiles002, slideFilesFdcp };
 }
 
 // Build the gated Skillfoundry plugin package. It lives OUTSIDE dist/ (which is
@@ -1869,6 +1970,11 @@ const CONCEPTS = {
         p: 'The open <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol</a> is the pattern in public: it gives agents a verifiable interface to call tools and retrieve answers with their sources attached, rather than trusting unprovenanced text.',
       },
     ],
+    guide: {
+      href: "/fdcp",
+      label: "Read the FDCP report",
+      note: "The Performance Thinking report on the Forward-Deployed Communications Professional is live: the full argument, four visuals, and the 12-slide deck.",
+    },
     kit: {
       name: "The Agent-Ready Org",
       p: "In autonomous markets your organization is judged by machines: agents route budget to operations they can query and verify. MarCom OS's Riverbank writes your brand rules so agents can enforce them, and the Hourglass puts human kill authority exactly where machine-speed output needs it.",
@@ -2244,6 +2350,7 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 ## The Field Guide
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
 - The Model Decides If You Exist (${SITE_URL}/field-guide-002): Field Guide 002 on the aggregated market. Three platforms are forecast to take 62.3% of worldwide digital ad spending in 2026 (eMarketer), organic reach is a rounding error, and AI answer layers absorb the click; the response is owning an identity and corpus machines can retrieve, verify, and cite. Includes three data visuals and a 13-slide deck.
+- The Forward-Deployed Communicator (${SITE_URL}/fdcp): the Performance Thinking report on the Forward-Deployed Communications Professional (FDCP), the operator role for agent-mediated markets. One person, a fleet of AI agents on a governed platform, and ownership of the whole workflow: loop engineering, policy as code, a receipts-first proof stack, and machine-to-machine communications. Includes four visuals and a 12-slide deck.
 
 ## The series
 - Aggregated markets (${SITE_URL}/aggregated): marketing within today's platforms (Meta, Google, TikTok) plus what is not yet understood about AI platforms like ChatGPT; own assets that survive rule changes. Field Guide 002 covers this market in full.
@@ -2299,6 +2406,7 @@ const SITEMAP_ROUTES = [
   "",
   "field-guide",
   "field-guide-002",
+  "fdcp",
   "skillfoundry",
   "marcom-kit",
   "topcall",
@@ -2320,6 +2428,7 @@ function lastModDate() {
     path.join(SRC, "site.css"),
     path.join(EXPORTS, "linkedin-thesis-article.md"),
     path.join(EXPORTS002, "field-guide-002-article.md"),
+    path.join(EXPORTSPT02, "fdcp-report.md"),
   ];
   let latest = 0;
   for (const f of sources) {
@@ -2700,7 +2809,7 @@ function renderRoute(active, builder) {
 function main() {
   rm(DIST);
   mkdir(DIST);
-  const { slideFiles, slideFiles002 } = copyAssets();
+  const { slideFiles, slideFiles002, slideFilesFdcp } = copyAssets();
   buildPluginZip();
   buildKitZip();
   buildDavosZip();
@@ -2728,6 +2837,14 @@ function main() {
     path.join(DIST, "field-guide-002.html"),
     fieldGuide002({ ...parsed002, bodyHtml: bodyHtml002 }, slideFiles002),
   );
+  const mdFdcp = fs.readFileSync(path.join(EXPORTSPT02, "fdcp-report.md"), "utf8");
+  const parsedFdcp = parseArticle(mdFdcp);
+  const bodyHtmlFdcp = renderArticleBody(parsedFdcp.body);
+  fs.writeFileSync(
+    path.join(DIST, "fdcp.html"),
+    fdcpPage({ ...parsedFdcp, bodyHtml: bodyHtmlFdcp }, slideFilesFdcp),
+  );
+
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
   fs.writeFileSync(path.join(DIST, "marcom-kit.html"), marcomKit());
   fs.writeFileSync(path.join(DIST, "topcall.html"), renderRoute("topcall", topcall));
@@ -2747,7 +2864,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 11 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 12 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFilesFdcp.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 
