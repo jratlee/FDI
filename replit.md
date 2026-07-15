@@ -164,12 +164,24 @@ A literal .fig binary cannot be authored outside Figma; tokens.json + SVGs are
 the Figma import path.
 
 ## Brand rules (locked)
-Strict two-tone warm family. **Signal Orange `#FF5E00` is the logo mark ONLY.**
-Accents use the amber ramp (`#FFB12B` / `#E0920C` / `#FFCB6B`); neutrals are
-cream `#F0E8D5` / faded `#A8997B` / muted `#7A6A50` on near-black `#0D0B08`.
-No off-family teal/red. Fonts: Space Grotesk (display), Inter (body),
-JetBrains Mono (labels). Lead with the FDI master brand + the "Growth
-Cartography" eyebrow.
+System of record: **Signal Neo-Brutalism** (adopted July 2026; full spec in
+`DESIGN.md`, reference source in `attached_assets/DESIGN_1784149690872.md`).
+Strict warm-industrial family on near-black `#0D0B08`; no off-family teal/red.
+**RULE CHANGE (July 2026):** the old rule "Signal Orange `#FF5E00` is the
+logo mark ONLY" is retired. **Signal Amber `#FFB12B` is the primary action
+color** (buttons, thick 2-4px borders, highlighted headline words); **Signal
+Orange `#FF5E00` is the secondary "alert" accent** (full-bleed color-block
+sections, 5%-opacity watermarks, kicker ticks, hover/invert states) and
+remains the logo mark color. Amber ramp `#FFB12B` / `#E0920C` / `#FFCB6B`;
+neutrals cream `#F0E8D5` / faded `#A8997B` / muted `#7A6A50`; umber surface
+ramp `#110e05` / `#1f1b10` / `#231f14` / `#2e2a1d` / `#393527`. Signature
+moves: massive uppercase viewport-scale Space Grotesk display type (22vw hero
+/ 14vw sections, clamped on scrollable pages, tight negative tracking, edge
+bleeds, amber text-glow), rotated (about 1deg, ~105% scale) full-bleed
+amber/orange sections with base-dark text, sharp 0px corners everywhere,
+thick 2px/4px borders instead of shadows, glass sticky header/footer chrome
+only. Fonts unchanged: Space Grotesk (display), Inter (body), JetBrains Mono
+(labels). Lead with the FDI master brand + the "Growth Cartography" eyebrow.
 
 ## User preferences
 - Reorganize `replit.md` for clarity but never trim content from it; the user

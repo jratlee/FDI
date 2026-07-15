@@ -1,20 +1,50 @@
-/* False Dawn Industries — design tokens
-   Source of truth: site/src/site.css and
-   artifacts/mockup-sandbox/public/ads/brand.css (identical :root values).
-   Signal Orange #FF5E00 is the logo mark ONLY. */
+/* False Dawn Industries design tokens
+   System of record: Signal Neo-Brutalism (adopted July 2026; see DESIGN.md).
+   Base tokens match site/src/site.css and
+   artifacts/mockup-sandbox/public/ads/brand.css :root values; the umber
+   surface ramp and role tokens come from the adopted reference spec.
+   RULE CHANGE: Signal Amber is the primary action color; Signal Orange is
+   the secondary alert accent (full-bleed panels, watermarks, hover states)
+   AND the logo mark. The old "orange = logo only" rule is retired. */
 :root {
+  /* backgrounds and surfaces (umber ramp) */
   --base: #0D0B08;
+  --surface-container-lowest: #110e05;
+  --surface-ref: #161308;
+  --surface-container-low: #1f1b10;
+  --surface-container: #231f14;
+  --surface-container-high: #2e2a1d;
+  --surface-container-highest: #393527;
+  --surface-bright: #3d392c;
+  /* legacy surfaces (still shipped in site.css / brand.css) */
   --surface: #141009;
   --elevated: #1C160D;
+  /* borders */
   --border: #2A2015;
   --hairline: #3A2D1C;
+  --outline: #9f8e7a;
+  --outline-variant: #524534;
+  /* text and neutrals */
   --cream: #F0E8D5;
+  --on-surface: #eae2cf;
   --faded: #A8997B;
   --muted: #7A6A50;
-  --amber: #FFB12B;
+  --on-surface-variant: #d7c4ad;
+  /* signal and action */
+  --amber: #FFB12B;         /* PRIMARY: actions, thick borders, highlights */
   --amber-press: #E0920C;
   --amber-glow: #FFCB6B;
-  --signal-orange: #FF5E00;
+  --signal-orange: #FF5E00; /* SECONDARY alert accent + logo mark */
+  --glow: rgba(255, 177, 43, 0.4); /* text-glow / outer-glow color */
+  /* type scale (Signal Neo-Brutalism; clamp vw sizes on scrollable pages) */
+  --display-huge-size: 22vw;      /* line-height .85, tracking -.06em, uppercase */
+  --punchy-heading-size: 14vw;    /* line-height .9, tracking -.05em, uppercase */
+  --headline-lg-size: 2.25rem;
+  --label-caps-tracking: 0.2em;
+  /* shape: sharp corners, thick borders */
+  --radius: 0px;
+  --border-thick: 2px;
+  --border-heavy: 4px;
   /* layout (site/src/site.css) */
   --maxw: 1180px;
   --readw: 720px;
