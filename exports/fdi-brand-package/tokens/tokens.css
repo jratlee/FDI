@@ -1,0 +1,21 @@
+/* False Dawn Industries — design tokens
+   Source of truth: site/src/site.css and
+   artifacts/mockup-sandbox/public/ads/brand.css (identical :root values).
+   Signal Orange #FF5E00 is the logo mark ONLY. */
+:root {
+  --base: #0D0B08;
+  --surface: #141009;
+  --elevated: #1C160D;
+  --border: #2A2015;
+  --hairline: #3A2D1C;
+  --cream: #F0E8D5;
+  --faded: #A8997B;
+  --muted: #7A6A50;
+  --amber: #FFB12B;
+  --amber-press: #E0920C;
+  --amber-glow: #FFCB6B;
+  --signal-orange: #FF5E00;
+  /* layout (site/src/site.css) */
+  --maxw: 1180px;
+  --readw: 720px;
+}

@@ -152,6 +152,17 @@ detail: `docs/export-assets.md`.
 - The Streamlit engine can still be run manually (`streamlit run app.py`) but is
   no longer the public/deployed surface.
 
+## Design system document + brand package
+`DESIGN.md` at the repo root is the authoritative brand/design-system document
+(purpose, critical files, colors, type, layout, logo, components, voice, copy
+rules; every value cited to its source file). The distributable brand package
+lives at `exports/fdi-brand-package/` (DESIGN.md, tokens.css + W3C tokens.json
+for Figma via Tokens Studio, all 20 self-hosted woff2 fonts, Dawn Mark SVG +
+favicon + LinkedIn avatar, the four 1280x1600 brand boards, and a
+self-contained `demo/starter.html`), zipped to `exports/fdi-brand-package.zip`.
+A literal .fig binary cannot be authored outside Figma; tokens.json + SVGs are
+the Figma import path.
+
 ## Brand rules (locked)
 Strict two-tone warm family. **Signal Orange `#FF5E00` is the logo mark ONLY.**
 Accents use the amber ramp (`#FFB12B` / `#E0920C` / `#FFCB6B`); neutrals are

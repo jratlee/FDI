@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>False Dawn Industries — Brand Starter</title>
+<style>
+/* Self-hosted fonts (package-local, latin subsets) */
+@font-face { font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/inter-400-latin.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/inter-500-latin.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url('../fonts/inter-600-latin.woff2') format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/jetbrains-mono-400-latin.woff2') format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/jetbrains-mono-500-latin.woff2') format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/jetbrains-mono-700-latin.woff2') format('woff2'); }
+@font-face { font-family:'Space Grotesk'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/space-grotesk-400-latin.woff2') format('woff2'); }
+@font-face { font-family:'Space Grotesk'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/space-grotesk-500-latin.woff2') format('woff2'); }
+@font-face { font-family:'Space Grotesk'; font-style:normal; font-weight:600; font-display:swap; src:url('../fonts/space-grotesk-600-latin.woff2') format('woff2'); }
+@font-face { font-family:'Space Grotesk'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/space-grotesk-700-latin.woff2') format('woff2'); }
+
+/* Tokens (mirrors tokens/tokens.css) */
+:root {
+  --base: #0D0B08; --surface: #141009; --elevated: #1C160D;
+  --border: #2A2015; --hairline: #3A2D1C;
+  --cream: #F0E8D5; --faded: #A8997B; --muted: #7A6A50;
+  --amber: #FFB12B; --amber-press: #E0920C; --amber-glow: #FFCB6B;
+  --signal-orange: #FF5E00;
+  --maxw: 1180px; --readw: 720px;
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--base); color:var(--cream); font-family:'Inter',system-ui,sans-serif; font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased; }
+a { color: var(--amber); text-decoration: none; }
+a:hover { color: var(--amber-glow); }
+h1,h2,h3 { font-family:'Space Grotesk',sans-serif; color:var(--cream); line-height:1.08; letter-spacing:-.015em; font-weight:600; }
+.wrap { width:100%; max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+.section { padding: clamp(56px, 9vw, 120px) 0; }
+
+/* Logo mark + lockup */
+.mark { color: var(--signal-orange); display:block; }
+.mark .arc { stroke: currentColor; stroke-width:7; fill:none; }
+.mark .fill { fill: currentColor; }
+.lockup { display:inline-flex; flex-direction:row-reverse; align-items:center; gap:.7em; color:var(--cream); }
+.lockup .mark { height:1em; width:1em; flex:none; }
+.lockup .wm { font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacing:.14em; text-transform:uppercase; line-height:1; white-space:nowrap; }
+
+.eyebrow { font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.28em; font-size:12px; color:var(--faded); display:inline-flex; align-items:center; gap:.9em; }
+.eyebrow::before { content:""; width:1.6em; height:0; border-top:2px solid var(--amber); }
+
+.btn { display:inline-flex; align-items:center; gap:.55em; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; letter-spacing:.01em; padding:13px 22px; border-radius:8px; border:1px solid transparent; cursor:pointer; }
+.btn-primary { background:var(--amber); color:#1a1206; }
+.btn-primary:hover { background:var(--amber-glow); color:#1a1206; }
+.btn-ghost { background:transparent; color:var(--cream); border-color:var(--hairline); }
+.btn-ghost:hover { border-color:var(--amber); color:var(--amber-glow); }
+
+.grid { display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:28px; }
+.card.featured { border-color:var(--amber); }
+.tag, .pill { font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); }
+.pill { color:#1a1206; background:var(--amber); padding:4px 10px; border-radius:99px; display:inline-block; }
+.card h3 { margin:14px 0 8px; }
+.card p { color:var(--faded); margin:0; }
+
+.swatches { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); }
+.sw { border:1px solid var(--border); border-radius:8px; padding:16px; font-family:'JetBrains Mono',monospace; font-size:12px; }
+.mono { font-family:'JetBrains Mono',monospace; }
+.k { font-family:'JetBrains Mono',monospace; font-size:34px; color:var(--cream); }
+.k .amber { color:var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap section">
+  <span class="lockup"><span class="wm">False Dawn Industries</span><svg class="mark" viewBox="0 0 100 100" fill="none" aria-hidden="true"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg></span>
+
+  <div style="margin-top:56px">
+    <span class="eyebrow">Growth Cartography</span>
+    <h1 style="font-size:clamp(34px,5vw,56px);margin:18px 0 12px">Build the machine, <em>not the ad</em>.</h1>
+    <p style="color:var(--faded);max-width:640px">Owned marketing systems for aggregated, decentralized, and autonomous markets. We map the machine that decides who gets seen and build the tools to own your place in it.</p>
+    <p><a class="btn btn-primary" href="#">Join the waitlist <span>→</span></a> <a class="btn btn-ghost" href="#">Read the Field Guide</a></p>
+  </div>
+
+  <h2 style="margin-top:72px">Color tokens</h2>
+  <div class="swatches">
+    <div class="sw" style="background:#0D0B08;color:#F0E8D5">--base #0D0B08</div>
+    <div class="sw" style="background:#141009;color:#F0E8D5">--surface #141009</div>
+    <div class="sw" style="background:#1C160D;color:#F0E8D5">--elevated #1C160D</div>
+    <div class="sw" style="background:#F0E8D5;color:#0D0B08">--cream #F0E8D5</div>
+    <div class="sw" style="background:#A8997B;color:#0D0B08">--faded #A8997B</div>
+    <div class="sw" style="background:#7A6A50;color:#F0E8D5">--muted #7A6A50</div>
+    <div class="sw" style="background:#FFB12B;color:#0D0B08">--amber #FFB12B</div>
+    <div class="sw" style="background:#E0920C;color:#0D0B08">--amber-press #E0920C</div>
+    <div class="sw" style="background:#FFCB6B;color:#0D0B08">--amber-glow #FFCB6B</div>
+    <div class="sw" style="background:#FF5E00;color:#0D0B08">--signal-orange #FF5E00 (logo only)</div>
+  </div>
+
+  <h2 style="margin-top:72px">Cards</h2>
+  <div class="grid">
+    <article class="card featured">
+      <span class="pill">Flagship · Structure as Code</span>
+      <h3>MarCom OS</h3>
+      <p>The blueprint for an AI-era marketing organization, shipped as a working kit instead of a slide deck. Structure as code.</p>
+    </article>
+    <article class="card">
+      <span class="tag">Product · Strategy as Code</span>
+      <h3>SkillFoundry</h3>
+      <p>A strategic firewall that routes any asset through three Signal-to-Value gates as a plugin built on the open Model Context Protocol (MCP).</p>
+    </article>
+    <article class="card">
+      <span class="tag">Field Guide 001</span>
+      <h3>The CMO's Field Guide</h3>
+      <p>System and cohort dynamics: why every cohort decays on day one, and why identity is the last durable infrastructure.</p>
+    </article>
+  </div>
+
+  <h2 style="margin-top:72px">Data / numerics</h2>
+  <div class="card" style="display:flex;gap:48px;flex-wrap:wrap">
+    <div><div class="tag">AD SPEND 2026</div><div class="k"><span class="amber">$1.3T</span></div></div>
+    <div><div class="tag">ATTENTION THRESHOLD</div><div class="k">2.5s</div></div>
+    <div><div class="tag">SHARED BELIEF</div><div class="k">70,000<span class="amber">yrs</span></div></div>
+  </div>
+
+  <p class="mono" style="color:var(--muted);font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-top:72px">© 2026 False Dawn Industries · Growth Cartography</p>
+</div>
+</body>
+</html>
