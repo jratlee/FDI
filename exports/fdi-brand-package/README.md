@@ -24,6 +24,12 @@ source file for every value.
   geometry from the site's inline mark).
 - `logo/favicon.svg` — the favicon currently served by the site (a plain
   rounded square in `#FF3C00`; the mark of record is `fdi-mark.svg`).
+- `logo/fdi-lockup-dark-1600x400.png` — the lockup PNG export on the Base
+  `#0D0B08` background (mark in Signal Orange, wordmark in Cream), rendered
+  from the site's exact `.lockup` markup, CSS, and self-hosted fonts.
+- `logo/fdi-lockup-light-1600x400.png` — the lockup on the Cream light chip
+  (mark and wordmark in Base `#0D0B08`, per the logo-concepts board rule
+  that the mark on light chips renders in Base).
 - `logo/li-avatar-400x400.png` — the LinkedIn avatar export of the mark.
 - `brand-boards/` — the four exported brand boards (1280x1600): color and
   typography, logo concepts, brand in action, brand guidelines.
