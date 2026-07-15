@@ -11,16 +11,17 @@
   .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.26em;
     color:var(--faded);font-size:1.02vw;display:flex;align-items:center;gap:.9em;margin-bottom:1vw;}
   .keyb::before{content:"";width:.95em;height:.62em;background:var(--signal-orange);flex:none;}
-  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
-    font-size:2.55vw;letter-spacing:-.015em;line-height:1.08;}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--cream);
+    font-size:2.7vw;letter-spacing:-.04em;line-height:.95;text-transform:uppercase;
+    text-shadow:0 0 20px rgba(255,177,43,.4);}
   .htitle em{font-style:normal;color:var(--amber);}
   .cols{display:flex;gap:1.7vw;flex:1;}
   .col{flex:1;display:flex;flex-direction:column;background:var(--surface);
     border:2px solid var(--border);border-top:3px solid var(--amber);border-radius:0;
     padding:1.6vw 1.5vw;}
   .cnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:1vw;letter-spacing:.2em;}
-  .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--amber);
-    font-size:1.85vw;margin:.35vw 0 .1vw;}
+  .cname{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--amber);
+    font-size:1.85vw;margin:.35vw 0 .1vw;text-transform:uppercase;letter-spacing:-.02em;}
   .csub{font-family:'JetBrains Mono',monospace;color:var(--faded);font-size:.92vw;
     letter-spacing:.04em;margin-bottom:1vw;}
   .stage{height:6vw;display:flex;align-items:center;justify-content:center;margin:.2vw 0 1vw;}
@@ -30,11 +31,11 @@
     font-size:.82vw;margin-bottom:.35vw;color:var(--muted);}
   .lbl.a{color:var(--amber);}
   .txt{font-family:'Inter',sans-serif;color:var(--cream);font-size:1.05vw;line-height:1.42;}
-  .form{border-top:1px solid var(--border);padding-top:.9vw;margin-top:auto;}
+  .form{border-top:2px solid var(--border);padding-top:.9vw;margin-top:auto;}
   .form .txt{color:var(--faded);}
   .foot{margin-top:1.8vw;font-family:'Inter',sans-serif;color:var(--muted);font-size:1.05vw;
     text-align:center;}
-  .foot b{color:var(--amber);font-weight:600;}
+  .foot b{color:var(--amber);font-weight:700;}
   .ln{stroke:var(--muted);stroke-width:2;fill:none;}
   .lna{stroke:var(--amber);stroke-width:2.4;fill:none;}
   .nd{fill:var(--faded);}
@@ -57,8 +58,8 @@
       <div class="csub">A few models mediate discovery</div>
       <div class="stage">
         <svg viewBox="0 0 150 84">
-          <rect class="bx" x="10" y="14" width="30" height="18" rx="3"/>
-          <rect class="bx" x="10" y="52" width="30" height="18" rx="3"/>
+          <rect class="bx" x="10" y="14" width="30" height="18"/>
+          <rect class="bx" x="10" y="52" width="30" height="18"/>
           <path class="ln" d="M16 21 h18 M16 26 h12 M16 59 h18 M16 64 h12"/>
           <path class="lna" d="M40 23 C64 23 60 42 78 42 M40 61 C64 61 60 42 78 42"/>
           <circle class="rg" cx="92" cy="42" r="15"/>
@@ -110,11 +111,11 @@
       <div class="csub">Agents transact on everyone's behalf</div>
       <div class="stage">
         <svg viewBox="0 0 150 84">
-          <rect class="bx" x="12" y="30" width="32" height="26" rx="5"/>
+          <rect class="bx" x="12" y="30" width="32" height="26"/>
           <circle class="nd" cx="22" cy="43" r="3.2"/><circle class="nd" cx="34" cy="43" r="3.2"/>
           <path class="ln" d="M28 22 v8"/><circle class="nd" cx="28" cy="20" r="2.8"/>
           <path class="lna" d="M48 43 h22 M64 37 l8 6 l-8 6"/>
-          <rect class="rg" x="86" y="26" width="34" height="34" rx="5"/>
+          <rect class="rg" x="86" y="26" width="34" height="34"/>
           <path class="lna" d="M96 43 l6 6 l12 -13"/>
           <path class="ln" d="M126 34 h12 M126 43 h9 M126 52 h12"/>
         </svg>

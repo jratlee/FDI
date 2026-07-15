@@ -10,16 +10,17 @@
   .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.26em;
     color:var(--faded);font-size:1.55vw;display:flex;align-items:center;gap:.9em;margin-bottom:1.6vw;}
   .keyb::before{content:"";width:.95em;height:.62em;background:var(--signal-orange);flex:none;}
-  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
-    font-size:4.4vw;letter-spacing:-.015em;line-height:1.08;}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--cream);
+    font-size:4.8vw;letter-spacing:-.04em;line-height:.95;text-transform:uppercase;
+    text-shadow:0 0 20px rgba(255,177,43,.4);}
   .htitle em{font-style:normal;color:var(--amber);}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:2.4vw;flex:1;}
   .cell{background:var(--surface);border:2px solid var(--border);border-radius:0;
     padding:2.6vw 2.5vw;display:flex;flex-direction:column;}
-  .cell.win{border-color:var(--amber-press);border-top:4px solid var(--amber);}
+  .cell.win{border:2px solid var(--amber);border-top:4px solid var(--amber);}
   .cnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:1.35vw;letter-spacing:.2em;}
-  .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--cream);
-    font-size:2.7vw;margin:.5vw 0 .2vw;}
+  .cname{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--cream);
+    font-size:2.7vw;margin:.5vw 0 .2vw;text-transform:uppercase;letter-spacing:-.02em;}
   .win .cname{color:var(--amber);}
   .verdict{font-family:'JetBrains Mono',monospace;font-size:1.25vw;letter-spacing:.1em;
     text-transform:uppercase;color:var(--muted);margin-bottom:1.6vw;}
@@ -31,7 +32,7 @@
   .sh{fill:rgba(122,106,80,.22);stroke:var(--muted);stroke-width:2;}
   .sha{fill:rgba(255,177,43,.12);stroke:var(--amber);stroke-width:2.6;}
   .foot{margin-top:2.6vw;font-family:'Inter',sans-serif;color:var(--muted);font-size:1.6vw;text-align:center;}
-  .foot b{color:var(--amber);font-weight:600;}
+  .foot b{color:var(--amber);font-weight:700;}
 </style>
 </head>
 <body>

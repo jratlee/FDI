@@ -8,8 +8,9 @@
   html,body{height:auto;}
   .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:3.6vw 3.8vw 3vw;}
   .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2.4vw;}
-  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
-    font-size:2.5vw;letter-spacing:-.01em;}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--cream);
+    font-size:2.7vw;letter-spacing:-.04em;line-height:.95;text-transform:uppercase;
+    text-shadow:0 0 20px rgba(255,177,43,.4);}
   .htitle em{font-style:normal;color:var(--amber);}
   .hmeta{font-family:'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;
     color:var(--muted);font-size:1.05vw;}
@@ -18,8 +19,8 @@
     border:2px solid var(--border);border-radius:0;padding:2vw 1.9vw;}
   .col .cnum{font-family:'JetBrains Mono',monospace;color:var(--amber);font-size:1.1vw;
     letter-spacing:.2em;}
-  .col .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--cream);
-    font-size:2vw;margin:.5vw 0 .2vw;}
+  .col .cname{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--cream);
+    font-size:2vw;margin:.5vw 0 .2vw;text-transform:uppercase;letter-spacing:-.02em;}
   .col .ctag{font-family:'JetBrains Mono',monospace;color:var(--faded);font-size:1.05vw;
     letter-spacing:.06em;margin-bottom:1vw;}
   .col .cdesc{font-family:'Inter',sans-serif;color:var(--cream);font-size:1.25vw;line-height:1.5;
@@ -60,29 +61,29 @@
         <svg viewBox="0 0 360 190">
           <path class="rel" d="M96 52 H150 M120 118 H150 M210 60 V96 M150 76 H210"/>
           <!-- users -->
-          <rect class="tbl" x="24" y="34" width="82" height="60" rx="3"/>
-          <rect class="tbar" x="24" y="34" width="82" height="16" rx="3"/>
+          <rect class="tbl" x="24" y="34" width="82" height="60"/>
+          <rect class="tbar" x="24" y="34" width="82" height="16"/>
           <text class="thead" x="32" y="46">users</text>
           <text class="trow" x="32" y="64">user_id  PK</text>
           <text class="trow" x="32" y="77">email</text>
           <text class="trow" x="32" y="90">credits</text>
           <!-- queries -->
-          <rect class="tbl" x="150" y="30" width="96" height="72" rx="3"/>
-          <rect class="tbar" x="150" y="30" width="96" height="16" rx="3"/>
+          <rect class="tbl" x="150" y="30" width="96" height="72"/>
+          <rect class="tbar" x="150" y="30" width="96" height="16"/>
           <text class="thead" x="158" y="42">queries</text>
           <text class="trow" x="158" y="60">query_id PK</text>
           <text class="trow" x="158" y="73">content_hash</text>
           <text class="trow" x="158" y="86">cost</text>
           <text class="trow" x="158" y="99">stripe_id</text>
           <!-- documents -->
-          <rect class="tbl" x="24" y="118" width="82" height="58" rx="3"/>
-          <rect class="tbar" x="24" y="118" width="82" height="16" rx="3"/>
+          <rect class="tbl" x="24" y="118" width="82" height="58"/>
+          <rect class="tbar" x="24" y="118" width="82" height="16"/>
           <text class="thead" x="32" y="130">documents</text>
           <text class="trow" x="32" y="148">doc_id  PK</text>
           <text class="trow" x="32" y="161">sha256</text>
           <!-- chunks -->
-          <rect class="tbl" x="150" y="118" width="96" height="58" rx="3"/>
-          <rect class="tbar" x="150" y="118" width="96" height="16" rx="3"/>
+          <rect class="tbl" x="150" y="118" width="96" height="58"/>
+          <rect class="tbar" x="150" y="118" width="96" height="16"/>
           <text class="thead" x="158" y="130">document_chunks</text>
           <text class="trow" x="158" y="148">chunk_id PK</text>
           <text class="trow" x="158" y="161">embedding vector</text>
