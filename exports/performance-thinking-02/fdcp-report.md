@@ -48,7 +48,9 @@ The shape that survives is the Hourglass, and it is where the FDCP lives:
 - **A lean middle:** coordination handoffs disappear, so the management layer that existed to shepherd them shrinks.
 - **A protected broad base:** juniors working in sandboxed environments whose mandate is not output. Their mandate is to build judgment, with high feedback frequency, so the top of the hourglass has a successor class.
 
-Holding an unproductive-looking junior base on the balance sheet while competitors post record margins takes conviction. That conviction is now a core competency of the modern CMO. We made the full org-design argument in our earlier report, The Hourglass Bet; this one is about the operator that shape exists to produce.
+Read correctly, the base is not a cost center held out of principle. It is an offensive position. Arm the junior layer with the same agent fleets the pods run and the economics invert: work that once priced out at senior rates ships from the base at junior cost, margin expands instead of shrinking, and the organization can take on more clients, more segments, and more markets without adding senior headcount. The Diamond cuts the base to protect this quarter's margin. The Hourglass upskills the base to grow next decade's surface area.
+
+Holding a junior base on the balance sheet while competitors post record margins still takes conviction. That conviction is now a core competency of the modern CMO. We made the full org-design argument in our earlier report, The Hourglass Bet; this one is about the operator that shape exists to produce.
 
 ## Part 2: The process
 
@@ -125,7 +127,7 @@ Brand equity gets replaced by something harsher: empirical, verifiable reputatio
 ![Marketing to machines: structured data in, verifiable reputation out](images/viz-m2m-agentcards-1200x1500.png)
 *A machine buyer never sees your homepage. It sees your structured data, your terms, and your verifiable track record, and it decides in milliseconds.*
 
-The FDCP operates the brand's machine-to-machine communications the way a previous generation operated its press office: publishing the structured facts agents parse, embedding the incentives agents weigh, and maintaining the verifiable record agents trust. Machine legibility becomes a brand asset with a balance.
+The FDCP operates the brand's machine-to-machine communications the way a previous generation operated its press office: publishing the structured facts agents parse, embedding specific, tracked incentives directly into the JSON-LD and service terms agents weigh, and maintaining the verifiable record agents trust. Machine legibility becomes a brand asset with a balance.
 
 ## What the FDCP is not
 

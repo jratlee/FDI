@@ -18,7 +18,7 @@ The operator built for this market is what we call the Forward-Deployed Communic
 In the full report we map the whole system:
 
 - The four hiring traits that outlast any certification: first-principles thinking, systems curiosity, high-fidelity taste, and orchestration of both people and agents.
-- The Hourglass org shape that protects your 2034 senior pipeline while the Diamond trap quietly eats it.
+- The Hourglass org shape: protect your 2034 senior pipeline, then arm the junior base with agents to expand margin and customer surface area while the Diamond trap quietly eats both.
 - Loop Engineering: verification, SEO/GEO, and ads-iteration loops that run for pennies while humans keep strategy and taste.
 - Policy as Code, the Riverbank: brand and budget rules compiled into infrastructure so autonomous speed stays safe.
 - The Proof Stack and the FT's Four Dimensions of Influence: receipts before roadmap for an audience that no longer trusts claims.
