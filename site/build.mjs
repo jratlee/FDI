@@ -643,9 +643,9 @@ function fdcpPage({ title, subtitle, attribution, bodyHtml }, slideFiles) {
   </div>
 </section>`;
   const description =
-    "The Forward-Deployed Communications Professional: the operator role for agent-mediated markets. One person, a fleet of agents, and ownership of the whole workflow.";
+    "How the Forward-Deployed Communications Professional (FDCP) runs AI agent fleets: loop engineering, policy as code, and marketing to machine buyers. Report plus 12-slide deck.";
   return page({
-    title: "The Forward-Deployed Communicator | False Dawn Industries",
+    title: "The FDCP: Marketing's Operator Role for AI Agent Markets | False Dawn Industries",
     description,
     active: "field-guide",
     jsonLd: articleJsonLd({
