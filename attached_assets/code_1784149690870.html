@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Growth Cartography - The Signal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#ffb94d",
+                      "secondary-fixed": "#e8e1db",
+                      "surface-container": "#231f14",
+                      "on-tertiary-fixed": "#1f1b13",
+                      "inverse-on-surface": "#343024",
+                      "primary-fixed": "#ffddb2",
+                      "on-secondary-container": "#bdb7b2",
+                      "on-primary-container": "#6c4700",
+                      "tertiary-fixed": "#ebe1d4",
+                      "primary": "#ffd69f",
+                      "on-primary-fixed": "#291800",
+                      "on-error": "#690005",
+                      "surface-container-lowest": "#110e05",
+                      "inverse-surface": "#eae2cf",
+                      "on-tertiary-fixed-variant": "#4c463d",
+                      "secondary-container": "#4c4844",
+                      "on-surface-variant": "#d7c4ad",
+                      "amber-glow": "#FFCB6B",
+                      "on-secondary": "#33302c",
+                      "primary-container": "#ffb12b",
+                      "on-primary": "#452b00",
+                      "surface-tint": "#ffb94d",
+                      "secondary-fixed-dim": "#ccc5c0",
+                      "surface-container-low": "#1f1b10",
+                      "surface": "#161308",
+                      "hairline": "#3A2D1C",
+                      "on-surface": "#eae2cf",
+                      "amber-press": "#E0920C",
+                      "faded-ink": "#A8997B",
+                      "elevated": "#1C160D",
+                      "background": "#161308",
+                      "signal-orange": "#FF5E00",
+                      "surface-variant": "#383528",
+                      "error-container": "#93000a",
+                      "on-tertiary": "#353027",
+                      "on-background": "#eae2cf",
+                      "surface-container-highest": "#383528",
+                      "tertiary": "#e5dbce",
+                      "surface-container-high": "#2d2a1d",
+                      "on-secondary-fixed": "#1e1b18",
+                      "tertiary-fixed-dim": "#cfc5b9",
+                      "border-umber": "#2A2015",
+                      "on-error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#624000",
+                      "tertiary-container": "#c8bfb3",
+                      "surface-dim": "#161308",
+                      "on-secondary-fixed-variant": "#4a4642",
+                      "muted-earth": "#7A6A50",
+                      "outline": "#9f8e7a",
+                      "secondary": "#ccc5c0",
+                      "outline-variant": "#524534",
+                      "inverse-primary": "#815500",
+                      "error": "#ffb4ab",
+                      "on-tertiary-container": "#544d44",
+                      "surface-bright": "#3d392c",
+                      "base-dark": "#0D0B08",
+                      "signal-amber": "#FFB12B"
+              },
+              "fontFamily": {
+                      "display": ["Space Grotesk"],
+                      "body-md": ["Inter"],
+                      "label-caps": ["JetBrains Mono"],
+                      "data-mono": ["JetBrains Mono"],
+                      "body-lg": ["Inter"]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.base-dark');
+            color: theme('colors.on-background');
+            overflow-x: hidden;
+        }
+        
+        .huge-text {
+            font-size: 22vw;
+            line-height: 0.85;
+            letter-spacing: -0.06em;
+            word-break: break-word;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 150vw;
+            color: theme('colors.signal-orange');
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+            font-variation-settings: 'FILL' 1;
+        }
+
+        .punchy-heading {
+            font-size: 14vw;
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 177, 43, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-base-dark text-on-background font-body-md antialiased selection:bg-signal-amber selection:text-base-dark pb-28">
+<span class="material-symbols-outlined watermark">architecture</span>
+<!-- Header Minimal -->
+<header class="w-full z-50 flex justify-between items-center p-4 border-b-4 border-signal-amber bg-base-dark/80 backdrop-blur-md sticky top-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-signal-orange text-3xl font-bold">architecture</span>
+<span class="font-display text-xl font-bold tracking-[-0.05em] text-signal-amber uppercase">Cartography</span>
+</div>
+<button class="md:hidden text-signal-amber">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+</header>
+<main class="w-full flex flex-col gap-12 pt-8">
+<!-- Slide 1: Title -->
+<section class="px-4 relative">
+<div class="w-full z-10 flex flex-col justify-start items-start">
+<div class="mb-4 flex items-center gap-2">
+<div class="w-8 h-2 bg-signal-orange"></div>
+<span class="font-label-caps text-[10px] text-signal-amber uppercase tracking-widest font-bold">MarCom Org Design</span>
+</div>
+<h1 class="font-display font-extrabold text-on-surface uppercase text-glow huge-text w-[120%] -ml-2">
+            BUILD<br/><span class="text-signal-amber">THE</span><br/><span class="text-signal-orange">MACHINE</span>
+</h1>
+<p class="font-body-lg text-lg text-secondary-fixed mt-6 font-medium border-l-4 border-signal-amber pl-4">
+            A cartographic approach to navigating complex, unmapped marketplaces. Operationalize high-velocity growth.
+        </p>
+</div>
+</section>
+<!-- Slide 2: The Talent Shift -->
+<section class="px-4 bg-signal-orange text-base-dark py-12 rotate-1 scale-105 shadow-2xl z-20 relative">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-4 h-4 bg-base-dark rounded-full"></div>
+<span class="font-label-caps text-[12px] text-base-dark uppercase font-bold tracking-widest">The Talent Shift</span>
+</div>
+<h2 class="font-display font-extrabold text-base-dark uppercase punchy-heading -ml-1">
+            EXPERT<br/>GENERALISTS<br/>&amp; THE<br/><span class="text-white">HOURGLASS</span>
+</h2>
+<p class="font-body-lg text-base-dark mt-6 font-semibold text-lg leading-snug">
+            The era of the hyper-specialist is ending. The modern growth engine requires polymaths capable of connecting disparate domains.
+        </p>
+<div class="grid grid-cols-1 gap-4 mt-8">
+<div class="p-4 bg-base-dark text-signal-orange rounded-sm border-2 border-base-dark">
+<span class="font-display font-bold text-xl uppercase mb-1 block">01 / Broad Context</span>
+<p class="font-body-md text-sm text-secondary-fixed">Strategic understanding across multiple disciplines.</p>
+</div>
+<div class="p-4 bg-base-dark text-signal-orange rounded-sm border-2 border-base-dark">
+<span class="font-display font-bold text-xl uppercase mb-1 block">02 / Deep Application</span>
+<p class="font-body-md text-sm text-secondary-fixed">Focused execution in critical operational bottlenecks.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Slide 3: Loop Engineering -->
+<section class="px-4 py-12 relative z-10">
+<div class="w-full flex flex-col justify-start">
+<div class="mb-4">
+<span class="font-label-caps text-[12px] text-signal-amber uppercase tracking-widest font-bold block mb-2 border-b border-hairline pb-2">Operational Engines</span>
+<h2 class="font-display font-extrabold text-on-surface uppercase punchy-heading text-glow w-[110%] -ml-1">
+                LOOP<br/>ENGIN<br/>EERING
+            </h2>
+</div>
+<div class="flex flex-col gap-4 mt-6">
+<div class="bg-base-dark border-2 border-signal-amber rounded-sm p-6 flex flex-col relative">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-display text-3xl font-bold text-signal-amber uppercase leading-none">Hill-Climbing<br/>Loop</h3>
+<span class="material-symbols-outlined text-4xl text-signal-orange">trending_up</span>
+</div>
+<p class="font-body-md text-secondary-fixed font-medium">Iterative performance maximization. Relentless, incremental A/B testing.</p>
+</div>
+<div class="bg-surface-container border-2 border-hairline rounded-sm p-6 flex flex-col relative opacity-80">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-display text-3xl font-bold text-on-surface uppercase leading-none">Verification<br/>Loop</h3>
+<span class="material-symbols-outlined text-4xl text-faded-ink">verified_user</span>
+</div>
+<p class="font-body-md text-faded-ink">Strategic anchoring. Human-in-the-loop oversight for long-term brand equity.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Slide 4: Proof Stack -->
+<section class="px-4 py-12 bg-signal-amber text-base-dark -rotate-1 scale-105 z-20 relative">
+<div class="flex flex-col">
+<h2 class="font-display font-extrabold uppercase punchy-heading -ml-1 mb-8">
+            PROOF<br/>STACK
+        </h2>
+<div class="space-y-0 border-l-8 border-base-dark pl-4 ml-2">
+<div class="py-4 border-b-2 border-base-dark/20">
+<span class="font-data-mono text-base-dark font-bold text-sm block mb-1">L3 / EMPIRICAL</span>
+<h4 class="font-display text-2xl font-extrabold uppercase">Quantifiable Data</h4>
+</div>
+<div class="py-4 border-b-2 border-base-dark/20">
+<span class="font-data-mono text-base-dark font-bold text-sm block mb-1">L2 / SYNTHESIS</span>
+<h4 class="font-display text-2xl font-extrabold uppercase">Expert Models</h4>
+</div>
+<div class="py-4">
+<span class="font-data-mono text-base-dark font-bold text-sm block mb-1">L1 / COHERENCE</span>
+<h4 class="font-display text-2xl font-extrabold uppercase">Brand Anchors</h4>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky CTA -->
+<div class="fixed bottom-0 left-0 w-full p-4 z-50 bg-base-dark/95 backdrop-blur-md border-t-2 border-signal-orange shadow-[0_-10px_30px_rgba(255,94,0,0.2)]">
+<button class="w-full bg-signal-amber text-base-dark font-display font-extrabold text-2xl py-4 uppercase tracking-tighter rounded-sm hover:bg-signal-orange hover:text-white transition-colors duration-300 flex items-center justify-center gap-2">
+        Join the Waitlist
+        <span class="material-symbols-outlined text-2xl font-bold">arrow_forward</span>
+</button>
+</div>
+</body></html>
