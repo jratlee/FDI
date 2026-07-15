@@ -1,4 +1,4 @@
-/* False Dawn Industries — shared creative system */
+/* False Dawn Industries · shared creative system */
 /* Self-hosted fonts (woff2, latin + latin-ext subsets from Google Fonts). Local-only, no external fetch at render/export time. font-display:block avoids fallback substitution + layout shift. */
 @font-face {
   font-family: 'Inter';
@@ -180,7 +180,7 @@
 html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--base); }
 body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
-/* ----- Logo mark (bold dawn circle — Signal Orange) ----- */
+/* ----- Logo mark (bold dawn circle · Signal Orange) ----- */
 .mark { color: var(--signal-orange); display: block; }
 .mark .arc { stroke: currentColor; stroke-width: 7; fill: none; }
 .mark .fill { fill: currentColor; }
@@ -194,9 +194,11 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 /* ----- Typographic primitives ----- */
 .eyebrow { font-family: 'JetBrains Mono', monospace; text-transform: uppercase;
   letter-spacing: .28em; color: var(--faded); display: flex; align-items: center; gap: .9em; }
-.eyebrow::before { content: ""; width: 1.6em; height: 0; border-top: 2px solid var(--amber); }
-.headline { font-family: 'Space Grotesk', sans-serif; font-weight: 500; color: var(--cream);
-  line-height: 1.02; letter-spacing: -.015em; }
+.eyebrow::before { content: ""; width: .95em; height: .62em; background: var(--signal-orange); flex: none; }
+.headline { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--cream);
+  text-transform: uppercase; line-height: .92; letter-spacing: -.04em;
+  text-shadow: 0 0 20px rgba(255,177,43,.4); }
+.headline em { font-style: normal; color: var(--signal-orange); }
 .subline { font-family: 'Inter', sans-serif; font-weight: 400; color: var(--faded);
   line-height: 1.45; max-width: 22em; }
 .metaline { font-family: 'JetBrains Mono', monospace; letter-spacing: .14em;
@@ -218,10 +220,10 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 .ad .corner { font-family: 'JetBrains Mono', monospace; font-size: 1.9vw; letter-spacing: .22em;
   color: var(--muted); text-transform: uppercase; text-align: right; }
 .ad .eyebrow { font-size: 2.2vw; margin-bottom: 3.4vw; }
-.ad .headline { font-size: 8.4vw; margin-bottom: 3vw; max-width: 14em; }
+.ad .headline { font-size: 8vw; margin-bottom: 3vw; max-width: 12em; }
 .ad .subline { font-size: 3.1vw; }
 .ad .foot { margin-top: 5.2vw; display: flex; align-items: center; gap: 1.2em; }
-.ad .foot .tick { width: .5em; height: .5em; background: var(--amber); border-radius: 50%; flex: none; }
+.ad .foot .tick { width: .5em; height: .5em; background: var(--signal-orange); flex: none; }
 .ad .metaline { font-size: 1.95vw; }
 
 /* Wide / landscape formats: tame the type and tighten vertical rhythm */

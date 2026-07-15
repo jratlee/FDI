@@ -26,7 +26,7 @@ export function BrandInAction() {
           </div>
           <div className="flex items-center gap-4 text-xs font-['JetBrains_Mono'] text-[#A8997B]">
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#FFCB6B]"></span>
+              <span className="w-2 h-2 rounded-none bg-[#FFCB6B]"></span>
               SYS.ONLINE
             </span>
             <span className="text-[#3A2D1C]">|</span>

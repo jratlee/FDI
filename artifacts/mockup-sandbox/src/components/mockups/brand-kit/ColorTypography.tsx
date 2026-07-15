@@ -12,7 +12,7 @@ export function ColorTypography() {
           <div className="flex items-center gap-4">
             <div className="h-px w-12 bg-[#3A2D1C]" />
             <span className="font-['JetBrains_Mono'] text-xs tracking-widest text-[#7A6A50] uppercase">
-              Brand System — Document 01
+              Brand System // Document 01
             </span>
           </div>
           <h1 className="font-['Space_Grotesk'] text-5xl md:text-7xl font-medium tracking-tight text-[#F0E8D5]">
@@ -22,7 +22,7 @@ export function ColorTypography() {
             <h2 className="font-['Space_Grotesk'] text-2xl text-[#A8997B]">
               Cartographic Precision
             </h2>
-            <div className="hidden sm:block h-1 w-1 rounded-full bg-[#3A2D1C]" />
+            <div className="hidden sm:block h-1 w-1 rounded-none bg-[#3A2D1C]" />
             <p className="font-['Inter'] text-lg text-[#7A6A50] max-w-xl leading-relaxed">
               Find true north in unmapped markets. A precision navigational
               instrument where quantitative thinking meets creative strategy.
@@ -159,7 +159,7 @@ export function ColorTypography() {
             <h4 className="font-['JetBrains_Mono'] text-xs text-[#7A6A50] uppercase tracking-wider">
               Signal Amber Ramp
             </h4>
-            <div className="flex h-32 rounded-lg overflow-hidden border border-[#2A2015]">
+            <div className="flex h-32 rounded-none overflow-hidden border border-[#2A2015]">
               <div
                 className="flex-1 flex flex-col justify-end p-4"
                 style={{ backgroundColor: "#E0920C" }}
@@ -292,7 +292,7 @@ export function ColorTypography() {
                 </p>
               </div>
               <div className="lg:col-span-3">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#141009] border border-[#2A2015] p-6 rounded-lg">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#141009] border border-[#2A2015] p-6 rounded-none">
                   <div className="space-y-2">
                     <div className="font-['JetBrains_Mono'] text-xs text-[#7A6A50]">
                       REVENUE_YTD
@@ -394,7 +394,7 @@ function Swatch({
 }) {
   return (
     <div
-      className={`group flex items-center justify-between p-4 rounded-lg transition-colors ${
+      className={`group flex items-center justify-between p-4 rounded-none transition-colors ${
         hasBorder ? "border border-[#2A2015]" : ""
       }`}
       style={{ backgroundColor: hex }}

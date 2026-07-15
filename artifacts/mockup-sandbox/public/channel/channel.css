@@ -1,4 +1,4 @@
-/* False Dawn Industries — channel identity assets */
+/* False Dawn Industries · channel identity assets */
 @import url('/__mockup/ads/brand.css');
 
 /* ---------- Avatar (square, safe for circular crop) ---------- */
@@ -26,15 +26,16 @@
 .post .lockup { font-size: 4vmin; }
 .post .ptag { font-family: 'JetBrains Mono', monospace; font-size: 2.4vmin; letter-spacing: .24em;
   text-transform: uppercase; color: var(--muted); }
-.post .idx { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 30vmin; line-height: .8;
+.post .idx { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 30vmin; line-height: .8;
   color: transparent; -webkit-text-stroke: .45vmin var(--amber); }
-.post .pname { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 10vmin;
-  letter-spacing: -.01em; color: var(--cream); line-height: 1; margin-top: 2vmin; }
+.post .pname { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 10vmin;
+  text-transform: uppercase; letter-spacing: -.03em; color: var(--cream); line-height: .95; margin-top: 2vmin;
+  text-shadow: 0 0 20px rgba(255,177,43,.4); }
 .post .pdesc { font-family: 'Inter', sans-serif; font-size: 3.3vmin; color: var(--faded);
   line-height: 1.4; max-width: 18em; margin-top: 3.5vmin; }
 .post .pfoot { display: flex; align-items: center; gap: 1em; font-family: 'JetBrains Mono', monospace;
   font-size: 2.4vmin; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-.post .pfoot .dot { width: .55em; height: .55em; border-radius: 50%; background: var(--amber); }
+.post .pfoot .dot { width: .55em; height: .55em; background: var(--signal-orange); }
 
 /* ---------- Story-highlight cover (square, centered icon for circular crop) ---------- */
 .cover { position: relative; width: 100vw; height: 100vh; background:

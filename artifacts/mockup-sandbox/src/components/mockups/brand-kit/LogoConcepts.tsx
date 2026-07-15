@@ -39,12 +39,12 @@ const CompassMark = ({ size, color }: { size: number; color: string }) => (
   </svg>
 );
 
-// Concept 2: False Dawn — bold dawn circle (primary mark)
+// Concept 2: False Dawn, bold dawn circle (primary mark)
 const HorizonMark = ({ size, color }: { size: number; color: string }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Open ring over the horizon */}
     <path d="M12 50 A38 38 0 0 1 88 50" stroke={color} strokeWidth="7" fill="none" />
-    {/* Solid lower half — the false dawn rising */}
+    {/* Solid lower half, the false dawn rising */}
     <path d="M12 50 A38 38 0 0 0 88 50 Z" fill={color} />
   </svg>
 );
@@ -182,8 +182,8 @@ export function LogoConcepts() {
           Mark={CompassMark}
         />
         <ConceptCard 
-          title="Concept 02: Dawn Mark — Primary"
-          description="The chosen identity: a bold false dawn breaking over the horizon — a solid lower half rising into an open ring. Rendered in Signal Orange so the mark cuts through at any size, while amber stays the supporting accent across the rest of the system."
+          title="Concept 02: Dawn Mark (Primary)"
+          description="The chosen identity: a bold false dawn breaking over the horizon, a solid lower half rising into an open ring. Rendered in Signal Orange so the mark cuts through at any size, while amber leads the action layer across the rest of the system."
           Mark={HorizonMark}
           markColor={COLORS.signalOrange}
           primary
@@ -201,7 +201,7 @@ export function LogoConcepts() {
       </div>
       
       <footer className="mt-24 pt-8 border-t border-solid text-center font-['JetBrains_Mono'] text-xs" style={{ borderColor: COLORS.borderHairline, color: COLORS.textMuted }}>
-        False Dawn Industries — Brand Exploration // {new Date().getFullYear()}
+        False Dawn Industries // Brand Exploration // {new Date().getFullYear()}
       </footer>
     </div>
   );

@@ -33,7 +33,7 @@ export function BrandGuidelines() {
               01 // Color Architecture
             </h3>
             <p className="brand-kit-text-secondary max-w-2xl mt-4">
-              The palette is constrained and functional. Backgrounds provide a warm, dark canvas. The identity runs two-tone: Signal Orange belongs to the logo mark alone, while Signal Amber is reserved for signal, action, and key data — never used for large fills.
+              The palette is constrained and functional. Backgrounds provide a warm, dark canvas. The identity runs two-tone: Signal Amber is the primary action color for buttons, thick borders, and highlighted headline words, while Signal Orange is the secondary alert accent and the logo mark, reserved for full-bleed color blocks, kicker ticks, and hover states.
             </p>
           </div>
 
@@ -71,13 +71,13 @@ export function BrandGuidelines() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <div className="p-6 border border-[#2A2015] bg-[#141009] rounded">
+            <div className="p-6 border border-[#2A2015] bg-[#141009] rounded-none">
               <div className="text-[#FFB12B] font-['Space_Grotesk'] mb-2 font-medium">DO</div>
-              <p className="brand-kit-text-secondary text-sm">Use Signal Amber sparingly for the most important action on a screen or to highlight critical shifts in data. Backgrounds stay warm dark.</p>
+              <p className="brand-kit-text-secondary text-sm">Lead with Signal Amber for actions, thick borders, and highlighted headline words. Deploy Signal Orange as a deliberate alert: full-bleed rotated color blocks, kicker ticks, and hover inversions. Backgrounds stay warm dark.</p>
             </div>
-            <div className="p-6 border border-[#2A2015] bg-[#141009] rounded">
+            <div className="p-6 border border-[#2A2015] bg-[#141009] rounded-none">
               <div className="text-[#7A6A50] font-['Space_Grotesk'] mb-2 font-medium">DON'T</div>
-              <p className="brand-kit-text-secondary text-sm">Never use amber for large fills, background colors, or generic decorative elements. This dilutes its power as a navigational signal.</p>
+              <p className="brand-kit-text-secondary text-sm">Never drift outside the warm family with teal, red, or cool grays, and never round a corner or replace a thick border with a soft shadow. That dilutes the system's signal.</p>
             </div>
           </div>
         </section>
@@ -91,21 +91,21 @@ export function BrandGuidelines() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col gap-4 border border-[#2A2015] p-6 rounded bg-[#141009]">
+            <div className="flex flex-col gap-4 border border-[#2A2015] p-6 rounded-none bg-[#141009]">
               <div className="font-['Space_Grotesk'] text-4xl brand-kit-text-primary mb-2">Space Grotesk</div>
               <div className="brand-kit-text-secondary text-sm mb-4">Display / Headings</div>
               <p className="brand-kit-text-muted text-sm leading-relaxed">
                 Used for primary navigation, section headers, and major typographic moments. Brings a technical, engineered feel while remaining highly legible.
               </p>
             </div>
-            <div className="flex flex-col gap-4 border border-[#2A2015] p-6 rounded bg-[#141009]">
+            <div className="flex flex-col gap-4 border border-[#2A2015] p-6 rounded-none bg-[#141009]">
               <div className="font-['Inter'] text-2xl font-medium brand-kit-text-primary mb-2 mt-2">Inter</div>
               <div className="brand-kit-text-secondary text-sm mb-4">Body / UI</div>
               <p className="brand-kit-text-muted text-sm leading-relaxed">
                 The workhorse. Used for all long-form reading, secondary UI elements, dense tables, and descriptive text. Quietly confident.
               </p>
             </div>
-            <div className="flex flex-col gap-4 border border-[#2A2015] p-6 rounded bg-[#141009]">
+            <div className="flex flex-col gap-4 border border-[#2A2015] p-6 rounded-none bg-[#141009]">
               <div className="font-['JetBrains_Mono'] text-xl brand-kit-text-primary mb-2 mt-3">JetBrains Mono</div>
               <div className="brand-kit-text-secondary text-sm mb-4">Numerics / Data / Code</div>
               <p className="brand-kit-text-muted text-sm leading-relaxed">
@@ -148,11 +148,11 @@ export function BrandGuidelines() {
             <div className="flex flex-col gap-4">
               <h4 className="brand-kit-text-primary font-medium">Copy Examples</h4>
               <div className="flex flex-col gap-3">
-                <div className="p-4 border border-[#2A2015] bg-[#141009] rounded flex gap-4">
+                <div className="p-4 border border-[#2A2015] bg-[#141009] rounded-none flex gap-4">
                   <div className="text-[#FFB12B] font-['JetBrains_Mono'] text-sm mt-1">DO</div>
                   <div className="brand-kit-text-primary">"The model lost its bearing."</div>
                 </div>
-                <div className="p-4 border border-[#2A2015] bg-[#141009] rounded flex gap-4">
+                <div className="p-4 border border-[#2A2015] bg-[#141009] rounded-none flex gap-4">
                   <div className="text-[#7A6A50] font-['JetBrains_Mono'] text-sm mt-1">DON'T</div>
                   <div className="brand-kit-text-muted">"Unleash the power of next-gen AI to supercharge your ROI!"</div>
                 </div>
@@ -170,7 +170,7 @@ export function BrandGuidelines() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="md:col-span-2 border border-[#2A2015] bg-[#141009] p-12 rounded flex flex-col items-center justify-center gap-6 relative overflow-hidden grid-pattern">
+            <div className="md:col-span-2 border border-[#2A2015] bg-[#141009] p-12 rounded-none flex flex-col items-center justify-center gap-6 relative overflow-hidden grid-pattern">
               <div className="absolute inset-0 opacity-20 pointer-events-none"></div>
               <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
                 <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FF5E00" strokeWidth="7" fill="none" />
@@ -182,7 +182,7 @@ export function BrandGuidelines() {
               <div className="absolute top-4 left-4 text-xs font-['JetBrains_Mono'] text-[#7A6A50]">Clear Space: 2x logo height</div>
             </div>
             
-            <div className="border border-[#2A2015] bg-[#141009] p-6 rounded flex flex-col items-center justify-center relative opacity-70">
+            <div className="border border-[#2A2015] bg-[#141009] p-6 rounded-none flex flex-col items-center justify-center relative opacity-70">
               <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
                 <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FFB12B" strokeWidth="7" fill="none" />
                 <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#FFB12B" />
@@ -191,7 +191,7 @@ export function BrandGuidelines() {
               <div className="mt-4 text-xs text-[#7A6A50] uppercase tracking-wider text-center">Don't recolor</div>
             </div>
 
-            <div className="border border-[#2A2015] bg-[#141009] p-6 rounded flex flex-col items-center justify-center relative opacity-70">
+            <div className="border border-[#2A2015] bg-[#141009] p-6 rounded-none flex flex-col items-center justify-center relative opacity-70">
               <svg width="96" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="relative z-10">
                 <path d="M12 50 A38 38 0 0 1 88 50" stroke="#FF5E00" strokeWidth="7" fill="none" />
                 <path d="M12 50 A38 38 0 0 0 88 50 Z" fill="#FF5E00" />
@@ -211,7 +211,7 @@ export function BrandGuidelines() {
             </h3>
           </div>
 
-          <div className="border border-[#2A2015] rounded overflow-hidden">
+          <div className="border border-[#2A2015] rounded-none overflow-hidden">
             <table className="w-full text-left text-sm">
               <thead className="bg-[#141009] border-b border-[#2A2015] font-['Space_Grotesk'] uppercase tracking-wider text-[#A8997B]">
                 <tr>
@@ -230,7 +230,7 @@ export function BrandGuidelines() {
                 <TableRow name="Amber Press #E0920C" ratio="7.94:1" rating="AAA" colorHex="#E0920C" />
                 <tr>
                   <td className="p-4 flex items-center gap-3">
-                    <div className="w-4 h-4 rounded-full bg-[#FFB12B] border border-[#2A2015]"></div>
+                    <div className="w-4 h-4 rounded-none bg-[#FFB12B] border border-[#2A2015]"></div>
                     <span className="brand-kit-text-primary font-medium">Parchment Night on Signal Amber</span>
                   </td>
                   <td className="p-4 font-['JetBrains_Mono'] text-[#F0E8D5]">10.83:1</td>
@@ -240,14 +240,14 @@ export function BrandGuidelines() {
             </table>
           </div>
 
-          <div className="p-6 border border-[#2A2015] bg-[#141009] rounded flex gap-4 items-start">
+          <div className="p-6 border border-[#2A2015] bg-[#141009] rounded-none flex gap-4 items-start">
             <div className="text-[#FFB12B] mt-0.5">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
             <div>
               <h4 className="brand-kit-text-primary font-medium mb-1">Colorblind Safety Note</h4>
               <p className="brand-kit-text-secondary text-sm leading-relaxed">
-                Data series within the warm family (e.g. stable baseline vs. volatile spike) must be distinguished by label, weight, or position — never by hue alone. Amber-for-text should always use the brighter token (Signal Amber or Amber Glow) to maintain legibility.
+                Data series within the warm family (e.g. stable baseline vs. volatile spike) must be distinguished by label, weight, or position, never by hue alone. Amber-for-text should always use the brighter token (Signal Amber or Amber Glow) to maintain legibility.
               </p>
             </div>
           </div>
@@ -260,7 +260,7 @@ export function BrandGuidelines() {
 
 function ColorSwatch({ name, hex, bgClass, textClass, borderClass = "" }: { name: string, hex: string, bgClass: string, textClass: string, borderClass?: string }) {
   return (
-    <div className={`p-4 rounded flex items-center justify-between ${bgClass} ${borderClass ? `border ${borderClass}` : ''}`}>
+    <div className={`p-4 rounded-none flex items-center justify-between ${bgClass} ${borderClass ? `border ${borderClass}` : ''}`}>
       <span className={`${textClass} font-medium`}>{name}</span>
       <span className={`${textClass} font-['JetBrains_Mono'] text-sm opacity-80`}>{hex}</span>
     </div>
@@ -271,7 +271,7 @@ function TableRow({ name, ratio, rating, colorHex }: { name: string, ratio: stri
   return (
     <tr>
       <td className="p-4 flex items-center gap-3">
-        <div className="w-4 h-4 rounded-full border border-[#2A2015]" style={{ backgroundColor: colorHex }}></div>
+        <div className="w-4 h-4 rounded-none border border-[#2A2015]" style={{ backgroundColor: colorHex }}></div>
         <span className="brand-kit-text-primary font-medium">{name}</span>
       </td>
       <td className="p-4 font-['JetBrains_Mono'] text-[#F0E8D5]">{ratio}</td>
