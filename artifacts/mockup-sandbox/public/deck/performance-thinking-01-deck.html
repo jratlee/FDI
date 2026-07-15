@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · Performance Thinking 01 Deck · The Hourglass Bet</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  /* Deck overrides: brand.css locks body to 100vh for ads; the deck scrolls */
+  html, body { width: auto; height: auto; overflow: visible; background: #060504; }
+
+  @page { size: 1920px 1080px; margin: 0; }
+
+  .slide {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    background: var(--base); page-break-after: always; break-after: page;
+    font-family: 'Inter', sans-serif; color: var(--cream);
+  }
+  @media screen { .slide { margin: 0 auto 24px; } }
+
+  .s-top { position: absolute; top: 72px; left: 96px; right: 96px;
+    display: flex; align-items: center; justify-content: space-between; }
+  .s-top .lockup { font-size: 30px; }
+  .s-top .corner { font-family: 'JetBrains Mono', monospace; font-size: 17px;
+    letter-spacing: .22em; color: var(--muted); text-transform: uppercase; text-align: right; }
+  .s-foot { position: absolute; bottom: 72px; left: 96px; right: 96px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+  .cite { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .08em;
+    color: var(--muted); line-height: 1.6; text-transform: uppercase; }
+  .cite b { color: var(--faded); font-weight: 500; }
+  .pageno { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .18em;
+    color: var(--muted); white-space: nowrap; }
+  .gridline-v { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px solid rgba(58,45,28,.45); }
+
+  /* ---- TPL/TITLE ---- */
+  .tpl-title .body { position: absolute; left: 96px; right: 96px; top: 300px; }
+  .tpl-title .eyebrow { font-size: 21px; margin-bottom: 52px; }
+  .tpl-title .headline { font-size: 116px; max-width: 15em; }
+  .tpl-title .subline { font-size: 30px; margin-top: 46px; max-width: 33em; }
+
+  /* ---- TPL/SECTION ---- */
+  .tpl-section .index { position: absolute; right: 64px; bottom: -84px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 620px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 2px rgba(58,45,28,.9); user-select: none; }
+  .tpl-section .body { position: absolute; left: 96px; top: 380px; max-width: 1100px; }
+  .tpl-section .eyebrow { font-size: 21px; margin-bottom: 48px; }
+  .tpl-section .headline { font-size: 128px; }
+  .tpl-section .subline { font-size: 31px; margin-top: 42px; }
+
+  /* ---- TPL/BIG-STAT ---- */
+  .tpl-stat .body { position: absolute; left: 96px; right: 96px; top: 240px; }
+  .tpl-stat .kicker { font-size: 21px; }
+  .tpl-stat .statrow { display: flex; align-items: stretch; gap: 96px; margin-top: 84px; }
+  .tpl-stat .stat { flex: 1; border-left: 3px solid var(--amber); padding-left: 56px; }
+  .tpl-stat .stat.dim { border-left-color: var(--hairline); }
+  .tpl-stat .num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 216px;
+    line-height: .95; letter-spacing: -.03em; color: var(--amber); white-space: nowrap; }
+  .tpl-stat .stat.dim .num { color: var(--faded); }
+  .tpl-stat .lbl { font-family: 'Inter', sans-serif; font-size: 29px; color: var(--faded);
+    margin-top: 34px; line-height: 1.45; max-width: 17em; }
+
+  /* ---- TPL/QUOTE ---- */
+  .tpl-quote .rule { position: absolute; left: 96px; top: 250px; width: 128px; height: 0;
+    border-top: 4px solid var(--amber); }
+  .tpl-quote .qmark { position: absolute; left: 90px; top: 120px; font-family: 'Space Grotesk', sans-serif;
+    font-size: 300px; line-height: 1; color: rgba(255,177,43,.14); user-select: none; }
+  .tpl-quote .q { position: absolute; left: 96px; right: 130px; top: 306px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 51px; line-height: 1.34;
+    letter-spacing: -.01em; color: var(--cream); }
+  .tpl-quote .q em { font-style: normal; color: var(--amber); }
+  .tpl-quote .attr { position: absolute; left: 96px; bottom: 130px; font-family: 'JetBrains Mono', monospace;
+    font-size: 19px; letter-spacing: .18em; text-transform: uppercase; color: var(--faded); }
+
+  /* ---- TPL/TABLE ---- */
+  .tpl-table .body { position: absolute; left: 96px; right: 96px; top: 210px; }
+  .tpl-table .headline { font-size: 66px; margin-top: 26px; }
+  .tpl-table table { width: 100%; margin-top: 64px; border-collapse: collapse; }
+  .tpl-table th { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    text-transform: uppercase; text-align: left; padding: 0 32px 26px 0; font-weight: 500; }
+  .tpl-table th.old { color: var(--muted); }
+  .tpl-table th.new { color: var(--amber); }
+  .tpl-table td { font-family: 'Space Grotesk', sans-serif; font-size: 37px; padding: 27px 32px 27px 0;
+    border-top: 1px solid var(--border); vertical-align: top; width: 50%; }
+  .tpl-table td.old { color: var(--muted); }
+  .tpl-table td.new { color: var(--cream); }
+  .tpl-table td.new::before { content: "→ "; color: var(--amber); font-family: 'JetBrains Mono', monospace;
+    font-size: 30px; }
+
+  /* ---- TPL/LIST (cards grid) ---- */
+  .tpl-list .body { position: absolute; left: 96px; right: 96px; top: 200px; }
+  .tpl-list .headline { font-size: 64px; margin-top: 26px; }
+  .tpl-list .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; margin-top: 58px; }
+  .tpl-list .grid.g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .tpl-list .grid.g2 { grid-template-columns: 1fr 1fr; }
+  .tpl-list .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 38px 40px; min-height: 240px; }
+  .tpl-list .card.win { border-color: var(--amber-press); border-top: 3px solid var(--amber); }
+  .tpl-list .card .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; color: var(--amber);
+    letter-spacing: .2em; }
+  .tpl-list .card h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 31px;
+    color: var(--cream); margin-top: 18px; line-height: 1.15; }
+  .tpl-list .card.win h3 { color: var(--amber); }
+  .tpl-list .card p { font-size: 20.5px; color: var(--faded); margin-top: 16px; line-height: 1.5; }
+  .tpl-list .card .shape { height: 110px; display: flex; align-items: center; margin-top: 18px; }
+  .tpl-list .card .shape svg { height: 100%; overflow: visible; }
+  .sh { fill: rgba(122,106,80,.22); stroke: var(--muted); stroke-width: 2; }
+  .sha { fill: rgba(255,177,43,.12); stroke: var(--amber); stroke-width: 2.6; }
+
+  /* ---- TPL/COLUMNS ---- */
+  .tpl-cols .body { position: absolute; left: 96px; right: 96px; top: 230px; }
+  .tpl-cols .headline { font-size: 64px; margin-top: 26px; max-width: 17em; }
+  .tpl-cols .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-top: 76px; }
+  .tpl-cols .col { padding: 0 56px; border-left: 1px solid var(--hairline); }
+  .tpl-cols .col:first-child { padding-left: 0; border-left: 0; }
+  .tpl-cols .col .tag { font-family: 'JetBrains Mono', monospace; font-size: 18px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--amber); }
+  .tpl-cols .col h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 41px;
+    color: var(--cream); margin-top: 24px; line-height: 1.14; }
+  .tpl-cols .col p { font-size: 22.5px; color: var(--faded); margin-top: 22px; line-height: 1.55; }
+
+  /* ---- TPL/CTA ---- */
+  .tpl-cta { text-align: center; }
+  .tpl-cta .body { position: absolute; left: 160px; right: 160px; top: 268px; }
+  .tpl-cta .mark { margin: 0 auto; height: 96px; width: 96px; }
+  .tpl-cta .headline { font-size: 96px; margin-top: 56px; }
+  .tpl-cta .subline { font-size: 29px; margin: 38px auto 0; max-width: 30em; }
+  .tpl-cta .pill { display: inline-block; margin-top: 62px; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 30px; color: #0D0B08; background: var(--amber);
+    padding: 26px 64px; border-radius: 999px; letter-spacing: .01em; }
+  .tpl-cta .sys { position: absolute; left: 96px; right: 96px; bottom: 72px;
+    display: flex; align-items: center; justify-content: center; gap: 26px; }
+  .tpl-cta .sys .chip { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 18px; }
+  .tpl-cta .sys .lead { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--faded); }
+
+  /* ---- TPL/SOURCES ---- */
+  .tpl-sources .body { position: absolute; left: 96px; right: 96px; top: 170px; }
+  .tpl-sources .headline { font-size: 64px; margin-top: 16px; }
+  .tpl-sources .srcgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 72px; margin-top: 48px; }
+  .tpl-sources .src { display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 22px; }
+  .tpl-sources .src .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    color: var(--amber); padding-top: 8px; }
+  .tpl-sources .src .org { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 30px;
+    line-height: 1.14; }
+  .tpl-sources .src .claim { font-size: 20px; color: var(--faded); margin-top: 12px; line-height: 1.45; }
+</style>
+</head>
+
+<!-- ============ 01 · TITLE ============ -->
+<section class="slide tpl-title" id="s1">
+  <div class="gridline-v" style="left: 1493px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">Performance Thinking · 01/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Growth Cartography · Performance Thinking · Org design</div>
+    <h1 class="headline">The Hourglass bet.</h1>
+    <p class="subline">Org design for the agentic era: software now acts on its own. The org chart that survives is the one that protects human judgment while agents do the work.</p>
+  </div>
+  <div class="s-foot">
+    <div class="cite"><b>False Dawn Industries</b> · Performance Thinking · 2026</div>
+    <div class="pageno">FDI-PT-01</div>
+  </div>
+</section>
+
+<!-- ============ 02 · BIG-STAT (the inversion) ============ -->
+<section class="slide tpl-stat" id="s2">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">The inversion · 02/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">Software stopped being a tool and started being a participant</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">~$0</div>
+        <div class="lbl">the marginal cost of generating content. The assembly-line MarCom department loses its reason to exist</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">$15T</div>
+        <div class="lbl">in B2B purchases could be agent-mediated by 2028, a Gartner estimate cited in Ramp's analysis of agentic commerce</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <b>AWS Events</b> agentic team structures · <b>Ramp</b> marketing to AI agents (Gartner estimate) · estimates, not actuals</div>
+    <div class="pageno">02</div>
+  </div>
+</section>
+
+<!-- ============ 03 · SECTION (People) ============ -->
+<section class="slide tpl-section" id="s3">
+  <div class="index">01</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">People · 03/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part one · People</div>
+    <h1 class="headline">The expert generalist</h1>
+    <p class="subline">Specialists owned lanes. Generalists own outcomes, with agents as on-demand domain experts. Hire for first principles, system curiosity, taste, and orchestration.</p>
+  </div>
+</section>
+
+<!-- ============ 04 · LIST g4 (four org shapes) ============ -->
+<section class="slide tpl-list" id="s4">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">People · 04/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">The deskilling trap</div>
+    <h2 class="headline">Four shapes an org can take. One survives 2034.</h2>
+    <div class="grid g4">
+      <div class="card">
+        <div class="n">01</div><h3>The Pyramid</h3>
+        <div class="shape"><svg viewBox="0 0 120 100"><path class="sh" d="M60 10 L110 90 L10 90 Z"/></svg></div>
+        <p>Many juniors, few seniors. Too slow and too heavy for agentic workflows.</p>
+      </div>
+      <div class="card">
+        <div class="n">02</div><h3>The Diamond</h3>
+        <div class="shape"><svg viewBox="0 0 120 100"><path class="sh" d="M60 8 L105 50 L60 92 L15 50 Z"/></svg></div>
+        <p>Juniors cut, middle bloated to watch the AI. Destroys the learning pipeline.</p>
+      </div>
+      <div class="card">
+        <div class="n">03</div><h3>The Inverted Pyramid</h3>
+        <div class="shape"><svg viewBox="0 0 120 100"><path class="sh" d="M10 10 L110 10 L60 90 Z"/></svg></div>
+        <p>Senior pods only. Fast today, no path for anyone to become senior tomorrow.</p>
+      </div>
+      <div class="card win">
+        <div class="n">04</div><h3>The Hourglass</h3>
+        <div class="shape"><svg viewBox="0 0 120 100"><path class="sha" d="M20 8 h80 l-30 38 v8 l30 38 h-80 l30 -38 v-8 Z"/></svg></div>
+        <p>Senior pods on top, lean middle, protected junior base building judgment below.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Source · <b>AWS Events</b> · a leader's guide to advanced team structures in an agentic world</div>
+    <div class="pageno">04</div>
+  </div>
+</section>
+
+<!-- ============ 05 · QUOTE (deskilling) ============ -->
+<section class="slide tpl-quote" id="s5">
+  <div class="qmark">&ldquo;</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">People · 05/12</div>
+  </div>
+  <div class="rule"></div>
+  <p class="q">Expert judgment is not innate. It is built by a decade of friction, mistakes, and edge cases. <em>If nobody junior is in the system today, nobody senior exists in 2034.</em> The junior layer's output is not the asset. It is the judgment.</p>
+  <div class="attr">The deskilling trap · after the AWS Events framework on agentic team structures</div>
+  <div class="s-foot">
+    <div class="cite"><b>Performance Thinking</b> · the Hourglass bet</div>
+    <div class="pageno">05</div>
+  </div>
+</section>
+
+<!-- ============ 06 · SECTION (Process) ============ -->
+<section class="slide tpl-section" id="s6">
+  <div class="index">02</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">Process · 06/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part two · Process</div>
+    <h1 class="headline">Pods on a paved road</h1>
+    <p class="subline">Ops handoffs break on non-deterministic agents. Embedded pods scale badly alone. The target: autonomous pods on a shared platform for runtime, identity, and observability.</p>
+  </div>
+</section>
+
+<!-- ============ 07 · LIST g4 (loop ladder) ============ -->
+<section class="slide tpl-list" id="s7">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">Process · 07/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Loop engineering · after LangChain and Addy Osmani</div>
+    <h2 class="headline">Four loop levels: from task runner to self-improving harness</h2>
+    <div class="grid g4">
+      <div class="card">
+        <div class="n">LEVEL 1</div><h3>Agent Loop</h3>
+        <p>One model calls tools until a discrete task completes. Automates isolated, high-volume work.</p>
+      </div>
+      <div class="card">
+        <div class="n">LEVEL 2</div><h3>Verification Loop</h3>
+        <p>Output scored against a strict rubric; failures retry with feedback. Brand safety, compliance, factual checks.</p>
+      </div>
+      <div class="card">
+        <div class="n">LEVEL 3</div><h3>Event-Driven Loop</h3>
+        <p>External signals trigger runs. Responsive market action without a human initiating.</p>
+      </div>
+      <div class="card win">
+        <div class="n">LEVEL 4</div><h3>Hill-Climbing Loop</h3>
+        <p>The system studies its own production traces and improves prompts, models, and memory over time.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <b>LangChain</b> the art of loop engineering · <b>Addy Osmani</b> loop engineering · human judgment stays at the boundaries</div>
+    <div class="pageno">07</div>
+  </div>
+</section>
+
+<!-- ============ 08 · COLUMNS (riverbank + JIT) ============ -->
+<section class="slide tpl-cols" id="s8">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">Process · 08/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Governance as infrastructure</div>
+    <h2 class="headline">The river needs a riverbank. Prompts are not controls.</h2>
+    <div class="cols">
+      <div class="col">
+        <div class="tag">Contain</div>
+        <h3>Blast radius at the OS level</h3>
+        <p>Scope agent permissions at the container or operating system layer, not the runtime. What an agent cannot reach, it cannot break.</p>
+      </div>
+      <div class="col">
+        <div class="tag">Compile</div>
+        <h3>Policy as code</h3>
+        <p>Brand rules, legal limits, and budgets become executable boolean conditions (Open Policy Agent is the common engine). Violations block instantly, no ticket queue.</p>
+      </div>
+      <div class="col">
+        <div class="tag">Record</div>
+        <h3>Log intent, not just action</h3>
+        <p>Forensics in a non-deterministic world means knowing what the agent tried and why, including what the policy layer refused.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <b>CodiLime</b> (Gartner: 25% of breaches by 2028 tied to agent abuse) · <b>BigID</b> (47% have no AI-specific controls)</div>
+    <div class="pageno">08</div>
+  </div>
+</section>
+
+<!-- ============ 09 · SECTION (Products) ============ -->
+<section class="slide tpl-section" id="s9">
+  <div class="index">03</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">Products · 09/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part three · Products</div>
+    <h1 class="headline">Proof beats promise</h1>
+    <p class="subline">The 80/20 vision-to-substance ratio inverted. The Proof Stack (after a16z crypto): deployed partnerships, hard data, organic pull, and validation nobody paid for.</p>
+  </div>
+</section>
+
+<!-- ============ 10 · TABLE (SEO to GEO) ============ -->
+<section class="slide tpl-table" id="s10">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">Products · 10/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Visibility · the reader is increasingly a model</div>
+    <h2 class="headline">Pull became push: SEO to GEO / LEO</h2>
+    <table>
+      <tr><th class="old">Traditional SEO</th><th class="new">GEO / LEO</th></tr>
+      <tr><td class="old">Real-time crawl and index</td><td class="new">Static training data plus RAG grounding</td></tr>
+      <tr><td class="old">Backlinks, keywords, domain rating</td><td class="new">Citation authority, entity depth, reputable third-party mentions</td></tr>
+      <tr><td class="old">SERP position and traffic volume</td><td class="new">AI citation frequency and share of voice in answers</td></tr>
+      <tr><td class="old">Ten blue links compete</td><td class="new">LLMs cite 2 to 7 domains per query: a zero-sum fight</td></tr>
+    </table>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <b>Profound</b> GEO guide 2025 · <b>Brandpipers</b> LEO definitive guide · one layer out: MCP, A2A, x402, AgentCards (arXiv:2507.19550)</div>
+    <div class="pageno">10</div>
+  </div>
+</section>
+
+<!-- ============ 11 · COLUMNS (90-day plan) ============ -->
+<section class="slide tpl-cols" id="s11">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">The plan · 11/12</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">A CMO's first 90 days</div>
+    <h2 class="headline">Assess, pilot, scale. Protect the base the whole way.</h2>
+    <div class="cols">
+      <div class="col">
+        <div class="tag">Days 1-30</div>
+        <h3>Assess and contain</h3>
+        <p>Map your org's real shape. Freeze middle-heavy hiring. Pull two or three latent polymaths into a pod. Stand up policy as code before agents touch production.</p>
+      </div>
+      <div class="col">
+        <div class="tag">Days 31-60</div>
+        <h3>Pilot loops and proof</h3>
+        <p>Ship the Verification Loop first, then an SEO/GEO loop with automated rollback. Re-sequence every pending campaign around the Proof Stack.</p>
+      </div>
+      <div class="col">
+        <div class="tag">Days 61-90</div>
+        <h3>Scale pods, build the base</h3>
+        <p>Move to pods plus platform. Retrain teams on citation authority. Launch the sandboxed junior program. Leaders keep maker time on the calendar.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite"><b>Performance Thinking</b> · condensed from the full research plan</div>
+    <div class="pageno">11</div>
+  </div>
+</section>
+
+<!-- ============ 12 · CTA ============ -->
+<section class="slide tpl-cta" id="s12">
+  <div class="body">
+    <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    <h2 class="headline">Structure as code, not slides.</h2>
+    <p class="subline">MarCom OS is this framework as a working kit: the Hourglass org blueprint, the capability calculator, and the riverbank governance templates. SkillFoundry runs the enforcement. Top Call grades the signal.</p>
+    <div class="pill">falsedawn.industries/marcom-kit</div>
+  </div>
+  <div class="sys">
+    <span class="lead">Named sources</span>
+    <span class="chip">AWS Events</span>
+    <span class="chip">Anthropic · F. Fung</span>
+    <span class="chip">LangChain</span>
+    <span class="chip">Addy Osmani</span>
+    <span class="chip">a16z crypto</span>
+    <span class="chip">Financial Times</span>
+    <span class="chip">Profound</span>
+    <span class="chip">Ramp</span>
+  </div>
+</section>
+
+</html>

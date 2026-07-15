@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · Loop Ladder</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:5vw 5.4vw 4.2vw;}
+  .head{margin-bottom:2.8vw;}
+  .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.26em;
+    color:var(--faded);font-size:1.55vw;display:flex;align-items:center;gap:.9em;margin-bottom:1.6vw;}
+  .keyb::before{content:"";width:1.8em;height:0;border-top:2px solid var(--amber);}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
+    font-size:4.4vw;letter-spacing:-.015em;line-height:1.08;}
+  .htitle em{font-style:normal;color:var(--amber);}
+  .ladder{display:flex;flex-direction:column;gap:1.9vw;flex:1;justify-content:center;}
+  .rung{display:flex;gap:2.2vw;background:var(--surface);border:1px solid var(--border);
+    border-radius:.7vw;padding:2.1vw 2.4vw;align-items:center;}
+  .rung.l4{border-color:var(--amber-press);background:linear-gradient(90deg,rgba(255,177,43,.07),transparent 60%),var(--surface);}
+  .lv{font-family:'JetBrains Mono',monospace;color:var(--amber);font-size:1.5vw;letter-spacing:.16em;
+    white-space:nowrap;width:9.5vw;flex:none;}
+  .body{flex:1;}
+  .lname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--cream);font-size:2.5vw;}
+  .ldesc{font-family:'Inter',sans-serif;color:var(--faded);font-size:1.65vw;line-height:1.45;margin-top:.5vw;}
+  .impact{font-family:'JetBrains Mono',monospace;font-size:1.2vw;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);width:18vw;flex:none;line-height:1.6;}
+  .rung.l4 .impact{color:var(--amber-glow);}
+  .foot{margin-top:2.6vw;font-family:'Inter',sans-serif;color:var(--muted);font-size:1.6vw;text-align:center;}
+  .foot b{color:var(--amber);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="ad"><div class="wrap">
+  <div class="head">
+    <div class="keyb">Performance Thinking · Process</div>
+    <div class="htitle">From prompting to <em>loop engineering</em></div>
+  </div>
+  <div class="ladder">
+    <div class="rung">
+      <div class="lv">Level 1</div>
+      <div class="body"><div class="lname">Agent Loop</div>
+        <div class="ldesc">One model calls tools repeatedly until a discrete task is complete.</div></div>
+      <div class="impact">Automates isolated high-volume work</div>
+    </div>
+    <div class="rung">
+      <div class="lv">Level 2</div>
+      <div class="body"><div class="lname">Verification Loop</div>
+        <div class="ldesc">Output is scored against a strict rubric. Fail means retry with feedback.</div></div>
+      <div class="impact">Brand safety, compliance, factual checks</div>
+    </div>
+    <div class="rung">
+      <div class="lv">Level 3</div>
+      <div class="body"><div class="lname">Event-Driven Loop</div>
+        <div class="ldesc">Real-world signals trigger agent runs. No human has to initiate.</div></div>
+      <div class="impact">Responsive market action at scale</div>
+    </div>
+    <div class="rung l4">
+      <div class="lv">Level 4</div>
+      <div class="body"><div class="lname">Hill-Climbing Loop</div>
+        <div class="ldesc">The system studies its own production traces and improves its prompts, models, and memory.</div></div>
+      <div class="impact">A self-improving operational harness</div>
+    </div>
+  </div>
+  <div class="foot">The loop executes conditions a human set. <b>It supplies velocity; you still supply the wisdom.</b></div>
+</div></div>
+</body>
+</html>

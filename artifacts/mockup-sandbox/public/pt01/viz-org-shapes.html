@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · Four Org Shapes</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;padding:5vw 5.4vw 4.2vw;}
+  .head{margin-bottom:3vw;}
+  .keyb{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.26em;
+    color:var(--faded);font-size:1.55vw;display:flex;align-items:center;gap:.9em;margin-bottom:1.6vw;}
+  .keyb::before{content:"";width:1.8em;height:0;border-top:2px solid var(--amber);}
+  .htitle{font-family:'Space Grotesk',sans-serif;font-weight:500;color:var(--cream);
+    font-size:4.4vw;letter-spacing:-.015em;line-height:1.08;}
+  .htitle em{font-style:normal;color:var(--amber);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:2.4vw;flex:1;}
+  .cell{background:var(--surface);border:1px solid var(--border);border-radius:.7vw;
+    padding:2.6vw 2.5vw;display:flex;flex-direction:column;}
+  .cell.win{border-color:var(--amber-press);border-top:4px solid var(--amber);}
+  .cnum{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:1.35vw;letter-spacing:.2em;}
+  .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--cream);
+    font-size:2.7vw;margin:.5vw 0 .2vw;}
+  .win .cname{color:var(--amber);}
+  .verdict{font-family:'JetBrains Mono',monospace;font-size:1.25vw;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:1.6vw;}
+  .win .verdict{color:var(--amber-glow);}
+  .stage{height:11vw;display:flex;align-items:center;justify-content:center;margin-bottom:1.8vw;}
+  .stage svg{height:100%;width:auto;overflow:visible;}
+  .txt{font-family:'Inter',sans-serif;color:var(--faded);font-size:1.6vw;line-height:1.5;}
+  .win .txt{color:var(--cream);}
+  .sh{fill:rgba(122,106,80,.22);stroke:var(--muted);stroke-width:2;}
+  .sha{fill:rgba(255,177,43,.12);stroke:var(--amber);stroke-width:2.6;}
+  .foot{margin-top:2.6vw;font-family:'Inter',sans-serif;color:var(--muted);font-size:1.6vw;text-align:center;}
+  .foot b{color:var(--amber);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="ad"><div class="wrap">
+  <div class="head">
+    <div class="keyb">Performance Thinking · People</div>
+    <div class="htitle">Four shapes, one survivor: <em>the Hourglass</em></div>
+  </div>
+  <div class="grid">
+    <div class="cell">
+      <div class="cnum">01</div><div class="cname">The Pyramid</div>
+      <div class="verdict">Legacy · too slow</div>
+      <div class="stage"><svg viewBox="0 0 120 100"><path class="sh" d="M60 10 L110 90 L10 90 Z"/></svg></div>
+      <div class="txt">Many juniors execute manual work under a few seniors. Built for a world where human throughput was the constraint. It isn't anymore.</div>
+    </div>
+    <div class="cell">
+      <div class="cnum">02</div><div class="cname">The Diamond</div>
+      <div class="verdict">The trap · critical risk</div>
+      <div class="stage"><svg viewBox="0 0 120 100"><path class="sh" d="M60 8 L105 50 L60 92 L15 50 Z"/></svg></div>
+      <div class="txt">Cut the junior base, bulk up the middle to watch the AI. Looks efficient on a spreadsheet. Destroys the learning pipeline entirely.</div>
+    </div>
+    <div class="cell">
+      <div class="cnum">03</div><div class="cname">The Inverted Pyramid</div>
+      <div class="verdict">Fast now · fatal later</div>
+      <div class="stage"><svg viewBox="0 0 120 100"><path class="sh" d="M10 10 L110 10 L60 90 Z"/></svg></div>
+      <div class="txt">Pods of 3 to 5 senior generalists running AI. Maximum output today, zero pathway for anyone to become senior tomorrow.</div>
+    </div>
+    <div class="cell win">
+      <div class="cnum">04</div><div class="cname">The Hourglass</div>
+      <div class="verdict">Optimal · protects 2034</div>
+      <div class="stage"><svg viewBox="0 0 120 100"><path class="sha" d="M20 8 h80 l-30 38 v8 l30 38 h-80 l30 -38 v-8 Z"/></svg></div>
+      <div class="txt">Senior pods execute at the top, the middle thins out, and a protected junior base learns at the bottom. Their output is judgment, not assets.</div>
+    </div>
+  </div>
+  <div class="foot">Expert judgment is cultivated, not hired. <b>No junior base today means no senior bench in 2034.</b></div>
+</div></div>
+</body>
+</html>
