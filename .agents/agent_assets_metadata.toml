@@ -191,3 +191,9 @@ id = "P43-_4sl5vTOXS-yX18HI"
 uri = "file://exports/davos-decision-kit/worked-example.md"
 type = "text"
 title = "Worked Example (Solvra)"
+
+[[outputs]]
+id = "8DE6ovoFdSDU18L0i6QyV"
+uri = "file://exports/community-launch/linkedin-article.md"
+type = "text"
+title = "LinkedIn Article: Open Cartography Lab Launch"
