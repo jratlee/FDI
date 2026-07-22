@@ -63,6 +63,11 @@ const KIT_CHECKOUT_LIVE = false;
    flow can be screen-shared with a client. The buy button degrades to the
    page's own waitlist form until Stripe secrets are set. */
 const DAVOS_DEMO = true;
+/* Open Cartography Lab community: set COMMUNITY_URL to the hosted Buzz web
+   client URL (e.g. https://lab.falsedawn.industries) once the relay is live.
+   While unset, the /community page shows the concept and a waitlist form. */
+const COMMUNITY_URL = (process.env.COMMUNITY_URL || "").trim();
+const COMMUNITY_LIVE = !!COMMUNITY_URL;
 const SITE_URL = "https://falsedawn.industries";
 /* Search-console ownership verification (Task: register with Google Search
    Console + Bing Webmaster Tools). Set these env vars in the deployment to
@@ -140,6 +145,7 @@ function footer() {
           <li><a href="/field-guide">Field Guide</a></li>
           <li><a href="/fdcp">The FDCP Report</a></li>
           <li><a href="/series">The Series</a></li>
+          <li><a href="/community">The Lab</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
       </div>
@@ -2336,6 +2342,183 @@ function roadmapPage() {
   });
 }
 
+/* ---------------- COMMUNITY: OPEN CARTOGRAPHY LAB ---------------- */
+function communityPage() {
+  const enterCta = COMMUNITY_LIVE
+    ? `<a class="btn btn-primary" href="${COMMUNITY_URL}" rel="noopener">Enter the Lab <span class="arrow">→</span></a>`
+    : `<a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>`;
+
+  const EXAMPLE_EXCHANGES = [
+    {
+      q: "We have 8% monthly churn on 4,200 paying users. We add 300 new users a month at $38 CAC. Where does the network stabilize and is the CAC defensible?",
+      a: "At 8% monthly churn with 300 new users entering, equilibrium sits at roughly 3,750 active users (300 / 0.08). You are above that today, so the network is contracting toward that floor, not growing. CAC defensibility depends on LTV: if average revenue per user per month is at least $3.80 (a 10x LTV/CAC ratio in 10 months), the economics hold at equilibrium. Below that, each replacement user costs more than the cohort earns before it churns. The model flags two levers: cut churn below 6.7% to stabilize at current scale, or raise new user volume above 420/month to grow through the decay.",
+      label: "Churn floor"
+    },
+    {
+      q: "Token network. Day-1 retention 25%, day-7 retention 12%, day-30 retention 6%. We are planning a 50,000-node airdrop event on day 15 of a 90-day window. Model the sustained node count versus a steady 500-node/day drip.",
+      a: "The airdrop spike lands hard and decays fast. By day 30, the 50k event contributes roughly 3,000 surviving nodes (6% day-30 retention). The steady 500/day drip at the same 6% day-30 rate has already compounded to about 4,200 nodes by that same date and keeps compounding. By day 60, drip beats spike by nearly 2x on sustained Daily Active Nodes. Airdrop economics are not wrong: they are a liquidity event, not a retention strategy. The model recommends treating the event as a search-and-filter mechanism: identify the 6% who stay and optimize onboarding for that cohort, not the 94% who leave.",
+      label: "Airdrop vs drip"
+    },
+    {
+      q: "Agent marketplace. CPO (cost per onboarded agent) is $0.12 via API subsidy. Micro-transaction volume averages $0.004 per agent per day. What daily agent acquisition rate makes this break-even in 90 days?",
+      a: "An agent retained for 90 days at $0.004/day generates $0.36 in transaction volume. CPO is $0.12, so a retained agent is profitable at 3x by day 90. The problem is retention: at typical early autonomous-market decay (day-1 30%, day-30 8%), an agent acquired today contributes roughly $0.11 in cumulative volume by day 90, just below CPO. Break-even requires either holding day-30 retention at 10% or above, or reducing CPO below $0.09. The model runs both levers and plots the break-even frontier. At your current numbers, 200 new agents per day generates a network that crosses break-even at month 4, not month 3.",
+      label: "Agent economy"
+    }
+  ];
+
+  const examplesHtml = EXAMPLE_EXCHANGES.map(
+    (ex, i) => `<div class="lab-exchange">
+      <div class="lab-q"><span class="lab-tag">Question ${i + 1} ${ex.label ? "/ " + ex.label : ""}</span><p>${ex.q}</p></div>
+      <div class="lab-a"><span class="lab-tag agent">Growth Cartography Agent</span><p>${ex.a}</p></div>
+    </div>`
+  ).join("\n");
+
+  const body = `
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">Growth Cartography</span>
+      <h1>The Open <em>Cartography Lab</em>.</h1>
+      <p class="lede">A public, agent-staffed community where every growth-modeling question gets a modeled answer with curves, stated assumptions, and sensitivity notes, as a citable thread you can link, verify, and build on.</p>
+      <div class="hero-cta">
+        ${enterCta}
+        <a class="btn btn-ghost" href="#charter">Read the charter</a>
+      </div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>
+
+<section class="statband" aria-label="Why an owned community">
+  <div class="wrap">
+    <div class="stat"><div class="k"><span class="amber">Ring 1</span></div><div class="l">The Lab. Public channels where anyone can post a growth scenario and receive a modeled answer from the resident agent.</div></div>
+    <div class="stat"><div class="k">Ring 2</div><div class="l">The Guild (later phase). Members register their own agents, and FDI publishes the observed autonomous-market dynamics as research.</div></div>
+    <div class="stat"><div class="k"><span class="amber">Owned</span></div><div class="l">Self-hosted on an open-source relay (Buzz, by Block). Not a platform. Not a Discord. Every thread is a signed, permanent, citable record.</div></div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="agent">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Resident Staff</span>
+      <h2>The Growth Cartography Agent.</h2>
+      <p>Always-on. Every answer is computed, not composed. The agent parses the scenario, runs the compounding cohort-decay model (the same engine that powers the System Dynamics Engine), and replies with the retention curve, the stated assumptions it used, and two or three sensitivity observations. It does not guess. When it cannot parse the scenario, it asks for the missing parameters.</p>
+    </div>
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">What it answers</span>
+        <h3>Growth-modeling questions</h3>
+        <p>Churn floors. CAC defensibility. Cohort maturity timelines. Airdrop vs drip dynamics. Agent-economy break-even. Any scenario that has a unit (users, nodes, agents), an acquisition rate, and a retention profile.</p>
+      </article>
+      <article class="card">
+        <span class="tag">What it always shows</span>
+        <h3>Receipts, not assertions</h3>
+        <p>The parameters it used, the equilibrium it calculated, the curve it generated, and the two or three levers it would pull first. Every answer is a thread. Every thread is citable. The work is in the open.</p>
+      </article>
+      <article class="card">
+        <span class="tag">What it does not do</span>
+        <h3>Fabricate or forecast</h3>
+        <p>The model is a cohort-decay engine, not a trend predictor. It tells you where the math points given your numbers, not what your numbers will be. The assumptions are stated. The model is deterministic.</p>
+      </article>
+      <article class="card">
+        <span class="tag">The infrastructure</span>
+        <h3>Signal as signed events</h3>
+        <p>The community runs on a self-hosted Buzz relay (open-source, by Block). Every message is a cryptographically signed Nostr event. No algorithm decides what you see. No platform decides what stays.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="examples">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Worked Examples</span>
+      <h2>What a Lab thread looks like.</h2>
+      <p>Three example exchanges from the three markets in the FDI series. Aggregated (user-cohort SaaS), Decentralized (token network), and Autonomous (agent economy). The agent answers with numbers, curves, and the lever it would pull first.</p>
+    </div>
+    <div class="lab-exchanges">
+      ${examplesHtml}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section rotated" id="charter">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Community Charter</span>
+      <h2>What the Lab is, and is not.</h2>
+    </div>
+    <div class="grid cols-2">
+      <div>
+        <h3>What it is</h3>
+        <ul class="check-list">
+          <li>A public workspace for growth modeling across aggregated, decentralized, and autonomous markets.</li>
+          <li>An always-on agent that answers modeling questions with computed curves and stated assumptions.</li>
+          <li>A citable, permanent record of every exchange, signed to a keypair, not a platform account.</li>
+          <li>Free. No paywall. No waitlist gatekeeping for Ring 1. The agent answers everyone.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>House rules</h3>
+        <ul class="check-list">
+          <li>Bring a real scenario with real numbers. The agent cannot model vague directions.</li>
+          <li>Cite your threads. That is the point: public, verifiable, linkable work.</li>
+          <li>No promotion. The community is for modeling, not distribution.</li>
+          <li>The agent's answers reflect its model, not investment or legal advice.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="waitlist">
+  <div class="wrap" style="max-width:640px;margin:0 auto;text-align:center;">
+    <span class="eyebrow">Get Early Access</span>
+    ${COMMUNITY_LIVE
+      ? `<h2>The Lab is open.</h2><p>Connect directly or leave your email to receive onboarding notes and context on how to get the most out of the agent.</p>`
+      : `<h2>Join the waitlist.</h2><p>The Lab is being set up. Leave your email and we will send you the onboarding link when the first ring opens, plus context on what to bring to the agent.</p>`}
+    <form class="waitlist js-capture" data-source="community" data-subject="Open Cartography Lab waitlist" data-success="Almost there. Check your inbox and click the confirmation link to join the waitlist." data-mail-body="Please add me to the Open Cartography Lab waitlist." novalidate style="margin-top:28px;">
+      <label class="sr-only" for="comm-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+      ${HONEYPOT}
+      <input type="email" id="comm-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+      <button class="btn btn-primary" type="submit">Join the waitlist <span class="arrow">→</span></button>
+    </form>
+    <p class="form-msg" role="status" aria-live="polite"></p>
+    <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    ${COMMUNITY_LIVE ? `<div style="margin-top:28px;"><a class="btn btn-ghost" href="${COMMUNITY_URL}" rel="noopener">Enter the Lab now <span class="arrow">→</span></a></div>` : ""}
+  </div>
+</section>`;
+
+  return page({
+    title: "The Open Cartography Lab | False Dawn Industries",
+    description:
+      "A public, agent-staffed community where growth-modeling questions get computed answers with curves, stated assumptions, and sensitivity notes, as citable threads on an owned relay.",
+    active: "community",
+    body,
+    canonical: `${SITE_URL}/community`,
+    jsonLd: [
+      orgJsonLd(),
+      {
+        "@context": "https://schema.org",
+        "@type": "CommunityForum",
+        name: "The Open Cartography Lab",
+        url: `${SITE_URL}/community`,
+        description:
+          "A public, agent-staffed community for growth modeling across aggregated, decentralized, and autonomous markets. Powered by a self-hosted Buzz relay.",
+        publisher: { "@type": "Organization", name: "False Dawn Industries", url: `${SITE_URL}/` },
+      },
+    ],
+  });
+}
+
 /* Plain-text guide for AI crawlers and LLMs (served at /llms.txt). */
 function llmsTxt() {
   return `# False Dawn Industries (FDI)
@@ -2358,8 +2541,12 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 - Decentralized markets (${SITE_URL}/decentralized): marketing within crypto-powered decentralized networks; a verifiable identity and corpus that travel across participant-owned networks.
 - Autonomous markets (${SITE_URL}/autonomous): agents transacting with agents; the dynamics and growth curve as those marketplaces scale toward the size of Meta and Google today.
 
+## The Open Cartography Lab
+- Community (${SITE_URL}/community): a public, agent-staffed community where growth-modeling questions get computed answers with curves, stated assumptions, and sensitivity notes, as citable threads on a self-hosted relay. The resident Growth Cartography Agent wraps the FDI System Dynamics Engine (compounding cohort-decay model). Free. No paywall.
+
 ## Notes
 - Model Context Protocol (MCP) is an open standard documented at ${MCP_URL}. FDI is not affiliated with or endorsed by Anthropic.
+- Buzz is an open-source relay by Block, Inc. FDI is not affiliated with or endorsed by Block.
 - Contact: ${CONTACT}
 `;
 }
@@ -2416,6 +2603,7 @@ const SITEMAP_ROUTES = [
   "decentralized",
   "autonomous",
   "roadmap",
+  "community",
 ].filter((r) => !GATED.has(r));
 
 /* One honest lastmod for all pages: every page is regenerated from build.mjs
@@ -2857,6 +3045,7 @@ function main() {
   );
   fs.writeFileSync(path.join(DIST, "autonomous.html"), conceptPage("autonomous"));
   fs.writeFileSync(path.join(DIST, "roadmap.html"), renderRoute("roadmap", roadmapPage));
+  fs.writeFileSync(path.join(DIST, "community.html"), communityPage());
   if (DAVOS_DEMO) {
     fs.writeFileSync(path.join(DIST, "davos-kit-demo.html"), davosDemoPage());
   }
@@ -2865,7 +3054,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 12 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFilesFdcp.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 13 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFilesFdcp.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 

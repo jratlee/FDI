@@ -34,6 +34,7 @@ const EXPECTED_ROUTES = [
   "/decentralized",
   "/autonomous",
   "/roadmap",
+  "/community",
 ];
 const EXPECTED_SLIDES = 13;
 const EXPECTED_SLIDES_FDCP = 12;
