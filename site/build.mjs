@@ -11,6 +11,7 @@ const SRC = path.join(__dirname, "src");
 
 const EXPORTS = path.join(ROOT, "exports", "field-guide-launch");
 const EXPORTS002 = path.join(ROOT, "exports", "field-guide-002-aggregated");
+const EXPORTS003 = path.join(ROOT, "exports", "field-guide-003-decentralized");
 const EXPORTSPT02 = path.join(ROOT, "exports", "performance-thinking-02");
 const EXPORTS004 = path.join(ROOT, "exports", "field-guide-004-autonomous");
 const FONTS = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "fonts");
@@ -504,10 +505,10 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
         <div class="card-foot"><a class="link-arrow" href="/field-guide-002">Read Field Guide 002 <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
-        <span class="tag">The market one-pager</span>
-        <h3>Aggregated markets, mapped</h3>
-        <p>The short version: the definition, the pattern, and the FDI answer for markets where a few platforms sit between makers and audiences and set the terms of discovery.</p>
-        <div class="card-foot"><a class="link-arrow" href="/aggregated">See the one-pager <span class="arrow">→</span></a></div>
+        <span class="pill">Also available</span>
+        <h3>Field Guide 003 · Decentralized: The Network Is the Product</h3>
+        <p>In crypto-powered networks there is no feed to buy — reach is earned through verifiable onchain participation. Farcaster, Lens, ENS, wallet-based identity, and the agent settlement layer.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide-003">Read Field Guide 003 <span class="arrow">→</span></a></div>
       </article>
     </div>
   </div>
@@ -599,6 +600,81 @@ function fieldGuide002({ title, subtitle, attribution, bodyHtml }, slideFiles) {
     body,
     canonical: `${SITE_URL}/field-guide-002`,
     ogImage: "/assets/fg002-cover-1200x627.png",
+  });
+}
+
+function fieldGuide003({ title, subtitle, attribution, bodyHtml }, slideFiles) {
+  const body = `
+<article class="article">
+  <div class="wrap">
+    <div class="article-head">
+      <span class="eyebrow">Growth Cartography · Field Guide 003 · Decentralized</span>
+      <h1>${title}</h1>
+      <p class="sub">${subtitle}</p>
+      <p class="byline">${attribution}</p>
+    </div>
+    <div class="article-cover">
+      <img src="/assets/fg003-cover-1200x627.png" alt="False Dawn Industries Field Guide 003: The network is the product. Decentralized markets." width="1200" height="627" />
+    </div>
+    <div class="prose">
+      ${bodyHtml}
+    </div>
+  </div>
+</article>
+
+<section class="deck section" id="deck">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The deck</span>
+      <h2>Field Guide 003: the decentralized market in 13 slides</h2>
+      <p>The full deck, built on the reusable FDI slide system. View it inline, download the PDF, or browse the slides.</p>
+    </div>
+    <div class="deck-frame">
+      <iframe src="/assets/fdi-field-guide-003-deck.pdf#view=FitH" title="FDI Field Guide 003 deck (PDF)" loading="lazy"></iframe>
+    </div>
+    <div class="deck-actions">
+      <a class="btn btn-primary" href="/assets/fdi-field-guide-003-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+    </div>
+    <div class="slides-strip">
+      ${slidesStrip(slideFiles, "deck-slides-003")}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="prev-guide">
+  <div class="wrap">
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">Previous in the series</span>
+        <h3>Field Guide 002: The Model Decides If You Exist</h3>
+        <p>Three platforms take 62.3% of digital ad spending, organic reach is a rounding error, and an AI answer layer absorbs the click. The aggregated market, mapped.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide-002">Read Field Guide 002 <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">The market one-pager</span>
+        <h3>Decentralized markets, mapped</h3>
+        <p>The short version: participant-owned rails, wallet-based identity, and onchain reputation — and the three crypto primitives that power agent-to-agent commerce.</p>
+        <div class="card-foot"><a class="link-arrow" href="/decentralized">See the one-pager <span class="arrow">→</span></a></div>
+      </article>
+    </div>
+  </div>
+</section>`;
+  const description =
+    "In crypto-powered networks, participants own the rails and there is no feed to buy. The durable asset is a verifiable onchain identity and corpus — Farcaster, Lens, ENS, x402, and the agent settlement layer.";
+  return page({
+    title: "The Decentralized Market: Field Guide 003 | False Dawn Industries",
+    description,
+    active: "field-guide",
+    jsonLd: articleJsonLd({
+      headline: "The Network Is the Product",
+      description,
+      image: "/assets/fg003-cover-1200x627.png",
+      route: "/field-guide-003",
+      datePublished: "2026-07-30",
+    }),
+    body,
+    canonical: `${SITE_URL}/field-guide-003`,
+    ogImage: "/assets/fg003-cover-1200x627.png",
   });
 }
 
@@ -1824,6 +1900,28 @@ function copyAssets() {
   for (const f of slideFiles002)
     copy(path.join(slidesDir002, f), path.join(DIST, "assets", "deck-slides-002", f));
 
+  // Field Guide 003 (Decentralized) images + deck
+  const assetFiles003 = [
+    "fg003-cover-1200x627.png",
+    "viz-protocol-ownership-1200x680.png",
+    "viz-wallet-identity-1200x640.png",
+    "viz-agent-settlement-1200x700.png",
+    "fdi-field-guide-003-deck.pdf",
+  ];
+  for (const f of assetFiles003) {
+    const from = path.join(EXPORTS003, f);
+    if (fs.existsSync(from)) copy(from, path.join(DIST, "assets", f));
+  }
+  const slidesDir003 = path.join(EXPORTS003, "deck-slides");
+  const slideFiles003 = fs.existsSync(slidesDir003)
+    ? fs
+        .readdirSync(slidesDir003)
+        .filter((f) => f.endsWith(".png"))
+        .sort()
+    : [];
+  for (const f of slideFiles003)
+    copy(path.join(slidesDir003, f), path.join(DIST, "assets", "deck-slides-003", f));
+
   // Performance Thinking 02 (FDCP) images + deck
   const assetFilesFdcp = [
     "fdcp-cover-1280x720.png",
@@ -1882,7 +1980,7 @@ function copyAssets() {
   const favicon = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "favicon.svg");
   if (fs.existsSync(favicon)) copy(favicon, path.join(DIST, "favicon.svg"));
 
-  return { slideFiles, slideFiles002, slideFilesFdcp, slideFiles004 };
+  return { slideFiles, slideFiles002, slideFiles003, slideFilesFdcp, slideFiles004 };
 }
 
 // Build the gated Skillfoundry plugin package. It lives OUTSIDE dist/ (which is
@@ -2074,26 +2172,45 @@ const CONCEPTS = {
     eyebrow: "The series · Decentralized markets",
     h1: "Decentralized",
     lede:
-      "Marketing within crypto-powered decentralized networks, where the participants own the rails and no single company sets the terms of discovery.",
+      "Marketing within crypto-powered networks — Farcaster, Lens, DAOs, onchain identity, and the agent settlement layer — where the participants own the rails and no single company controls the feed.",
     definition:
-      "A decentralized market is one where the network itself is owned by its participants: crypto-powered protocols, tokens, and onchain communities instead of one platform's feed. Decentralized marketing is marketing within those networks, and the winning strategy is a persistent, verifiable identity and corpus that travel across them.",
+      "A decentralized market is one where the infrastructure is participant-owned: crypto-powered protocols, tokens, and onchain communities instead of one company's database. There is no feed to buy and no platform to petition. Reach is earned through verifiable contribution, and the durable marketing asset is an onchain identity — wallet, ENS name, attestations, and corpus — that travels across every network the brand enters.",
     points: [
       {
-        h: "The pattern",
-        p: "There is no single feed to win and no platform to petition. Discovery, reputation, and reach run on protocols and communities that the participants themselves own and govern.",
+        h: "No feed to win",
+        p: 'Discovery on <a href="https://www.farcaster.xyz" target="_blank" rel="noopener">Farcaster</a> and <a href="https://lens.xyz" target="_blank" rel="noopener">Lens</a> is distributed across open protocols and community channels. There is no advertising product to buy placement inside. Reach is earned through participation, contribution, and the on-chain reputation that accumulates from both.',
       },
       {
-        h: "The FDI answer",
-        p: "Show up onchain the way a strong brand shows up anywhere: one consistent, verifiable identity and corpus that communities and protocols can check for themselves, portable across every network you enter.",
+        h: "Wallet-based identity",
+        p: 'A wallet address and its associated <a href="https://ens.domains" target="_blank" rel="noopener">ENS</a> name, attestations, and token holdings are the same across every EVM-compatible protocol. <b>brand.eth</b> resolves everywhere. SIWE (EIP-4361, implemented in <code>wevm/viem</code>) lets any application verify wallet ownership without storing a password or trusting a platform.',
       },
       {
-        h: "In the wild",
-        p: 'Protocols like <a href="https://www.farcaster.xyz" target="_blank" rel="noopener">Farcaster</a> (decentralized social) and <a href="https://ens.domains" target="_blank" rel="noopener">ENS</a> (portable onchain identity) are the pattern in public: the network and the identity layer belong to the participants, and reputation travels with the account instead of being locked inside one company\'s platform.',
+        h: "The agent layer",
+        p: 'Three open primitives are building the agent-to-agent commerce stack: <a href="https://github.com/coinbase/x402" target="_blank" rel="noopener"><code>coinbase/x402</code></a> for HTTP-native USDC payment, <a href="https://github.com/coinbase/agentkit" target="_blank" rel="noopener"><code>coinbase/agentkit</code></a> for managed agent wallets, and <a href="https://github.com/google-agentic-commerce/AP2" target="_blank" rel="noopener"><code>google-agentic-commerce/AP2</code></a> for pre-authorized payment mandates. Agents can now discover, verify, and pay for services onchain — no human in the loop.',
+      },
+    ],
+    guide: {
+      href: "/field-guide-003",
+      label: "Read Field Guide 003",
+      note: "Field Guide 003 is live: the full argument for marketing within crypto-powered networks, six moves for the decentralized market, and the three agent-commerce primitives — with the 13-slide deck.",
+    },
+    faqs: [
+      {
+        q: "What is a decentralized market?",
+        a: "A decentralized market is one where the infrastructure is owned by its participants: crypto-powered protocols, tokens, and onchain communities instead of one company's database. There is no single feed to buy and no platform to petition. Reach is earned through verifiable contribution, and the durable marketing asset is a portable, onchain identity.",
+      },
+      {
+        q: "How do Farcaster and Lens differ from web2 social platforms?",
+        a: "On Farcaster, the social graph and content are stored on a peer-to-peer Hub network — no single company controls or can censor them. On Lens, posts and follows are EVM smart contract transactions the brand interacts with directly, not records in a platform's database. Both have production-ready open-source SDKs (neynarxyz/nodejs-sdk and lens-protocol/lens-sdk, both MIT).",
+      },
+      {
+        q: "What are x402, AgentKit, and AP2?",
+        a: "Three open-source primitives for agent-to-agent commerce in crypto: x402 (coinbase/x402, MIT) implements HTTP-native USDC micropayments so an AI agent can pay for an API inline in the request — no billing accounts. AgentKit (coinbase/agentkit, MIT) gives an agent a managed Ethereum wallet. AP2 (google-agentic-commerce/AP2, Apache 2.0) defines a payment mandate an agent carries, pre-authorized by the user.",
       },
     ],
     kit: {
       name: "The Network-Native Org",
-      p: "In decentralized markets the org has to operate across many participant-owned networks at once, without a platform playbook to follow. MarCom OS's Hourglass design and Riverbank governance give the team one set of brand rules and one source of truth that hold in every network it shows up in.",
+      p: "In decentralized markets the org operates across many participant-owned networks without a platform playbook. MarCom OS's Hourglass design and Riverbank governance give the team one set of brand rules and one source of truth that hold in every network it shows up in — and in every agent interaction that queries it.",
     },
   },
   autonomous: {
@@ -2685,11 +2802,12 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 ## The Field Guide
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
 - The Model Decides If You Exist (${SITE_URL}/field-guide-002): Field Guide 002 on the aggregated market. Three platforms are forecast to take 62.3% of worldwide digital ad spending in 2026 (eMarketer), organic reach is a rounding error, and AI answer layers absorb the click; the response is owning an identity and corpus machines can retrieve, verify, and cite. Includes three data visuals and a 13-slide deck.
+- The Network Is the Product (${SITE_URL}/field-guide-003): Field Guide 003 on the decentralized market. In crypto-powered networks (Farcaster, Lens, DAOs) there is no feed to buy and no platform to petition — reach is earned through verifiable onchain contribution. Wallet-based identity (ENS + SIWE via wevm/viem) is the portable reputation substrate. Includes the agent-commerce primitives (coinbase/x402, coinbase/agentkit, google-agentic-commerce/AP2), four visuals, and a 13-slide deck.
 - The Forward-Deployed Communicator (${SITE_URL}/fdcp): the Performance Thinking report on the Forward-Deployed Communications Professional (FDCP), the operator role for agent-mediated markets. One person, a fleet of AI agents on a governed platform, and ownership of the whole workflow: loop engineering, policy as code, a receipts-first proof stack, and machine-to-machine communications. Includes four visuals and a 12-slide deck.
 
 ## The series
 - Aggregated markets (${SITE_URL}/aggregated): marketing within today's platforms (Meta, Google, TikTok) plus what is not yet understood about AI platforms like ChatGPT; own assets that survive rule changes. Field Guide 002 covers this market in full.
-- Decentralized markets (${SITE_URL}/decentralized): marketing within crypto-powered decentralized networks; a verifiable identity and corpus that travel across participant-owned networks.
+- Decentralized markets (${SITE_URL}/decentralized): marketing within crypto-powered decentralized networks (Farcaster, Lens, DAOs, onchain identity, agent settlement). Field Guide 003 covers this market in full.
 - Autonomous markets (${SITE_URL}/autonomous): agents transacting with agents; the dynamics and growth curve as those marketplaces scale toward the size of Meta and Google today.
 
 ## The Open Cartography Lab
@@ -2745,6 +2863,7 @@ const SITEMAP_ROUTES = [
   "",
   "field-guide",
   "field-guide-002",
+  "field-guide-003",
   "fdcp",
   "skillfoundry",
   "marcom-kit",
@@ -2768,6 +2887,7 @@ function lastModDate() {
     path.join(SRC, "site.css"),
     path.join(EXPORTS, "linkedin-thesis-article.md"),
     path.join(EXPORTS002, "field-guide-002-article.md"),
+    path.join(EXPORTS003, "field-guide-003-article.md"),
     path.join(EXPORTSPT02, "fdcp-report.md"),
   ];
   let latest = 0;
@@ -3149,7 +3269,7 @@ function renderRoute(active, builder) {
 function main() {
   rm(DIST);
   mkdir(DIST);
-  const { slideFiles, slideFiles002, slideFilesFdcp, slideFiles004 } = copyAssets();
+  const { slideFiles, slideFiles002, slideFiles003, slideFilesFdcp, slideFiles004 } = copyAssets();
   buildPluginZip();
   buildKitZip();
   buildDavosZip();
@@ -3168,6 +3288,13 @@ function main() {
   const parsed002 = parseArticle(md002);
   const bodyHtml002 = renderArticleBody(parsed002.body);
 
+  const md003 = fs.readFileSync(
+    path.join(EXPORTS003, "field-guide-003-article.md"),
+    "utf8",
+  );
+  const parsed003 = parseArticle(md003);
+  const bodyHtml003 = renderArticleBody(parsed003.body);
+
   const md004 = fs.readFileSync(
     path.join(EXPORTS004, "field-guide-004-article.md"),
     "utf8",
@@ -3183,6 +3310,10 @@ function main() {
   fs.writeFileSync(
     path.join(DIST, "field-guide-002.html"),
     fieldGuide002({ ...parsed002, bodyHtml: bodyHtml002 }, slideFiles002),
+  );
+  fs.writeFileSync(
+    path.join(DIST, "field-guide-003.html"),
+    fieldGuide003({ ...parsed003, bodyHtml: bodyHtml003 }, slideFiles003),
   );
   const mdFdcp = fs.readFileSync(path.join(EXPORTSPT02, "fdcp-report.md"), "utf8");
   const parsedFdcp = parseArticle(mdFdcp);
@@ -3216,7 +3347,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 14 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFilesFdcp.length}+${slideFiles004.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 15 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFiles003.length}+${slideFilesFdcp.length}+${slideFiles004.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 

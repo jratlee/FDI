@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · FG003 · Agent Settlement Stack</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html, body { width: 1200px; height: 700px; overflow: hidden; margin: 0; padding: 0; background: #0D0B08; }
+  .viz { width: 1200px; height: 700px; background: var(--base); position: relative; display: flex; flex-direction: column; justify-content: center; padding: 0 72px; }
+  .viz::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(58,45,28,.12) 0, rgba(58,45,28,.12) 1px, transparent 1px, transparent 60px),
+      repeating-linear-gradient(90deg, rgba(58,45,28,.12) 0, rgba(58,45,28,.12) 1px, transparent 1px, transparent 60px);
+    z-index: 0;
+  }
+  .amber-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--amber); z-index: 2; }
+  .inner { position: relative; z-index: 2; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .24em; text-transform: uppercase; color: var(--amber);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 8px; background: #FF5E00; flex: none; }
+
+  .headline {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 38px; letter-spacing: -.03em; text-transform: uppercase;
+    color: var(--cream); margin: 0 0 36px; line-height: 1.05;
+  }
+  .headline em { font-style: normal; color: var(--amber); }
+
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0; align-items: center; }
+
+  .step {
+    border: 2px solid var(--hairline); padding: 26px 24px; background: var(--sc);
+    display: flex; flex-direction: column; gap: 10px; min-height: 200px;
+  }
+  .step.highlight { border-color: var(--amber); background: rgba(255,177,43,.04); }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+  }
+  .step.highlight .step-num { color: var(--amber); }
+
+  .step-prim {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+    letter-spacing: .1em; color: var(--amber); text-transform: uppercase;
+  }
+  .step-title {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 21px; color: var(--cream); line-height: 1.1;
+    letter-spacing: -.01em;
+  }
+  .step-desc {
+    font-family: 'Inter', sans-serif; font-size: 14px; color: var(--faded);
+    line-height: 1.5; margin-top: 4px;
+  }
+  .step-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase;
+    background: var(--sc-high); color: var(--faded);
+    padding: 4px 10px; align-self: flex-start; border: 1px solid var(--hairline);
+    margin-top: auto;
+  }
+  .step.highlight .step-tag { background: rgba(255,177,43,.12); color: var(--amber-glow); border-color: rgba(255,177,43,.3); }
+
+  .arrow-col {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0 18px; gap: 4px;
+  }
+  .arrow-line { width: 2px; height: 40px; background: var(--hairline); }
+  .arrow-tip {
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 10px solid var(--hairline);
+  }
+  .arrow-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted); white-space: nowrap;
+    margin-top: 8px;
+  }
+
+  .note {
+    margin-top: 22px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    letter-spacing: .08em; color: var(--muted); text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="viz">
+  <div class="amber-bar"></div>
+  <div class="inner">
+    <div class="eyebrow">Field Guide 003 · Crypto primitives for agent commerce</div>
+    <h1 class="headline">Three open primitives. <em>Agents settle in crypto, no human in the loop.</em></h1>
+    <div class="flow">
+      <div class="step">
+        <div class="step-num">01 / Mandate</div>
+        <div class="step-prim">AP2</div>
+        <div class="step-title">Payment mandate</div>
+        <div class="step-desc">User pre-authorizes agent to spend within defined limits: max amounts, approved counterparties, permitted transaction types.</div>
+        <div class="step-tag">google-agentic-commerce/AP2 · Apache 2.0</div>
+      </div>
+      <div class="arrow-col">
+        <div class="arrow-line"></div>
+        <div class="arrow-tip"></div>
+        <div class="arrow-label">agent executes</div>
+      </div>
+      <div class="step highlight">
+        <div class="step-num">02 / Payment</div>
+        <div class="step-prim">x402</div>
+        <div class="step-title">HTTP-native USDC payment</div>
+        <div class="step-desc">API returns 402 with payment terms. Agent pays inline in the HTTP request using stablecoin on Base. No billing accounts, no subscriptions.</div>
+        <div class="step-tag">coinbase/x402 · MIT</div>
+      </div>
+      <div class="arrow-col">
+        <div class="arrow-line"></div>
+        <div class="arrow-tip"></div>
+        <div class="arrow-label">wallet transacts</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03 / Wallet</div>
+        <div class="step-prim">AgentKit</div>
+        <div class="step-title">Managed agent wallet</div>
+        <div class="step-desc">Agent holds a managed Ethereum wallet, sends transactions, calls smart contracts, checks balances — all within its task loop.</div>
+        <div class="step-tag">coinbase/agentkit · MIT</div>
+      </div>
+    </div>
+    <div class="note">False Dawn Industries · Field Guide 003 · falsedawn.industries/field-guide-003 · 2026</div>
+  </div>
+</div>
+</body>
+</html>

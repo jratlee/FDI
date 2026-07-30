@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · FG003 · Wallet Identity</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html, body { width: 1200px; height: 640px; overflow: hidden; margin: 0; padding: 0; background: #0D0B08; }
+  .viz { width: 1200px; height: 640px; background: var(--base); position: relative; display: flex; flex-direction: column; justify-content: center; padding: 0 72px; }
+  .viz::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(58,45,28,.12) 0, rgba(58,45,28,.12) 1px, transparent 1px, transparent 60px),
+      repeating-linear-gradient(90deg, rgba(58,45,28,.12) 0, rgba(58,45,28,.12) 1px, transparent 1px, transparent 60px);
+    z-index: 0;
+  }
+  .amber-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--amber); z-index: 2; }
+  .inner { position: relative; z-index: 2; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .24em; text-transform: uppercase; color: var(--amber);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 8px; background: #FF5E00; flex: none; }
+
+  .headline {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 40px; letter-spacing: -.03em; text-transform: uppercase;
+    color: var(--cream); margin: 0 0 36px; line-height: 1.05;
+  }
+  .headline em { font-style: normal; color: var(--amber); }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  .col { border: 2px solid var(--hairline); padding: 28px 30px; }
+  .col.owned { border-color: var(--amber); background: rgba(255,177,43,.03); }
+
+  .col-hd {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .2em; text-transform: uppercase;
+    padding-bottom: 14px; margin-bottom: 18px;
+    border-bottom: 2px solid var(--border);
+  }
+  .col-hd.rented { color: var(--muted); }
+  .col-hd.owned { color: var(--amber); border-bottom-color: rgba(255,177,43,.3); }
+
+  .col-title {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 24px; color: var(--cream); margin-bottom: 20px;
+    letter-spacing: -.01em;
+  }
+  .col.rented-col .col-title { color: var(--faded); }
+
+  .row {
+    display: flex; align-items: flex-start; gap: 14px; padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .row:last-child { border-bottom: 0; }
+  .row-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted); min-width: 88px;
+    padding-top: 2px;
+  }
+  .row-val { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.4; }
+  .row-val.bad { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(122,106,80,.4); }
+  .row-val.good { color: var(--cream); }
+  .row-val.amber { color: var(--amber); font-weight: 600; }
+
+  .note {
+    margin-top: 22px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    letter-spacing: .08em; color: var(--muted); text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="viz">
+  <div class="amber-bar"></div>
+  <div class="inner">
+    <div class="eyebrow">Field Guide 003 · Decentralized markets</div>
+    <h1 class="headline">Rented platform identity vs. <em>owned onchain identity</em>.</h1>
+    <div class="compare">
+      <div class="col rented-col">
+        <div class="col-hd rented">Web2 / platform identity</div>
+        <div class="col-title">Stored in a company's database</div>
+        <div class="row">
+          <div class="row-label">Portable?</div>
+          <div class="row-val bad">No. Lives on one platform.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Revocable?</div>
+          <div class="row-val bad">Yes — by platform policy.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Verifiable?</div>
+          <div class="row-val bad">Only by the platform.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Composable?</div>
+          <div class="row-val bad">Locked behind APIs.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Agent-readable?</div>
+          <div class="row-val bad">Requires OAuth + rate limits.</div>
+        </div>
+      </div>
+      <div class="col owned">
+        <div class="col-hd owned">Onchain identity · wallet + ENS + EAS</div>
+        <div class="col-title">Controlled by the wallet holder</div>
+        <div class="row">
+          <div class="row-label">Portable?</div>
+          <div class="row-val amber">Yes — same across all EVM protocols.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Revocable?</div>
+          <div class="row-val good">No company can revoke it.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Verifiable?</div>
+          <div class="row-val amber">By any party, publicly, on-chain.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Composable?</div>
+          <div class="row-val good">Attestations stack across protocols.</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Agent-readable?</div>
+          <div class="row-val amber">Yes — direct on-chain query.</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">False Dawn Industries · Field Guide 003 · falsedawn.industries/field-guide-003 · 2026</div>
+  </div>
+</div>
+</body>
+</html>

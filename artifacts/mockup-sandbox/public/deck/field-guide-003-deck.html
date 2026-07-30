@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · Field Guide 003 Deck · Decentralized</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html, body { width: auto; height: auto; overflow: visible; background: #060504; }
+
+  @page { size: 1920px 1080px; margin: 0; }
+
+  .slide {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    background: var(--base); page-break-after: always; break-after: page;
+    font-family: 'Inter', sans-serif; color: var(--cream);
+  }
+  @media screen { .slide { margin: 0 auto 24px; } }
+
+  /* ---- shared chrome ---- */
+  .s-top { position: absolute; top: 72px; left: 96px; right: 96px;
+    display: flex; align-items: center; justify-content: space-between; }
+  .s-top .lockup { font-size: 30px; }
+  .s-top .corner { font-family: 'JetBrains Mono', monospace; font-size: 17px;
+    letter-spacing: .22em; color: var(--muted); text-transform: uppercase; text-align: right; }
+  .s-foot { position: absolute; bottom: 72px; left: 96px; right: 96px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+  .cite { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .08em;
+    color: var(--muted); line-height: 1.6; text-transform: uppercase; }
+  .cite b { color: var(--faded); font-weight: 500; }
+  .cite a { color: var(--amber); font-weight: 500; text-decoration: none;
+    border-bottom: 1px solid rgba(255,177,43,.4); }
+  .pageno { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .18em;
+    color: var(--muted); white-space: nowrap; }
+  .gridline-v { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px solid rgba(58,45,28,.45); }
+  .gridline-h { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid rgba(58,45,28,.45); }
+
+  /* ---- TPL/TITLE ---- */
+  .tpl-title .body { position: absolute; left: 96px; right: 96px; top: 280px; }
+  .tpl-title .eyebrow { font-size: 21px; margin-bottom: 52px; }
+  .tpl-title .headline { font-size: 104px; max-width: 13em; }
+  .tpl-title .headline em { font-style: normal; color: var(--amber); }
+  .tpl-title .subline { font-size: 30px; margin-top: 46px; max-width: 33em; color: var(--faded); }
+
+  /* ---- TPL/SECTION ---- */
+  .tpl-section .index { position: absolute; right: 64px; bottom: -84px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 620px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 2px rgba(58,45,28,.9); user-select: none; }
+  .tpl-section .body { position: absolute; left: 96px; top: 360px; max-width: 1100px; }
+  .tpl-section .eyebrow { font-size: 21px; margin-bottom: 48px; }
+  .tpl-section .headline { font-size: 112px; }
+  .tpl-section .headline em { font-style: normal; color: var(--amber); }
+  .tpl-section .subline { font-size: 31px; margin-top: 42px; color: var(--faded); }
+
+  /* ---- TPL/BIG-STAT ---- */
+  .tpl-stat .body { position: absolute; left: 96px; right: 96px; top: 240px; }
+  .tpl-stat .kicker { font-size: 21px; }
+  .tpl-stat .statrow { display: flex; align-items: stretch; gap: 96px; margin-top: 84px; }
+  .tpl-stat .stat { flex: 1; border-left: 3px solid var(--amber); padding-left: 56px; }
+  .tpl-stat .stat.dim { border-left-color: var(--hairline); }
+  .tpl-stat .num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 196px;
+    line-height: .95; letter-spacing: -.03em; color: var(--amber); white-space: nowrap; }
+  .tpl-stat .stat.dim .num { color: var(--faded); }
+  .tpl-stat .num.smaller { font-size: 130px; }
+  .tpl-stat .lbl { font-family: 'Inter', sans-serif; font-size: 29px; color: var(--faded);
+    margin-top: 34px; line-height: 1.45; max-width: 17em; }
+  .tpl-stat .headline { font-size: 54px; margin-top: 8px; max-width: 20em; }
+
+  /* ---- TPL/QUOTE ---- */
+  .tpl-quote .rule { position: absolute; left: 96px; top: 250px; width: 128px; height: 0;
+    border-top: 4px solid var(--amber); }
+  .tpl-quote .qmark { position: absolute; left: 90px; top: 120px; font-family: 'Space Grotesk', sans-serif;
+    font-size: 300px; line-height: 1; color: rgba(255,177,43,.14); user-select: none; }
+  .tpl-quote .q { position: absolute; left: 96px; right: 130px; top: 306px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 51px; line-height: 1.34;
+    letter-spacing: -.01em; color: var(--cream); }
+  .tpl-quote .q em { font-style: normal; color: var(--amber); }
+  .tpl-quote .attr { position: absolute; left: 96px; bottom: 130px; font-family: 'JetBrains Mono', monospace;
+    font-size: 19px; letter-spacing: .18em; text-transform: uppercase; color: var(--faded); }
+
+  /* ---- TPL/TABLE ---- */
+  .tpl-table .body { position: absolute; left: 96px; right: 96px; top: 200px; }
+  .tpl-table .headline { font-size: 60px; margin-top: 26px; }
+  .tpl-table table { width: 100%; margin-top: 64px; border-collapse: collapse; }
+  .tpl-table th { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    text-transform: uppercase; text-align: left; padding: 0 32px 26px 0; font-weight: 500; }
+  .tpl-table th.old { color: var(--muted); }
+  .tpl-table th.new { color: var(--amber); }
+  .tpl-table td { font-family: 'Space Grotesk', sans-serif; font-size: 36px; padding: 24px 32px 24px 0;
+    border-top: 2px solid var(--border); vertical-align: top; width: 50%; }
+  .tpl-table td.old { color: var(--muted); }
+  .tpl-table td.new { color: var(--cream); }
+  .tpl-table td.new::before { content: "→ "; color: var(--amber); font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; }
+
+  /* ---- TPL/LIST ---- */
+  .tpl-list .body { position: absolute; left: 96px; right: 96px; top: 190px; }
+  .tpl-list .headline { font-size: 58px; margin-top: 26px; }
+  .tpl-list .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 54px; }
+  .tpl-list .card { background: var(--surface); border: 2px solid var(--hairline); border-radius: 0;
+    padding: 36px 38px; min-height: 230px; }
+  .tpl-list .card .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; color: var(--amber);
+    letter-spacing: .2em; }
+  .tpl-list .card h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 30px;
+    color: var(--cream); margin-top: 18px; line-height: 1.15; }
+  .tpl-list .card p { font-size: 20px; color: var(--faded); margin-top: 14px; line-height: 1.5; }
+
+  /* ---- TPL/COLUMNS ---- */
+  .tpl-cols .body { position: absolute; left: 96px; right: 96px; top: 220px; }
+  .tpl-cols .headline { font-size: 58px; margin-top: 26px; max-width: 20em; }
+  .tpl-cols .headline em { font-style: normal; color: var(--amber); }
+  .tpl-cols .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-top: 72px; }
+  .tpl-cols .col { padding: 0 52px; border-left: 2px solid var(--hairline); }
+  .tpl-cols .col:first-child { padding-left: 0; border-left: 0; }
+  .tpl-cols .col .tag { font-family: 'JetBrains Mono', monospace; font-size: 18px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--amber); }
+  .tpl-cols .col h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 40px;
+    color: var(--cream); margin-top: 22px; line-height: 1.14; }
+  .tpl-cols .col .repo { font-family: 'JetBrains Mono', monospace; font-size: 17px; letter-spacing: .04em;
+    color: var(--amber); margin-top: 16px; }
+  .tpl-cols .col p { font-size: 22px; color: var(--faded); margin-top: 20px; line-height: 1.55; }
+
+  /* ---- TPL/CTA ---- */
+  .tpl-cta { text-align: center; }
+  .tpl-cta .body { position: absolute; left: 160px; right: 160px; top: 250px; }
+  .tpl-cta .mark { margin: 0 auto; height: 96px; width: 96px; }
+  .tpl-cta .headline { font-size: 88px; margin-top: 56px; }
+  .tpl-cta .subline { font-size: 29px; margin: 38px auto 0; max-width: 30em; color: var(--faded); }
+  .tpl-cta .pill { display: inline-block; margin-top: 62px; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 30px; color: #0D0B08; background: var(--amber);
+    padding: 26px 64px; border-radius: 0; letter-spacing: .01em; }
+
+  /* ---- TPL/SOURCES ---- */
+  .tpl-sources .body { position: absolute; left: 96px; right: 96px; top: 140px; }
+  .tpl-sources .headline { font-size: 56px; margin-top: 16px; }
+  .tpl-sources .srcgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 72px; margin-top: 28px; }
+  .tpl-sources .src { display: flex; gap: 28px; border-top: 2px solid var(--border); padding-top: 20px; }
+  .tpl-sources .src .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    color: var(--amber); padding-top: 6px; }
+  .tpl-sources .src .meta { min-width: 0; }
+  .tpl-sources .src .org { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 31px;
+    line-height: 1.14; }
+  .tpl-sources .src .org a { color: var(--cream); text-decoration: none;
+    border-bottom: 1px solid rgba(255,177,43,.4); }
+  .tpl-sources .src .claim { font-size: 20px; color: var(--faded); margin-top: 12px; line-height: 1.4; }
+  .tpl-sources .src .url { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; letter-spacing: .04em;
+    margin-top: 12px; }
+  .tpl-sources .src .url a { color: var(--amber); text-decoration: none; }
+</style>
+</head>
+
+<!-- ============ 01 · TPL/TITLE ============ -->
+<section class="slide tpl-title" id="s1">
+  <div class="gridline-v" style="left: 1493px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/TITLE · 01/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Growth Cartography · Field Guide 003 · Decentralized</div>
+    <h1 class="headline">The network is the <em>product</em>.</h1>
+    <p class="subline">Marketing within crypto-powered networks: Farcaster, Lens, DAOs, onchain identity, token communities, and the agent settlement layer arriving on top of them.</p>
+  </div>
+  <div class="s-foot">
+    <div class="cite"><b>False Dawn Industries</b> · Field Guide 003 · 2026</div>
+    <div class="pageno">FDI-FG-003</div>
+  </div>
+</section>
+
+<!-- ============ 02 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s2">
+  <div class="index">01</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 02/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part one</div>
+    <h1 class="headline">The participant-owned stack</h1>
+    <p class="subline">No landlord, no single feed, no advertising product to buy. The infrastructure is owned by its participants — and that changes everything about how reach works.</p>
+  </div>
+</section>
+
+<!-- ============ 03 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s3">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 03/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">The structural difference: no platform controls the feed</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num smaller">Protocol-owned</div>
+        <div class="lbl">Farcaster social graph stored on peer-to-peer Hubs. No company can shadow-ban, remove, or reprice a brand's presence. Content is permanent.</div>
+      </div>
+      <div class="stat dim">
+        <div class="num smaller">On-chain social</div>
+        <div class="lbl">Lens posts and follows are EVM transactions. The brand's content lives in smart contracts it interacts with directly — not in a database a platform controls.</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://docs.farcaster.xyz" target="_blank" rel="noopener"><b>Farcaster</b> protocol docs</a> · <a href="https://docs.lens.xyz" target="_blank" rel="noopener"><b>Lens</b> developer docs</a> · <a href="https://github.com/neynarxyz/nodejs-sdk" target="_blank" rel="noopener"><b>neynarxyz/nodejs-sdk</b> (MIT)</a> · <a href="https://github.com/lens-protocol/lens-sdk" target="_blank" rel="noopener"><b>lens-protocol/lens-sdk</b> (MIT)</a></div>
+    <div class="pageno">03</div>
+  </div>
+</section>
+
+<!-- ============ 04 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s4">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 04/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">Portable identity: ENS makes brand.eth the same everywhere</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num smaller">Millions of .eth names</div>
+        <div class="lbl">ENS has registered millions of human-readable names since launch. <b>brand.eth</b> resolves to the same wallet address in every ENS-compatible app — no redirect required.</div>
+      </div>
+      <div class="stat dim">
+        <div class="num smaller">One standard</div>
+        <div class="lbl">EIP-4361 (SIWE) is the formal Ethereum standard for wallet-based authentication. <b>viem</b> (MIT) implements it production-ready. No platform owns the relationship.</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://ens.domains" target="_blank" rel="noopener"><b>ENS</b> (ens.domains)</a> · <a href="https://eips.ethereum.org/EIPS/eip-4361" target="_blank" rel="noopener"><b>EIP-4361</b> / SIWE standard</a> · <a href="https://github.com/wevm/viem" target="_blank" rel="noopener"><b>wevm/viem</b> (MIT)</a></div>
+    <div class="pageno">04</div>
+  </div>
+</section>
+
+<!-- ============ 05 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s5">
+  <div class="index">02</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 05/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part two</div>
+    <h1 class="headline">How <em>reach</em> works here</h1>
+    <p class="subline">Frames, tokens, attestations, and airdrops are the mechanics. Contribution and participation are the distribution mechanisms — and both are partially legible on-chain.</p>
+  </div>
+</section>
+
+<!-- ============ 06 · TPL/QUOTE ============ -->
+<section class="slide tpl-quote" id="s6">
+  <div class="qmark">&ldquo;</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/PULL-QUOTE · 06/13</div>
+  </div>
+  <div class="rule"></div>
+  <p class="q">Frames are the first social format that produces <em>first-party data by design</em>. The "click" is a wallet transaction — cryptographically verified, onchain, permanent. No cookie, no pixel, no post-click attribution to reconstruct.</p>
+  <div class="attr">False Dawn Industries · FG003 · Farcaster Frames as a marketing primitive</div>
+  <div class="s-foot">
+    <div class="cite">Technical reference · <a href="https://docs.farcaster.xyz/developers/frames" target="_blank" rel="noopener"><b>Farcaster Frames</b> specification</a> · <a href="https://github.com/neynarxyz/nodejs-sdk" target="_blank" rel="noopener"><b>neynarxyz/nodejs-sdk</b> Frame validation (MIT)</a></div>
+    <div class="pageno">06</div>
+  </div>
+</section>
+
+<!-- ============ 07 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s7">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 07/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">Onchain reputation: attestations + POAPs = composable trust</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num smaller">EAS attestations</div>
+        <div class="lbl">Any party can issue a signed, on-chain claim about any wallet: "completed course," "governance contributor," "licensed holder." Composable across every protocol in the ecosystem.</div>
+      </div>
+      <div class="stat dim">
+        <div class="num smaller">POAPs</div>
+        <div class="lbl">On-chain attendance tokens — events, AMAs, milestones. The wallet's POAP collection is a permanent, publicly-verifiable track record that travels with the holder forever.</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://attest.org" target="_blank" rel="noopener"><b>Ethereum Attestation Service</b> (attest.org)</a> · <a href="https://documentation.poap.tech" target="_blank" rel="noopener"><b>POAP</b> documentation</a> · <a href="https://github.com/ethereum-attestation-service/eas-sdk" target="_blank" rel="noopener"><b>eas-sdk</b> (MIT)</a></div>
+    <div class="pageno">07</div>
+  </div>
+</section>
+
+<!-- ============ 08 · TPL/TABLE ============ -->
+<section class="slide tpl-table" id="s8">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/TABLE · 08/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Recalibrate for the decentralized market</div>
+    <h1 class="headline">What you rent vs what you own</h1>
+    <table>
+      <tr><th class="old">Rented from a platform</th><th class="new">Owned onchain</th></tr>
+      <tr><td class="old">Followers in a company's database</td><td class="new">wallet.eth identity, portable across all EVM protocols</td></tr>
+      <tr><td class="old">Social reach priced by the algorithm</td><td class="new">Contribution record, verifiable by any protocol</td></tr>
+      <tr><td class="old">Loyalty tiers in a CRM</td><td class="new">Token holdings, attestations, and POAPs in the wallet</td></tr>
+      <tr><td class="old">Ad targeting via platform cookie</td><td class="new">Airdrop eligibility criteria in smart contract logic</td></tr>
+      <tr><td class="old">Impressions</td><td class="new">On-chain interactions: Frame signatures, governance votes</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 09 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s9">
+  <div class="index">03</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 09/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part three</div>
+    <h1 class="headline">The <em>agent</em> layer</h1>
+    <p class="subline">Agents are going to transact with agents. The settlement layer taking shape is crypto — not for ideological reasons, but because it solves the agent commerce problem cleanly.</p>
+  </div>
+</section>
+
+<!-- ============ 10 · TPL/COLUMNS ============ -->
+<section class="slide tpl-cols" id="s10">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/COLUMNS · 10/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Three open primitives · all MIT or Apache 2.0 · all active July 2026</div>
+    <h1 class="headline">How agents settle in crypto. <em>No human in the loop.</em></h1>
+    <div class="cols">
+      <div class="col">
+        <div class="tag">AP2 · Payment mandate</div>
+        <h3>Pre-authorized spending</h3>
+        <div class="repo">google-agentic-commerce/AP2</div>
+        <p>User pre-authorizes agent: max amounts, approved counterparties, permitted transaction types. The mandate travels with the agent task.</p>
+      </div>
+      <div class="col">
+        <div class="tag">x402 · HTTP payment</div>
+        <h3>Pay inline, in the request</h3>
+        <div class="repo">coinbase/x402</div>
+        <p>API returns 402 with payment terms. Agent pays USDC on Base, attaches receipt to header, retries. No billing accounts, no subscriptions, no human approval.</p>
+      </div>
+      <div class="col">
+        <div class="tag">AgentKit · Managed wallet</div>
+        <h3>Agent holds the wallet</h3>
+        <div class="repo">coinbase/agentkit</div>
+        <p>Agent manages an Ethereum wallet: send transactions, call contracts, check balances — all within the task loop. No human needed to sign.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://github.com/coinbase/x402" target="_blank" rel="noopener"><b>coinbase/x402</b> (MIT)</a> · <a href="https://github.com/coinbase/agentkit" target="_blank" rel="noopener"><b>coinbase/agentkit</b> (MIT)</a> · <a href="https://github.com/google-agentic-commerce/AP2" target="_blank" rel="noopener"><b>google-agentic-commerce/AP2</b> (Apache 2.0)</a></div>
+    <div class="pageno">10</div>
+  </div>
+</section>
+
+<!-- ============ 11 · TPL/LIST ============ -->
+<section class="slide tpl-list" id="s11">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/LIST · 11/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">The CMO action plan</div>
+    <h1 class="headline">Six moves for the decentralized market</h1>
+    <div class="grid">
+      <div class="card"><div class="n">01</div><h3>Establish brand.eth</h3><p>Register the ENS name. It is the portable, verifiable identity that all other onchain assets attach to.</p></div>
+      <div class="card"><div class="n">02</div><h3>Show up in the protocols</h3><p>Maintain a Farcaster channel and a Lens profile. Participation, not broadcast. Contribution, not impressions.</p></div>
+      <div class="card"><div class="n">03</div><h3>Issue and earn attestations</h3><p>Use EAS to attest that wallets completed actions with your brand. Earn attestations from credible community issuers.</p></div>
+      <div class="card"><div class="n">04</div><h3>Design a thoughtful airdrop</h3><p>Eligibility criteria are your definition of an ideal community member, encoded in smart contract logic. Genuine contribution requirements, not volume metrics.</p></div>
+      <div class="card"><div class="n">05</div><h3>Build Frames and Open Actions</h3><p>Let community members interact directly from casts and posts. Every Frame interaction is a wallet signature — first-party data by design.</p></div>
+      <div class="card"><div class="n">06</div><h3>Publish an x402 API surface</h3><p>Make your corpus and services discoverable and payable by agents, inline, via x402. Be in the agent-readable stack before it matures.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 · TPL/SOURCES ============ -->
+<section class="slide tpl-sources" id="s12">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SOURCES · 12/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Every build reference, one place to check</div>
+    <h1 class="headline">Sources &amp; methodology</h1>
+    <div class="srcgrid">
+      <div class="src">
+        <div class="n">01</div>
+        <div class="meta">
+          <div class="org"><a href="https://docs.farcaster.xyz" target="_blank" rel="noopener">Farcaster protocol docs + neynarxyz/nodejs-sdk (MIT)</a></div>
+          <div class="claim">Decentralized social protocol on peer-to-peer Hubs; production Node.js SDK for casts, channels, Frames</div>
+          <div class="url"><a href="https://github.com/neynarxyz/nodejs-sdk" target="_blank" rel="noopener">github.com/neynarxyz/nodejs-sdk ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">02</div>
+        <div class="meta">
+          <div class="org"><a href="https://docs.lens.xyz" target="_blank" rel="noopener">Lens Protocol docs + lens-protocol/lens-sdk (MIT)</a></div>
+          <div class="claim">Onchain social graph on EVM chains; production SDK for profiles, posts, Open Actions</div>
+          <div class="url"><a href="https://github.com/lens-protocol/lens-sdk" target="_blank" rel="noopener">github.com/lens-protocol/lens-sdk ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">03</div>
+        <div class="meta">
+          <div class="org"><a href="https://eips.ethereum.org/EIPS/eip-4361" target="_blank" rel="noopener">EIP-4361 (SIWE) + wevm/viem (MIT)</a></div>
+          <div class="claim">Ethereum standard for wallet authentication; viem implements createSiweMessage / verifySiweMessage</div>
+          <div class="url"><a href="https://github.com/wevm/viem" target="_blank" rel="noopener">github.com/wevm/viem ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">04</div>
+        <div class="meta">
+          <div class="org"><a href="https://attest.org" target="_blank" rel="noopener">Ethereum Attestation Service (EAS)</a></div>
+          <div class="claim">General-purpose on-chain attestation framework; composable verifiable claims about any wallet address</div>
+          <div class="url"><a href="https://github.com/ethereum-attestation-service/eas-sdk" target="_blank" rel="noopener">attest.org ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">05</div>
+        <div class="meta">
+          <div class="org"><a href="https://github.com/coinbase/x402" target="_blank" rel="noopener">coinbase/x402 (MIT)</a></div>
+          <div class="claim">HTTP 402 payment protocol; agent pays USDC inline in HTTP request — no billing accounts, no subscriptions</div>
+          <div class="url"><a href="https://www.x402.org" target="_blank" rel="noopener">x402.org ↗</a></div>
+        </div>
+      </div>
+      <div class="src">
+        <div class="n">06</div>
+        <div class="meta">
+          <div class="org"><a href="https://github.com/coinbase/agentkit" target="_blank" rel="noopener">coinbase/agentkit (MIT) + google-agentic-commerce/AP2</a></div>
+          <div class="claim">AgentKit: managed wallet for AI agents. AP2: payment mandate spec (pre-authorized agent spending)</div>
+          <div class="url"><a href="https://github.com/google-agentic-commerce/AP2" target="_blank" rel="noopener">github.com/google-agentic-commerce/AP2 ↗</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13 · TPL/CTA ============ -->
+<section class="slide tpl-cta" id="s13">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/CTA · 13/13</div>
+  </div>
+  <div class="body">
+    <svg class="mark" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+      <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+    </svg>
+    <h1 class="headline">Build the machine, not the ad.</h1>
+    <p class="subline">In crypto-powered networks the durable asset is a verifiable onchain identity and corpus that travel with you — not a position in a rented feed. Build it now, while showing up is still a differentiator.</p>
+    <a class="pill" href="https://falsedawn.industries/field-guide-003">falsedawn.industries/field-guide-003</a>
+  </div>
+  <div class="s-foot">
+    <div class="cite"><b>Growth Cartography series:</b> 001 System &amp; Cohort Dynamics · 002 Aggregated · <b>003 Decentralized</b> · 004 Autonomous</div>
+    <div class="pageno">FDI · 2026</div>
+  </div>
+</section>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · Field Guide 003 · Cover</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html, body { width: 1200px; height: 627px; overflow: hidden; margin: 0; padding: 0; background: #0D0B08; }
+  .cover {
+    position: relative; width: 1200px; height: 627px; overflow: hidden;
+    background: var(--base); display: flex; flex-direction: column;
+    justify-content: flex-end;
+  }
+  /* grid texture */
+  .cover::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(58,45,28,.18) 0, rgba(58,45,28,.18) 1px, transparent 1px, transparent 60px),
+      repeating-linear-gradient(90deg, rgba(58,45,28,.18) 0, rgba(58,45,28,.18) 1px, transparent 1px, transparent 60px);
+    z-index: 0;
+  }
+  /* signal orange mark watermark */
+  .bg-mark {
+    position: absolute; right: -80px; top: -80px; width: 620px; height: 620px;
+    opacity: .06; z-index: 0;
+  }
+  .bg-mark .arc { stroke: #FF5E00; stroke-width: 7; fill: none; }
+  .bg-mark .fill { fill: #FF5E00; }
+
+  /* amber accent line top */
+  .amber-bar { position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--amber); z-index: 2; }
+
+  .inner { position: relative; z-index: 2; padding: 52px 64px 56px; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+    letter-spacing: .24em; text-transform: uppercase; color: var(--amber);
+    display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+  }
+  .eyebrow::before { content: ""; width: 28px; height: 10px; background: #FF5E00; flex: none; }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 82px; line-height: .92; letter-spacing: -.04em;
+    text-transform: uppercase; color: var(--cream); margin: 0 0 28px;
+    text-shadow: 0 0 60px rgba(255,177,43,.25);
+  }
+  h1 em { font-style: normal; color: var(--amber); }
+
+  .sub {
+    font-family: 'Inter', sans-serif; font-size: 21px; font-weight: 500;
+    color: var(--faded); line-height: 1.45; max-width: 38em;
+    border-left: 4px solid var(--amber); padding-left: 18px; margin: 0;
+  }
+
+  .lockup-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 36px;
+  }
+  .lockup { display: inline-flex; flex-direction: row-reverse; align-items: center; gap: .7em; color: var(--cream); }
+  .lockup .mark { height: 1.1em; width: 1.1em; flex: none; }
+  .lockup .arc { stroke: #FF5E00; stroke-width: 7; fill: none; }
+  .lockup .fill { fill: #FF5E00; }
+  .lockup .wm {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase; font-size: 15px; line-height: 1;
+  }
+  .guide-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+    letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="amber-bar"></div>
+  <svg class="bg-mark" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+    <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+    <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+  </svg>
+  <div class="inner">
+    <div class="eyebrow">Growth Cartography · Field Guide 003 · Decentralized</div>
+    <h1>The network<br>is the <em>product</em>.</h1>
+    <p class="sub">Marketing within crypto-powered networks — Farcaster, Lens, DAOs, onchain identity, token communities, and the agent settlement layer arriving on top of them.</p>
+    <div class="lockup-row">
+      <div class="lockup">
+        <span class="wm">False Dawn Industries</span>
+        <svg class="mark" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+          <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+        </svg>
+      </div>
+      <div class="guide-num">FDI-FG-003 · 2026</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

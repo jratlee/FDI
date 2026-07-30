@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · FG003 · Protocol Ownership Stack</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html, body { width: 1200px; height: 680px; overflow: hidden; margin: 0; padding: 0; background: #0D0B08; }
+  .viz { width: 1200px; height: 680px; background: var(--base); position: relative; display: flex; flex-direction: column; justify-content: center; padding: 0 72px; }
+
+  /* grid */
+  .viz::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(58,45,28,.12) 0, rgba(58,45,28,.12) 1px, transparent 1px, transparent 60px),
+      repeating-linear-gradient(90deg, rgba(58,45,28,.12) 0, rgba(58,45,28,.12) 1px, transparent 1px, transparent 60px);
+    z-index: 0;
+  }
+  .amber-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--amber); z-index: 2; }
+
+  .inner { position: relative; z-index: 2; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .24em; text-transform: uppercase; color: var(--amber);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 32px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 8px; background: #FF5E00; flex: none; }
+
+  .headline {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 42px; letter-spacing: -.03em; text-transform: uppercase;
+    color: var(--cream); margin: 0 0 40px; line-height: 1.05;
+  }
+  .headline em { font-style: normal; color: var(--amber); }
+
+  /* stack layers */
+  .stack { display: flex; flex-direction: column; gap: 0; }
+  .layer {
+    display: flex; align-items: stretch; gap: 0;
+    border: 2px solid var(--hairline);
+    border-bottom: 0;
+  }
+  .layer:last-child { border-bottom: 2px solid var(--hairline); }
+  .layer-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+    letter-spacing: .18em; color: var(--muted); padding: 18px 22px;
+    border-right: 2px solid var(--hairline); min-width: 56px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--sc);
+  }
+  .layer-body { flex: 1; padding: 18px 26px; display: flex; align-items: center; gap: 32px; background: var(--sc); }
+  .layer.owned { border-color: var(--amber); background: var(--sc); }
+  .layer.owned .layer-num { border-right-color: var(--amber); background: rgba(255,177,43,.06); color: var(--amber); }
+  .layer.owned .layer-body { background: rgba(255,177,43,.04); }
+  .layer-name {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 22px; color: var(--cream); min-width: 220px;
+    text-transform: uppercase; letter-spacing: -.01em;
+  }
+  .layer.owned .layer-name { color: var(--amber); }
+  .layer-desc {
+    font-family: 'Inter', sans-serif; font-size: 15.5px; color: var(--faded);
+    line-height: 1.45; flex: 1;
+  }
+  .layer-examples {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; text-align: right; white-space: nowrap;
+    min-width: 260px;
+  }
+  .layer.owned .layer-examples { color: var(--amber-glow); }
+
+  /* connector arrows */
+  .arrow-row { display: flex; justify-content: flex-start; padding: 0 0 0 56px; }
+  .arrow { width: 2px; height: 0; background: var(--hairline); position: relative; margin: 0 auto; }
+
+  /* bottom footnote */
+  .note {
+    margin-top: 28px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    letter-spacing: .08em; color: var(--muted); text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="viz">
+  <div class="amber-bar"></div>
+  <div class="inner">
+    <div class="eyebrow">Field Guide 003 · Decentralized markets</div>
+    <h1 class="headline">The participant-owned stack. <em>No company controls any layer.</em></h1>
+    <div class="stack">
+      <div class="layer">
+        <div class="layer-num">4</div>
+        <div class="layer-body">
+          <div class="layer-name">Participant</div>
+          <div class="layer-desc">Holds tokens, controls wallet, earns attestations, participates in governance. Identity travels with them across every protocol they enter.</div>
+          <div class="layer-examples">Wallet + ENS + SIWE + EAS attestations</div>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-num">3</div>
+        <div class="layer-body">
+          <div class="layer-name">Community</div>
+          <div class="layer-desc">Token holders governing the protocol, setting standards, allocating treasury. Reputation is earned through contribution, not purchased through impressions.</div>
+          <div class="layer-examples">DAO governance · airdrops · POAPs</div>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-num">2</div>
+        <div class="layer-body">
+          <div class="layer-name">Token</div>
+          <div class="layer-desc">The governance and economic mechanism. Tokens define ownership, voting rights, access tiers, and alignment between participants and protocol success.</div>
+          <div class="layer-examples">ERC-20 governance · ERC-721 membership</div>
+        </div>
+      </div>
+      <div class="layer owned">
+        <div class="layer-num">1</div>
+        <div class="layer-body">
+          <div class="layer-name">Protocol</div>
+          <div class="layer-desc">The rules are on-chain. No company controls the feed, the identity layer, or the terms of discovery. The infrastructure is owned by its participants.</div>
+          <div class="layer-examples">Farcaster · Lens · ENS · EAS</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">False Dawn Industries · Field Guide 003 · falsedawn.industries/field-guide-003 · 2026</div>
+  </div>
+</div>
+</body>
+</html>
