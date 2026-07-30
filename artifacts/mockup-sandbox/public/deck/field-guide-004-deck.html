@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · Field Guide 004 Deck · Autonomous</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  /* Deck overrides: brand.css locks body to 100vh for ads; the deck scrolls */
+  html, body { width: auto; height: auto; overflow: visible; background: #060504; }
+
+  @page { size: 1920px 1080px; margin: 0; }
+
+  .slide {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    background: var(--base); page-break-after: always; break-after: page;
+    font-family: 'Inter', sans-serif; color: var(--cream);
+  }
+  @media screen { .slide { margin: 0 auto 24px; } }
+
+  /* ---- shared chrome ---- */
+  .s-top { position: absolute; top: 72px; left: 96px; right: 96px;
+    display: flex; align-items: center; justify-content: space-between; }
+  .s-top .lockup { font-size: 30px; }
+  .s-top .corner { font-family: 'JetBrains Mono', monospace; font-size: 17px;
+    letter-spacing: .22em; color: var(--muted); text-transform: uppercase; text-align: right; }
+  .s-foot { position: absolute; bottom: 72px; left: 96px; right: 96px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+  .cite { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .08em;
+    color: var(--muted); line-height: 1.6; text-transform: uppercase; }
+  .cite b { color: var(--faded); font-weight: 500; }
+  .cite a { color: var(--amber); font-weight: 500; text-decoration: none;
+    border-bottom: 1px solid rgba(255,177,43,.4); }
+  .pageno { font-family: 'JetBrains Mono', monospace; font-size: 16.5px; letter-spacing: .18em;
+    color: var(--muted); white-space: nowrap; }
+  .gridline-v { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px solid rgba(58,45,28,.45); }
+  .gridline-h { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid rgba(58,45,28,.45); }
+
+  /* ---- TPL/TITLE ---- */
+  .tpl-title .body { position: absolute; left: 96px; right: 96px; top: 300px; }
+  .tpl-title .eyebrow { font-size: 21px; margin-bottom: 52px; }
+  .tpl-title .headline { font-size: 104px; max-width: 13em; }
+  .tpl-title .subline { font-size: 30px; margin-top: 46px; max-width: 33em; }
+
+  /* ---- TPL/SECTION ---- */
+  .tpl-section .index { position: absolute; right: 64px; bottom: -84px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 620px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 2px rgba(58,45,28,.9); user-select: none; }
+  .tpl-section .body { position: absolute; left: 96px; top: 380px; max-width: 1100px; }
+  .tpl-section .eyebrow { font-size: 21px; margin-bottom: 48px; }
+  .tpl-section .headline { font-size: 112px; }
+  .tpl-section .subline { font-size: 31px; margin-top: 42px; }
+
+  /* ---- TPL/BIG-STAT ---- */
+  .tpl-stat .body { position: absolute; left: 96px; right: 96px; top: 240px; }
+  .tpl-stat .kicker { font-size: 21px; }
+  .tpl-stat .statrow { display: flex; align-items: stretch; gap: 96px; margin-top: 84px; }
+  .tpl-stat .stat { flex: 1; border-left: 3px solid var(--amber); padding-left: 56px; }
+  .tpl-stat .stat.dim { border-left-color: var(--hairline); }
+  .tpl-stat .num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 216px;
+    line-height: .95; letter-spacing: -.03em; color: var(--amber); white-space: nowrap; }
+  .tpl-stat .stat.dim .num { color: var(--faded); }
+  .tpl-stat .lbl { font-family: 'Inter', sans-serif; font-size: 29px; color: var(--faded);
+    margin-top: 34px; line-height: 1.45; max-width: 17em; }
+  .tpl-stat .headline { font-size: 54px; margin-top: 8px; max-width: 20em; }
+
+  /* ---- TPL/QUOTE ---- */
+  .tpl-quote .rule { position: absolute; left: 96px; top: 250px; width: 128px; height: 0;
+    border-top: 4px solid var(--amber); }
+  .tpl-quote .qmark { position: absolute; left: 90px; top: 120px; font-family: 'Space Grotesk', sans-serif;
+    font-size: 300px; line-height: 1; color: rgba(255,177,43,.14); user-select: none; }
+  .tpl-quote .q { position: absolute; left: 96px; right: 130px; top: 306px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 51px; line-height: 1.34;
+    letter-spacing: -.01em; color: var(--cream); }
+  .tpl-quote .q em { font-style: normal; color: var(--amber); }
+  .tpl-quote .attr { position: absolute; left: 96px; bottom: 130px; font-family: 'JetBrains Mono', monospace;
+    font-size: 19px; letter-spacing: .18em; text-transform: uppercase; color: var(--faded); }
+
+  /* ---- TPL/TABLE ---- */
+  .tpl-table .body { position: absolute; left: 96px; right: 96px; top: 210px; }
+  .tpl-table .headline { font-size: 60px; margin-top: 26px; }
+  .tpl-table table { width: 100%; margin-top: 64px; border-collapse: collapse; }
+  .tpl-table th { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    text-transform: uppercase; text-align: left; padding: 0 32px 26px 0; font-weight: 500; }
+  .tpl-table th.layer { color: var(--amber); }
+  .tpl-table th.does { color: var(--faded); }
+  .tpl-table th.why { color: var(--muted); }
+  .tpl-table td { font-family: 'Space Grotesk', sans-serif; font-size: 34px; padding: 24px 32px 24px 0;
+    border-top: 2px solid var(--border); vertical-align: top; }
+  .tpl-table td.layer { color: var(--amber); font-weight: 700; width: 22%; }
+  .tpl-table td.does { color: var(--cream); width: 40%; }
+  .tpl-table td.why { color: var(--faded); font-size: 28px; width: 38%; }
+
+  /* ---- TPL/LIST (imperatives grid) ---- */
+  .tpl-list .body { position: absolute; left: 96px; right: 96px; top: 200px; }
+  .tpl-list .headline { font-size: 58px; margin-top: 26px; }
+  .tpl-list .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; margin-top: 58px; }
+  .tpl-list .card { background: var(--surface); border: 2px solid var(--hairline); border-radius: 0;
+    padding: 38px 40px; min-height: 240px; }
+  .tpl-list .card .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; color: var(--amber);
+    letter-spacing: .2em; }
+  .tpl-list .card h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 31px;
+    color: var(--cream); margin-top: 18px; line-height: 1.15; }
+  .tpl-list .card p { font-size: 20.5px; color: var(--faded); margin-top: 16px; line-height: 1.5; }
+
+  /* ---- TPL/COLUMNS ---- */
+  .tpl-cols .body { position: absolute; left: 96px; right: 96px; top: 230px; }
+  .tpl-cols .headline { font-size: 58px; margin-top: 26px; max-width: 17em; }
+  .tpl-cols .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-top: 76px; }
+  .tpl-cols .col { padding: 0 56px; border-left: 2px solid var(--hairline); }
+  .tpl-cols .col:first-child { padding-left: 0; border-left: 0; }
+  .tpl-cols .col .tag { font-family: 'JetBrains Mono', monospace; font-size: 18px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--amber); }
+  .tpl-cols .col h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 41px;
+    color: var(--cream); margin-top: 24px; line-height: 1.14; }
+  .tpl-cols .col p { font-size: 22.5px; color: var(--faded); margin-top: 22px; line-height: 1.55; }
+
+  /* ---- TPL/CTA ---- */
+  .tpl-cta { text-align: center; }
+  .tpl-cta .body { position: absolute; left: 160px; right: 160px; top: 268px; }
+  .tpl-cta .mark { margin: 0 auto; height: 96px; width: 96px; }
+  .tpl-cta .headline { font-size: 88px; margin-top: 56px; }
+  .tpl-cta .subline { font-size: 29px; margin: 38px auto 0; max-width: 30em; }
+  .tpl-cta .pill { display: inline-block; margin-top: 62px; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 30px; color: #0D0B08; background: var(--amber);
+    padding: 26px 64px; border-radius: 0; letter-spacing: .01em; }
+  .tpl-cta .sys { position: absolute; left: 96px; right: 96px; bottom: 72px;
+    display: flex; align-items: center; justify-content: center; gap: 26px; }
+  .tpl-cta .sys .chip { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted); border: 2px solid var(--border);
+    border-radius: 0; padding: 10px 18px; }
+  .tpl-cta .sys .lead { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--faded); }
+
+  /* ---- TPL/SOURCES ---- */
+  .tpl-sources .body { position: absolute; left: 96px; right: 96px; top: 148px; }
+  .tpl-sources .headline { font-size: 58px; margin-top: 16px; }
+  .tpl-sources .srcgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 72px; margin-top: 32px; }
+  .tpl-sources .src { display: flex; gap: 30px; border-top: 2px solid var(--border); padding-top: 22px; }
+  .tpl-sources .src .n { font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: .2em;
+    color: var(--amber); padding-top: 8px; }
+  .tpl-sources .src .meta { min-width: 0; }
+  .tpl-sources .src .org { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 30px;
+    line-height: 1.14; color: var(--cream); }
+  .tpl-sources .src .claim { font-size: 21px; color: var(--faded); margin-top: 12px; line-height: 1.45; }
+</style>
+</head>
+
+<!-- ============ 01 · TPL/TITLE ============ -->
+<section class="slide tpl-title" id="s1">
+  <div class="gridline-v" style="left: 1493px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/TITLE · 01/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Growth Cartography · Field Guide 004 · Autonomous</div>
+    <h1 class="headline">When the buyer is software.</h1>
+    <p class="subline">Agent-to-agent market dynamics, the growth curve, and what it means to market when the entity searching, comparing, and buying is a program acting under delegated authority.</p>
+  </div>
+  <div class="s-foot">
+    <div class="cite"><b>False Dawn Industries</b> · Field Guide 004 · 2026</div>
+    <div class="pageno">FDI-FG-004</div>
+  </div>
+</section>
+
+<!-- ============ 02 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s2">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 02/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">The demand is already there — and already measured</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">23%</div>
+        <div class="lbl">of Americans made a purchase using AI in the month before December 2025</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">$3–5T</div>
+        <div class="lbl">global orchestrated commerce projected by 2030 · McKinsey QuantumBlack, Oct 2025</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://www.morganstanley.com/insights/articles/agentic-commerce-market-impact-outlook" target="_blank" rel="noopener"><b>Morgan Stanley</b>, Dec 2025</a> · <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-agentic-commerce-opportunity-how-ai-agents-are-ushering-in-a-new-era-for-consumers-and-merchants" target="_blank" rel="noopener"><b>McKinsey QuantumBlack</b>, Oct 2025</a></div>
+    <div class="pageno">02</div>
+  </div>
+</section>
+
+<!-- ============ 03 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s3">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 03/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">Adobe measuring &gt;1 trillion retail visits: the channel shift is live</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">+393%</div>
+        <div class="lbl">AI-referred traffic to US retail sites, year over year, Q1 2026 · AI converts better than non-AI</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">39%</div>
+        <div class="lbl">of US consumers used AI to shop · 85% said it improved the experience</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Source · <a href="https://business.adobe.com/blog/ai-traffic-surge-retail-sites-not-machine-readable" target="_blank" rel="noopener"><b>Adobe</b> Q2 2026 AI Traffic Report · primary measurement, April 2026</a></div>
+    <div class="pageno">03</div>
+  </div>
+</section>
+
+<!-- ============ 04 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s4">
+  <div class="index">01</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 04/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part one</div>
+    <h1 class="headline">The protocol stack</h1>
+    <p class="subline">Four open, Apache-licensed, foundation-governed standards now layer into an end-to-end agent commerce stack. Understanding them is the prerequisite for understanding the growth curve.</p>
+  </div>
+</section>
+
+<!-- ============ 05 · TPL/TABLE ============ -->
+<section class="slide tpl-table" id="s5">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/TABLE · 05/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">The open stack, layer by layer</div>
+    <h2 class="headline">MCP → A2A → AP2 → x402</h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="layer">Layer</th>
+          <th class="does">What it does</th>
+          <th class="why">Why it matters for brands</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="layer">MCP</td>
+          <td class="does">Exposes tools, data, and prompts as callable agent interfaces</td>
+          <td class="why">Your system becomes something agents can query and invoke</td>
+        </tr>
+        <tr>
+          <td class="layer">A2A</td>
+          <td class="does">Agents discover and delegate to each other at runtime via Agent Cards</td>
+          <td class="why">A buyer's agent finds your agent without a wired integration</td>
+        </tr>
+        <tr>
+          <td class="layer">AP2</td>
+          <td class="does">Cryptographic mandates prove a human authorized the transaction</td>
+          <td class="why">You can verify the agent has permission before fulfilling</td>
+        </tr>
+        <tr>
+          <td class="layer">x402</td>
+          <td class="does">HTTP-native stablecoin settlement via Coinbase x402 + agentkit</td>
+          <td class="why">Agents pay in crypto — the settlement rail is already in the stack</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://modelcontextprotocol.io/specification/2025-11-25" target="_blank" rel="noopener"><b>MCP spec</b></a> · <a href="https://a2a-protocol.org/latest/announcing-1.0/" target="_blank" rel="noopener"><b>A2A 1.0</b></a> · <a href="https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol" target="_blank" rel="noopener"><b>Google AP2</b></a> · <a href="https://github.com/coinbase/x402" target="_blank" rel="noopener"><b>coinbase/x402</b></a></div>
+    <div class="pageno">05</div>
+  </div>
+</section>
+
+<!-- ============ 06 · TPL/PULL-QUOTE ============ -->
+<section class="slide tpl-quote" id="s6">
+  <div class="qmark">&ldquo;</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/PULL-QUOTE · 06/13</div>
+  </div>
+  <div class="rule"></div>
+  <p class="q">Today's payment systems generally <em>assume a human is directly clicking 'buy'</em> on a trusted surface. Autonomous agents break this fundamental assumption.</p>
+  <div class="attr">Google Cloud — Announcing the Agent Payments Protocol (AP2), September 16, 2025</div>
+  <div class="s-foot">
+    <div class="cite">Source · <a href="https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol" target="_blank" rel="noopener"><b>Google Cloud</b> · AP2 announcement · Tier 1</a></div>
+    <div class="pageno">06</div>
+  </div>
+</section>
+
+<!-- ============ 07 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s7">
+  <div class="index">02</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 07/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part two</div>
+    <h1 class="headline">The growth curve</h1>
+    <p class="subline">What happens when selection, pricing, and reputation run at machine speed, with no human latency in the loop, and the settlement rail is stablecoin.</p>
+  </div>
+</section>
+
+<!-- ============ 08 · TPL/COLUMNS ============ -->
+<section class="slide tpl-cols" id="s8">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/COLUMNS · 08/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Three dynamics, one curve — all running faster than human decision speed</div>
+    <h2 class="headline">The same loop the platforms run, at machine speed</h2>
+    <div class="cols">
+      <div class="col">
+        <div class="tag">Selection</div>
+        <h3>A shopping agent evaluates thousands of options in one query</h3>
+        <p>It does not read landing pages. It calls APIs, checks schema, validates provenance, and moves on. Machine-legible brands get retrieved. Brands that are not readable do not appear as an option.</p>
+      </div>
+      <div class="col">
+        <div class="tag">Pricing</div>
+        <h3>Early citation signals compound into structural advantages</h3>
+        <p>Like follower counts on platforms — but faster, because the evaluation loop has no human latency. Small early advantages become large structural moats before a human CMO notices the curve has turned.</p>
+      </div>
+      <div class="col">
+        <div class="tag">Reputation</div>
+        <h3>Stablecoin settlement removes the last friction on the curve</h3>
+        <p>When agents settle trades in USDC, cross-border and cross-platform transactions drop to near-zero friction. Brands that are callable and payable in one protocol step participate in every agent marketplace at once.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="pageno">08</div>
+  </div>
+</section>
+
+<!-- ============ 09 · TPL/BIG-STAT ============ -->
+<section class="slide tpl-stat" id="s9">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/BIG-STAT · 09/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow kicker">The interface is standardizing: cross-vendor, foundation-governed, already in production</div>
+    <div class="statrow">
+      <div class="stat">
+        <div class="num">97M+</div>
+        <div class="lbl">monthly MCP SDK downloads · 10,000+ active public servers · adopted by ChatGPT, Gemini, Copilot, Cursor</div>
+      </div>
+      <div class="stat dim">
+        <div class="num">150+</div>
+        <div class="lbl">organizations backing A2A in its first year · production use in supply chain, finance, insurance</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Sources · <a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation" target="_blank" rel="noopener"><b>Anthropic</b> MCP foundation announcement, Dec 2025</a> · <a href="https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year" target="_blank" rel="noopener"><b>Linux Foundation</b> A2A 1-year milestone, Apr 2026</a></div>
+    <div class="pageno">09</div>
+  </div>
+</section>
+
+<!-- ============ 10 · TPL/SECTION ============ -->
+<section class="slide tpl-section" id="s10">
+  <div class="index">03</div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/SECTION · 10/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">Part three</div>
+    <h1 class="headline">The trust boundary</h1>
+    <p class="subline">The same properties that make an agent-facing system trustworthy to a human are exactly the properties that make it safely callable by an agent. The security model is not a caveat — it is the enabling condition.</p>
+  </div>
+</section>
+
+<!-- ============ 11 · TPL/LIST ============ -->
+<section class="slide tpl-list" id="s11">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/LIST · 11/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">OWASP #1 LLM risk · CaMeL (Google DeepMind + ETH Zurich, Mar 2025) · Anthropic GTG-1002 incident</div>
+    <h2 class="headline">Three rules that run through every FDI build</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="n">RULE 01</div>
+        <h3>Treat every retrieved document as hostile input</h3>
+        <p>Regardless of the source, any content that enters the model's context has had opportunity to be poisoned. Indirect prompt injection is OWASP's number-one LLM risk.</p>
+      </div>
+      <div class="card">
+        <div class="n">RULE 02</div>
+        <h3>Sanitize everything that goes out</h3>
+        <p>Outputs that reach other systems or users must be validated against expected structure and content before they leave the agent's control. The blast radius of a successful injection is now a real action, not a bad answer.</p>
+      </div>
+      <div class="card">
+        <div class="n">RULE 03</div>
+        <h3>Never let data become a command</h3>
+        <p>Retrieved content is data. Instructions are instructions. CaMeL: any system where those two streams mix in the same token context is vulnerable by design. Separate them at the architecture level.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <div class="cite">Authority · <a href="https://genai.owasp.org/llmrisk/llm01-prompt-injection/" target="_blank" rel="noopener"><b>OWASP LLM01:2025</b></a> · <a href="https://arxiv.org/abs/2503.18813" target="_blank" rel="noopener"><b>CaMeL arXiv:2503.18813</b></a> · <a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/" target="_blank" rel="noopener"><b>Simon Willison, the lethal trifecta</b></a></div>
+    <div class="pageno">11</div>
+  </div>
+</section>
+
+<!-- ============ 12 · TPL/TABLE ============ -->
+<section class="slide tpl-table" id="s12">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/TABLE · 12/13</div>
+  </div>
+  <div class="body">
+    <div class="eyebrow">What a brand becomes in an agent-mediated market</div>
+    <h2 class="headline">The interface is the marketing system</h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="layer">Was</th>
+          <th class="does">Becomes</th>
+          <th class="why">Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="layer">Website</td>
+          <td class="does">MCP server — callable tools and citable resources</td>
+          <td class="why">Agents invoke, not browse</td>
+        </tr>
+        <tr>
+          <td class="layer">SEO</td>
+          <td class="does">GEO/AEO — corpus structured so models retrieve and cite it</td>
+          <td class="why">Discovery is inside the answer, not on the results page</td>
+        </tr>
+        <tr>
+          <td class="layer">Ad buy</td>
+          <td class="does">Agent Card — discoverable identity at runtime via A2A</td>
+          <td class="why">The buying agent finds you; you don't interrupt it</td>
+        </tr>
+        <tr>
+          <td class="layer">Payment</td>
+          <td class="does">AP2 mandate + x402 stablecoin rail</td>
+          <td class="why">Verified intent, zero-friction cross-border settlement</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="s-foot">
+    <div class="pageno">12</div>
+  </div>
+</section>
+
+<!-- ============ 13 · TPL/CTA ============ -->
+<section class="slide tpl-cta" id="s13">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none"><path class="arc" d="M12 50 A38 38 0 0 1 88 50"/><path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/></svg>
+    </div>
+    <div class="corner">TPL/CTA · 13/13</div>
+  </div>
+  <div class="body">
+    <svg class="mark" viewBox="0 0 100 100" fill="none" style="height:96px;width:96px;margin:0 auto;color:#FF5E00;">
+      <path class="arc" d="M12 50 A38 38 0 0 1 88 50" stroke="currentColor" stroke-width="7" fill="none"/>
+      <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z" fill="currentColor"/>
+    </svg>
+    <h2 class="headline">Build the interface,<br/>not the ad.</h2>
+    <p class="subline">Every quarter spent buying commoditized reach is a quarter not spent becoming the callable, citable, machine-legible interface that agents will reach for first.</p>
+    <div class="pill">falsedawn.industries</div>
+  </div>
+  <div class="sys">
+    <span class="lead">Read the full guide:</span>
+    <span class="chip">Field Guide 004 · Autonomous</span>
+    <span class="chip">falsedawn.industries/field-guide-004</span>
+  </div>
+</section>
+
+</html>

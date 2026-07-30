@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · FG004 Stack Diagram</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html, body { width: auto; height: auto; overflow: visible; background: #060504; margin: 0; padding: 0; }
+  .viz {
+    position: relative; width: 1200px; height: 700px; overflow: hidden;
+    background: var(--base); font-family: 'Inter', sans-serif; color: var(--cream);
+    display: flex; flex-direction: column; padding: 56px 64px 48px;
+  }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .22em; font-size: 12px; font-weight: 700; color: var(--amber); display: inline-flex; align-items: center; gap: .9em; margin-bottom: 28px; }
+  .eyebrow::before { content:""; width: 2em; height: .7em; background: #FF5E00; flex: none; }
+  .headline { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.1; letter-spacing: -.03em; text-transform: uppercase; color: var(--cream); margin: 0 0 40px; }
+  .headline em { font-style: normal; color: var(--amber); }
+  .stack { display: flex; gap: 0; flex: 1; }
+  .layer {
+    flex: 1; display: flex; flex-direction: column;
+    border: 2px solid var(--hairline); border-radius: 0;
+    background: var(--sc); position: relative;
+  }
+  .layer + .layer { margin-left: -2px; }
+  .layer.top { border-color: var(--amber); background: #1a1508; }
+  .layer-head {
+    background: var(--sc-high); border-bottom: 2px solid var(--hairline);
+    padding: 18px 22px;
+  }
+  .layer.top .layer-head { background: #241b0c; border-bottom-color: var(--amber); }
+  .layer-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .layer-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 30px; color: var(--amber); margin-top: 6px; letter-spacing: -.01em; }
+  .layer.top .layer-name { color: var(--amber); text-shadow: 0 0 16px rgba(255,177,43,.5); }
+  .layer-body { padding: 20px 22px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .layer-role { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+  .layer-desc { font-size: 15.5px; color: var(--faded); line-height: 1.5; margin: 0; }
+  .layer-badge { margin-top: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; }
+  .layer-badge b { color: var(--cream); font-weight: 500; }
+  /* Arrow connectors */
+  .arrow-row { display: flex; align-items: center; justify-content: center; gap: 0; position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%); }
+  .arrow-down { width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 14px solid var(--amber); }
+  .stack-caption { margin-top: 28px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .1em; color: var(--muted); text-align: center; text-transform: uppercase; }
+  .stack-caption b { color: var(--faded); font-weight: 500; }
+  /* border accent on left */
+  .viz::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--amber); }
+</style>
+</head>
+<body>
+<div class="viz" id="viz">
+  <div class="eyebrow">Field Guide 004 · Autonomous · The open agent commerce stack</div>
+  <h2 class="headline">MCP → A2A → AP2 → <em>x402</em>: four layers, all Apache-licensed, all shipping now</h2>
+  <div class="stack">
+    <div class="layer">
+      <div class="layer-head">
+        <div class="layer-tag">Layer 1 · Tools &amp; Data</div>
+        <div class="layer-name">MCP</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-role">Model Context Protocol</div>
+        <p class="layer-desc">Exposes any system as agent-callable tools, resources, and prompts over JSON-RPC 2.0. The layer at which a brand becomes something an agent can invoke.</p>
+        <div class="layer-badge"><b>97M+</b> monthly SDK downloads · <b>10,000+</b> public servers · Agentic AI Foundation (Linux Foundation)</div>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="layer-head">
+        <div class="layer-tag">Layer 2 · Agent Coordination</div>
+        <div class="layer-name">A2A</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-role">Agent2Agent Protocol</div>
+        <p class="layer-desc">Agents discover and delegate to other agents at runtime via Agent Cards — without pre-wired integrations. The layer at which your agent becomes findable to a buyer's agent.</p>
+        <div class="layer-badge"><b>150+</b> orgs · stable 1.0 · production use in supply chain, finance, insurance · Linux Foundation</div>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="layer-head">
+        <div class="layer-tag">Layer 3 · Payment Auth</div>
+        <div class="layer-name">AP2</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-role">Agent Payments Protocol</div>
+        <p class="layer-desc">Cryptographically signed "mandates" built on W3C Verifiable Credentials prove a human authorized the transaction. Runs as an extension of both A2A and MCP.</p>
+        <div class="layer-badge">Google · <b>60+</b> partners: Mastercard, Amex, PayPal, <b>Coinbase</b>, Worldpay · Sep 2025</div>
+      </div>
+    </div>
+    <div class="layer top">
+      <div class="layer-head">
+        <div class="layer-tag">Layer 4 · Settlement</div>
+        <div class="layer-name">x402</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-role">Stablecoin settlement rail</div>
+        <p class="layer-desc">HTTP-native micropayments settled in stablecoins (USDC) via Coinbase x402 + agentkit. The crypto throughline: agents settle trades without touching wire-transfer systems.</p>
+        <div class="layer-badge">Coinbase · <b>Apache 2.0</b> · connects to the Decentralized Field Guide</div>
+      </div>
+    </div>
+  </div>
+  <div class="stack-caption"><b>Source:</b> MCP spec (Nov 2025) · A2A 1.0 (Apr 2026) · Google AP2 announcement (Sep 2025) · coinbase/x402 · all verified Tier 1 primary sources</div>
+</div>
+</body>
+</html>

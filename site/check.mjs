@@ -25,6 +25,7 @@ const EXPECTED_ROUTES = [
   "/",
   "/field-guide",
   "/field-guide-002",
+  "/field-guide-004",
   "/fdcp",
   "/skillfoundry",
   "/marcom-kit",
@@ -38,6 +39,7 @@ const EXPECTED_ROUTES = [
 ];
 const EXPECTED_SLIDES = 13;
 const EXPECTED_SLIDES_FDCP = 12;
+const EXPECTED_SLIDES_004 = 13;
 
 const errors = [];
 const fail = (msg) => errors.push(msg);
@@ -172,6 +174,15 @@ const slideCountFdcp = fs.existsSync(slidesDirFdcp)
 if (slideCountFdcp !== EXPECTED_SLIDES_FDCP) {
   fail(`expected ${EXPECTED_SLIDES_FDCP} FDCP deck slides, found ${slideCountFdcp}`);
 }
+const deckPdf004 = path.join(DIST, "assets", "fdi-field-guide-004-deck.pdf");
+if (!fs.existsSync(deckPdf004)) fail("missing deck PDF: /assets/fdi-field-guide-004-deck.pdf");
+const slidesDir004 = path.join(DIST, "assets", "deck-slides-004");
+const slideCount004 = fs.existsSync(slidesDir004)
+  ? fs.readdirSync(slidesDir004).filter((f) => f.endsWith(".png")).length
+  : 0;
+if (slideCount004 !== EXPECTED_SLIDES_004) {
+  fail(`expected ${EXPECTED_SLIDES_004} Field Guide 004 deck slides, found ${slideCount004}`);
+}
 
 /* 3. every referenced /assets, /fonts, and internal link resolves */
 const pages = fs
@@ -209,5 +220,5 @@ if (errors.length) {
 }
 
 console.log(
-  `\n[check] OK — ${EXPECTED_ROUTES.length} routes, ${slideCount}+${slideCount002}+${slideCountFdcp} slides, ${refCount} references all resolve.`,
+  `\n[check] OK — ${EXPECTED_ROUTES.length} routes, ${slideCount}+${slideCount002}+${slideCountFdcp}+${slideCount004} slides, ${refCount} references all resolve.`,
 );

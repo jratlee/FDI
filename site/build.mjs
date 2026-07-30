@@ -12,6 +12,7 @@ const SRC = path.join(__dirname, "src");
 const EXPORTS = path.join(ROOT, "exports", "field-guide-launch");
 const EXPORTS002 = path.join(ROOT, "exports", "field-guide-002-aggregated");
 const EXPORTSPT02 = path.join(ROOT, "exports", "performance-thinking-02");
+const EXPORTS004 = path.join(ROOT, "exports", "field-guide-004-autonomous");
 const FONTS = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "fonts");
 
 /* ---------------- helpers ---------------- */
@@ -673,6 +674,81 @@ function fdcpPage({ title, subtitle, attribution, bodyHtml }, slideFiles) {
     body,
     canonical: `${SITE_URL}/fdcp`,
     ogImage: "/assets/fdcp-cover-1280x720.png",
+  });
+}
+
+function fieldGuide004({ title, subtitle, attribution, bodyHtml }, slideFiles) {
+  const body = `
+<article class="article">
+  <div class="wrap">
+    <div class="article-head">
+      <span class="eyebrow">Growth Cartography · Field Guide 004 · Autonomous</span>
+      <h1>${title}</h1>
+      <p class="sub">${subtitle}</p>
+      <p class="byline">${attribution}</p>
+    </div>
+    <div class="article-cover">
+      <img src="/assets/fg004-cover-1200x627.png" alt="False Dawn Industries Field Guide 004: When the buyer is software. Autonomous markets, agent-to-agent dynamics, and the growth curve." width="1200" height="627" />
+    </div>
+    <div class="prose">
+      ${bodyHtml}
+    </div>
+  </div>
+</article>
+
+<section class="deck section" id="deck">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The deck</span>
+      <h2>Field Guide 004: agent-to-agent dynamics in 13 slides</h2>
+      <p>The full deck, built on the reusable FDI slide system. View it inline, download the PDF, or browse the slides.</p>
+    </div>
+    <div class="deck-frame">
+      <iframe src="/assets/fdi-field-guide-004-deck.pdf#view=FitH" title="FDI Field Guide 004 deck (PDF)" loading="lazy"></iframe>
+    </div>
+    <div class="deck-actions">
+      <a class="btn btn-primary" href="/assets/fdi-field-guide-004-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+    </div>
+    <div class="slides-strip">
+      ${slidesStrip(slideFiles, "deck-slides-004")}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="prev-guide">
+  <div class="wrap">
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">Earlier in the series</span>
+        <h3>Field Guide 003 · The FDCP</h3>
+        <p>How the Forward-Deployed Communications Professional runs AI agent fleets: loop engineering, policy as code, and marketing to machine buyers.</p>
+        <div class="card-foot"><a class="link-arrow" href="/fdcp">Read the FDCP report <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">The market one-pager</span>
+        <h3>Autonomous markets, mapped</h3>
+        <p>The short version of this guide: the definition, the pattern, and the FDI answer for markets where agents transact with agents at machine speed.</p>
+        <div class="card-foot"><a class="link-arrow" href="/autonomous">See the one-pager <span class="arrow">→</span></a></div>
+      </article>
+    </div>
+  </div>
+</section>`;
+  const description =
+    "Agents are already buying at scale, the protocols are open, and the growth curve points toward Meta-sized agent marketplaces. The response: become a callable, citable, machine-legible interface.";
+  return page({
+    title: "The Autonomous Market: Field Guide 004 | False Dawn Industries",
+    description,
+    active: "field-guide",
+    jsonLd: articleJsonLd({
+      headline: "When the Buyer Is Software",
+      description,
+      image: "/assets/fg004-cover-1200x627.png",
+      route: "/field-guide-004",
+      datePublished: "2026-07-30",
+    }),
+    body,
+    canonical: `${SITE_URL}/field-guide-004`,
+    ogImage: "/assets/fg004-cover-1200x627.png",
   });
 }
 
@@ -1772,6 +1848,26 @@ function copyAssets() {
   for (const f of slideFilesFdcp)
     copy(path.join(slidesDirFdcp, f), path.join(DIST, "assets", "deck-slides-fdcp", f));
 
+  // Field Guide 004 (Autonomous) images + deck
+  const assetFiles004 = [
+    "fg004-cover-1200x627.png",
+    "viz-fg004-stack-1200x700.png",
+    "fdi-field-guide-004-deck.pdf",
+  ];
+  for (const f of assetFiles004) {
+    const from = path.join(EXPORTS004, f);
+    if (fs.existsSync(from)) copy(from, path.join(DIST, "assets", f));
+  }
+  const slidesDir004 = path.join(EXPORTS004, "deck-slides");
+  const slideFiles004 = fs.existsSync(slidesDir004)
+    ? fs
+        .readdirSync(slidesDir004)
+        .filter((f) => f.endsWith(".png"))
+        .sort()
+    : [];
+  for (const f of slideFiles004)
+    copy(path.join(slidesDir004, f), path.join(DIST, "assets", "deck-slides-004", f));
+
   // Davos demo end-user journey screenshots (private page assets)
   const davosShots = path.join(SRC, "assets", "davos-demo");
   if (fs.existsSync(davosShots)) {
@@ -1786,7 +1882,7 @@ function copyAssets() {
   const favicon = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "favicon.svg");
   if (fs.existsSync(favicon)) copy(favicon, path.join(DIST, "favicon.svg"));
 
-  return { slideFiles, slideFiles002, slideFilesFdcp };
+  return { slideFiles, slideFiles002, slideFilesFdcp, slideFiles004 };
 }
 
 // Build the gated Skillfoundry plugin package. It lives OUTSIDE dist/ (which is
@@ -2005,32 +2101,42 @@ const CONCEPTS = {
     eyebrow: "The series · Autonomous markets",
     h1: "Autonomous",
     lede:
-      "Agents transacting with agents. The question that matters is the dynamics: what the growth curve looks like as agent marketplaces scale toward the size of Meta and Google today.",
+      "Agents transacting with agents. The open protocol stack (MCP → A2A → AP2 → x402) is live; the growth curve points toward marketplaces at the scale of Meta and Google today.",
     definition:
-      "An autonomous market is one where software agents discover, evaluate, and transact with other agents on behalf of people. Autonomous marketing is marketing to and through those agents, and the strategic question is the dynamics: how selection, pricing, and reputation behave as agent marketplaces scale toward the size of Meta and Google today.",
+      "An autonomous market is one where software agents discover, evaluate, and transact with other agents on behalf of people. The open stack is already in production: MCP exposes callable tools, A2A lets agents find each other at runtime, AP2 authorizes payments with cryptographic proof of user intent, and x402 settles in stablecoins. Autonomous marketing is building the gated, citable, machine-legible interface those agents can call — before the compounding selection dynamics close the window.",
     points: [
       {
         h: "The pattern",
-        p: "When agents transact with agents, marketplace loops (selection, pricing, reputation) run at machine speed with no human in the middle. Small early advantages compound fast as the marketplace grows.",
+        p: 'The commerce protocols are live and open. On September 29, 2025, Stripe and OpenAI published <a href="https://stripe.com/blog/developing-an-open-standard-for-agentic-commerce" target="_blank" rel="noopener">ACP</a> and switched on agent checkout in ChatGPT for 700 million weekly users. Two weeks earlier, Google launched <a href="https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol" target="_blank" rel="noopener">AP2</a> with 60+ payments partners. The assumption that "a human is directly clicking buy" is already broken.',
+      },
+      {
+        h: "The growth curve",
+        p: "Selection, pricing, and reputation run at machine speed with no human latency in the loop. Small early advantages in machine-legibility and citation signals compound into structural moats — faster than the organic-reach collapse on social platforms, because the evaluation loop has no human slowdown.",
       },
       {
         h: "The FDI answer",
-        p: "Model the growth curve before the marketplaces mature, and build the assets agents can verify along the way: a graded corpus with provenance, exposed through open interfaces like the Model Context Protocol (MCP), so every answer carries its source, tier, and confidence.",
-      },
-      {
-        h: "In the wild",
-        p: 'The open <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol</a> is the pattern in public: it gives agents a verifiable interface to call tools and retrieve answers with their sources attached, rather than trusting unprovenanced text.',
+        p: 'Build the gated, citable, machine-legible interface agents can call: an <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP</a>-exposed corpus with provenance, structured so every answer carries its source and confidence. The same callable identity that agents verify over MCP is the identity that travels onchain through the crypto-settlement layer.',
       },
     ],
     guide: {
-      href: "/fdcp",
-      label: "Read the FDCP report",
-      note: "The Performance Thinking report on the Forward-Deployed Communications Professional is live: the full argument, four visuals, and the 12-slide deck.",
+      href: "/field-guide-004",
+      label: "Read Field Guide 004",
+      note: "Field Guide 004 is live: the full article on agent-market dynamics and the growth curve, three data visuals, and the 13-slide deck.",
     },
     kit: {
       name: "The Agent-Ready Org",
       p: "In autonomous markets your organization is judged by machines: agents route budget to operations they can query and verify. MarCom OS's Riverbank writes your brand rules so agents can enforce them, and the Hourglass puts human kill authority exactly where machine-speed output needs it.",
     },
+    faqs: [
+      {
+        q: "What is agentic commerce and is it live yet?",
+        a: "Agentic commerce is the purchase of goods and services by AI agents acting under delegated user authority. It is live: Stripe and OpenAI published the Agentic Commerce Protocol (ACP) in September 2025 and enabled agent checkout in ChatGPT for over 700 million weekly users. Google launched the Agent Payments Protocol (AP2) with 60+ partners including Mastercard, PayPal, and Coinbase the same month. Morgan Stanley reported roughly 23% of Americans had already made a purchase using AI by December 2025.",
+      },
+      {
+        q: "What is the open agent protocol stack?",
+        a: "Four Apache-licensed, foundation-governed standards now layer into an end-to-end agent commerce stack: MCP (Model Context Protocol) exposes tools and data as callable agent interfaces; A2A (Agent2Agent) lets agents discover and delegate to each other at runtime; AP2 (Agent Payments Protocol) authorizes payments with cryptographically signed user mandates; and x402 enables stablecoin settlement over standard HTTP. All four are under Linux Foundation governance.",
+      },
+    ],
   },
 };
 
@@ -3043,7 +3149,7 @@ function renderRoute(active, builder) {
 function main() {
   rm(DIST);
   mkdir(DIST);
-  const { slideFiles, slideFiles002, slideFilesFdcp } = copyAssets();
+  const { slideFiles, slideFiles002, slideFilesFdcp, slideFiles004 } = copyAssets();
   buildPluginZip();
   buildKitZip();
   buildDavosZip();
@@ -3062,6 +3168,13 @@ function main() {
   const parsed002 = parseArticle(md002);
   const bodyHtml002 = renderArticleBody(parsed002.body);
 
+  const md004 = fs.readFileSync(
+    path.join(EXPORTS004, "field-guide-004-article.md"),
+    "utf8",
+  );
+  const parsed004 = parseArticle(md004);
+  const bodyHtml004 = renderArticleBody(parsed004.body);
+
   fs.writeFileSync(path.join(DIST, "index.html"), home());
   fs.writeFileSync(
     path.join(DIST, "field-guide.html"),
@@ -3077,6 +3190,10 @@ function main() {
   fs.writeFileSync(
     path.join(DIST, "fdcp.html"),
     fdcpPage({ ...parsedFdcp, bodyHtml: bodyHtmlFdcp }, slideFilesFdcp),
+  );
+  fs.writeFileSync(
+    path.join(DIST, "field-guide-004.html"),
+    fieldGuide004({ ...parsed004, bodyHtml: bodyHtml004 }, slideFiles004),
   );
 
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
@@ -3099,7 +3216,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 13 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFilesFdcp.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 14 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFilesFdcp.length}+${slideFiles004.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 

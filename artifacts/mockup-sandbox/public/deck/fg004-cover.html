@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FDI · Field Guide 004 Cover</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css" />
+<style>
+  html, body { width: auto; height: auto; overflow: visible; background: #060504; margin: 0; padding: 0; }
+  .cover {
+    position: relative; width: 1200px; height: 627px; overflow: hidden;
+    background: var(--base); font-family: 'Inter', sans-serif; color: var(--cream);
+  }
+  .gridline-v { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px solid rgba(58,45,28,.45); }
+  .gridline-h { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid rgba(58,45,28,.45); }
+  .amber-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--amber); }
+  .lockup-wrap { position: absolute; top: 44px; left: 60px; }
+  .lockup { display: inline-flex; flex-direction: row-reverse; align-items: center; gap: .6em; font-size: 18px; color: var(--cream); }
+  .lockup .wm { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; line-height: 1; white-space: nowrap; }
+  .lockup .mark { height: 1em; width: 1em; flex: none; color: #FF5E00; }
+  .lockup .mark .arc { stroke: currentColor; stroke-width: 7; fill: none; }
+  .lockup .mark .fill { fill: currentColor; }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .22em; font-size: 12px; font-weight: 700; color: var(--amber); display: inline-flex; align-items: center; gap: .9em; }
+  .eyebrow::before { content:""; width: 2em; height: .7em; background: #FF5E00; flex: none; }
+  .body { position: absolute; left: 60px; top: 130px; right: 60px; }
+  .headline { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 86px; line-height: .95; letter-spacing: -.04em; text-transform: uppercase; color: var(--cream); margin: 18px 0 0; text-shadow: 0 0 20px rgba(255,177,43,.4); }
+  .headline em { font-style: normal; color: #FF5E00; }
+  .sub { color: var(--faded); font-size: 19px; margin-top: 22px; line-height: 1.45; max-width: 34em; border-left: 4px solid var(--amber); padding-left: 16px; font-weight: 500; }
+  .badge { position: absolute; right: 60px; top: 130px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--base); background: var(--amber); padding: 8px 18px; border-radius: 0; }
+  /* watermark mark */
+  .wm-bg { position: absolute; right: -60px; top: -40px; width: 480px; height: 480px; opacity: .06; color: #FF5E00; pointer-events: none; }
+  .wm-bg .arc { stroke: currentColor; stroke-width: 7; fill: none; }
+  .wm-bg .fill { fill: currentColor; }
+</style>
+</head>
+<body>
+<div class="cover" id="cover">
+  <div class="gridline-v" style="left: 740px;"></div>
+  <div class="gridline-h" style="top: 120px;"></div>
+  <svg class="wm-bg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+    <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+    <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+  </svg>
+  <div class="lockup-wrap">
+    <div class="lockup">
+      <span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+  </div>
+  <div class="badge">Field Guide 004</div>
+  <div class="body">
+    <div class="eyebrow">Growth Cartography · Autonomous</div>
+    <h1 class="headline">When the buyer<br/>is <em>software</em>.</h1>
+    <p class="sub">Agent-to-agent market dynamics, the growth curve, and what it means to market when the entity searching, comparing, and buying is a program acting under delegated authority.</p>
+  </div>
+  <div class="amber-bar"></div>
+</div>
+</body>
+</html>
