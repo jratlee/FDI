@@ -67,12 +67,12 @@ isValidation = true
 name = "audit-report"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node skillfoundry/schema/validate-report.mjs && node skillfoundry/schema/test-validator.mjs"
-
 [workflows.workflow.metadata]
 isValidation = true
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node skillfoundry/schema/validate-report.mjs && node skillfoundry/schema/test-validator.mjs && node skillfoundry/engine/test-audit.mjs"
 
 [[workflows.workflow]]
 name = "site-links-outbound"
