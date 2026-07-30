@@ -137,6 +137,121 @@ const manageLimiter = pool
     )
   : new RateLimiterMemory(MANAGE_RL_OPTS);
 
+// Per-IP rate limit for Stripe Checkout session creation.
+// Keeps bots from running up Stripe API usage; a real user rarely needs more
+// than a handful of checkout attempts in an hour.
+const CHECKOUT_RL_OPTS = {
+  keyPrefix: "co",
+  points: 20,
+  duration: 60 * 60,      // per hour
+  blockDuration: 60 * 60,
+};
+const checkoutLimiter = pool
+  ? new RateLimiterPostgres(
+      {
+        ...CHECKOUT_RL_OPTS,
+        storeClient: pool,
+        storeType: "pool",
+        tableName: "rate_limits",
+        clearExpiredByTimeout: true,
+        insuranceLimiter: new RateLimiterMemory(CHECKOUT_RL_OPTS),
+      },
+      (err) => {
+        if (err) console.error("[ratelimit] checkout Postgres store init failed:", err.message);
+      },
+    )
+  : new RateLimiterMemory(CHECKOUT_RL_OPTS);
+
+// Per-IP rate limit for subscription-key validation.
+const VALIDATE_RL_OPTS = {
+  keyPrefix: "val",
+  points: 15,
+  duration: 60 * 15,      // per 15 minutes
+  blockDuration: 60 * 60,
+};
+const validateLimiter = pool
+  ? new RateLimiterPostgres(
+      {
+        ...VALIDATE_RL_OPTS,
+        storeClient: pool,
+        storeType: "pool",
+        tableName: "rate_limits",
+        clearExpiredByTimeout: true,
+        insuranceLimiter: new RateLimiterMemory(VALIDATE_RL_OPTS),
+      },
+      (err) => {
+        if (err) console.error("[ratelimit] validate Postgres store init failed:", err.message);
+      },
+    )
+  : new RateLimiterMemory(VALIDATE_RL_OPTS);
+
+// Per-IP rate limit for the protected compute run path. Tighter than the
+// others because each run invokes the full audit engine.
+const RUN_RL_OPTS = {
+  keyPrefix: "run",
+  points: 10,
+  duration: 60 * 60,      // per hour
+  blockDuration: 60 * 60,
+};
+const runLimiter = pool
+  ? new RateLimiterPostgres(
+      {
+        ...RUN_RL_OPTS,
+        storeClient: pool,
+        storeType: "pool",
+        tableName: "rate_limits",
+        clearExpiredByTimeout: true,
+        insuranceLimiter: new RateLimiterMemory(RUN_RL_OPTS),
+      },
+      (err) => {
+        if (err) console.error("[ratelimit] run Postgres store init failed:", err.message);
+      },
+    )
+  : new RateLimiterMemory(RUN_RL_OPTS);
+
+// Per-IP rate limit for Stripe customer-portal session creation.
+const PORTAL_RL_OPTS = {
+  keyPrefix: "por",
+  points: 10,
+  duration: 60 * 15,      // per 15 minutes
+  blockDuration: 60 * 60,
+};
+const portalLimiter = pool
+  ? new RateLimiterPostgres(
+      {
+        ...PORTAL_RL_OPTS,
+        storeClient: pool,
+        storeType: "pool",
+        tableName: "rate_limits",
+        clearExpiredByTimeout: true,
+        insuranceLimiter: new RateLimiterMemory(PORTAL_RL_OPTS),
+      },
+      (err) => {
+        if (err) console.error("[ratelimit] portal Postgres store init failed:", err.message);
+      },
+    )
+  : new RateLimiterMemory(PORTAL_RL_OPTS);
+
+// Shared helper: consume one point from `limiter` for the request's IP.
+// Returns true if the request is allowed; writes 429 + Retry-After and returns
+// false if it is blocked. Callers must return immediately on false.
+async function consumeRateLimit(limiter, req, res) {
+  try {
+    await limiter.consume(clientIp(req));
+    return true;
+  } catch (rl) {
+    const retryMs = rl && typeof rl.msBeforeNext === "number" ? rl.msBeforeNext : 3600000;
+    const retrySec = Math.ceil(retryMs / 1000);
+    res.setHeader("Retry-After", String(retrySec));
+    sendJson(res, 429, {
+      ok: false,
+      error: "rate_limited",
+      message: "Too many attempts. Please try again later.",
+    });
+    return false;
+  }
+}
+
 // Disposable / throwaway email domains we don't want on the list.
 //
 // The blocklist is backed by a large, community-maintained public list that is
@@ -2050,6 +2165,7 @@ async function handleCheckout(req, res) {
     sendJson(res, 405, { ok: false, error: "method_not_allowed" });
     return;
   }
+  if (!await consumeRateLimit(checkoutLimiter, req, res)) return;
   if (!stripeConfigured() || !commerceStorage()) {
     sendJson(res, 503, {
       ok: false,
@@ -2137,6 +2253,7 @@ async function handleValidate(req, res) {
     sendJson(res, 405, { ok: false, error: "method_not_allowed" });
     return;
   }
+  if (!await consumeRateLimit(validateLimiter, req, res)) return;
   if (!commerceStorage()) {
     sendJson(res, 503, { ok: false, error: "storage_unavailable" });
     return;
@@ -2179,6 +2296,7 @@ async function handleRun(req, res) {
     sendJson(res, 405, { ok: false, error: "method_not_allowed" });
     return;
   }
+  if (!await consumeRateLimit(runLimiter, req, res)) return;
   if (!commerceStorage()) {
     sendJson(res, 503, { ok: false, error: "storage_unavailable" });
     return;
@@ -2276,6 +2394,7 @@ async function handlePortal(req, res) {
     sendJson(res, 405, { ok: false, error: "method_not_allowed" });
     return;
   }
+  if (!await consumeRateLimit(portalLimiter, req, res)) return;
   if (!stripeConfigured() || !commerceStorage()) {
     sendJson(res, 503, { ok: false, error: "commerce_unavailable" });
     return;
