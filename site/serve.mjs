@@ -1103,6 +1103,144 @@ async function handleAdmin(req, res, urlObj) {
     return;
   }
 
+  // Resend confirmation email for a pending signup.
+  if (req.method === "POST" && pathname === "/admin/waitlist/resend") {
+    if (!isAdmin(req, urlObj)) {
+      loginPage(res, 401);
+      return;
+    }
+    let email = "";
+    try {
+      const raw = await readBody(req);
+      const params = new URLSearchParams(raw);
+      email = String(params.get("email") || "").trim().toLowerCase();
+    } catch {
+      res.writeHead(303, { Location: "/admin/waitlist?msg=bad", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    if (!email) {
+      res.writeHead(303, { Location: "/admin/waitlist?msg=bad", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    try {
+      await ensureTable();
+      const existing = await pool.query(
+        `SELECT id, confirmed_at, unsub_token, confirm_token
+           FROM waitlist_signups WHERE email = $1`,
+        [email],
+      );
+      const row = existing.rows[0];
+      if (!row) {
+        res.writeHead(303, { Location: "/admin/waitlist?msg=notfound", "Cache-Control": "no-store" });
+        res.end();
+        return;
+      }
+      if (row.confirmed_at) {
+        res.writeHead(303, { Location: "/admin/waitlist?msg=alreadyconfirmed", "Cache-Control": "no-store" });
+        res.end();
+        return;
+      }
+      // Regenerate token and refresh confirm_sent_at so the window resets.
+      const confirmToken = newConfirmToken();
+      await pool.query(
+        `UPDATE waitlist_signups
+            SET confirm_token = $1, confirm_sent_at = now()
+          WHERE id = $2`,
+        [confirmToken, row.id],
+      );
+      // Best-effort — fire after redirect.
+      const confirmUrl = `${reqOrigin(req)}/api/waitlist/confirm?token=${encodeURIComponent(confirmToken)}`;
+      const unsubscribeUrl = row.unsub_token
+        ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
+        : "";
+      // Need source for the email copy; fetch it separately.
+      const srcRow = await pool.query(`SELECT source FROM waitlist_signups WHERE id = $1`, [row.id]);
+      const source = (srcRow.rows[0] && srcRow.rows[0].source) || "site";
+      res.writeHead(303, { Location: "/admin/waitlist?msg=resent", "Cache-Control": "no-store" });
+      res.end();
+      sendConfirmationRequest({ email, source, confirmUrl, unsubscribeUrl, days: CONFIRM_DAYS }).catch(
+        (err) => console.error("[admin] resend confirm email failed:", err.message),
+      );
+    } catch (err) {
+      console.error("[admin] resend failed:", err.message);
+      res.writeHead(303, { Location: "/admin/waitlist?msg=error", "Cache-Control": "no-store" });
+      res.end();
+    }
+    return;
+  }
+
+  // Manually confirm a pending signup (fires welcome email once, idempotent).
+  if (req.method === "POST" && pathname === "/admin/waitlist/confirm") {
+    if (!isAdmin(req, urlObj)) {
+      loginPage(res, 401);
+      return;
+    }
+    let email = "";
+    try {
+      const raw = await readBody(req);
+      const params = new URLSearchParams(raw);
+      email = String(params.get("email") || "").trim().toLowerCase();
+    } catch {
+      res.writeHead(303, { Location: "/admin/waitlist?msg=bad", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    if (!email) {
+      res.writeHead(303, { Location: "/admin/waitlist?msg=bad", "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    try {
+      await ensureTable();
+      const existing = await pool.query(
+        `SELECT id, confirmed_at, unsub_token, source
+           FROM waitlist_signups WHERE email = $1`,
+        [email],
+      );
+      const row = existing.rows[0];
+      if (!row) {
+        res.writeHead(303, { Location: "/admin/waitlist?msg=notfound", "Cache-Control": "no-store" });
+        res.end();
+        return;
+      }
+      if (row.confirmed_at) {
+        res.writeHead(303, { Location: "/admin/waitlist?msg=alreadyconfirmed", "Cache-Control": "no-store" });
+        res.end();
+        return;
+      }
+      // Mark confirmed, idempotently (guard on IS NULL).
+      const upd = await pool.query(
+        `UPDATE waitlist_signups
+            SET confirmed_at = now(), confirm_token = NULL
+          WHERE id = $1 AND confirmed_at IS NULL
+          RETURNING id`,
+        [row.id],
+      );
+      const didConfirm = upd.rowCount > 0;
+      res.writeHead(303, {
+        Location: `/admin/waitlist?msg=${didConfirm ? "confirmed" : "alreadyconfirmed"}`,
+        "Cache-Control": "no-store",
+      });
+      res.end();
+      if (didConfirm) {
+        const source = row.source || "site";
+        const unsubscribeUrl = row.unsub_token
+          ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
+          : "";
+        sendWelcomeEmails({ email, source, unsubscribeUrl }).catch(
+          (err) => console.error("[admin] manual confirm welcome email failed:", err.message),
+        );
+      }
+    } catch (err) {
+      console.error("[admin] manual confirm failed:", err.message);
+      res.writeHead(303, { Location: "/admin/waitlist?msg=error", "Cache-Control": "no-store" });
+      res.end();
+    }
+    return;
+  }
+
   // Generate a Process Defragmentation Report (authed, quota-capped).
   if (req.method === "POST" && pathname === "/admin/defrag/generate") {
     if (!isAdmin(req, urlObj)) {
@@ -1420,13 +1558,31 @@ async function handleAdmin(req, res, urlObj) {
       needemail: ["warn", "Enter an email address first."],
       bad: ["warn", "Bad request."],
       error: ["warn", "Something went wrong. Try again."],
+      resent: ["ok", "Confirmation email resent."],
+      confirmed: ["ok", "Signup manually confirmed. Welcome email sent."],
+      alreadyconfirmed: ["warn", "That signup is already confirmed."],
     };
     const msgKey = urlObj.searchParams.get("msg") || "";
     const msg = MSGS[msgKey]
       ? `<p class="notice ${MSGS[msgKey][0]}">${esc(MSGS[msgKey][1])}</p>`
       : "";
     const dataRights = `<section class="ops">
-  <h2>Data rights (support)</h2>
+  <h2>Confirmation support</h2>
+  <form class="ops-form" method="POST" action="/admin/waitlist/resend">
+    <label for="resend-email">Resend confirmation email (pending only)</label>
+    <div class="ops-row">
+      <input id="resend-email" name="email" type="email" placeholder="person@example.com" autocomplete="off" required>
+      <button class="btn ghost" type="submit">Resend</button>
+    </div>
+  </form>
+  <form class="ops-form" method="POST" action="/admin/waitlist/confirm" onsubmit="return confirm('Manually confirm this signup and send the welcome email?')">
+    <label for="confirm-email">Manually confirm a signup (pending only — sends welcome email once)</label>
+    <div class="ops-row">
+      <input id="confirm-email" name="email" type="email" placeholder="person@example.com" autocomplete="off" required>
+      <button class="btn ghost" type="submit">Confirm</button>
+    </div>
+  </form>
+  <h2 style="margin-top:28px">Data rights (support)</h2>
   <form class="ops-form" method="POST" action="/admin/waitlist/delete" onsubmit="return confirm('Permanently delete this signup?')">
     <label for="del-email">Delete a signup by email (erasure request)</label>
     <div class="ops-row">
