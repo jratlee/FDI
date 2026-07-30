@@ -148,6 +148,7 @@ function footer() {
           <li><a href="/fdcp">The FDCP Report</a></li>
           <li><a href="/series">The Series</a></li>
           <li><a href="/community">The Lab</a></li>
+          <li><a href="/workshop">Workshops</a></li>
           <li><a href="/#about">About</a></li>
         </ul>
       </div>
@@ -2850,11 +2851,246 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 ## The Open Cartography Lab
 - Community (${SITE_URL}/community): a public, agent-staffed community where growth-modeling questions get computed answers with curves, stated assumptions, and sensitivity notes, as citable threads on a self-hosted relay. The resident Growth Cartography Agent wraps the FDI System Dynamics Engine (compounding cohort-decay model). Free. No paywall.
 
+## Workshops
+- The Cartographers' Table (${SITE_URL}/workshop): a four-part in-person workshop series that runs the FDI thesis live. Each session produces one real artifact for a real client: an answer object (Session 1), a knowledge graph (Session 2), a tool-call spec (Session 3). Session 1 (Aggregated) is the flagship and cleanest standalone entry point.
+
 ## Notes
 - Model Context Protocol (MCP) is an open standard documented at ${MCP_URL}. FDI is not affiliated with or endorsed by Anthropic.
 - Buzz is an open-source relay by Block, Inc. FDI is not affiliated with or endorsed by Block.
 - Contact: ${CONTACT}
 `;
+}
+
+/* ---------------- WORKSHOP PAGE (/workshop) ----------------
+ * The Cartographers' Table: a four-part in-person workshop series that runs the
+ * FDI thesis live. Feeds the existing waitlist via data-source="workshop". */
+
+function workshopPage() {
+  const SESSIONS = [
+    {
+      num: "0",
+      title: "The Terrain: Build the Machine, Not the Ad",
+      tag: "Session 0",
+      maps: "The thesis and diagnosis",
+      artifact: "A one-page map of where your marketing rents reach versus owning a system",
+      next: "The Field Guide and the free Top Call prompt pack",
+    },
+    {
+      num: "1",
+      title: "Aggregated: Become the Answer the Machine Cites",
+      tag: "Session 1 / Flagship",
+      maps: "Aggregated market",
+      artifact: "One graded source list and one owned answer object for a real high-intent question",
+      next: "SkillFoundry source-authority grading as repeatable code",
+    },
+    {
+      num: "2",
+      title: "Decentralized: Turn Scattered Knowledge into an Owned Graph",
+      tag: "Session 2",
+      maps: "Decentralized market",
+      artifact: "A hand-drawn mini knowledge graph of one entity's relationships",
+      next: "SkillFoundry and the Top Call graph layer",
+    },
+    {
+      num: "3",
+      title: "Autonomous: Make Your System Something an Agent Can Trust",
+      tag: "Session 3",
+      maps: "Autonomous market",
+      artifact: "A spec for one tool call an agent could make against your system, with trust boundaries",
+      next: "Top Call MCP interface and SkillFoundry Tier 2/3",
+    },
+  ];
+
+  const sessionsHtml = SESSIONS.map(
+    (s) => `<article class="card">
+      <span class="tag">${s.tag}</span>
+      <h3>${s.title}</h3>
+      <p><strong>Maps to:</strong> ${s.maps}</p>
+      <p><strong>You build:</strong> ${s.artifact}</p>
+      <p><strong>Opens:</strong> ${s.next}</p>
+    </article>`
+  ).join("\n");
+
+  const BEATS = [
+    { n: "1", title: "Arrival and capture", time: "15 min", note: "Name tags, table tents, QR scan, coffee" },
+    { n: "2", title: "Cold open", time: "15 min", note: "One live demonstration of the problem for this market" },
+    { n: "3", title: "The map", time: "20 min", note: "Short teach: the FDI framing for this market from the Field Guide" },
+    { n: "4", title: "The build", time: "55 min", note: "You produce one real artifact for a real client, in pairs" },
+    { n: "5", title: "The share", time: "20 min", note: "Three or four attendees show their artifact; facilitator reacts" },
+    { n: "6", title: "The bridge", time: "15 min", note: "The by-hand artifact, made repeatable and provable. Live product moment." },
+    { n: "7", title: "Exit ticket and close", time: "10 min", note: "Thesis-validation vote, exit card, and the next-session tease" },
+  ];
+
+  const beatsHtml = BEATS.map(
+    (b) => `<div class="timeline-beat">
+      <div class="beat-num">${b.n}</div>
+      <div class="beat-body">
+        <strong>${b.title}</strong> <span class="beat-time">${b.time}</span>
+        <p>${b.note}</p>
+      </div>
+    </div>`
+  ).join("\n");
+
+  const body = `
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">Growth Cartography</span>
+      <h1>The <em>Cartographers' Table</em>.</h1>
+      <p class="lede">A four-part in-person workshop series that runs the False Dawn Industries thesis live. Every session, you build one real artifact for a real client. Attend the season and you leave with a coherent, owned system.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#register">Register your interest <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#sessions">See the sessions</a>
+      </div>
+    </div>
+    <div class="hero-machine">${MACHINE}</div>
+  </div>
+</section>
+
+<section class="statband" aria-label="Workshop at a glance">
+  <div class="wrap">
+    <div class="stat"><div class="k"><span class="amber">4</span></div><div class="l">Sessions. One per market: the thesis, Aggregated, Decentralized, and Autonomous. Attend one or the full season.</div></div>
+    <div class="stat"><div class="k">2.5 hr</div><div class="l">Per session. Seven-beat spine, same structure every time. Only the market and the artifact change.</div></div>
+    <div class="stat"><div class="k"><span class="amber">1</span></div><div class="l">Real artifact per session. Built in the room, for a real client, in pairs. You leave with the work done.</div></div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The mechanic</span>
+      <h2>Attending once is rented. The season is owned.</h2>
+      <p>The workshop practices what it teaches. A single session gives you a useful artifact that does not compound. The four-session season gives you a coherent owned system: each session's artifact feeds the next, and the room itself demonstrates the thesis it teaches.</p>
+    </div>
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">Artifacts that stack</span>
+        <h3>One system, built across four sessions</h3>
+        <p>Session 1's answer object becomes a node in Session 2's graph, which becomes a callable tool in Session 3's agent spec. Miss a session and your system has a hole. Attend the season and you walk away with something coherent and provable.</p>
+      </article>
+      <article class="card">
+        <span class="tag">The thesis, made physical</span>
+        <h3>The room demonstrates what it teaches</h3>
+        <p>Attending one session is a rented outcome. Attending the season is an owned system. Facilitators name this out loud. The workshop practices what it preaches, which is memorable and quotable.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Social proof</span>
+        <h3>A living scoreboard</h3>
+        <p>Each session opens by revisiting the previous thesis-validation vote and any attendee wins. Who got cited by an LLM since last time? Proof compounds alongside the artifacts.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Belonging</span>
+        <h3>A named cohort, not a one-off event</h3>
+        <p>Returning attendees become "the Table" for that city: a standing peer group of AI-forward strategists. Belonging is a return force that a one-off event never earns.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="sessions">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The season arc</span>
+      <h2>Four sessions. One per market.</h2>
+      <p>The series mirrors the FDI thesis exactly: one session to name the problem, then one session per market. Session 1 is the flagship and the cleanest standalone entry point. The citation audit is the most visceral demonstration of the thesis, and a newcomer who attends only Session 1 still gets a complete, satisfying loop.</p>
+    </div>
+    <div class="grid cols-2">
+      ${sessionsHtml}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section rotated" id="spine">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Session format</span>
+      <h2>The seven-beat spine.</h2>
+      <p>Every session follows the same structure so a facilitator can re-skin it in an afternoon. Only beats 2 through 4 and beat 6 change per market. Beats 1, 5, and 7 are fixed infrastructure built once.</p>
+    </div>
+    <div class="timeline">
+      ${beatsHtml}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="formats">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Format variants</span>
+      <h2>Same spine, different length.</h2>
+    </div>
+    <div class="grid cols-3">
+      <article class="card">
+        <span class="tag">90-minute</span>
+        <h3>Lunch-and-learn</h3>
+        <p>Compress beats 3 through 6, single-question build, skip the share round-robin. The facilitator narrates two examples instead.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Half-day</span>
+        <h3>Intensive</h3>
+        <p>Two adjacent market themes back to back, for example Aggregated and Decentralized. You leave with an answer object and the graph it feeds.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Remote</span>
+        <h3>Live cohort</h3>
+        <p>Identical spine over video. Build happens in breakout pairs, share uses screen-share, capture is a link rather than a QR. The fallback when the target segment is geographically sparse.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="register">
+  <div class="wrap" style="max-width:640px;margin:0 auto;text-align:center;">
+    <span class="eyebrow">Register your interest</span>
+    <h2>Tell us where you want a Table.</h2>
+    <p>We are scheduling the first season now. Leave your email and we will send you the date and location once confirmed, along with the Field Guide so you arrive ready to build.</p>
+    <form class="waitlist js-capture" data-source="workshop" data-subject="The Cartographers' Table workshop interest" data-success="You are on the list. We will send the first date as soon as it is confirmed." data-mail-body="Please add me to The Cartographers' Table workshop list." novalidate style="margin-top:28px;">
+      <label class="sr-only" for="workshop-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+      ${HONEYPOT}
+      <input type="email" id="workshop-email" name="email" placeholder="you@company.com" autocomplete="email" required />
+      <button class="btn btn-primary" type="submit">Register interest <span class="arrow">→</span></button>
+    </form>
+    <p class="form-msg" role="status" aria-live="polite"></p>
+    <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+  </div>
+</section>`;
+
+  return page({
+    title: "The Cartographers' Table | False Dawn Industries",
+    description:
+      "A four-part in-person workshop series that runs the FDI thesis live. Each session you build one real artifact for a real client. Attend the season and leave with a coherent, owned marketing system.",
+    active: "workshop",
+    body,
+    canonical: `${SITE_URL}/workshop`,
+    jsonLd: [
+      orgJsonLd(),
+      {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        name: "The Cartographers' Table",
+        description:
+          "A four-part in-person workshop series running the FDI thesis live: the Terrain, Aggregated, Decentralized, and Autonomous markets. Each session produces one owned artifact.",
+        organizer: {
+          "@type": "Organization",
+          name: "False Dawn Industries",
+          url: SITE_URL,
+        },
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        eventStatus: "https://schema.org/EventScheduled",
+        url: `${SITE_URL}/workshop`,
+      },
+    ],
+  });
 }
 
 /* ---------------- temporary page gating ----------------
@@ -2911,6 +3147,7 @@ const SITEMAP_ROUTES = [
   "autonomous",
   "roadmap",
   "community",
+  "workshop",
 ].filter((r) => !GATED.has(r));
 
 /* One honest lastmod for all pages: every page is regenerated from build.mjs
@@ -3376,6 +3613,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "autonomous.html"), conceptPage("autonomous"));
   fs.writeFileSync(path.join(DIST, "roadmap.html"), renderRoute("roadmap", roadmapPage));
   fs.writeFileSync(path.join(DIST, "community.html"), communityPage());
+  fs.writeFileSync(path.join(DIST, "workshop.html"), workshopPage());
   if (DAVOS_DEMO) {
     fs.writeFileSync(path.join(DIST, "davos-kit-demo.html"), davosDemoPage());
   }
