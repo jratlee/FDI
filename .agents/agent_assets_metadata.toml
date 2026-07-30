@@ -197,3 +197,15 @@ id = "8DE6ovoFdSDU18L0i6QyV"
 uri = "file://exports/community-launch/linkedin-article.md"
 type = "text"
 title = "LinkedIn Article: Open Cartography Lab launch"
+
+[[outputs]]
+id = "RcYXG1057VIm0mWHM_Mg_"
+uri = "file://exports/agentic-web-publisher-models/linkedin-article.md"
+type = "text"
+title = "LinkedIn Article: Time Is Selling Ads to Robots. Good."
+
+[[outputs]]
+id = "VAjLWQMevbAzWtesGhgQp"
+uri = "file://exports/agentic-web-publisher-models/social-copy.md"
+type = "text"
+title = "Social copy: LinkedIn short post + X version"
