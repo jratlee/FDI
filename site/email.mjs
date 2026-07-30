@@ -416,4 +416,97 @@ export async function sendWelcomeEmails({ email, source, unsubscribeUrl }) {
   }
 }
 
+// Self-serve key recovery: a buyer enters their purchase email and we send
+// them every key on that address plus a billing-portal link for subscription
+// keys. The portal link goes to /manage/portal?key=... (server creates a fresh
+// Stripe session on click) so the link itself never expires.
+export async function sendKeyRecoveryEmail({ email, entitlements, origin }) {
+  if (!FROM) {
+    console.warn("[email] RESEND_FROM not set — skipping key-recovery email for", email);
+    return;
+  }
+  if (!entitlements || entitlements.length === 0) return;
+
+  const base = (origin || "").replace(/\/+$/, "");
+
+  // Build per-entitlement rows for the HTML and text bodies.
+  const htmlRows = entitlements.map((e) => {
+    const keyLabel = e.key_type === "license" ? "License key" : "Subscription key";
+    const statusColor = e.status === "active" ? C.amberSoft : C.faded;
+    const statusText = e.status === "active" ? "Active" : "Inactive";
+    // Product display name: use the tier as a readable hint.
+    const productName = e.product
+      ? e.product === "marcom-kit"
+        ? "MarCom OS"
+        : e.product === "davoskit"
+          ? "Davos Decision Kit"
+          : "Skillfoundry"
+      : "Skillfoundry";
+    // Portal link for subscription-keyed rows with a Stripe customer.
+    const portalBtn =
+      e.key_type === "subscription" && e.stripe_customer_id
+        ? `<p style="margin:10px 0 0;"><a href="${base}/manage/portal?key=${encodeURIComponent(e.key_value)}" style="display:inline-block;background:transparent;color:${C.amber};font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:600;text-decoration:none;border:1px solid ${C.amber};padding:7px 14px;border-radius:8px;">Manage billing →</a></p>`
+        : "";
+    return `<tr>
+      <td style="padding:14px 0;border-top:1px solid ${C.border};">
+        <p style="margin:0 0 4px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:${C.faded};">${productName} &mdash; <span style="color:${statusColor};">${statusText}</span></p>
+        <p style="margin:0 0 4px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:${C.faded};">${keyLabel}</p>
+        <p style="margin:0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:17px;letter-spacing:.05em;color:${C.amberSoft};word-break:break-all;">${e.key_value}</p>
+        ${portalBtn}
+      </td>
+    </tr>`;
+  }).join("");
+
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:${C.panel};border:1px solid ${C.border};border-radius:14px;overflow:hidden;">
+      <tr><td style="padding:32px 32px 8px;">
+        <p style="margin:0 0 20px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:${C.faded};">Growth Cartography</p>
+        <h1 style="margin:0 0 14px;font-family:'Space Grotesk',Arial,sans-serif;font-size:24px;line-height:1.2;color:${C.cream};">Your license${entitlements.length > 1 ? "s" : ""}</h1>
+        <p style="margin:0 0 22px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:${C.cream};">Here ${entitlements.length > 1 ? "are" : "is"} the key${entitlements.length > 1 ? "s" : ""} for your purchase${entitlements.length > 1 ? "s" : ""} at False Dawn Industries. Keep ${entitlements.length > 1 ? "them" : "it"} safe.</p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          ${htmlRows}
+        </table>
+      </td></tr>
+      <tr><td style="padding:24px 32px 32px;">
+        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:${C.faded};">&mdash; False Dawn Industries</p>
+      </td></tr>
+    </table>
+    <p style="margin:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:${C.faded};">You received this because you requested a key lookup for ${email} at False Dawn Industries.</p>
+  </td></tr>
+</table>
+</body></html>`;
+
+  const textRows = entitlements.map((e) => {
+    const keyLabel = e.key_type === "license" ? "License key" : "Subscription key";
+    const productName = e.product === "marcom-kit"
+      ? "MarCom OS"
+      : e.product === "davoskit"
+        ? "Davos Decision Kit"
+        : "Skillfoundry";
+    const portal =
+      e.key_type === "subscription" && e.stripe_customer_id
+        ? `\nManage billing: ${base}/manage/portal?key=${encodeURIComponent(e.key_value)}`
+        : "";
+    return `${productName} (${e.status})\n${keyLabel}: ${e.key_value}${portal}`;
+  }).join("\n\n");
+
+  const text = `Your license${entitlements.length > 1 ? "s" : ""}\n\nHere ${entitlements.length > 1 ? "are" : "is"} the key${entitlements.length > 1 ? "s" : ""} for your purchase${entitlements.length > 1 ? "s" : ""} at False Dawn Industries:\n\n${textRows}\n\n— False Dawn Industries\n\nYou received this because you requested a key lookup for ${email} at False Dawn Industries.`;
+
+  try {
+    await send({
+      from: FROM,
+      to: [email],
+      subject: `Your False Dawn Industries license key${entitlements.length > 1 ? "s" : ""}`,
+      html,
+      text,
+      ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+    });
+  } catch (err) {
+    console.error("[email] key-recovery email failed:", err.message);
+    throw err; // caller decides whether to surface
+  }
+}
+
 export const emailConfigured = Boolean(FROM);

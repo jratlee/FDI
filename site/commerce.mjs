@@ -351,8 +351,10 @@ export async function provisionFromSession(session) {
     return null;
   }
   const tier = TIERS[tierId];
-  const email =
-    session.customer_details?.email || session.customer_email || null;
+  // Normalize to lowercase so lookups are always case-insensitive regardless
+  // of what Stripe returns (some providers send mixed-case addresses).
+  const rawEmail = session.customer_details?.email || session.customer_email || null;
+  const email = rawEmail ? rawEmail.trim().toLowerCase() : null;
   const customerId =
     typeof session.customer === "string"
       ? session.customer
@@ -576,6 +578,22 @@ export async function getEntitlementByKey(key) {
     [String(key).trim()],
   );
   return rows[0] || null;
+}
+
+// Return all entitlements for a purchase email address, newest first.
+// Case-insensitive: Stripe may return mixed-case emails that were stored
+// before normalization was enforced, so we compare on LOWER() both sides.
+export async function getEntitlementsByEmail(email) {
+  if (!pool || !email) return [];
+  await ensureSchema();
+  const normalized = String(email).trim().toLowerCase();
+  const { rows } = await pool.query(
+    `SELECT * FROM skillfoundry_entitlements
+      WHERE LOWER(email) = $1
+      ORDER BY created_at DESC`,
+    [normalized],
+  );
+  return rows;
 }
 
 // Validate a subscription key for the Tier 2 gate. Returns a plain shape the

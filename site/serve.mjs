@@ -10,6 +10,7 @@ import {
   sendConfirmationRequest,
   sendWelcomeEmails,
   sendPendingSignupNotification,
+  sendKeyRecoveryEmail,
 } from "./email.mjs";
 import { runAudit } from "../skillfoundry/engine/audit.mjs";
 import { validateReport } from "../skillfoundry/schema/validate.mjs";
@@ -24,6 +25,7 @@ import {
   validateKey,
   createPortalSession,
   getEntitlementByKey,
+  getEntitlementsByEmail,
   stripeConfigured,
   storageConfigured as commerceStorage,
 } from "./commerce.mjs";
@@ -56,6 +58,12 @@ const DIST = path.join(__dirname, "dist");
 const PORT = Number(process.env.PORT) || 5000;
 const HOST = "0.0.0.0";
 const ADMIN_TOKEN = process.env.WAITLIST_ADMIN_TOKEN || "";
+// Canonical site origin used in outbound email links so they can never be
+// spoofed via a forged Host / X-Forwarded-Proto header. Set SITE_ORIGIN to
+// the production URL (e.g. "https://falsedawn.industries") in the environment.
+// Falls back to deriving from the request only for local / dev contexts where
+// the env var is not configured.
+const SITE_ORIGIN = (process.env.SITE_ORIGIN || "").replace(/\/+$/, "");
 
 /* ---------------- waitlist storage (Postgres) ---------------- */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -98,6 +106,30 @@ const waitlistLimiter = pool
       }
     )
   : new RateLimiterMemory(RL_OPTS);
+
+// Per-IP rate limit for the key-recovery manage endpoint: tighter than the
+// waitlist limiter to slow down email-enumeration attempts.
+const MANAGE_RL_OPTS = {
+  keyPrefix: "mgmt",
+  points: 5,           // requests allowed
+  duration: 60 * 15,  // per 15 minutes (seconds)
+  blockDuration: 60 * 60,
+};
+const manageLimiter = pool
+  ? new RateLimiterPostgres(
+      {
+        ...MANAGE_RL_OPTS,
+        storeClient: pool,
+        storeType: "pool",
+        tableName: "rate_limits",
+        clearExpiredByTimeout: true,
+        insuranceLimiter: new RateLimiterMemory(MANAGE_RL_OPTS),
+      },
+      (err) => {
+        if (err) console.error("[ratelimit] manage Postgres store init failed:", err.message);
+      },
+    )
+  : new RateLimiterMemory(MANAGE_RL_OPTS);
 
 // Disposable / throwaway email domains we don't want on the list.
 //
@@ -1685,6 +1717,165 @@ function readRawBody(req, limit = 1024 * 1024) {
   });
 }
 
+/* ---------------- self-serve key recovery (/manage) ---------------- */
+// On-brand page reusing the same card shell as the unsubscribe/confirm flows.
+function managePage(res, status, body) {
+  res.writeHead(status, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow",
+  });
+  res.end(unsubscribeShell(body, "Manage your purchase — False Dawn Industries"));
+}
+
+async function handleManagePage(req, res) {
+  if (req.method !== "GET") {
+    res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("405 Method Not Allowed");
+    return;
+  }
+  managePage(
+    res,
+    200,
+    `<p class="eyebrow">Your purchase</p>
+<h1>Look up your key</h1>
+<p>Enter the email address you used when you purchased. We'll email your key(s) and — for subscribers — a billing-management link.</p>
+<form id="manage-form" method="POST" action="/api/manage">
+  <label for="mgmt-email" style="display:block;font-size:.88rem;color:#A8997B;margin:0 0 6px">Purchase email</label>
+  <input id="mgmt-email" name="email" type="email" autocomplete="email" required
+    style="width:100%;box-sizing:border-box;background:#1C160D;border:1px solid #3A2D1C;border-radius:8px;color:#F0E8D5;padding:11px 13px;font-size:1rem;margin:0 0 14px;display:block"
+    placeholder="you@example.com">
+  <button class="btn" type="submit" style="width:100%">Email my key</button>
+</form>
+<p class="muted" style="margin-top:20px;font-size:.88rem">If you purchased with a different address, or need further help, reply to your original confirmation email.</p>
+<script>
+  var f=document.getElementById("manage-form");
+  if(f){f.addEventListener("submit",function(ev){
+    ev.preventDefault();
+    var btn=f.querySelector("button[type=submit]");
+    btn.disabled=true;btn.textContent="Sending…";
+    var fd=new FormData(f);
+    fetch("/api/manage",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email:fd.get("email")})})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        f.innerHTML="<h2 style='margin:0 0 10px'>Check your inbox</h2><p class='muted'>If that address has a purchase on file, you'll receive an email with your key(s) shortly.</p><p><a href='/'>Return to False Dawn Industries</a></p>";
+      })
+      .catch(function(){btn.disabled=false;btn.textContent="Email my key";});
+  });}
+</script>`,
+  );
+}
+
+async function handleManageSubmit(req, res) {
+  if (req.method !== "POST") {
+    sendJson(res, 405, { ok: false, error: "method_not_allowed" });
+    return;
+  }
+  // Rate-limit before doing any work.
+  try {
+    await manageLimiter.consume(clientIp(req));
+  } catch (rl) {
+    const retrySec = Math.ceil(
+      (rl && typeof rl.msBeforeNext === "number" ? rl.msBeforeNext : 900000) / 1000,
+    );
+    res.setHeader("Retry-After", String(retrySec));
+    sendJson(res, 429, { ok: false, error: "rate_limited" });
+    return;
+  }
+  let email;
+  try {
+    const raw = await readBody(req);
+    const parsed = raw ? JSON.parse(raw) : {};
+    email = String(parsed.email || "").trim().toLowerCase();
+  } catch {
+    sendJson(res, 400, { ok: false, error: "bad_request" });
+    return;
+  }
+  if (!email || !EMAIL_RE.test(email)) {
+    sendJson(res, 422, { ok: false, error: "invalid_email" });
+    return;
+  }
+  if (!commerceStorage()) {
+    sendJson(res, 503, { ok: false, error: "storage_unavailable" });
+    return;
+  }
+  // Always return 200 regardless of whether the email matched — prevents
+  // enumeration of which addresses have purchases on file.
+  sendJson(res, 200, { ok: true });
+  // Look up entitlements and email them. Best-effort: never blocks the response.
+  try {
+    const entitlements = await getEntitlementsByEmail(email);
+    if (entitlements.length > 0) {
+      // Use the configured canonical origin for email links so a spoofed
+      // Host or X-Forwarded-Proto header cannot redirect keys to an attacker.
+      sendKeyRecoveryEmail({
+        email,
+        entitlements,
+        origin: SITE_ORIGIN || reqOrigin(req),
+      }).catch((err) => console.error("[manage] recovery email failed:", err.message));
+    }
+  } catch (err) {
+    console.error("[manage] entitlement lookup failed:", err.message);
+  }
+}
+
+// Accepts ?key=... and creates a fresh Stripe portal session then redirects.
+// This is the target of the "Manage billing" link in the recovery email, so
+// the link itself never expires — a fresh session is created on each click.
+async function handleManagePortal(req, res, urlObj) {
+  if (req.method !== "GET") {
+    res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("405 Method Not Allowed");
+    return;
+  }
+  const key = (urlObj.searchParams.get("key") || "").trim();
+  if (!key) {
+    managePage(
+      res,
+      400,
+      `<p class="eyebrow">Your purchase</p><h1>Missing key</h1><p class="muted">No key was supplied. <a href="/manage">Try the key lookup</a> to get a new link.</p>`,
+    );
+    return;
+  }
+  if (!stripeConfigured() || !commerceStorage()) {
+    managePage(
+      res,
+      503,
+      `<p class="eyebrow">Your purchase</p><h1>Temporarily unavailable</h1><p class="muted">The billing portal isn't reachable right now. Please try again later.</p>`,
+    );
+    return;
+  }
+  try {
+    const { url } = await createPortalSession({ key, origin: reqOrigin(req) });
+    res.writeHead(303, { Location: url, "Cache-Control": "no-store" });
+    res.end();
+  } catch (err) {
+    if (err instanceof CommerceError && err.code === "unknown_key") {
+      managePage(
+        res,
+        404,
+        `<p class="eyebrow">Your purchase</p><h1>Key not found</h1><p class="muted">That key wasn't recognised. <a href="/manage">Look up your key</a> with your purchase email.</p>`,
+      );
+      return;
+    }
+    if (err instanceof CommerceError && err.code === "no_customer") {
+      managePage(
+        res,
+        400,
+        `<p class="eyebrow">Your purchase</p><h1>No billing account</h1><p class="muted">This key doesn't have an associated billing account. Perpetual licenses don't have a billing portal.</p>`,
+      );
+      return;
+    }
+    console.error("[manage] portal redirect failed:", err.message);
+    managePage(
+      res,
+      500,
+      `<p class="eyebrow">Your purchase</p><h1>Something went wrong</h1><p class="muted">We couldn't open the billing portal. Please try again later.</p>`,
+    );
+  }
+}
+
 function reqOrigin(req) {
   const proto =
     (req.headers["x-forwarded-proto"] || "").split(",")[0].trim() || "http";
@@ -2368,6 +2559,34 @@ const server = http.createServer((req, res) => {
     handlePortal(req, res).catch((err) => {
       console.error("[commerce] portal error:", err.message);
       if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+  if (rawPath === "/manage") {
+    handleManagePage(req, res).catch((err) => {
+      console.error("[manage] page error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
+    });
+    return;
+  }
+  if (rawPath === "/api/manage") {
+    handleManageSubmit(req, res).catch((err) => {
+      console.error("[manage] submit error:", err.message);
+      if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+  if (rawPath === "/manage/portal") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    handleManagePortal(req, res, urlObj).catch((err) => {
+      console.error("[manage] portal error:", err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("500 Server Error");
+      }
     });
     return;
   }
