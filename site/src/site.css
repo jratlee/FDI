@@ -343,6 +343,16 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; color: var(--cream); lin
   .rm-board { grid-template-columns: 1fr; }
 }
 
+/* ---------- Roadmap callout strip (homepage) ---------- */
+.roadmap-callout { background: var(--sc-low); border-top: 2px solid var(--border); border-bottom: 2px solid var(--border); }
+.roadmap-callout-inner { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 32px; padding-top: 26px; padding-bottom: 26px; }
+.roadmap-callout .eyebrow { flex: none; }
+.roadmap-callout-text { color: var(--faded); font-size: 14.5px; margin: 0; flex: 1; min-width: 200px; }
+.roadmap-callout .link-arrow { flex: none; white-space: nowrap; }
+@media (max-width: 560px) {
+  .roadmap-callout-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
 /* ---------- Davos demo page visuals (private, password-gated) ---------- */
 .viz-hd { font-size: 21px; text-transform: uppercase; margin: 56px 0 8px; color: var(--amber); }
 .viz-sub { color: var(--faded); font-size: 14.5px; margin: 0 0 18px; max-width: 46em; }

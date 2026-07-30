@@ -339,6 +339,14 @@ function home() {
   </div>
 </section>
 
+<div class="roadmap-callout">
+  <div class="wrap roadmap-callout-inner">
+    <span class="eyebrow">Roadmap</span>
+    <p class="roadmap-callout-text">FDI is building in public. See what's live, what's in progress, and what's coming next.</p>
+    <a class="link-arrow" href="/roadmap">See where FDI is headed <span class="arrow">→</span></a>
+  </div>
+</div>
+
 <hr class="divider" />
 
 <section class="section" id="proof">
