@@ -4,6 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
 import pg from "pg";
 import { RateLimiterMemory, RateLimiterPostgres } from "rate-limiter-flexible";
 import {
@@ -64,6 +65,11 @@ const ADMIN_TOKEN = process.env.WAITLIST_ADMIN_TOKEN || "";
 // Falls back to deriving from the request only for local / dev contexts where
 // the env var is not configured.
 const SITE_ORIGIN = (process.env.SITE_ORIGIN || "").replace(/\/+$/, "");
+// CRON_SECRET protects /api/cron/link-check from arbitrary callers.
+// If unset, the endpoint is disabled (404). Set it to any random string and
+// pass it as the `secret` query param or Authorization: Bearer header when
+// triggering the cron (e.g. from a Replit Scheduled Deployment or cron-job.org).
+const CRON_SECRET = (process.env.CRON_SECRET || "").trim();
 
 /* ---------------- waitlist storage (Postgres) ---------------- */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -2673,6 +2679,38 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
+  // Advisory scheduled link check — triggered by an external cron caller.
+  // Returns 202 immediately and runs the check in a detached child process.
+  // Protected by CRON_SECRET (disabled when unset). Pass the secret as:
+  //   ?secret=<value>  or  Authorization: Bearer <value>
+  if (rawPath === "/api/cron/link-check") {
+    if (!CRON_SECRET) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("404 Not Found");
+      return;
+    }
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    const querySecret = urlObj.searchParams.get("secret") || "";
+    const authHeader = (req.headers["authorization"] || "").replace(/^Bearer\s+/i, "");
+    const provided = querySecret || authHeader;
+    if (!provided || provided !== CRON_SECRET) {
+      res.writeHead(401, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("401 Unauthorized");
+      return;
+    }
+    // Spawn the scheduler script detached so it outlives this request.
+    const child = spawn(
+      process.execPath,
+      [path.join(__dirname, "link-check-scheduled.mjs")],
+      { detached: true, stdio: "inherit", env: process.env },
+    );
+    child.unref();
+    console.log(`[cron/link-check] spawned pid ${child.pid}`);
+    res.writeHead(202, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(JSON.stringify({ ok: true, message: "Link check started", pid: child.pid }));
+    return;
+  }
+
   const file = resolveFile(req.url || "/");
   if (!file) {
     res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });

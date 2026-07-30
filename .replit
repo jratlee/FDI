@@ -107,6 +107,14 @@ timeoutMs = 120000
 RESEND_FROM = "False Dawn Industries <onboarding@resend.dev>"
 WAITLIST_NOTIFY_EMAIL = "john@ratcliffe-lee.com"
 RESEND_REPLY_TO = "john@ratcliffe-lee.com"
+# Canonical production origin for the scheduled link checker.
+# Set to the deployed URL, e.g. https://falsedawn.industries
+SITE_BASE_URL = ""
+# Random secret that protects the /api/cron/link-check HTTP trigger endpoint.
+# Set to any strong random string; pass it as ?secret=<value> or
+# Authorization: Bearer <value> when calling from a cron service.
+# Leave blank to disable the endpoint entirely.
+CRON_SECRET = ""
 
 [userenv.development]
 DAVOSKIT_TIER1_PRICE_ID = "price_1TrNbuIr6q4Tm9bcIzcEhR8c"

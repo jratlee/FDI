@@ -509,4 +509,77 @@ export async function sendKeyRecoveryEmail({ email, entitlements, origin }) {
   }
 }
 
+// Scheduled link-check failure digest. Sent to the team when the recurring
+// link checker finds broken external URLs on the live site. Advisory only —
+// the caller never blocks on delivery. Never throws.
+export async function sendLinkCheckReport({ failures, externalUrls, pagesChecked, baseUrl }) {
+  if (!FROM || !NOTIFY) {
+    if (!FROM) console.warn("[email] RESEND_FROM not set — skipping link-check report");
+    return;
+  }
+  if (!failures || failures.length === 0) return;
+
+  const count = failures.length;
+  const ts = new Date().toUTCString();
+
+  // Build HTML rows for each failure
+  const htmlRows = failures.map((r) => {
+    const detail = r.error ? r.error : `HTTP ${r.status}`;
+    const pages = [...(externalUrls?.get(r.url) || [])].join(", ") || "unknown";
+    return `<tr>
+      <td style="padding:10px 0;border-top:1px solid ${C.border};vertical-align:top;">
+        <p style="margin:0 0 3px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;color:${C.amberSoft};word-break:break-all;">${r.url}</p>
+        <p style="margin:0 0 3px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:${C.faded};">Error: <span style="color:#e07070;">${detail}</span></p>
+        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:${C.faded};">Found on: ${pages}</p>
+      </td>
+    </tr>`;
+  }).join("");
+
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${C.panel};border:1px solid ${C.border};border-radius:14px;overflow:hidden;">
+      <tr><td style="padding:32px 32px 8px;">
+        <p style="margin:0 0 20px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:${C.faded};">Link Check — Advisory</p>
+        <h1 style="margin:0 0 14px;font-family:'Space Grotesk',Arial,sans-serif;font-size:22px;line-height:1.2;color:${C.cream};">⚠ ${count} broken external link${count > 1 ? "s" : ""} detected</h1>
+        <p style="margin:0 0 22px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:${C.faded};">Checked ${pagesChecked} page${pagesChecked !== 1 ? "s" : ""} at <span style="color:${C.cream};">${baseUrl}</span> · ${ts}</p>
+        <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:${C.faded};">These are advisory — transient failures (rate limits, timeouts, bot blocks) are common. Re-run to confirm before acting.</p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          ${htmlRows}
+        </table>
+      </td></tr>
+      <tr><td style="padding:20px 32px 32px;">
+        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:${C.faded};">&mdash; False Dawn Industries automated link checker</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+
+  const textRows = failures.map((r) => {
+    const detail = r.error ? r.error : `HTTP ${r.status}`;
+    const pages = [...(externalUrls?.get(r.url) || [])].join(", ") || "unknown";
+    return `${r.url}\n  Error: ${detail}\n  Found on: ${pages}`;
+  }).join("\n\n");
+
+  const text = `⚠ ${count} broken external link${count > 1 ? "s" : ""} detected\n\n` +
+    `Checked ${pagesChecked} page(s) at ${baseUrl} · ${ts}\n\n` +
+    `These are advisory — transient failures are common. Re-run to confirm before acting.\n\n` +
+    textRows +
+    `\n\n— False Dawn Industries automated link checker`;
+
+  try {
+    await send({
+      from: FROM,
+      to: [NOTIFY],
+      subject: `[Advisory] ${count} broken external link${count > 1 ? "s" : ""} on ${baseUrl}`,
+      html,
+      text,
+      ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+    });
+  } catch (err) {
+    console.error("[email] link-check report failed:", err.message);
+  }
+}
+
 export const emailConfigured = Boolean(FROM);
