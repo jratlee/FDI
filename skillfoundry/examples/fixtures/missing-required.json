@@ -1,0 +1,50 @@
+{
+  "asset": {
+    "title": "Missing word_count",
+    "audited_at": "2026-07-05T00:00:00Z"
+  },
+  "gates": [
+    {
+      "gate": "relevance",
+      "gate_name": "Market-Deficit Analyzer",
+      "framework": "Jobs-to-be-Done",
+      "score": 69,
+      "verdict": "REVISE",
+      "ranked_reasons": [
+        { "rank": 1, "severity": "high", "finding": "Example finding." }
+      ],
+      "rewrites": []
+    },
+    {
+      "gate": "performance",
+      "gate_name": "Enterprise Valuation Gate",
+      "framework": "Brand equity (Aaker)",
+      "score": 73,
+      "verdict": "REVISE",
+      "ranked_reasons": [
+        { "rank": 1, "severity": "high", "finding": "Example finding." }
+      ],
+      "rewrites": []
+    },
+    {
+      "gate": "signal",
+      "gate_name": "Adversarial Defense Matrix",
+      "framework": "GEO/AEO",
+      "score": 77,
+      "verdict": "PASS",
+      "ranked_reasons": [
+        { "rank": 1, "severity": "high", "finding": "Example finding." }
+      ],
+      "rewrites": []
+    }
+  ],
+  "rollup": {
+    "composite_score": 72,
+    "ship_recommendation": "REVISE",
+    "top_moves": [
+      { "rank": 1, "gate": "relevance", "move": "Do the thing." },
+      { "rank": 2, "gate": "signal", "move": "Do the other thing." },
+      { "rank": 3, "gate": "performance", "move": "Yet another thing." }
+    ]
+  }
+}

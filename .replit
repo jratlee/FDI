@@ -65,7 +65,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node skillfoundry/schema/validate-report.mjs"
+args = "node skillfoundry/schema/validate-report.mjs && node skillfoundry/schema/test-validator.mjs"
 
 [workflows.workflow.metadata]
 isValidation = true
