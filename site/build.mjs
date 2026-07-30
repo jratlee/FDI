@@ -816,19 +816,19 @@ function skillfoundry() {
     </div>
     <div class="cmds">
       <div class="cmd cmd-hero">
-        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:strategic-audit</code><span class="cmd-tag">Hero</span></div>
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:strategic-audit</code><span class="cmd-tag">Hero</span><button class="cmd-copy" data-cmd="/skillfoundry:strategic-audit" aria-label="Copy command /skillfoundry:strategic-audit">Copy</button></div>
         <p>Runs the asset through all three gates in order and returns one consolidated strategic audit report, scored, ranked, with line-level rewrites you can defend to the C-suite.</p>
       </div>
       <div class="cmd">
-        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:relevance-gate</code></div>
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:relevance-gate</code><button class="cmd-copy" data-cmd="/skillfoundry:relevance-gate" aria-label="Copy command /skillfoundry:relevance-gate">Copy</button></div>
         <p>Runs only Gate 1, the Market-Deficit Analyzer, scoring the asset through a Jobs-to-be-Done lens and returning its Relevance GateResult.</p>
       </div>
       <div class="cmd">
-        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:performance-gate</code></div>
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:performance-gate</code><button class="cmd-copy" data-cmd="/skillfoundry:performance-gate" aria-label="Copy command /skillfoundry:performance-gate">Copy</button></div>
         <p>Runs only Gate 2, the Enterprise Valuation Gate, auditing brand equity and competitive positioning and returning its Performance GateResult.</p>
       </div>
       <div class="cmd">
-        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:signal-gate</code></div>
+        <div class="cmd-hd"><code class="cmd-name">/skillfoundry:signal-gate</code><button class="cmd-copy" data-cmd="/skillfoundry:signal-gate" aria-label="Copy command /skillfoundry:signal-gate">Copy</button></div>
         <p>Runs only Gate 3, the Adversarial Defense Matrix, checking GEO/AEO and human-signal density and returning its Algorithmic-Signal GateResult.</p>
       </div>
     </div>
@@ -1647,6 +1647,43 @@ const SITE_JS = `(function () {
         setBuyMsg("Couldn't reach checkout. Join the waitlist below.", "is-error");
         toWaitlist();
       });
+    });
+  });
+
+  // Copy-to-clipboard for command cards (.cmd-copy buttons)
+  function cmdCopyFallback(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    ta.style.top = "-9999px";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  var copies = document.querySelectorAll(".cmd-copy");
+  Array.prototype.forEach.call(copies, function (btn) {
+    btn.addEventListener("click", function () {
+      var cmd = btn.getAttribute("data-cmd") || "";
+      function confirm() {
+        btn.textContent = "Copied";
+        btn.setAttribute("aria-label", "Copied");
+        btn.classList.add("is-copied");
+        setTimeout(function () {
+          btn.textContent = "Copy";
+          btn.setAttribute("aria-label", "Copy command " + cmd);
+          btn.classList.remove("is-copied");
+        }, 2000);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(cmd).then(confirm).catch(function () {
+          cmdCopyFallback(cmd, confirm);
+        });
+      } else {
+        cmdCopyFallback(cmd, confirm);
+      }
     });
   });
 })();`;

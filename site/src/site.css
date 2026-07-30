@@ -209,6 +209,9 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; color: var(--cream); lin
 .cmd p { color: var(--faded); font-size: 14.5px; margin: 12px 0 0; }
 .cmd-eg { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); text-align: center; margin-top: 24px; }
 .cmd-eg code { color: var(--amber); }
+.cmd-copy { margin-left: auto; flex: none; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; background: transparent; color: var(--muted); border: 1.5px solid var(--hairline); border-radius: 0; padding: 4px 10px; cursor: pointer; transition: color .15s ease, border-color .15s ease, background .15s ease; }
+.cmd-copy:hover { color: var(--amber); border-color: var(--amber); }
+.cmd-copy.is-copied { color: var(--base); background: var(--amber); border-color: var(--amber); }
 
 /* ---------- Pricing ---------- */
 .price-anchor { color: var(--faded); font-size: 15px; margin: 0 0 26px; max-width: 52em; }
