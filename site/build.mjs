@@ -332,9 +332,9 @@ function home() {
         <div class="card-foot"><a class="link-arrow" href="/field-guide">Read the guide <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
-        <span class="tag">The series</span>
+        <span class="tag">The series · All three guides live</span>
         <h3>Aggregated · Decentralized · Autonomous</h3>
-        <p>Three more field guides map the markets reshaping marketing: today's platforms and the AI platforms whose rules are not yet understood, crypto-powered decentralized networks, and agent-to-agent marketplaces scaling toward the size of Meta and Google today.</p>
+        <p>Three field guides map the markets reshaping marketing, and all three are live: Field Guide 002 on today's platforms and the AI platforms whose rules are not yet understood, Field Guide 003 on crypto-powered decentralized networks, and Field Guide 004 on agent-to-agent marketplaces scaling toward the size of Meta and Google today.</p>
         <div class="card-foot"><a class="link-arrow" href="/series">See the series <span class="arrow">→</span></a></div>
       </article>
     </div>
@@ -795,8 +795,8 @@ function fieldGuide004({ title, subtitle, attribution, bodyHtml }, slideFiles) {
   <div class="wrap">
     <div class="grid cols-2">
       <article class="card">
-        <span class="tag">Earlier in the series</span>
-        <h3>Field Guide 003 · The FDCP</h3>
+        <span class="tag">The companion report</span>
+        <h3>The FDCP</h3>
         <p>How the Forward-Deployed Communications Professional runs AI agent fleets: loop engineering, policy as code, and marketing to machine buyers.</p>
         <div class="card-foot"><a class="link-arrow" href="/fdcp">Read the FDCP report <span class="arrow">→</span></a></div>
       </article>
@@ -2145,6 +2145,8 @@ const CONCEPTS = {
     ],
     guide: {
       href: "/field-guide-002",
+      num: "Field Guide 002",
+      title: "The Model Decides If You Exist",
       label: "Read Field Guide 002",
       note: "The Aggregated field guide is live: the full article, three data visuals, and the 13-slide deck.",
     },
@@ -2191,6 +2193,8 @@ const CONCEPTS = {
     ],
     guide: {
       href: "/field-guide-003",
+      num: "Field Guide 003",
+      title: "The Network Is the Product",
       label: "Read Field Guide 003",
       note: "Field Guide 003 is live: the full argument for marketing within crypto-powered networks, six moves for the decentralized market, and the three agent-commerce primitives — with the 13-slide deck.",
     },
@@ -2237,6 +2241,8 @@ const CONCEPTS = {
     ],
     guide: {
       href: "/field-guide-004",
+      num: "Field Guide 004",
+      title: "When the Buyer Is Software",
       label: "Read Field Guide 004",
       note: "Field Guide 004 is live: the full article on agent-market dynamics and the growth curve, three data visuals, and the 13-slide deck.",
     },
@@ -2329,6 +2335,30 @@ function conceptPage(key) {
 
 <hr class="divider" />
 
+<section class="section" id="continue-the-series">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Continue the series</span>
+      <h2>The other two markets.</h2>
+      <p>Each market has a one-pager and a full field guide. Move through the series in any order.</p>
+    </div>
+    <div class="grid cols-2">
+      ${Object.keys(CONCEPTS)
+        .filter((k) => k !== key)
+        .map((k) => {
+          const s = CONCEPTS[k];
+          const links = s.guide
+            ? `<a class="link-arrow" href="${s.guide.href}">${s.guide.label}: ${s.guide.title} <span class="arrow">→</span></a><br /><a class="link-arrow" href="/${s.slug}">Read the ${s.h1} one-pager <span class="arrow">→</span></a>`
+            : `<a class="link-arrow" href="/${s.slug}">Read the ${s.h1} one-pager <span class="arrow">→</span></a>`;
+          return `<article class="card">${s.guide ? `<span class="pill">${s.guide.num} · Live</span>` : `<span class="tag">${s.h1}</span>`}<h3>${s.h1} markets</h3><p>${s.lede}</p><div class="card-foot">${links}</div></article>`;
+        })
+        .join("\n      ")}
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
 <section class="cta" id="waitlist">
   <div class="wrap section">
     <div class="cta-box">
@@ -2365,7 +2395,13 @@ function conceptPage(key) {
 function seriesPage() {
   const card = (key) => {
     const c = CONCEPTS[key];
-    return `<article class="card"><span class="tag">${c.h1}</span><h3>${c.h1} markets</h3><p>${c.lede}</p><div class="card-foot"><a class="link-arrow" href="/${c.slug}">Read the one-pager <span class="arrow">→</span></a></div></article>`;
+    const status = c.guide
+      ? `<span class="pill">${c.guide.num} · Live</span>`
+      : `<span class="tag">${c.h1}</span>`;
+    const foot = c.guide
+      ? `<a class="link-arrow" href="${c.guide.href}">${c.guide.label}: ${c.guide.title} <span class="arrow">→</span></a><br /><a class="link-arrow" href="/${c.slug}">Read the ${c.h1} one-pager <span class="arrow">→</span></a>`
+      : `<a class="link-arrow" href="/${c.slug}">Read the one-pager <span class="arrow">→</span></a>`;
+    return `<article class="card${c.guide ? " featured" : ""}">${status}<h3>${c.h1} markets</h3><p>${c.lede}</p><div class="card-foot">${foot}</div></article>`;
   };
   const body = `
 <section class="hero">
@@ -2373,22 +2409,22 @@ function seriesPage() {
     <div>
       <span class="eyebrow">The series · As of ${AS_OF}</span>
       <h1>Aggregated. Decentralized. <em>Autonomous.</em></h1>
-      <p class="lede">Three market structures are reshaping marketing: today's platforms and the AI platforms whose rules are not yet understood, crypto-powered decentralized networks, and agent-to-agent marketplaces scaling toward the size of Meta and Google. The FDI series maps each one and ships the working code that proves the thesis.</p>
+      <p class="lede">Three market structures are reshaping marketing: today's platforms and the AI platforms whose rules are not yet understood, crypto-powered decentralized networks, and agent-to-agent marketplaces scaling toward the size of Meta and Google. All three field guides are live, each grounded in working code that proves the thesis.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="/field-guide">Read the Field Guide <span class="arrow">→</span></a>
-        <a class="btn btn-ghost" href="#waitlist">Follow the series</a>
+        <a class="btn btn-primary" href="#guides">Read the guides <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/field-guide">Start with Field Guide 001</a>
       </div>
     </div>
     <div class="hero-machine">${MACHINE}</div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="guides">
   <div class="wrap">
     <div class="section-hd">
       <span class="eyebrow">Three market structures</span>
-      <h2>One thesis, three field guides.</h2>
-      <p>Each guide maps a market structure and grounds it in a real, working build you can pressure-test.</p>
+      <h2>One thesis, three field guides. All live.</h2>
+      <p>Each guide maps a market structure and grounds it in a real, working build you can pressure-test. Read the full guide, or start with the market's one-pager.</p>
     </div>
     <div class="grid cols-3">
       ${card("aggregated")}
@@ -2405,7 +2441,7 @@ function seriesPage() {
     <div class="cta-box">
       <span class="eyebrow" style="justify-content:center;">Join the waitlist</span>
       <h2>Follow the FDI series.</h2>
-      <p>Drop your email and we'll reach out as each field guide and its working code ship. No spam.</p>
+      <p>All three guides are live. Drop your email and we'll reach out as the series grows: new guides, updated data, and the working code that ships with each one. No spam.</p>
       <form class="waitlist js-capture" data-source="series" data-subject="FDI series waitlist" data-success="Almost there. Check your inbox and click the confirmation link to finish signing up." data-mail-body="Please add me to the FDI series waitlist." novalidate>
         <label class="sr-only" for="series-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
         ${HONEYPOT}
@@ -2484,7 +2520,7 @@ const ROADMAP = {
         {
           title: "The Growth Cartography series ships",
           desc: "The three field guides (Aggregated, Decentralized, Autonomous), each backed by a deep-research report, published as real destinations.",
-          status: "Committed",
+          status: "Live",
           link: "/series",
         },
         {
@@ -2803,12 +2839,13 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
 - The Model Decides If You Exist (${SITE_URL}/field-guide-002): Field Guide 002 on the aggregated market. Three platforms are forecast to take 62.3% of worldwide digital ad spending in 2026 (eMarketer), organic reach is a rounding error, and AI answer layers absorb the click; the response is owning an identity and corpus machines can retrieve, verify, and cite. Includes three data visuals and a 13-slide deck.
 - The Network Is the Product (${SITE_URL}/field-guide-003): Field Guide 003 on the decentralized market. In crypto-powered networks (Farcaster, Lens, DAOs) there is no feed to buy and no platform to petition — reach is earned through verifiable onchain contribution. Wallet-based identity (ENS + SIWE via wevm/viem) is the portable reputation substrate. Includes the agent-commerce primitives (coinbase/x402, coinbase/agentkit, google-agentic-commerce/AP2), four visuals, and a 13-slide deck.
+- When the Buyer Is Software (${SITE_URL}/field-guide-004): Field Guide 004 on the autonomous market. Agents transacting with agents on the live open protocol stack (MCP, A2A, AP2, x402): agent-market dynamics, the growth curve toward marketplaces at the scale of Meta and Google today, and why machine-legibility advantages compound at machine speed. Includes three data visuals and a 13-slide deck.
 - The Forward-Deployed Communicator (${SITE_URL}/fdcp): the Performance Thinking report on the Forward-Deployed Communications Professional (FDCP), the operator role for agent-mediated markets. One person, a fleet of AI agents on a governed platform, and ownership of the whole workflow: loop engineering, policy as code, a receipts-first proof stack, and machine-to-machine communications. Includes four visuals and a 12-slide deck.
 
 ## The series
 - Aggregated markets (${SITE_URL}/aggregated): marketing within today's platforms (Meta, Google, TikTok) plus what is not yet understood about AI platforms like ChatGPT; own assets that survive rule changes. Field Guide 002 covers this market in full.
 - Decentralized markets (${SITE_URL}/decentralized): marketing within crypto-powered decentralized networks (Farcaster, Lens, DAOs, onchain identity, agent settlement). Field Guide 003 covers this market in full.
-- Autonomous markets (${SITE_URL}/autonomous): agents transacting with agents; the dynamics and growth curve as those marketplaces scale toward the size of Meta and Google today.
+- Autonomous markets (${SITE_URL}/autonomous): agents transacting with agents; the dynamics and growth curve as those marketplaces scale toward the size of Meta and Google today. Field Guide 004 covers this market in full.
 
 ## The Open Cartography Lab
 - Community (${SITE_URL}/community): a public, agent-staffed community where growth-modeling questions get computed answers with curves, stated assumptions, and sensitivity notes, as citable threads on a self-hosted relay. The resident Growth Cartography Agent wraps the FDI System Dynamics Engine (compounding cohort-decay model). Free. No paywall.
