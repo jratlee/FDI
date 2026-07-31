@@ -240,7 +240,7 @@ const orgJsonLd = () => ({
   logo: `${SITE_URL}/favicon.svg`,
   email: CONTACT,
   description:
-    "False Dawn Industries builds owned marketing systems for aggregated, decentralized, and autonomous markets: a persistent identity and corpus you can prove.",
+    "Reach is commoditized; platforms are opaque. False Dawn Industries builds the systems that let a brand do what a person does: show up with one consistent, coherent identity in every new space, legible to machines, portable across communities, and verifiable by agents.",
   sameAs: [GITHUB, GITHUB_USER],
 });
 
@@ -3035,7 +3035,7 @@ function communityPage() {
 function llmsTxt() {
   return `# False Dawn Industries (FDI)
 
-> False Dawn Industries builds owned marketing systems for aggregated, decentralized, and autonomous markets: a persistent identity and corpus you can prove. As of ${AS_OF}.
+> Reach is commoditized; platforms are opaque. False Dawn Industries builds the systems that let a brand do what a person does: show up with one consistent, coherent identity in every new space, legible to machines, portable across communities, and verifiable by agents. As of ${AS_OF}.
 
 False Dawn Industries (FDI) publishes the Field Guide thesis and ships working products that let organizations own their place in AI-mediated markets.
 
