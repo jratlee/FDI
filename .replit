@@ -48,6 +48,10 @@ args = "commerce-gate-test"
 task = "workflow.run"
 args = "commerce-gates"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "cron-link-check-test"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -137,6 +141,17 @@ args = "node site/test-commerce-gates.mjs"
 [workflows.workflow.metadata]
 isValidation = true
 
+[[workflows.workflow]]
+name = "cron-link-check-test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node site/test-cron-link-check.mjs"
+
+[workflows.workflow.metadata]
+isValidation = true
+
 [deployment]
 deploymentTarget = "autoscale"
 run = ["node", "site/serve.mjs"]
@@ -162,6 +177,7 @@ SITE_BASE_URL = ""
 CRON_SECRET = ""
 
 [userenv.development]
+CRON_SECRET = "cron-dev-local-only-not-for-production"
 DAVOSKIT_TIER1_PRICE_ID = "price_1TrNbuIr6q4Tm9bcIzcEhR8c"
 MARCOMKIT_AUDIT_PRICE_ID = "price_1Tyz01Ir6q4Tm9bcjfnmgBqB"
 MARCOMKIT_SPRINT_PRICE_ID = "price_1Tyz01Ir6q4Tm9bcq8vnYtSS"
