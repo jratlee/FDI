@@ -526,7 +526,7 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
 
 <section class="section" id="next-guide">
   <div class="wrap">
-    <div class="grid cols-2">
+    <div class="grid cols-3">
       <article class="card featured">
         <span class="pill">Next in the series</span>
         <h3>Field Guide 002 · Aggregated: The Model Decides If You Exist</h3>
@@ -536,8 +536,14 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       <article class="card">
         <span class="pill">Also available</span>
         <h3>Field Guide 003 · Decentralized: The Network Is the Product</h3>
-        <p>In crypto-powered networks there is no feed to buy — reach is earned through verifiable onchain participation. Farcaster, Lens, ENS, wallet-based identity, and the agent settlement layer.</p>
+        <p>In crypto-powered networks there is no feed to buy. Reach is earned through verifiable onchain participation: Farcaster, Lens, ENS, wallet-based identity, and the agent settlement layer.</p>
         <div class="card-foot"><a class="link-arrow" href="/field-guide-003">Read Field Guide 003 <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="pill">Also available</span>
+        <h3>Field Guide 004 · Autonomous: When the Buyer Is Software</h3>
+        <p>Agents transacting with agents on the live open protocol stack (MCP, A2A, AP2, x402): agent-market dynamics, the growth curve toward marketplaces at the scale of Meta and Google today, and why machine-legibility advantages compound at machine speed.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide-004">Read Field Guide 004 <span class="arrow">→</span></a></div>
       </article>
     </div>
   </div>
