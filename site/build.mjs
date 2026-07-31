@@ -488,7 +488,13 @@ function fieldGuide({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       <iframe src="/assets/fdi-field-guide-deck.pdf#view=FitH" title="FDI Field Guide deck (PDF)" loading="lazy"></iframe>
     </div>
     <div class="deck-actions">
-      <a class="btn btn-primary" href="/assets/fdi-field-guide-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+      <form class="waitlist js-capture" data-source="field-guide-deck" data-subject="Field Guide deck PDF" data-download="/assets/fdi-field-guide-deck.pdf" data-mail-body="Please send me the FDI Field Guide deck PDF." novalidate style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <label class="sr-only" for="fg-deck-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="fg-deck-email" name="email" placeholder="you@company.com" autocomplete="email" required style="flex:1;min-width:200px;" />
+        <button class="btn btn-primary" type="submit">Download the deck (PDF) <span class="arrow">↓</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
     </div>
     <div class="slides-strip">
       ${slidesStrip(slideFiles)}
@@ -559,7 +565,13 @@ function fieldGuide002({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       <iframe src="/assets/fdi-field-guide-002-deck.pdf#view=FitH" title="FDI Field Guide 002 deck (PDF)" loading="lazy"></iframe>
     </div>
     <div class="deck-actions">
-      <a class="btn btn-primary" href="/assets/fdi-field-guide-002-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+      <form class="waitlist js-capture" data-source="field-guide-002-deck" data-subject="Field Guide 002 deck PDF" data-download="/assets/fdi-field-guide-002-deck.pdf" data-mail-body="Please send me the FDI Field Guide 002 deck PDF." novalidate style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <label class="sr-only" for="fg002-deck-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="fg002-deck-email" name="email" placeholder="you@company.com" autocomplete="email" required style="flex:1;min-width:200px;" />
+        <button class="btn btn-primary" type="submit">Download the deck (PDF) <span class="arrow">↓</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
     </div>
     <div class="slides-strip">
       ${slidesStrip(slideFiles, "deck-slides-002")}
@@ -634,7 +646,13 @@ function fieldGuide003({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       <iframe src="/assets/fdi-field-guide-003-deck.pdf#view=FitH" title="FDI Field Guide 003 deck (PDF)" loading="lazy"></iframe>
     </div>
     <div class="deck-actions">
-      <a class="btn btn-primary" href="/assets/fdi-field-guide-003-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+      <form class="waitlist js-capture" data-source="field-guide-003-deck" data-subject="Field Guide 003 deck PDF" data-download="/assets/fdi-field-guide-003-deck.pdf" data-mail-body="Please send me the FDI Field Guide 003 deck PDF." novalidate style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <label class="sr-only" for="fg003-deck-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="fg003-deck-email" name="email" placeholder="you@company.com" autocomplete="email" required style="flex:1;min-width:200px;" />
+        <button class="btn btn-primary" type="submit">Download the deck (PDF) <span class="arrow">↓</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
     </div>
     <div class="slides-strip">
       ${slidesStrip(slideFiles, "deck-slides-003")}
@@ -709,7 +727,13 @@ function fdcpPage({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       <iframe src="/assets/fdi-fdcp-deck.pdf#view=FitH" title="FDI FDCP deck (PDF)" loading="lazy"></iframe>
     </div>
     <div class="deck-actions">
-      <a class="btn btn-primary" href="/assets/fdi-fdcp-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+      <form class="waitlist js-capture" data-source="fdcp-deck" data-subject="FDCP deck PDF" data-download="/assets/fdi-fdcp-deck.pdf" data-mail-body="Please send me the FDI FDCP deck PDF." novalidate style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <label class="sr-only" for="fdcp-deck-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="fdcp-deck-email" name="email" placeholder="you@company.com" autocomplete="email" required style="flex:1;min-width:200px;" />
+        <button class="btn btn-primary" type="submit">Download the deck (PDF) <span class="arrow">↓</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
     </div>
     <div class="slides-strip">
       ${slidesStrip(slideFiles, "deck-slides-fdcp")}
@@ -784,7 +808,13 @@ function fieldGuide004({ title, subtitle, attribution, bodyHtml }, slideFiles) {
       <iframe src="/assets/fdi-field-guide-004-deck.pdf#view=FitH" title="FDI Field Guide 004 deck (PDF)" loading="lazy"></iframe>
     </div>
     <div class="deck-actions">
-      <a class="btn btn-primary" href="/assets/fdi-field-guide-004-deck.pdf" download>Download the deck (PDF) <span class="arrow">↓</span></a>
+      <form class="waitlist js-capture" data-source="field-guide-004-deck" data-subject="Field Guide 004 deck PDF" data-download="/assets/fdi-field-guide-004-deck.pdf" data-mail-body="Please send me the FDI Field Guide 004 deck PDF." novalidate style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <label class="sr-only" for="fg004-deck-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="fg004-deck-email" name="email" placeholder="you@company.com" autocomplete="email" required style="flex:1;min-width:200px;" />
+        <button class="btn btn-primary" type="submit">Download the deck (PDF) <span class="arrow">↓</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
     </div>
     <div class="slides-strip">
       ${slidesStrip(slideFiles, "deck-slides-004")}
@@ -1170,7 +1200,6 @@ function topcall() {
           <button class="btn btn-primary" type="submit">Email me the pack <span class="arrow">↓</span></button>
         </form>
         <p class="form-msg" role="status" aria-live="polite"></p>
-        <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer a direct link? <a href="/assets/top-call-prompt-pack.zip" download>Download the ZIP</a>.</p>
       </article>
       <article class="card">
         <span class="tag">The ceiling</span>
@@ -1460,7 +1489,6 @@ function marcomKit() {
           <button class="btn btn-primary" type="submit">Email me the pack <span class="arrow">↓</span></button>
         </form>
         <p class="form-msg" role="status" aria-live="polite"></p>
-        <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer a direct link? <a href="/assets/fdi-marcom-starter-pack.zip" download>Download the ZIP</a>.</p>
       </article>
       <article class="card">
         <span class="tag">Why structure first</span>

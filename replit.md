@@ -72,6 +72,7 @@ Site-wide contact is the single `CONTACT` const in `build.mjs`
 Full page-by-page detail: `docs/public-site.md`.
 
 ### Brand/copy conventions (locked)
+- **Universal download rule (locked):** every direct file download on the public site, even free assets, must be email-gated via the `js-capture` + `data-download` pattern. No ungated direct-link bypasses. This applies to all current and future pages.
 - All visible product copy uses "SkillFoundry"
   (the `/skillfoundry` URL and `skillfoundry/` dir stay lowercase); every waitlist
   CTA and every waitlist-style pricing-tier button reads "Join the waitlist". The
