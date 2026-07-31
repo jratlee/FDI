@@ -44,11 +44,14 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
     the kit's enforcement engine); nav/footer/llms.txt list the kit first; each
     concept page carries an "Own the structure" kit-branch section
     (Aggregator-Resilient Org / Network-Native Org / Agent-Ready Org).
-  - `/topcall` — Top Call ("Signal as Code"): a FREE prompt-pack lead magnet
-    (email-capture that triggers the ZIP download), the three owned-system
-    constructs (corpus / knowledge graph / MCP), architecture built on the open
-    Model Context Protocol (MCP), a three-tier pricing ladder (Engine / Feed /
-    Desk), and a paid waitlist CTA
+  - `/topcall` — Top Call ("the owned authority layer that makes your brand's
+    expertise citeable by AI"): a FREE prompt-pack lead magnet (email-capture
+    that triggers the ZIP download), three owned-system pillars framed around
+    the FT trust requirements (corpus = evidence that withstands scrutiny /
+    knowledge graph = independent traceable oversight / MCP interface = human
+    review built in), architecture built on the open Model Context Protocol
+    (MCP), a three-tier pricing ladder (Engine / Feed / Desk), and a paid
+    waitlist CTA
   - `/series` — landing page for the field-guide series (source tag `series`)
   - `/aggregated`, `/decentralized`, `/autonomous` — one-pager concept pages,
     each a direct-answer definition + pattern/answer/proof cards + a waitlist CTA

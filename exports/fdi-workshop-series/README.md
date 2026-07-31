@@ -5,23 +5,29 @@
 > Aggregated · Decentralized · Autonomous
 
 This folder is the complete facilitator kit for **The Cartographers' Table**, a
-repeatable in-person workshop FDI can run again and again to generate qualified
-SkillFoundry leads, establish thought leadership on the *owned marketing systems*
-thesis, send every attendee home with a hands-on skill, and validate the thesis
-against a live audience.
+recurring in-person workshop for senior marketing leaders navigating the shift to
+owned marketing systems. Attendees come for the methodology; they return for the
+peer cohort. The sessions provide the credibility signal that justifies the room.
+The curated cohort of AI-forward practitioners is the product that compounds.
+
+FDI uses this series to build a standing peer group around the owned-marketing
+thesis, generate qualified SkillFoundry leads from practitioners who have
+experienced the argument firsthand, and validate the thesis against a live
+audience every season.
 
 ## The concept in one line
 
-Marketing strategists gather around a table to **map new territory and leave
-having built a piece of an owned system they keep** — because a map you draw
-yourself is worth more than a map you rent.
+A curated cohort of senior marketing leaders navigates the same shift, in the
+same room, with a real artifact to show for it each time.
 
-The series *is* the thesis. Come to one session and you leave with a useful but
-disposable artifact (a rented outcome, like the free prompt-pack). Come to the
-whole season and each session compounds onto the last until you have built the
-beginnings of an owned system (a corpus, a graph, an interface) that no one can
-take away. That compounding-versus-evaporating contrast is exactly the argument
-in *Build the Machine, Not the Ad*, made physical in a room.
+The session content gives every attendee a credible reason to be in the room: a
+working methodology, a graded artifact, proof they did something. The peer
+network is the return force no single-session event earns. Come once and you
+leave with a useful artifact. Come for the season and each session compounds onto
+the last until you have built the beginnings of an owned system (a corpus, a
+graph, an interface) and a named cohort of peers building the same thing. That
+compounding-versus-evaporating contrast is exactly the argument in *Build the
+Machine, Not the Ad*, made physical in a room.
 
 ## Who it is for
 

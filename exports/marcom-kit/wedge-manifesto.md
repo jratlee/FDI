@@ -24,7 +24,7 @@ Agencies adapting to this shift by instinct usually walk into one of two traps.
 
 **The deskilling trap.** Fire the junior creatives, buy the AI seats, keep everything else the same. Costs drop for two quarters. Then the pipeline problem arrives: taste, client instinct, and media relationships are trained in people, and you just removed the training ground. In three years you have senior people with no successors and a product no one under 40 in your building can evaluate.
 
-**The ungoverned throughput trap.** Let every team adopt AI tools ad hoc, with no shared guardrails. Volume goes up 10x and every unit of it carries risk: off-brand tone, unsubstantiated claims, disclosure failures, regulated-industry landmines. One bad autonomous output in a client's earnings week costs more than a year of tool savings. Speed without governance is not velocity. It is exposure.
+**The ungoverned throughput trap.** Let every team adopt AI tools ad hoc, with no shared guardrails. Volume goes up 10x and every unit of it carries risk: off-brand tone, unsubstantiated claims, disclosure failures, regulated-industry landmines. One bad autonomous output in a client's earnings week costs more than a year of tool savings. Speed without governance is not velocity. It is exposure. The FT's New Dimensions of Influence research (2026) found 85% of business leaders are concerned that AI-generated content makes it harder to know what is credible, and a third report suffering from information overload. Every agency whose clients feel that way about their output loses the retainer before the next QBR.
 
 ## The Riverbank
 

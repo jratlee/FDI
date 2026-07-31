@@ -102,6 +102,13 @@ const CITE = {
   /* ynharari.com/book/sapiens-2/ silently redirects to the 21 Lessons page;
      /book/sapiens/ is the real Sapiens page. */
   belief: "https://www.ynharari.com/book/sapiens/",
+  /* FT New Dimensions of Influence, 2026: survey of 500+ global decision-makers.
+     Key findings: 74% held back decisions due to data-trust failures; 85% concerned
+     AI content makes credibility harder to assess; 4 in 5 say trusted sources are
+     now more important than two years ago; decision-makers are 10x more likely to
+     trust evidenced, independently produced information than speedy information. */
+  ftipa:
+    "https://aboutus.ft.com/press_release/ft-new-dimensions-of-influence",
 };
 
 /* Small superscript source link rendered after a factual claim. */
@@ -306,6 +313,7 @@ function home() {
     <div class="stat"><div class="k"><span class="amber">$1.3T</span></div><div class="l">what the world will spend on advertising in 2026 ${cite(CITE.adspend, "WARC global ad forecast, Dec 2025")}</div></div>
     <div class="stat"><div class="k">2.5s</div><div class="l">of active attention before an ad even starts to stick in memory. Most digital ads never get there ${cite(CITE.attention, "Dr Karen Nelson-Field / Amplified, the attention-memory threshold")}</div></div>
     <div class="stat"><div class="k">70,000<span class="amber">yrs</span></div><div class="l">humans have coordinated around shared belief, and identity is still the bridge ${cite(CITE.belief, "Yuval Noah Harari, Sapiens")}</div></div>
+    <div class="stat"><div class="k">74<span class="amber">%</span></div><div class="l">of business leaders held back a decision because they did not know what data to trust. Trusted sources are now more important for strategic decisions than they were two years ago ${cite(CITE.ftipa, "FT New Dimensions of Influence, 2026")}</div></div>
   </div>
 </section>
 
@@ -1184,8 +1192,8 @@ function topcall() {
   <div class="wrap hero-inner">
     <div>
       <span class="eyebrow">A False Dawn Industries product · As of ${AS_OF}</span>
-      <h1>Top Call: <em>signal as code</em>.</h1>
-      <p class="lede">Executive-intelligence monitoring is usually a disposable weekly brief, read once, then gone. Top Call is the owned radar: the sibling to SkillFoundry that turns every signal you grade into a provenance-stamped corpus, a knowledge graph, and a verifiable interface agents can query. SkillFoundry is strategy as code; Top Call is signal as code.</p>
+      <h1>Top Call: <em>the owned authority layer</em>.</h1>
+      <p class="lede">85% of business leaders are concerned that AI-generated content makes it harder to know what is credible. The leaders who get cited are not producing more content. They are building the graded corpus, the traceable knowledge graph, and the verifiable interface that gives a model or a boardroom a reason to trust them. Top Call is that infrastructure: the owned authority layer that makes your brand's expertise citeable by AI and by the people who brief it.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#prompt-pack">Get the free prompt-pack <span class="arrow">↓</span></a>
         <a class="btn btn-ghost" href="#constructs">See the owned system</a>
@@ -1231,31 +1239,31 @@ function topcall() {
   <div class="wrap">
     <div class="section-hd">
       <span class="eyebrow">The thesis, in code</span>
-      <h2>Three constructs turn signal into an owned asset.</h2>
-      <p>Top Call maps the FDI thesis directly onto working infrastructure. Every source you grade is written into a store that compounds instead of evaporating.</p>
+      <h2>Three pillars. Three reasons a source gets trusted.</h2>
+      <p>FT research finds decision-makers are ten times more likely to trust evidenced, independently produced information than speedy information. Top Call maps those requirements onto working infrastructure: a citable corpus, a traceable graph, and a verifiable interface agents and executives can rely on. ${cite(CITE.ftipa, "FT New Dimensions of Influence, 2026")}</p>
     </div>
     <div class="grid cols-3">
       ${construct(
         1,
         "Corpus",
-        "A citable corpus",
-        "Every source is classified into a source-authority tier (1A/1B/1C/2/3) at ingest and written into a persistent, provenance-stamped store. Re-running is cumulative: known moves gain provenance instead of duplicating.",
+        "Evidence that withstands scrutiny",
+        "Every source is classified into a source-authority tier (1A/1B/1C/2/3) at ingest and written into a persistent, provenance-stamped store. The chain of evidence is preserved from ingest to answer, so every claim a model or executive sees can be checked against the source that justified it.",
         "Becomes",
         "Owned, provenance-stamped store",
       )}
       ${construct(
         2,
         "Graph",
-        "A knowledge graph",
-        "Executives, companies, moves, categories, implications, and sources become a queryable node/edge graph. Relationships are preserved and traceable, never re-derived from scratch.",
+        "Independent, traceable oversight",
+        "Executives, companies, moves, categories, implications, and sources become a queryable node/edge graph. Relationships are independently traceable and never re-derived from scratch on demand. When a Tier 1 source corroborates a move first seen in a Tier 2 release, confidence upgrades automatically and the audit trail is always there.",
         "Becomes",
         "Queryable node/edge graph",
       )}
       ${construct(
         3,
         "Interface",
-        "A verifiable MCP interface",
-        "The repeatable read skills are exposed as MCP tools built on the same open Model Context Protocol (MCP) as SkillFoundry, so an agent can call them and get answers stamped with source, tier, and confidence.",
+        "Human review, built in",
+        "The repeatable read skills are exposed as MCP tools built on the open Model Context Protocol (MCP) so an agent can call them and get answers stamped with source, tier, and confidence. Nothing is a black box. Every answer is checkable by a human before anyone acts on it.",
         "Becomes",
         "Answers stamped source · tier · confidence",
       )}
@@ -1370,9 +1378,9 @@ function topcall() {
   </div>
 </section>`;
   return page({
-    title: "Top Call: Signal as Code, the Owned Radar | False Dawn Industries",
+    title: "Top Call: The Owned Authority Layer | False Dawn Industries",
     description:
-      "Top Call turns executive-intelligence monitoring into an owned asset: a provenance-stamped corpus, a knowledge graph, and a verifiable MCP interface. Get the free prompt-pack, then the owned system.",
+      "Top Call is the owned authority layer that makes your brand's expertise citeable by AI and by the people who brief it. A provenance-stamped corpus, a traceable knowledge graph, and a verifiable MCP interface. Get the free prompt-pack, then the owned system.",
     active: "topcall",
     body,
     canonical: `${SITE_URL}/topcall`,
@@ -2216,7 +2224,7 @@ const CONCEPTS = {
       },
       {
         h: "The squeeze",
-        p: 'Paying does not restore control. Meta\'s own <a href="https://www.prnewswire.com/news-releases/meta-reports-fourth-quarter-and-full-year-2025-results-302673127.html" target="_blank" rel="noopener">full-year 2025 results</a> report the average price per ad up 9% while impressions grew 12%. And the same structure is arriving one layer up: about <a href="https://www.bain.com/insights/goodbye-clicks-hello-ai-zero-click-search-redefines-marketing/" target="_blank" rel="noopener">60% of searches now end with no click</a> (Bain), and only about <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/" target="_blank" rel="noopener">1% of users click a source cited in an AI summary</a> (Pew Research Center).',
+        p: 'Paying does not restore control. Meta\'s own <a href="https://www.prnewswire.com/news-releases/meta-reports-fourth-quarter-and-full-year-2025-results-302673127.html" target="_blank" rel="noopener">full-year 2025 results</a> report the average price per ad up 9% while impressions grew 12%. And the same structure is arriving one layer up: about <a href="https://www.bain.com/insights/goodbye-clicks-hello-ai-zero-click-search-redefines-marketing/" target="_blank" rel="noopener">60% of searches now end with no click</a> (Bain), and only about <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/" target="_blank" rel="noopener">1% of users click a source cited in an AI summary</a> (Pew Research Center). At the same time, 85% of business leaders are concerned that AI-generated content makes it harder to know what is credible ${cite(CITE.ftipa, "FT New Dimensions of Influence, 2026")}: the squeeze is not just on reach, it is on trust.',
       },
       {
         h: "The FDI answer",
@@ -3213,7 +3221,7 @@ function workshopPage() {
     <div>
       <span class="eyebrow">Growth Cartography</span>
       <h1>The <em>Cartographers' Table</em>.</h1>
-      <p class="lede">A four-part in-person workshop series that runs the False Dawn Industries thesis live. Every session, you build one real artifact for a real client. Attend the season and you leave with a coherent, owned system.</p>
+      <p class="lede">A curated cohort of senior marketing leaders navigating the same shift, in the same room. The sessions deliver a real artifact for a real client, every time. The peer network is what makes you come back: a named cohort of AI-forward practitioners building owned systems alongside you.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#register">Register your interest <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="#sessions">See the sessions</a>
@@ -3236,30 +3244,30 @@ function workshopPage() {
 <section class="section" id="why">
   <div class="wrap">
     <div class="section-hd">
-      <span class="eyebrow">The mechanic</span>
-      <h2>Attending once is rented. The season is owned.</h2>
-      <p>The workshop practices what it teaches. A single session gives you a useful artifact that does not compound. The four-session season gives you a coherent owned system: each session's artifact feeds the next, and the room itself demonstrates the thesis it teaches.</p>
+      <span class="eyebrow">Why it works</span>
+      <h2>The peer network is the product.</h2>
+      <p>The session content gives every attendee a credible reason to be in the room: a working methodology, a real artifact, proof they did something. FT research found four in five senior leaders say trusted sources are now more important for strategic decisions than two years ago, and they are five times more likely to rely on a trusted peer than an AI tool or social feed. ${cite(CITE.ftipa, "FT New Dimensions of Influence, 2026")} The Table is that peer group.</p>
     </div>
     <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">The peer cohort</span>
+        <h3>A curated cohort of senior marketing leaders</h3>
+        <p>Returning attendees become "the Table" for that city: a standing peer group of AI-forward strategists navigating the same shift. The methodology is the entry ticket. The cohort is what compounds. Belonging is a return force that a one-off content event never earns.</p>
+      </article>
+      <article class="card">
+        <span class="tag">The credibility signal</span>
+        <h3>Content that justifies the room</h3>
+        <p>The sessions are not the product; they are the reason the room is credible. Each session delivers one real artifact for a real client: something attendees can show, not just describe. The content earns the peer trust. The peer trust earns the return.</p>
+      </article>
       <article class="card">
         <span class="tag">Artifacts that stack</span>
         <h3>One system, built across four sessions</h3>
         <p>Session 1's answer object becomes a node in Session 2's graph, which becomes a callable tool in Session 3's agent spec. Miss a session and your system has a hole. Attend the season and you walk away with something coherent and provable.</p>
       </article>
       <article class="card">
-        <span class="tag">The thesis, made physical</span>
-        <h3>The room demonstrates what it teaches</h3>
-        <p>Attending one session is a rented outcome. Attending the season is an owned system. Facilitators name this out loud. The workshop practices what it preaches, which is memorable and quotable.</p>
-      </article>
-      <article class="card">
-        <span class="tag">Social proof</span>
-        <h3>A living scoreboard</h3>
-        <p>Each session opens by revisiting the previous thesis-validation vote and any attendee wins. Who got cited by an LLM since last time? Proof compounds alongside the artifacts.</p>
-      </article>
-      <article class="card">
-        <span class="tag">Belonging</span>
-        <h3>A named cohort, not a one-off event</h3>
-        <p>Returning attendees become "the Table" for that city: a standing peer group of AI-forward strategists. Belonging is a return force that a one-off event never earns.</p>
+        <span class="tag">A living scoreboard</span>
+        <h3>Proof compounds alongside the artifacts</h3>
+        <p>Each session opens by revisiting the previous thesis-validation vote and any attendee wins. Who got cited by an LLM since last time? The cohort tracks it together, which makes the wins visible and the thesis verifiable in public.</p>
       </article>
     </div>
   </div>
