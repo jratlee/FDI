@@ -1974,7 +1974,6 @@ function copyAssets() {
     "viz-two-builds-1200x700.png",
     "viz-three-markets-1200x680.png",
     "fdi-field-guide-deck.pdf",
-    "fdi-field-guide-launch-bundle.zip",
     "fdi-linkedin-thesis-package.zip",
     "top-call-prompt-pack.zip",
   ];
@@ -1982,6 +1981,9 @@ function copyAssets() {
     const from = path.join(EXPORTS, f);
     if (fs.existsSync(from)) copy(from, path.join(DIST, "assets", f));
   }
+
+  // Field Guide launch bundle — built fresh from sources so it never drifts
+  buildFieldGuideBundleZip();
 
   // MarCom OS free starter pack (lead magnet) — built fresh from sources
   buildStarterPackZip();
@@ -2138,6 +2140,61 @@ function buildPluginZip() {
     console.log(`[build] plugin package → ${path.relative(ROOT, outZip)} (${kb} KB)`);
   } catch (err) {
     console.warn("[build] plugin package build failed:", err.message);
+  }
+}
+
+// Build the Field Guide launch bundle zip from exports/field-guide-launch/.
+// The zip is emitted to dist/assets/ so it is served publicly at
+// /assets/fdi-field-guide-launch-bundle.zip — the URL referenced by the
+// field-guide download link.  Building from sources at every build ensures the
+// zip can never silently lag behind updates to the deck PDF or slide PNGs.
+function buildFieldGuideBundleZip() {
+  const srcDir = EXPORTS; // exports/field-guide-launch/
+  if (!fs.existsSync(srcDir)) {
+    console.warn("[build] exports/field-guide-launch/ not found, skipping field guide bundle zip");
+    return;
+  }
+  const slidesDir = path.join(srcDir, "deck-slides");
+  if (!fs.existsSync(slidesDir)) {
+    console.warn("[build] exports/field-guide-launch/deck-slides/ not found, skipping field guide bundle zip");
+    return;
+  }
+  const outDir = path.join(DIST, "assets");
+  const outZip = path.join(outDir, "fdi-field-guide-launch-bundle.zip");
+  mkdir(outDir);
+  rm(outZip);
+  try {
+    // Collect root-level files: PDF, PNGs, and MDs (exclude zip files so
+    // stale pre-built archives never end up bundled inside the new zip).
+    const rootFiles = fs
+      .readdirSync(srcDir)
+      .filter((f) => {
+        if (fs.statSync(path.join(srcDir, f)).isDirectory()) return false;
+        const ext = path.extname(f).toLowerCase();
+        return ext === ".pdf" || ext === ".png" || ext === ".md";
+      })
+      .sort();
+    // deck-slides/*.png collected as relative paths so the zip preserves the
+    // deck-slides/ subdirectory structure (matching the original bundle).
+    const slideFiles = fs
+      .readdirSync(slidesDir)
+      .filter((f) => f.endsWith(".png"))
+      .sort()
+      .map((f) => path.join("deck-slides", f));
+    const allEntries = [...rootFiles, ...slideFiles];
+    if (allEntries.length === 0) {
+      console.warn("[build] no files found for field guide bundle, skipping");
+      return;
+    }
+    execFileSync(
+      "zip",
+      ["-q", outZip, ...allEntries],
+      { cwd: srcDir, stdio: ["ignore", "ignore", "inherit"] },
+    );
+    const kb = Math.round(fs.statSync(outZip).size / 1024);
+    console.log(`[build] field guide bundle → dist/assets/fdi-field-guide-launch-bundle.zip (${kb} KB)`);
+  } catch (err) {
+    console.warn("[build] field guide bundle zip build failed:", err.message);
   }
 }
 
