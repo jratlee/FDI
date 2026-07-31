@@ -59,7 +59,7 @@ const CHECKOUT_LIVE = false;
 /* MarCom OS Stripe checkout: same pattern. While false, all kit
    tier CTAs stay waitlist links. Flip to true once the kit purchase flow is
    proven in Stripe (see exports/marcom-kit/STRIPE_SETUP.md). */
-const KIT_CHECKOUT_LIVE = false;
+const KIT_CHECKOUT_LIVE = true;
 /* Davos Decision Kit commerce demo: while true, an internal, noindex demo page
    is emitted at /davos-kit-demo (never linked from public nav) so the checkout
    flow can be screen-shared with a client. The buy button degrades to the

@@ -211,14 +211,23 @@ export function tierIsConfigured(tierId) {
 }
 
 /* ---------------- Stripe client (lazy, env-driven) ---------------- */
+// Prefer the explicit STRIPE_SECRET_KEY; fall back to STRIPE_TEST_API_KEY so
+// the test-mode key already configured as a Replit Secret is used automatically
+// in dev without needing to duplicate it under a second name.
+function resolveStripeKey() {
+  return (
+    (process.env.STRIPE_SECRET_KEY || "").trim() ||
+    (process.env.STRIPE_TEST_API_KEY || "").trim()
+  );
+}
 let _stripe = null;
 export function stripeConfigured() {
-  return Boolean((process.env.STRIPE_SECRET_KEY || "").trim());
+  return Boolean(resolveStripeKey());
 }
 function getStripe() {
   if (!stripeConfigured()) return null;
   if (!_stripe) {
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY.trim(), {
+    _stripe = new Stripe(resolveStripeKey(), {
       // Pin nothing exotic — use the SDK's bundled apiVersion.
       appInfo: { name: "fdi-skillfoundry", version: "1.0.0" },
     });
