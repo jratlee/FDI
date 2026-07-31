@@ -72,6 +72,26 @@ function countMatches(text, re) {
   return m ? m.length : 0;
 }
 
+/**
+ * Count vanity-metric matches that appear in a negation/critique context.
+ * Checks a 3-sentence window (prev + current + next) for VANITY_CRITIQUE_CONTEXT
+ * or CONTRARIAN signals so we catch patterns like:
+ *   "...a bet on reach: buy attention, count clicks…  That bet is over."
+ */
+function countVanityInCritiqueContext(sentences) {
+  let count = 0;
+  for (let i = 0; i < sentences.length; i++) {
+    const s = sentences[i];
+    const vanityMatches = s.match(VANITY_METRICS);
+    if (!vanityMatches) continue;
+    const win = [sentences[i - 1] || "", s, sentences[i + 1] || ""].join(" ");
+    if (VANITY_CRITIQUE_CONTEXT.test(win) || CONTRARIAN_NG.test(win)) {
+      count += vanityMatches.length;
+    }
+  }
+  return count;
+}
+
 /* ---------------- signal dictionaries ---------------- */
 
 const LLM_TELLS = [
@@ -92,6 +112,12 @@ const VALUE_DRIVERS =
 
 const VANITY_METRICS =
   /\b(impressions|reach|awareness|engagement|likes|followers|virality|going viral|clicks|eyeballs)\b/gi;
+
+// Signals that a vanity-metric mention is being *critiqued* rather than relied on.
+// Used with a 3-sentence window to catch patterns like "bet on reach … That bet is over."
+// Note: commoditiz\w* (not commoditiz\b) so "commoditized/commoditization" all match.
+const VANITY_CRITIQUE_CONTEXT =
+  /\b(not|no longer|over|stop|instead|rather|commoditiz\w*|discounts?|worth nothing|renting|opaque|waste|dead|myth|wrong|argue|vanity|isn'?t|is not|don'?t|doesn'?t|won'?t|never|can'?t|cannot|abandon|replace|ditch|reject|beyond|end of)\b/i;
 
 const SUPERLATIVES =
   /\b(revolutionary|transformative|game-?changing|world-?class|best-in-class|cutting-edge|unparalleled|unmatched|next-generation|paradigm shift|disrupt(?:ive|ion)?|groundbreaking)\b/gi;
@@ -116,6 +142,9 @@ const CONSENSUS =
 
 const CONTRARIAN =
   /\b(but |however|actually|the truth is|contrary|myth|wrong|counter|isn(?:'|\u2019)?t|not the|instead)\b/gi;
+
+// Non-global copy for .test() calls that must not advance lastIndex.
+const CONTRARIAN_NG = new RegExp(CONTRARIAN.source, CONTRARIAN.flags.replace("g", ""));
 
 const AUTHORITY_ASSERTION =
   /\b(studies show|experts agree|research shows|it is well known|many believe|some say)\b/gi;
@@ -244,8 +273,16 @@ function scorePerformance(text, sentences) {
   const citations = countMatches(text, CITATION);
   const contrarian = countMatches(text, CONTRARIAN);
 
+  // Separate vanity mentions that critique/dismiss them from those that rely on them.
+  // An asset arguing *against* reach/impressions/engagement demonstrates value-driver
+  // awareness and should not be penalised the same way as one that leans on them.
+  const vanityInCritique = countVanityInCritiqueContext(sentences);
+  const vanityApproving = Math.max(0, vanity - vanityInCritique);
+  // Small credit: naming and dismissing vanity metrics signals strategic literacy.
+  const critiqueCredit = Math.min(25, vanityInCritique * 5);
+
   // 1. Value-driver linkage (0.30)
-  let value = 35 + Math.min(45, drivers * 15) - Math.min(30, vanity * 8);
+  let value = 35 + Math.min(45, drivers * 15) - Math.min(30, vanityApproving * 8) + critiqueCredit;
   value = clamp(value);
 
   // 2. Category-authority position (0.25)
@@ -271,17 +308,27 @@ function scorePerformance(text, sentences) {
   const findings = [];
   const rewrites = [];
 
-  if (drivers === 0 || vanity > drivers) {
-    const s = firstSentenceWith(sentences, [VANITY_METRICS]) || sentences[0] || text;
+  // Only raise the vanity-metric finding when the asset is *relying* on vanity
+  // metrics, not when it is arguing against them (vanityApproving > 0 and
+  // exceeds the named value drivers, or no drivers at all and no critique either).
+  if (vanityApproving > drivers || (drivers === 0 && vanityInCritique === 0)) {
+    // Find a sentence with an approving vanity mention where possible, otherwise
+    // fall back to the first sentence in the asset.
+    const approvedSentence =
+      sentences.find((s, idx) => {
+        if (!s.match(VANITY_METRICS)) return false;
+        const win = [sentences[idx - 1] || "", s, sentences[idx + 1] || ""].join(" ");
+        return !VANITY_CRITIQUE_CONTEXT.test(win) && !CONTRARIAN_NG.test(win);
+      }) || sentences[0] || text;
     findings.push({
       severity: "high",
       finding:
         "The case rests on vanity metrics (reach/impressions/engagement) a CFO discounts, not on a value driver the reader controls. Connect at least one claim to revenue, CAC, retention/LTV, risk, or capital efficiency.",
-      evidence: truncate(s),
+      evidence: truncate(approvedSentence),
     });
     rewrites.push({
-      original: truncate(s, 240),
-      revised: truncate(s, 180) + " - and tie that to the CAC you can lower and the retention you keep, the drivers a CFO already tracks.",
+      original: truncate(approvedSentence, 240),
+      revised: truncate(approvedSentence, 180) + " - and tie that to the CAC you can lower and the retention you keep, the drivers a CFO already tracks.",
       rationale: "value-driver linkage - re-anchors a soft claim to a named enterprise value driver.",
     });
   }
