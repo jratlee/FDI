@@ -23,6 +23,7 @@
  *   --max-pages=<n>     crawl limit — give up after this many internal pages (default 80)
  */
 
+import pg from "pg";
 import { sendLinkCheckReport } from "./email.mjs";
 
 /* ---------------- config ---------------- */
@@ -193,6 +194,41 @@ async function crawl() {
   return { pages: [...visitedRoutes], externalUrls };
 }
 
+/* ---------------- DB: record run ---------------- */
+// Write a row to cron_runs so the admin panel and silence monitor know the
+// cron is still alive. Best-effort — a DB failure never affects the exit code.
+async function recordRun({ failuresFound, pagesChecked, externalChecked }) {
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) return;
+  let pool;
+  try {
+    pool = new pg.Pool({ connectionString: dbUrl, max: 1 });
+    // Ensure the table exists (idempotent)
+    await pool.query(
+      `CREATE TABLE IF NOT EXISTS cron_runs (
+         id              BIGSERIAL PRIMARY KEY,
+         job_name        TEXT NOT NULL,
+         ran_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+         failures_found  INT NOT NULL DEFAULT 0,
+         pages_checked   INT NOT NULL DEFAULT 0,
+         external_checked INT NOT NULL DEFAULT 0
+       );
+       CREATE INDEX IF NOT EXISTS cron_runs_job_ran_idx
+         ON cron_runs (job_name, ran_at DESC);`,
+    );
+    await pool.query(
+      `INSERT INTO cron_runs (job_name, failures_found, pages_checked, external_checked)
+       VALUES ('link-check', $1, $2, $3)`,
+      [failuresFound, pagesChecked, externalChecked],
+    );
+    console.log("[link-check-scheduled] run recorded in cron_runs.");
+  } catch (err) {
+    console.error("[link-check-scheduled] failed to record run:", err.message);
+  } finally {
+    try { await pool?.end(); } catch { /* ignore */ }
+  }
+}
+
 /* ---------------- main ---------------- */
 console.log(`[link-check-scheduled] starting — ${new Date().toISOString()}`);
 
@@ -221,6 +257,14 @@ if (failures.length) {
     `[link-check-scheduled] all ${urls.length} external link(s) OK across ${pages.length} page(s) — no report needed.`,
   );
 }
+
+// Record this run in the DB so the admin panel and silence monitor know the
+// cron is still alive regardless of whether any links were broken.
+await recordRun({
+  failuresFound: failures.length,
+  pagesChecked: pages.length,
+  externalChecked: urls.length,
+});
 
 // Advisory: always exit 0
 process.exit(0);

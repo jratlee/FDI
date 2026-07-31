@@ -1,0 +1,40 @@
+{
+  "_comment": "Committed cron-job configuration for the FDI site monitors. Import into cron-job.org (https://cron-job.org/en/) or any compatible scheduler. Both jobs must be active for the silence monitor to work correctly.",
+  "_env": {
+    "CRON_SECRET": "Set in production secrets — the value from CRON_SECRET env var. Pass as Authorization: Bearer header.",
+    "PRODUCTION_URL": "https://falsedawn.industries"
+  },
+  "jobs": [
+    {
+      "title": "FDI — external link check",
+      "description": "Crawls the live site, probes all external URLs, emails the team if any are broken. Writes a row to cron_runs so the silence monitor knows the cron is healthy.",
+      "url": "https://falsedawn.industries/api/cron/link-check",
+      "method": "POST",
+      "auth_header": "Authorization: Bearer <CRON_SECRET>",
+      "schedule_cron": "0 7 * * *",
+      "schedule_human": "Daily at 07:00 UTC",
+      "expected_status": 202,
+      "timeout_seconds": 10,
+      "notes": "The job spawns a child process and returns 202 immediately; crawl runs detached. Failures are advisory — the endpoint always returns 202 on auth success."
+    },
+    {
+      "title": "FDI — cron silence monitor",
+      "description": "Independently checks whether the link-check job has recorded a run within the last 48 h. If not, and no silence alert has been sent in the last 24 h (cooldown persisted in cron_alerts Postgres table), emails WAITLIST_NOTIFY_EMAIL. Must run on its OWN schedule, separate from the link-check job — that independence is the whole point.",
+      "url": "https://falsedawn.industries/api/cron/silence-check",
+      "method": "POST",
+      "auth_header": "Authorization: Bearer <CRON_SECRET>",
+      "schedule_cron": "0 */6 * * *",
+      "schedule_human": "Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)",
+      "expected_status": 202,
+      "timeout_seconds": 10,
+      "notes": "Runs every 6 h so an alert fires within 6 h of a 48-h silence threshold being crossed. The spawned cron-silence-check.mjs script handles all threshold and cooldown logic with Postgres-persisted state — the endpoint itself is stateless."
+    }
+  ],
+  "required_production_env": {
+    "DATABASE_URL": "Postgres connection string — required for cron_runs and cron_alerts tables",
+    "CRON_SECRET": "Shared secret that gates both /api/cron/* endpoints — must match what the scheduler sends",
+    "SITE_BASE_URL": "Canonical production origin, e.g. https://falsedawn.industries — required for the link-check crawl",
+    "RESEND_FROM": "Verified Resend sender address — required for silence alert and link-check failure emails",
+    "WAITLIST_NOTIFY_EMAIL": "Team inbox that receives silence alerts and link-check failure digests"
+  }
+}

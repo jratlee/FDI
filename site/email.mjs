@@ -608,3 +608,54 @@ export async function sendLinkCheckReport({ failures, externalUrls, pagesChecked
 }
 
 export const emailConfigured = Boolean(FROM);
+
+// Alert the team when the link-check cron has not been recorded in the
+// database for longer than the expected interval. Best-effort; never throws.
+export async function sendCronSilenceAlert({ lastRunAt, hoursSince }) {
+  if (!FROM || !NOTIFY) {
+    if (!FROM) console.warn("[email] RESEND_FROM not set — skipping cron silence alert");
+    return;
+  }
+  const lastStr = lastRunAt
+    ? new Date(lastRunAt).toUTCString()
+    : "never";
+  const hoursStr = lastRunAt
+    ? `${Math.round(hoursSince)} hours ago`
+    : "no run on record";
+  const subject = `[Alert] Link-check cron has not fired in ${Math.round(hoursSince)}h`;
+  const text =
+    `⚠ The scheduled link checker has not recorded a run in the database for ` +
+    `${hoursStr}.\n\n` +
+    `Last recorded run: ${lastStr}\n\n` +
+    `This may mean the cron trigger (CRON_SECRET endpoint, Replit Scheduled ` +
+    `Deployment, or cron-job.org) has stopped firing. Check that:\n` +
+    `  • CRON_SECRET is still set and matches the caller's configuration\n` +
+    `  • SITE_BASE_URL is set so the script knows which site to crawl\n` +
+    `  • The scheduled job is still active in the cron service\n\n` +
+    `— False Dawn Industries automated monitor`;
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${C.panel};border:1px solid ${C.border};border-radius:14px;overflow:hidden;">
+      <tr><td style="padding:32px 32px 8px;">
+        <p style="margin:0 0 20px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:${C.faded};">Link Check Monitor</p>
+        <h1 style="margin:0 0 14px;font-family:'Space Grotesk',Arial,sans-serif;font-size:22px;line-height:1.2;color:${C.cream};">⚠ Cron silence alert</h1>
+        <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:${C.cream};">The scheduled link checker has not recorded a run in the database for <strong>${hoursStr}</strong>.</p>
+        <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:${C.faded};">Last recorded run: <span style="color:${C.cream};">${lastStr}</span></p>
+        <p style="margin:0 0 22px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:${C.faded};">This may mean the cron trigger has stopped firing. Check that CRON_SECRET is set and matches the caller's configuration, SITE_BASE_URL is set, and the scheduled job is still active in the cron service.</p>
+      </td></tr>
+      <tr><td style="padding:20px 32px 32px;">
+        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:${C.faded};">&mdash; False Dawn Industries automated monitor</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+  try {
+    await send({ from: FROM, to: [NOTIFY], subject, html, text });
+    return true; // delivered
+  } catch (err) {
+    console.error("[email] cron silence alert failed:", err.message);
+    return false; // failed — caller should reset the cooldown claim
+  }
+}

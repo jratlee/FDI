@@ -52,6 +52,10 @@ args = "commerce-gates"
 task = "workflow.run"
 args = "cron-link-check-test"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "cron-silence-check-test"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -103,7 +107,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node site/gate-check.mjs"
+args = "node site/build.mjs && node site/gate-check.mjs"
 
 [workflows.workflow.metadata]
 isValidation = true
@@ -152,6 +156,17 @@ args = "node site/test-cron-link-check.mjs"
 [workflows.workflow.metadata]
 isValidation = true
 
+[[workflows.workflow]]
+name = "cron-silence-check-test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node site/test-cron-silence.mjs"
+
+[workflows.workflow.metadata]
+isValidation = true
+
 [deployment]
 deploymentTarget = "autoscale"
 run = ["node", "site/serve.mjs"]
@@ -170,11 +185,16 @@ RESEND_REPLY_TO = "john@ratcliffe-lee.com"
 # Canonical production origin for the scheduled link checker.
 # Set to the deployed URL, e.g. https://falsedawn.industries
 SITE_BASE_URL = ""
-# Random secret that protects the /api/cron/link-check HTTP trigger endpoint.
-# Set to any strong random string; pass it as ?secret=<value> or
-# Authorization: Bearer <value> when calling from a cron service.
-# Leave blank to disable the endpoint entirely.
+# Random secret that protects both /api/cron/* HTTP trigger endpoints.
+# Set to any strong random string; pass it as Authorization: Bearer <value>
+# when calling from a cron service (see site/cron-schedule.json).
+# Leave blank to disable both endpoints entirely.
 CRON_SECRET = ""
+# Silence monitor thresholds (optional — defaults shown).
+# SILENCE_THRESHOLD_H: hours of no recorded run before an alert fires (default 48).
+# ALERT_COOLDOWN_H: minimum hours between consecutive silence alerts (default 24).
+SILENCE_THRESHOLD_H = ""
+ALERT_COOLDOWN_H = ""
 
 [userenv.development]
 CRON_SECRET = "cron-dev-local-only-not-for-production"

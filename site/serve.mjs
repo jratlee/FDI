@@ -370,6 +370,70 @@ const CONFIRM_DAYS = (() => {
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : 7;
 })();
 
+/* ---------------- cron_runs / cron_alerts tables ---------------- */
+// cron_runs   — one row per completed link-check run (ran_at, outcomes).
+// cron_alerts — one row per job; alerted_at tracks the last silence alert so
+//               the cooldown is durable across restarts and shared across
+//               autoscale instances. The silence-check logic lives in the
+//               standalone site/cron-silence-check.mjs script, not here.
+let cronRunsReady = null;
+
+function ensureCronRunsTable() {
+  if (!pool) return Promise.resolve(false);
+  if (!cronRunsReady) {
+    cronRunsReady = pool
+      .query(
+        `CREATE TABLE IF NOT EXISTS cron_runs (
+           id               BIGSERIAL PRIMARY KEY,
+           job_name         TEXT NOT NULL,
+           ran_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
+           failures_found   INT NOT NULL DEFAULT 0,
+           pages_checked    INT NOT NULL DEFAULT 0,
+           external_checked INT NOT NULL DEFAULT 0
+         );
+         CREATE INDEX IF NOT EXISTS cron_runs_job_ran_idx
+           ON cron_runs (job_name, ran_at DESC);
+         CREATE TABLE IF NOT EXISTS cron_alerts (
+           job_name   TEXT PRIMARY KEY,
+           alerted_at TIMESTAMPTZ NOT NULL
+         );`,
+      )
+      .then(() => true)
+      .catch((err) => {
+        console.error("[cron_runs] table init failed:", err.message);
+        cronRunsReady = null;
+        return false;
+      });
+  }
+  return cronRunsReady;
+}
+
+async function getCronStatus(jobName = "link-check") {
+  if (!pool) return null;
+  try {
+    await ensureCronRunsTable();
+    const { rows } = await pool.query(
+      `SELECT ran_at, failures_found, pages_checked, external_checked
+         FROM cron_runs
+        WHERE job_name = $1
+        ORDER BY ran_at DESC
+        LIMIT 1`,
+      [jobName],
+    );
+    if (!rows.length) return { lastRunAt: null, failuresFound: 0, pagesChecked: 0, externalChecked: 0 };
+    const r = rows[0];
+    return {
+      lastRunAt: r.ran_at,
+      failuresFound: r.failures_found,
+      pagesChecked: r.pages_checked,
+      externalChecked: r.external_checked,
+    };
+  } catch (err) {
+    console.error("[cron_runs] status query failed:", err.message);
+    return null;
+  }
+}
+
 // Give any pre-existing rows a deletion token so they can be unsubscribed too.
 // Done in JS (per-row crypto token) to avoid depending on a DB crypto extension.
 async function backfillTokens() {
@@ -1839,6 +1903,41 @@ ${dnotice}
       ? `${rows.length} in "${esc(sourceFilter)}"`
       : `${rows.length} signup${rows.length === 1 ? "" : "s"}`;
     const shownLabel = `${base} · ${confirmedCount} confirmed, ${pendingCount} pending`;
+    // Cron status widget — best-effort, never blocks page render.
+    let cronHtml = "";
+    try {
+      const cs = await getCronStatus("link-check");
+      if (cs !== null) {
+        const nowMs = Date.now();
+        const lastMs = cs.lastRunAt ? new Date(cs.lastRunAt).getTime() : null;
+        const hoursSince = lastMs ? (nowMs - lastMs) / 3_600_000 : null;
+        const silent = hoursSince === null || hoursSince > 48;
+        const lastLabel = cs.lastRunAt
+          ? new Date(cs.lastRunAt).toISOString().slice(0, 19).replace("T", " ") + " UTC"
+          : "never";
+        const hoursLabel = hoursSince !== null
+          ? `${Math.round(hoursSince)}h ago`
+          : "—";
+        const statusColor = silent ? "#e07070" : cs.failuresFound > 0 ? "#FFB12B" : "#6fcf97";
+        const statusLabel = silent
+          ? "⚠ silent &gt;48h"
+          : cs.failuresFound > 0
+            ? `⚠ ${cs.failuresFound} link${cs.failuresFound !== 1 ? "s" : ""} failed`
+            : "✓ ok";
+        cronHtml = `<section class="ops" style="margin-top:28px">
+  <h2>Link-check cron status</h2>
+  <table style="font-size:.88rem;border-collapse:collapse;width:100%;max-width:540px">
+    <tr><td style="padding:5px 0;color:#A8997B;width:160px">Last run</td><td style="padding:5px 0">${esc(lastLabel)} <span style="color:#A8997B">(${hoursLabel})</span></td></tr>
+    <tr><td style="padding:5px 0;color:#A8997B">Status</td><td style="padding:5px 0;color:${statusColor}">${statusLabel}</td></tr>
+    <tr><td style="padding:5px 0;color:#A8997B">Pages checked</td><td style="padding:5px 0">${cs.pagesChecked}</td></tr>
+    <tr><td style="padding:5px 0;color:#A8997B">External URLs</td><td style="padding:5px 0">${cs.externalChecked}</td></tr>
+  </table>
+  <p style="margin:10px 0 0;font-size:.82rem;color:#A8997B">Raw JSON: <a href="/api/admin/cron-status" style="color:#FFB12B">/api/admin/cron-status</a> &middot; A silence alert email fires automatically if no run is recorded for &gt;48h.</p>
+</section>`;
+      }
+    } catch {
+      // non-fatal — page renders without the widget
+    }
     const body = `<p class="eyebrow">Growth Cartography — Internal</p>
 <h1>Waitlist signups</h1>
 ${msg}
@@ -1849,7 +1948,8 @@ ${chips}
   <a href="/admin/logout" style="margin-left:auto">Log out</a>
 </div>
 ${table}
-${dataRights}`;
+${dataRights}
+${cronHtml}`;
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
@@ -3071,6 +3171,39 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
+  // Cron status JSON — admin-only, returns last link-check run details.
+  if (rawPath === "/api/admin/cron-status") {
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    (async () => {
+      if (!isAdmin(req, urlObj)) {
+        sendJson(res, 401, { ok: false, error: "unauthorized" });
+        return;
+      }
+      const status = await getCronStatus("link-check");
+      if (!status) {
+        sendJson(res, 503, { ok: false, error: "storage_unavailable" });
+        return;
+      }
+      const nowMs = Date.now();
+      const lastMs = status.lastRunAt ? new Date(status.lastRunAt).getTime() : null;
+      const hoursSince = lastMs ? (nowMs - lastMs) / 3_600_000 : null;
+      sendJson(res, 200, {
+        ok: true,
+        job: "link-check",
+        lastRunAt: status.lastRunAt,
+        hoursSince: hoursSince !== null ? Math.round(hoursSince * 10) / 10 : null,
+        silenceWarning: hoursSince === null || hoursSince > 48,
+        failuresFound: status.failuresFound,
+        pagesChecked: status.pagesChecked,
+        externalChecked: status.externalChecked,
+      });
+    })().catch((err) => {
+      console.error("[cron-status] handler error:", err.message);
+      if (!res.headersSent) sendJson(res, 500, { ok: false, error: "server_error" });
+    });
+    return;
+  }
+
   // Advisory scheduled link check — triggered by an external cron caller.
   // Returns 202 immediately and runs the check in a detached child process.
   // Protected by CRON_SECRET (disabled when unset). Pass the secret as:
@@ -3100,6 +3233,37 @@ const server = http.createServer((req, res) => {
     console.log(`[cron/link-check] spawned pid ${child.pid}`);
     res.writeHead(202, { "Content-Type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({ ok: true, message: "Link check started", pid: child.pid }));
+    return;
+  }
+  // Silence monitor — triggered by an independent external cron caller on its
+  // own schedule (e.g. every 6 h). Spawns site/cron-silence-check.mjs detached
+  // so it outlives this request. The script owns all threshold/cooldown/email
+  // logic and persists cooldown in Postgres — no in-process state.
+  // Protected by CRON_SECRET (disabled when unset).
+  if (rawPath === "/api/cron/silence-check") {
+    if (!CRON_SECRET) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("404 Not Found");
+      return;
+    }
+    const urlObj = new URL(req.url || "/", `http://${HOST}:${PORT}`);
+    const querySecret = urlObj.searchParams.get("secret") || "";
+    const authHeader = (req.headers["authorization"] || "").replace(/^Bearer\s+/i, "");
+    const provided = querySecret || authHeader;
+    if (!provided || provided !== CRON_SECRET) {
+      res.writeHead(401, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("401 Unauthorized");
+      return;
+    }
+    const child2 = spawn(
+      process.execPath,
+      [path.join(__dirname, "cron-silence-check.mjs")],
+      { detached: true, stdio: "inherit", env: process.env },
+    );
+    child2.unref();
+    console.log(`[cron/silence-check] spawned pid ${child2.pid}`);
+    res.writeHead(202, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(JSON.stringify({ ok: true, message: "Silence check started", pid: child2.pid }));
     return;
   }
 
