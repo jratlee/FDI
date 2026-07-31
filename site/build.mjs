@@ -1890,13 +1890,8 @@ function copyAssets() {
     if (fs.existsSync(from)) copy(from, path.join(DIST, "assets", f));
   }
 
-  // MarCom OS free starter pack (lead magnet)
-  const starterPack = path.join(ROOT, "exports", "marcom-kit", "fdi-marcom-starter-pack.zip");
-  if (fs.existsSync(starterPack)) {
-    copy(starterPack, path.join(DIST, "assets", "fdi-marcom-starter-pack.zip"));
-  } else {
-    console.warn("[build] fdi-marcom-starter-pack.zip not found, lead-magnet download will 404");
-  }
+  // MarCom OS free starter pack (lead magnet) — built fresh from sources
+  buildStarterPackZip();
 
   // deck slides
   const slidesDir = path.join(EXPORTS, "deck-slides");
@@ -2048,6 +2043,45 @@ function buildPluginZip() {
     console.log(`[build] plugin package → ${path.relative(ROOT, outZip)} (${kb} KB)`);
   } catch (err) {
     console.warn("[build] plugin package build failed:", err.message);
+  }
+}
+
+// Build the free MarCom OS starter-pack zip from exports/marcom-kit-lead-magnet/*.md.
+// The zip is emitted to dist/assets/ so it is served publicly at
+// /assets/fdi-marcom-starter-pack.zip — the URL referenced by the lead-magnet form.
+// Building from sources at every build ensures the zip can never drift from the
+// markdown copy (the near-miss that prompted this: the old product name was still
+// inside the zip after a rename because only the static file was forgotten).
+function buildStarterPackZip() {
+  const srcDir = path.join(ROOT, "exports", "marcom-kit-lead-magnet");
+  if (!fs.existsSync(srcDir)) {
+    console.warn("[build] exports/marcom-kit-lead-magnet/ not found, skipping starter pack zip");
+    return;
+  }
+  const outDir = path.join(DIST, "assets");
+  const outZip = path.join(outDir, "fdi-marcom-starter-pack.zip");
+  mkdir(outDir);
+  rm(outZip);
+  try {
+    // Collect only .md files so stray editor artefacts or OS metadata never
+    // slip into the download.
+    const mdFiles = fs
+      .readdirSync(srcDir)
+      .filter((f) => f.endsWith(".md"))
+      .sort();
+    if (mdFiles.length === 0) {
+      console.warn("[build] no .md files in marcom-kit-lead-magnet/, skipping starter pack zip");
+      return;
+    }
+    execFileSync(
+      "zip",
+      ["-q", outZip, ...mdFiles],
+      { cwd: srcDir, stdio: ["ignore", "ignore", "inherit"] },
+    );
+    const kb = Math.round(fs.statSync(outZip).size / 1024);
+    console.log(`[build] starter pack → dist/assets/fdi-marcom-starter-pack.zip (${kb} KB)`);
+  } catch (err) {
+    console.warn("[build] starter pack zip build failed:", err.message);
   }
 }
 
