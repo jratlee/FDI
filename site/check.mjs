@@ -146,6 +146,60 @@ if (!fs.existsSync(robotsPath)) {
     fail("robots.txt does not point at the sitemap");
 }
 
+/* 1d. gated-page leak guard
+ * These routes must render the holding page (noindex, neutral copy) and must
+ * NOT contain any of the known internal markers from their full page builders.
+ * Mirrors the GATED set in build.mjs; update both together when a page is
+ * ungated or a new marker is added. */
+const GATED_CHECKS = [
+  {
+    route: "/topcall",
+    /* Unique strings that appear in the full topcall() builder but never in
+     * the neutral holding page. If any appear in the built HTML the full page
+     * was accidentally rendered instead of the holding page. */
+    leakMarkers: [
+      "topcall:exec-move-scan",          // MCP slash-command listed in the module table
+      "$5,000 to $50,000 a year",        // price-anchor paragraph
+      "signal as code",                  // page tagline / hero copy (lower-case)
+    ],
+  },
+  {
+    route: "/roadmap",
+    leakMarkers: [
+      "August 15, 2026",                 // internal revenue-goal deadline
+      "$5,000/month in revenue",         // internal monthly revenue target
+    ],
+  },
+];
+
+const HOLDING_SENTINEL = "Coming back";   // text present in every holding page
+
+for (const { route, leakMarkers } of GATED_CHECKS) {
+  const file = resolveFile(route);
+  if (!file) {
+    fail(`gated route does not resolve: ${route}`);
+    continue;
+  }
+  const html = fs.readFileSync(file, "utf8");
+
+  /* Must carry noindex so it cannot be indexed by crawlers */
+  if (!html.includes('content="noindex')) {
+    fail(`${route}: gated page is missing the noindex meta tag`);
+  }
+
+  /* Must show the holding-page copy, not the real page */
+  if (!html.includes(HOLDING_SENTINEL)) {
+    fail(`${route}: gated page is missing the holding-page sentinel ("${HOLDING_SENTINEL}") — the full page may have been rendered instead`);
+  }
+
+  /* Must not contain any internal marker from the real page builder */
+  for (const marker of leakMarkers) {
+    if (html.toLowerCase().includes(marker.toLowerCase())) {
+      fail(`${route}: gated page leaks internal content — found marker: "${marker}"`);
+    }
+  }
+}
+
 /* 2. deck PDFs + 13 slides present for each guide */
 const deckPdf = path.join(DIST, "assets", "fdi-field-guide-deck.pdf");
 if (!fs.existsSync(deckPdf)) fail("missing deck PDF: /assets/fdi-field-guide-deck.pdf");
