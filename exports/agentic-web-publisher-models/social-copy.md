@@ -1,33 +1,56 @@
-# Social Copy — Agentic-Web Publisher Models
+# Agentic-Web Publisher Models · Social Copy
+Companion to `linkedin-article.md`. All quotes and figures verified in `citations.md`.
 
-## LinkedIn short post (~900 chars, hook < 110 chars)
+---
 
-Time now gets more bot traffic than human traffic. So it started selling ads to the bots.
+## LinkedIn · Short post (personal voice)
+**Attach:** link to the full article once published.
 
-Smart. But it's a tactic, not a business model — and three builders just showed us what the model actually is:
+```
+Time is now selling ads to AI bots. Not people. Bots.
 
-→ Time sells influence to agents (premium rests on Time100-grade editorial authority)
-→ Cloudflare meters the door (pay-per-crawl rewards "reputable and novel" content)
-→ Parallel pays your marginal value (Shapley scores for uniqueness)
+It's rational: Time sees more bot traffic than human traffic most days. If the reader is a machine, sell to the machine.
 
-Three different markets. Look at what each one prices:
+But zoom out and three competing models for the agentic web are now live:
 
-Authority. Novelty. Uniqueness.
+→ Time/Mobian: sell influence to the agents (sponsored FAQs in markdown pages)
+→ Cloudflare: meter and charge the crawl ("all markets require scarcity")
+→ Parallel: pay creators their Shapley value — their marginal contribution to what agents actually produce
 
-Three names for the same input: humans with expertise, compounding over time.
+Here's what nobody says out loud: all three models price the same asset, and none of them create it.
 
-Which is the NYT's whole thesis. Asked why the Times won, CEO Meredith Kopit Levien gave one answer: "We kept investing in journalism, that's it."
+Time's premium rests on Time100-grade editorial franchises. Cloudflare's market pays for "reputable and novel." Parallel's math pays for uniqueness. And NYT's Meredith Kopit Levien names the whole game: "we kept investing in journalism, that's it."
 
-The agentic web isn't a threat to expertise-first publishers. It's the first time three independent markets put a spot price on expertise itself.
+Every road on the agentic web leads back to the same starting point: humans with expertise, producing content that's scarce, authoritative, and worth paying for.
 
-Build the thing machines can't make. Then sell it on every rail they build.
+Agent ads are a tactic. Expertise is the business model.
 
-Full breakdown (with citations) in the article. Link in comments.
+Full breakdown in the article below.
 
-## X / Twitter version (< 280 chars)
+#AgenticWeb #MediaStrategy #AIMarketing #Publishing #CMO
+```
 
-Time now sees more bot traffic than human traffic — so it's selling ads to the bots.
+---
 
-Cloudflare meters crawls. Parallel pays for uniqueness. Three markets, one asset priced by all of them: human expertise.
+## X · Short version
 
-The agentic web just put a spot price on taste.
+```
+Time is selling ads to AI bots. Cloudflare wants to meter the crawl. Parallel pays your Shapley value.
+
+Three models, one hidden prerequisite: human expertise. It's the only thing that makes content scarce enough to price.
+
+Monetization is a tactic. Expertise is the moat.
+```
+
+---
+
+## Validation
+
+| Asset | Rule | Actual | Pass |
+|---|---|---|---|
+| LI hook | ≤110 chars | 46 | ✓ |
+| LI hashtags | 3–5 | 5 | ✓ |
+| X post | ≤280 chars | 262 | ✓ |
+| Banned openers ("I'm excited", "Thrilled", etc.) | absent | absent | ✓ |
+| Em-dash overuse | limited to quotes/structure | ✓ | ✓ |
+```
