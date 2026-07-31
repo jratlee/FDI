@@ -44,6 +44,15 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
     the kit's enforcement engine); nav/footer/llms.txt list the kit first; each
     concept page carries an "Own the structure" kit-branch section
     (Aggregator-Resilient Org / Network-Native Org / Agent-Ready Org).
+  - `/community` — The Open Cartography Lab: two-ring structure (Ring 1 Lab,
+    Ring 2 Guild later phase), Growth Cartography agent staff profile, community
+    charter, three worked example exchanges (aggregated/decentralized/autonomous),
+    and a flag-controlled entry CTA (`COMMUNITY_URL` env var / `COMMUNITY_LIVE`
+    const). While `COMMUNITY_URL` is unset the primary CTA is the waitlist form
+    (`js-capture`, `source=community`); once set, the primary CTA becomes "Enter
+    the Lab" linking to the Buzz web client. Buzz is described as open-source, by
+    Block, with no affiliation or endorsement claims. Guild framed as a later phase
+    with no dates promised. Free; no Stripe or paywall.
   - `/topcall` — Top Call ("the owned authority layer that makes your brand's
     expertise citeable by AI"): a FREE prompt-pack lead magnet (email-capture
     that triggers the ZIP download), three owned-system pillars framed around
@@ -71,7 +80,6 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
   per-page "prefer email" notes, the signup mailto fallback JS, llms.txt, and
   the Organization JSON-LD email). Backend routing matches: env vars
   `WAITLIST_NOTIFY_EMAIL` and `RESEND_REPLY_TO` are set to the same address.
-
 ## Brand/copy conventions (locked)
 - All visible product copy uses "SkillFoundry"
   (the `/skillfoundry` URL and `skillfoundry/` dir stay lowercase); every waitlist

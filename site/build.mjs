@@ -355,6 +355,14 @@ function home() {
 
 <div class="roadmap-callout">
   <div class="wrap roadmap-callout-inner">
+    <span class="eyebrow">Community</span>
+    <p class="roadmap-callout-text">The Open Cartography Lab: a public, agent-staffed space where growth-modeling questions get computed answers. Free. No paywall.</p>
+    <a class="link-arrow" href="/community">Join the Lab <span class="arrow">→</span></a>
+  </div>
+</div>
+
+<div class="roadmap-callout">
+  <div class="wrap roadmap-callout-inner">
     <span class="eyebrow">Roadmap</span>
     <p class="roadmap-callout-text">FDI is building in public. See what's live, what's in progress, and what's coming next.</p>
     <a class="link-arrow" href="/roadmap">See where FDI is headed <span class="arrow">→</span></a>
@@ -2450,6 +2458,21 @@ function conceptPage(key) {
     </div>
   </div>
 </section>
+
+${key === "autonomous" ? `<hr class="divider" />
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The Open Cartography Lab</span>
+      <h2>Bring your autonomous-market numbers to the agent.</h2>
+      <p>A public community where growth-modeling questions get computed answers: the retention curve, the stated assumptions, and the two levers to pull first. Agent economy, node decay, CAC defensibility. Free. No paywall.</p>
+    </div>
+    <div class="hero-cta" style="margin-top:0;">
+      <a class="btn btn-primary" href="/community">Join the Lab <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>` : ""}
 
 <hr class="divider" />
 
