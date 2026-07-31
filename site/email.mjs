@@ -282,11 +282,14 @@ export async function sendEntitlementEmail({
 }
 
 // Manual-fulfillment purchases (retainer, sprint, audit) notify the team so a
-// human starts onboarding. Best-effort; never throws.
+// human starts onboarding. Returns { ok: true } on success or
+// { ok: false, error: string } on failure so callers (and tests) can observe
+// the outcome. Never throws — best-effort from the provisioning path's view.
 export async function sendPurchaseNotification({ email, tierLabel, product, key }) {
   if (!FROM || !NOTIFY) {
     if (!FROM) console.warn("[email] RESEND_FROM not set — skipping purchase notification");
-    return;
+    if (FROM && !NOTIFY) console.warn("[email] WAITLIST_NOTIFY_EMAIL not set — skipping purchase notification");
+    return { ok: false, error: !FROM ? "RESEND_FROM not set" : "WAITLIST_NOTIFY_EMAIL not set" };
   }
   try {
     await send({
@@ -296,8 +299,10 @@ export async function sendPurchaseNotification({ email, tierLabel, product, key 
       text: `A purchase that needs manual fulfillment just landed.\n\nProduct: ${product}\nTier:    ${tierLabel}\nBuyer:   ${email || "(no email on session)"}\nKey:     ${key}\nTime:    ${new Date().toISOString()}\n\nReach out to the buyer to start onboarding.`,
       ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
     });
+    return { ok: true };
   } catch (err) {
     console.error("[email] purchase notification failed:", err.message);
+    return { ok: false, error: err.message };
   }
 }
 
