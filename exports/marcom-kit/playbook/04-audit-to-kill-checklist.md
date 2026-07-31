@@ -63,6 +63,25 @@ The same method runs as a half-day executive workshop inside the Transformation 
 - The junior training loop. It looks like an inefficiency to a spreadsheet; it is your 2030 senior bench.
 - Crisis muscle. Standing crisis simulations and escalation trees stay, full stop.
 
+## 7. Narrative audit: the Proof Stack
+
+Once the process kill list is signed, run a second pass over external communications: the Proof Stack audit. This is the narrative equivalent of the Audit to Kill, and it applies the same diagnostic question to claims rather than to meetings. The question: does this statement exist to show something real, or to promise something not yet built?
+
+The Proof Stack framework, drawn from work published by a16z crypto on modern communications strategy, identifies four elements that carry weight with buyers who have been burned by a decade of unfulfilled AI promises. Apply them as a checklist to every active campaign, press release, landing page, and pitch deck.
+
+**Narrative audit checklist**
+
+| # | Test | If it fails | Verdict |
+|---|---|---|---|
+| P1 | Partnerships with teeth: does any cited partnership have a publicly verifiable, deployed integration rather than an abstract memorandum of understanding or a logo on a slide? | Strip the partnership claim or replace it with a description of the actual deployed integration. | Partnerships that cannot be verified by an independent journalist hold zero weight; they actively reduce credibility with sophisticated buyers. |
+| P2 | Hard data over growth claims: are grandiose descriptors ("rapid growth", "disrupting the category") replaced by specific, verifiable metrics that would withstand independent scrutiny? | Replace the descriptor with the metric, or remove the claim. | Active users, retention curves, and transaction volumes carry weight. Category adjectives do not. |
+| P3 | Unmanufactured product-market fit: does the narrative lead with organic, unprompted community or customer behaviour that predates any formal PR push? | Identify actual organic signals and lead with those. If none exist, this section of the narrative is not yet earned. | Authenticity cannot be manufactured through financial incentives or paid placements. Retained active user behaviour is the signal; everything else is decoration. |
+| P4 | Third-party validation: is there natural, unsolicited media coverage, independent research, or rigorous audit that an external entity produced without direct compensation or coercion? | Name the third-party source and what it actually said, without implying endorsement of your broader claims. | Unsolicited third-party validation is the highest-trust signal available. Solicited coverage is a distant second and should be labelled accurately. |
+
+**Sequencing rule.** Lead with receipts, vision last. The strongest narrative order is: verified data point, then the organic signal that supports it, then the third-party confirmation, and only then the interpretation of what it means for the road ahead. A vision section that appears before the substance has been established reads as a promise, not a claim. In a market where buyers have been oversold repeatedly, promises are a credibility cost, not a hook.
+
+**Where this fits the Audit to Kill method.** Run the Proof Stack audit immediately after the process kill list is signed. The same hour freed from reassurance meetings is the hour that should go into rebuilding external communications on a substantive foundation. Defragmenting the internal process and then continuing to publish claims that cannot survive scrutiny is a half-measure.
+
 ---
 
 *Operating guidance, not legal, employment, or compliance advice. Steps required by regulation or contract must be identified with qualified counsel before any process change.*

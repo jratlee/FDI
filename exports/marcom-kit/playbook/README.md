@@ -13,6 +13,7 @@ This is the one-time-purchase edition of the kit: four operational blueprints fo
 | `02-use-compose-build-calculator.md` | The Use, Compose, Build MarTech economic matrix and scoring worksheet | Stop overspending on proprietary AI builds; triage every tool decision in under an hour |
 | `03-riverbank-governance-templates.md` | Baseline Riverbank governance: prompt constraints for brand social, PR drafting, and reporting | Put enforceable guardrails in front of AI throughput before scaling volume |
 | `04-audit-to-kill-checklist.md` | The Audit to Kill process defragmentation checklist | Kill the review and meeting layers that exist to reassure rather than improve, and shift verification left |
+| `05-loop-engineering-ladder.md` | The four-level agent loop ladder mapped onto Riverbank governance, with three worked MarCom loop examples | Move from manual prompting to governed, self-improving agent workflows once the Riverbank is enforcing |
 
 ## How to work through it
 
@@ -21,6 +22,7 @@ This is the one-time-purchase edition of the kit: four operational blueprints fo
 3. Use `02` to triage the tool stack before you buy anything else.
 4. Install the `03` guardrails on one workflow (start with reporting; it is the least emotional).
 5. Then, and only then, restructure one pod using `01`.
+6. Once the Riverbank is enforcing and the pod is running, use `05` to design the first agent loops.
 
 ## Versioning
 
