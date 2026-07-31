@@ -38,6 +38,7 @@ const EXPECTED_ROUTES = [
   "/roadmap",
   "/community",
   "/workshop",
+  "/engine",
 ];
 const EXPECTED_SLIDES = 13;
 const EXPECTED_SLIDES_FDCP = 12;

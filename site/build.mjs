@@ -124,6 +124,7 @@ function nav(active) {
       ${link("/marcom-kit", "MarCom OS", "marcom-kit")}
       ${link("/skillfoundry", "SkillFoundry", "skillfoundry")}
       ${link("/field-guide", "Field Guide", "field-guide")}
+      ${link("/engine", "Engine", "engine")}
       ${link("/#about", "About", "about")}
       <a class="btn btn-primary" href="/marcom-kit#waitlist">Join the waitlist</a>
     </nav>
@@ -145,6 +146,7 @@ function footer() {
           <li><a href="/marcom-kit">MarCom OS</a></li>
           <li><a href="/skillfoundry">SkillFoundry</a></li>
           <li><a href="/field-guide">Field Guide</a></li>
+          <li><a href="/engine">Growth Engine</a></li>
           <li><a href="/fdcp">The FDCP Report</a></li>
           <li><a href="/series">The Series</a></li>
           <li><a href="/community">The Lab</a></li>
@@ -169,7 +171,7 @@ function footer() {
 </footer>`;
 }
 
-function page({ title, description, active, body, canonical, jsonLd, noindex, ogImage }) {
+function page({ title, description, active, body, canonical, jsonLd, noindex, ogImage, extraHead }) {
   const ld = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])
     .map(
       (obj) =>
@@ -194,6 +196,7 @@ ${ld}
 <link rel="preload" as="font" type="font/woff2" href="/fonts/space-grotesk-600-latin.woff2" crossorigin />
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-400-latin.woff2" crossorigin />
 <link rel="stylesheet" href="/site.css" />
+${extraHead || ""}
 </head>
 <body>
 <div class="watermark" aria-hidden="true">${MARK}</div>
@@ -349,6 +352,17 @@ function home() {
     <a class="link-arrow" href="/roadmap">See where FDI is headed <span class="arrow">→</span></a>
   </div>
 </div>
+
+<section class="section" style="padding:clamp(40px,5vw,64px) 0;">
+  <div class="wrap">
+    <div class="eng-teaser">
+      <span class="eyebrow">Growth Cartography · System Dynamics Engine</span>
+      <h3>Model your network before you build it.</h3>
+      <p>Enter your growth parameters and see the math: how cohorts decay, how stability beats spikes, and how many units you actually need to hit your target. Then get a personalised PDF Growth Report.</p>
+      <a class="btn btn-primary" href="/engine">Try the Engine <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
 
 <hr class="divider" />
 
@@ -2002,6 +2016,8 @@ function copyAssets() {
   // static: css, js, favicon
   copy(path.join(SRC, "site.css"), path.join(DIST, "site.css"));
   fs.writeFileSync(path.join(DIST, "site.js"), SITE_JS);
+  // engine interactivity — only loaded on /engine
+  copy(path.join(SRC, "engine.js"), path.join(DIST, "engine.js"));
   const favicon = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "favicon.svg");
   if (fs.existsSync(favicon)) copy(favicon, path.join(DIST, "favicon.svg"));
 
@@ -2911,6 +2927,9 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 - Decentralized markets (${SITE_URL}/decentralized): marketing within crypto-powered decentralized networks (Farcaster, Lens, DAOs, onchain identity, agent settlement). Field Guide 003 covers this market in full.
 - Autonomous markets (${SITE_URL}/autonomous): agents transacting with agents; the dynamics and growth curve as those marketplaces scale toward the size of Meta and Google today. Field Guide 004 covers this market in full.
 
+## The System Dynamics Engine
+- Growth Engine (${SITE_URL}/engine): an interactive, browser-native cohort-decay modelling tool. Model compounding network liquidity targets, volatility versus steady acquisition, and cohort maturity value extraction across three market paradigms (Aggregated/SaaS, Decentralized/Web3, Autonomous AI). Enter a growth goal and get a personalised PDF Growth Report by email. Free. No login required.
+
 ## The Open Cartography Lab
 - Community (${SITE_URL}/community): a public, agent-staffed community where growth-modeling questions get computed answers with curves, stated assumptions, and sensitivity notes, as citable threads on a self-hosted relay. The resident Growth Cartography Agent wraps the FDI System Dynamics Engine (compounding cohort-decay model). Free. No paywall.
 
@@ -2922,6 +2941,200 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 - Buzz is an open-source relay by Block, Inc. FDI is not affiliated with or endorsed by Block.
 - Contact: ${CONTACT}
 `;
+}
+
+/* ---------------- ENGINE PAGE (/engine) ----------------
+ * Interactive System Dynamics Engine: cohort-decay modelling for SaaS,
+ * Web3, and Autonomous AI markets. Serves as a lead magnet; visitors
+ * configure a growth scenario and exchange their email for a PDF report. */
+function enginePage() {
+  const sliderRow = (id, label, min, max, step, def, unit) => {
+    const numId = `${id}-num`;
+    const unitHtml = unit ? ` <span style="color:var(--muted);font-size:10px;">(${unit})</span>` : "";
+    return `<div class="eng-input-row">
+      <label class="eng-input-label" for="${id}">${label}${unitHtml}</label>
+      <div class="eng-slider-pair">
+        <input type="range" class="eng-slider" id="${id}" min="${min}" max="${max}" step="${step}" value="${def}" aria-label="${label}" />
+        <input type="number" class="eng-num" id="${numId}" min="${min}" max="${max}" step="${step}" value="${def}" aria-label="${label} value" />
+      </div>
+    </div>`;
+  };
+
+  const outCard = (id, label) => `<div class="eng-output-card">
+    <div class="eng-out-label">${label}</div>
+    <div class="eng-out-value" id="${id}">—</div>
+  </div>`;
+
+  const retAdv = (prefix, r1 = 82, r7 = 55, r30 = 32) => `<div class="eng-advanced">
+    <button type="button" class="eng-advanced-toggle" aria-expanded="false"
+      onclick="var c=document.getElementById('${prefix}-adv');var open=c.hidden;c.hidden=!open;this.textContent=(open?'▾':'▸')+' Retention curve anchors';">
+      ▸ Retention curve anchors
+    </button>
+    <div class="eng-advanced-content" id="${prefix}-adv" hidden>
+      ${sliderRow(`${prefix}-r1`, "Day 1 retention (%)", 0, 100, 1, r1)}
+      ${sliderRow(`${prefix}-r7`, "Day 7 retention (%)", 0, 100, 1, r7)}
+      ${sliderRow(`${prefix}-r30`, "Day 30 retention (%)", 0, 100, 1, r30)}
+    </div>
+  </div>`;
+
+  const body = `
+<section class="eng-hero">
+  <div class="wrap">
+    <span class="eyebrow">Growth Cartography · System Dynamics Engine</span>
+    <h1>Model your network <em>before you build it</em>.</h1>
+    <p class="lede">Enter your growth parameters and see the math: how cohorts decay, how stability beats spikes, and how many units you actually need to hit your target. Then get your personalised Growth Report.</p>
+
+    <div class="eng-paradigm" role="group" aria-label="Select market paradigm">
+      <button class="eng-par-btn active" data-paradigm="saas" type="button">Aggregated / SaaS</button>
+      <button class="eng-par-btn" data-paradigm="web3" type="button">Decentralized / Web3</button>
+      <button class="eng-par-btn" data-paradigm="autonomous" type="button">Autonomous AI</button>
+    </div>
+
+    <div class="eng-goal-wrap">
+      <label class="eng-goal-label" for="eng-goal">What&rsquo;s your growth goal?</label>
+      <textarea class="eng-goal-input" id="eng-goal" placeholder="e.g. Reach 10K daily active users in 90 days, reduce churn below 20%, or launch in a new vertical&hellip;" rows="2"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="eng-tabs-section">
+  <div class="wrap">
+    <div class="eng-tabs" role="tablist" aria-label="Engine tabs">
+      <button class="eng-tab active" role="tab" aria-selected="true" data-tab="0">
+        <span class="eng-tab-num">01</span> Network Liquidity Target
+      </button>
+      <button class="eng-tab" role="tab" aria-selected="false" data-tab="1">
+        <span class="eng-tab-num">02</span> Volatility vs. Stability
+      </button>
+      <button class="eng-tab" role="tab" aria-selected="false" data-tab="2">
+        <span class="eng-tab-num">03</span> Cohort Maturity &amp; Value
+      </button>
+    </div>
+
+    <!-- Tab 0: Network Liquidity Target -->
+    <div class="eng-panel active" data-panel="0" role="tabpanel">
+      <p class="eng-panel-desc">Enter a target <span data-par-label="unitLabelPlural">Daily Active Users</span>, a timeline, and a cost-per-unit. The engine back-calculates how many new units per day you need and the total capital required, accounting for cohort decay.</p>
+      <div class="eng-panel-grid">
+        <div class="eng-inputs">
+          ${sliderRow("t0-target-dau", '<span data-par-label="unitLabel">DAU</span> target', 0, 100000, 500, 10000, "units")}
+          ${sliderRow("t0-timeline", "Timeline (days)", 1, 365, 1, 90)}
+          ${sliderRow("t0-cost", '<span data-par-label="acqLabel">CAC</span> cost per unit', 0, 5000, 5, 45, "$")}
+          ${retAdv("t0")}
+        </div>
+        <div class="eng-outputs">
+          ${outCard("t0-out-units", '<span data-par-label="unitLabel">DAU</span> units required')}
+          ${outCard("t0-out-new-per-day", "New units / day required")}
+          ${outCard("t0-out-capital", "Total capital required")}
+          <div class="eng-chart" id="t0-chart">
+            <div class="eng-chart-label">Retention decay curve (day 0–60)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 1: Volatility vs. Stability -->
+    <div class="eng-panel" data-panel="1" role="tabpanel" hidden>
+      <p class="eng-panel-desc">Compare a steady daily drip against a one-day spike of the same total volume. The chart shows how network size diverges &mdash; and why spikes are a poor substitute for compounding acquisition.</p>
+      <div class="eng-panel-grid">
+        <div class="eng-inputs">
+          ${sliderRow("t1-base", "Steady drip (units / day)", 1, 5000, 10, 80)}
+          ${sliderRow("t1-spike-day", "Spike occurs on day&hellip;", 0, 89, 1, 0)}
+          ${sliderRow("t1-horizon", "Horizon (days)", 7, 180, 1, 60)}
+          ${retAdv("t1")}
+        </div>
+        <div class="eng-outputs">
+          ${outCard("t1-out-stable", 'Steady <span data-par-label="unitLabel">DAU</span> at horizon')}
+          ${outCard("t1-out-vol", 'Spike <span data-par-label="unitLabel">DAU</span> at horizon')}
+          ${outCard("t1-out-delta", "Difference (steady minus spike)")}
+          <div class="eng-chart" id="t1-chart">
+            <div class="eng-chart-label">Cumulative network size — steady vs. spike</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Cohort Maturity & Value -->
+    <div class="eng-panel" data-panel="2" role="tabpanel" hidden>
+      <p class="eng-panel-desc">Model the cohort maturity threshold: units that have survived past your milestone unlock yield. Adjust new units per day, the maturity milestone, and the yield rate to project aged <span data-par-label="unitLabel">DAU</span> and total revenue.</p>
+      <div class="eng-panel-grid">
+        <div class="eng-inputs">
+          ${sliderRow("t2-new-per-day", "New units per day", 1, 5000, 10, 100)}
+          ${sliderRow("t2-maturity", "Maturity milestone (days)", 1, 180, 1, 30)}
+          ${sliderRow("t2-yield-rate", "Yield rate (%)", 0, 100, 1, 12, "%")}
+          ${sliderRow("t2-yield-value", '<span data-par-label="valueLabel">LTV</span> / unit / day', 0, 500, 0.5, 49, "$")}
+          ${sliderRow("t2-horizon", "Horizon (days)", 7, 365, 1, 90)}
+          ${retAdv("t2")}
+        </div>
+        <div class="eng-outputs">
+          ${outCard("t2-out-aged", 'Matured <span data-par-label="unitLabel">DAU</span> at horizon')}
+          ${outCard("t2-out-daily-rev", "Revenue / day (at horizon)")}
+          ${outCard("t2-out-revenue", "Projected total revenue")}
+          <div class="eng-chart" id="t2-chart">
+            <div class="eng-chart-label">Total vs. matured <span data-par-label="unitLabel">DAU</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="eng-cta-inline" id="get-report">
+  <div class="wrap">
+    <div class="eng-cta-inner">
+      <div class="eng-cta-copy">
+        <span class="eyebrow">Get your Growth Report</span>
+        <h2>Take the model with you.</h2>
+        <p>Enter your email and we&rsquo;ll send a personalised PDF Growth Report: your session summary, the three headline metrics from your scenario, and one concrete tactic per market type matched to your stated goal.</p>
+        <p style="color:var(--muted);font-size:13px;margin-top:10px;">Directional, not predictive. Assumptions are explicit in the report. Not financial advice.</p>
+      </div>
+      <div class="eng-cta-form-wrap">
+        <div class="eng-out-label" style="margin-bottom:16px;">Your personalised Growth Report, emailed to you</div>
+        <form class="eng-cta-form" novalidate>
+          ${HONEYPOT}
+          <label style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);" for="eng-cta-email">Email address</label>
+          <input type="email" id="eng-cta-email" name="email" class="eng-cta-email" placeholder="you@company.com" autocomplete="email" required />
+          <button class="btn btn-primary" type="submit">Get my Growth Report <span class="arrow">&rarr;</span></button>
+        </form>
+        <p class="eng-form-msg" role="status" aria-live="polite" style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12.5px;min-height:1.4em;"></p>
+        <p class="eng-cta-note" style="margin-top:12px;">Confirmation email first, then the report. One click, no spam.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="eng-sticky-cta">
+  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faded);flex:1;">Run your scenario</span>
+  <a class="btn btn-primary" href="#get-report" style="padding:10px 18px;font-size:13px;">Get report <span class="arrow">&rarr;</span></a>
+</div>`;
+
+  return page({
+    title: "System Dynamics Engine | False Dawn Industries",
+    description:
+      "Model compounding cohort decay across SaaS, Web3, and Autonomous AI markets. Enter your growth parameters and get a personalised PDF Growth Report.",
+    active: "engine",
+    body,
+    canonical: `${SITE_URL}/engine`,
+    extraHead: `<script src="/engine.js" defer></script>`,
+    jsonLd: [
+      orgJsonLd(),
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        name: "FDI System Dynamics Engine",
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Web browser (cross-platform)",
+        url: `${SITE_URL}/engine`,
+        description:
+          "Interactive cohort-decay modelling tool for SaaS, Web3, and Autonomous AI markets. Free. No login required.",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        publisher: {
+          "@type": "Organization",
+          name: "False Dawn Industries",
+          url: `${SITE_URL}/`,
+        },
+      },
+    ],
+  });
 }
 
 /* ---------------- WORKSHOP PAGE (/workshop) ----------------
@@ -3212,6 +3425,7 @@ const SITEMAP_ROUTES = [
   "roadmap",
   "community",
   "workshop",
+  "engine",
 ].filter((r) => !GATED.has(r));
 
 /* One honest lastmod for all pages: every page is regenerated from build.mjs
@@ -3678,6 +3892,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "roadmap.html"), renderRoute("roadmap", roadmapPage));
   fs.writeFileSync(path.join(DIST, "community.html"), communityPage());
   fs.writeFileSync(path.join(DIST, "workshop.html"), workshopPage());
+  fs.writeFileSync(path.join(DIST, "engine.html"), enginePage());
   if (DAVOS_DEMO) {
     fs.writeFileSync(path.join(DIST, "davos-kit-demo.html"), davosDemoPage());
   }
@@ -3686,7 +3901,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 15 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFiles003.length}+${slideFilesFdcp.length}+${slideFiles004.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 16 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFiles003.length}+${slideFilesFdcp.length}+${slideFiles004.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 

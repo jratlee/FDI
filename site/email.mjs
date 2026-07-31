@@ -52,6 +52,12 @@ const SOURCES = {
     heading: "You're on the list",
     lead: "Thanks for signing up. We build owned marketing systems for aggregated, decentralized, and autonomous markets \u2014 we'll keep you posted on what's next.",
   },
+  engine: {
+    product: "System Dynamics Engine",
+    subject: "Your Growth Report from the FDI Engine",
+    heading: "Your Growth Report is attached",
+    lead: "Thanks for running your scenario in the FDI System Dynamics Engine. Your personalised Growth Report is attached: a session summary, headline metrics, and one concrete tactic per market type grounded in your stated goal. The model is directional, not predictive, and the assumptions are explicit. Use it as a starting point for your growth plan.",
+  },
 };
 
 function copyFor(source) {
@@ -368,8 +374,25 @@ export async function sendPendingSignupNotification({ email, source }) {
 // to the subscriber and (optionally) notify the team. Firing team notification
 // here (not at signup) means the team only hears about proven, real addresses.
 // Never throws — email is best-effort and must not break the confirm flow.
-export async function sendWelcomeEmails({ email, source, unsubscribeUrl }) {
+export async function sendWelcomeEmails({ email, source, unsubscribeUrl, meta }) {
   const copy = { ...copyFor(source), unsubscribeUrl };
+
+  // Engine signups: generate and attach a personalised Growth Report PDF.
+  // Degrades gracefully: if PDF generation fails, the welcome email still sends.
+  let pdfAttachment = null;
+  if (source === "engine" && meta && typeof meta === "object") {
+    try {
+      const { renderEngineReportPDF } = await import("./engine-report.mjs");
+      const pdfBuf = await renderEngineReportPDF({ email }, meta);
+      pdfAttachment = {
+        filename: "fdi-growth-report.pdf",
+        content: pdfBuf.toString("base64"),
+        type: "application/pdf",
+      };
+    } catch (err) {
+      console.error("[email] engine PDF generation failed (sending without attachment):", err.message);
+    }
+  }
 
   if (!FROM) {
     console.warn(
@@ -395,6 +418,8 @@ export async function sendWelcomeEmails({ email, source, unsubscribeUrl }) {
               },
             }
           : {}),
+        // Engine: attach the Growth Report PDF if we generated one.
+        ...(pdfAttachment ? { attachments: [pdfAttachment] } : {}),
       });
     } catch (err) {
       console.error("[email] welcome email failed:", err.message);

@@ -400,6 +400,7 @@ function ensureTable() {
          ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS confirm_token TEXT;
          ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS confirm_sent_at TIMESTAMPTZ;
          ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMPTZ;
+         ALTER TABLE waitlist_signups ADD COLUMN IF NOT EXISTS meta JSONB;
          CREATE UNIQUE INDEX IF NOT EXISTS waitlist_signups_unsub_token_uniq
            ON waitlist_signups (unsub_token);
          CREATE UNIQUE INDEX IF NOT EXISTS waitlist_signups_confirm_token_uniq
@@ -481,14 +482,21 @@ async function handleWaitlist(req, res) {
   let email;
   let source;
   let honeypot;
+  let metaJson = null;
   try {
-    const raw = await readBody(req);
+    const raw = await readBody(req, 16384);
     const parsed = raw ? JSON.parse(raw) : {};
     email = String(parsed.email || "").trim().toLowerCase();
     source = String(parsed.source || "site").trim().slice(0, 64);
     if (!/^[a-z0-9][a-z0-9._-]*$/i.test(source)) source = "site";
     // Honeypot: a hidden field real users never fill. Any value = a bot.
     honeypot = String(parsed.company || "").trim();
+    // Optional meta JSON payload (engine session parameters, etc.)
+    if (parsed.meta && typeof parsed.meta === "object" && !Array.isArray(parsed.meta)) {
+      // Truncate to 32 KB when serialized to prevent abuse
+      const serialized = JSON.stringify(parsed.meta);
+      if (serialized.length <= 32768) metaJson = parsed.meta;
+    }
   } catch {
     sendJson(res, 400, { ok: false, error: "bad_request" });
     return;
@@ -528,11 +536,11 @@ async function handleWaitlist(req, res) {
     // fresh confirm token. The only mail it triggers is a "confirm your email"
     // request; the welcome email is held until the link is clicked.
     const result = await pool.query(
-      `INSERT INTO waitlist_signups (email, source, unsub_token, confirm_token, confirm_sent_at)
-       VALUES ($1, $2, $3, $4, now())
+      `INSERT INTO waitlist_signups (email, source, unsub_token, confirm_token, confirm_sent_at, meta)
+       VALUES ($1, $2, $3, $4, now(), $5)
        ON CONFLICT (email) DO NOTHING
        RETURNING unsub_token, confirm_token`,
-      [email, source, newUnsubToken(), newConfirmToken()],
+      [email, source, newUnsubToken(), newConfirmToken(), metaJson ? JSON.stringify(metaJson) : null],
     );
     const isNew = result.rowCount > 0;
 
@@ -679,7 +687,7 @@ async function handleConfirm(req, res, urlObj) {
   try {
     await ensureTable();
     const result = await pool.query(
-      `SELECT id, email, source, confirmed_at, confirm_sent_at, unsub_token
+      `SELECT id, email, source, confirmed_at, confirm_sent_at, unsub_token, meta
          FROM waitlist_signups WHERE confirm_token = $1`,
       [token],
     );
@@ -752,7 +760,7 @@ async function handleConfirm(req, res, urlObj) {
       ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
       : "";
     // Welcome email + team notification only fire now, on a proven address.
-    sendWelcomeEmails({ email: row.email, source: row.source, unsubscribeUrl }).catch(
+    sendWelcomeEmails({ email: row.email, source: row.source, unsubscribeUrl, meta: row.meta || null }).catch(
       (err) => console.error("[confirm] welcome email error:", err.message),
     );
   }
