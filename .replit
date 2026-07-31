@@ -40,6 +40,14 @@ args = "davos-gate"
 task = "workflow.run"
 args = "competitive-analysis-pdf"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "commerce-gate-test"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "commerce-gates"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -103,6 +111,28 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node exports/skillfoundry-competitive-analysis/check-pdf.mjs"
+
+[workflows.workflow.metadata]
+isValidation = true
+
+[[workflows.workflow]]
+name = "commerce-gate-test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node site/test-commerce-gates.mjs"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "commerce-gates"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node site/test-commerce-gates.mjs"
 
 [workflows.workflow.metadata]
 isValidation = true
