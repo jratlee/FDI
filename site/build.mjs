@@ -366,7 +366,7 @@ function home() {
         <p>A pay-per-question answer engine where trust has an architecture: the free preview and the paid answer are literally the same bytes, every delivery carries a SHA-256 proof-of-delivery hash, and low-confidence answers warn you before you pay. Provable honesty as the product.</p>
       </article>
       <article class="card">
-        <span class="tag">Build · Decentralized &amp; Autonomous</span>
+        <span class="tag">Build · Open Source</span>
         <h3><a href="https://github.com/jratlee/nyc-chat" target="_blank" rel="noopener">Talk to NYC</a></h3>
         <p>A Hybrid GraphRAG system that turns thousands of scattered legal XML files into one citable knowledge graph, answering with both meaning and structure, section numbers attached, exposed through an MCP server other agents can query directly.</p>
       </article>
@@ -1223,7 +1223,7 @@ function topcall() {
     <div class="grid cols-3">
       ${construct(
         1,
-        "Aggregated",
+        "Corpus",
         "A citable corpus",
         "Every source is classified into a source-authority tier (1A/1B/1C/2/3) at ingest and written into a persistent, provenance-stamped store. Re-running is cumulative: known moves gain provenance instead of duplicating.",
         "Becomes",
@@ -1231,7 +1231,7 @@ function topcall() {
       )}
       ${construct(
         2,
-        "Decentralized",
+        "Graph",
         "A knowledge graph",
         "Executives, companies, moves, categories, implications, and sources become a queryable node/edge graph. Relationships are preserved and traceable, never re-derived from scratch.",
         "Becomes",
@@ -1239,7 +1239,7 @@ function topcall() {
       )}
       ${construct(
         3,
-        "Autonomous",
+        "Interface",
         "A verifiable MCP interface",
         "The repeatable read skills are exposed as MCP tools built on the same open Model Context Protocol (MCP) as SkillFoundry, so an agent can call them and get answers stamped with source, tier, and confidence.",
         "Becomes",
