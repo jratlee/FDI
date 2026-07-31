@@ -100,37 +100,57 @@ function buildImplicationForGoal(goal, paradigm) {
   return goalPhrase;
 }
 
-// Compute three headline metrics from the meta session parameters
+// Safely parse a meta value, falling back to `fallback` only when the value
+// is absent or non-finite. Explicit zeros from the visitor are preserved.
+function num(v, fallback) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+// Compute three headline metrics from the meta session parameters.
+// Each tab uses its own retention anchors: the visitor can configure
+// r1/r7/r30 independently in Tab 0, Tab 1, and Tab 2.
 function computeMetrics(meta, pd) {
-  // Use visitor-submitted retention anchors when present and valid; fall back to paradigm defaults.
-  const r1 = (Number.isFinite(Number(meta.r1)) && Number(meta.r1) > 0) ? Number(meta.r1) : pd.r1;
-  const r7 = (Number.isFinite(Number(meta.r7)) && Number(meta.r7) > 0) ? Number(meta.r7) : pd.r7;
-  const r30 = (Number.isFinite(Number(meta.r30)) && Number(meta.r30) > 0) ? Number(meta.r30) : pd.r30;
+  // Tab 0 retention anchors (UI fields t0-r1, t0-r7, t0-r30).
+  const r1  = num(meta.r1,  pd.r1);
+  const r7  = num(meta.r7,  pd.r7);
+  const r30 = num(meta.r30, pd.r30);
 
-  // Tab 0 metric: total units required
+  // Tab 1 retention anchors (UI fields t1-r1, t1-r7, t1-r30).
+  // Fall back to Tab 0 anchors when the payload predates this field.
+  const t1r1  = num(meta.t1r1,  r1);
+  const t1r7  = num(meta.t1r7,  r7);
+  const t1r30 = num(meta.t1r30, r30);
+
+  // Tab 2 retention anchors (UI fields t2-r1, t2-r7, t2-r30).
+  const t2r1  = num(meta.t2r1,  r1);
+  const t2r7  = num(meta.t2r7,  r7);
+  const t2r30 = num(meta.t2r30, r30);
+
+  // Tab 0 metric: total units required to hit the DAU target.
   const tab0 = targetBackCalc({
-    targetDau: Number(meta.targetDau) || pd.defaultTargetDau,
-    timelineDays: Number(meta.timelineDays) || pd.defaultTimeline,
-    costPerUnit: Number(meta.costPerUnit) || pd.defaultCostPerUnit,
+    targetDau:    num(meta.targetDau,    pd.defaultTargetDau),
+    timelineDays: num(meta.timelineDays, pd.defaultTimeline),
+    costPerUnit:  num(meta.costPerUnit,  pd.defaultCostPerUnit),
     r1, r7, r30,
   });
 
-  // Tab 1 metric: stable DAU at end of horizon
-  const horizon = Number(meta.horizon) || pd.defaultHorizon;
-  const basePerDay = Number(meta.basePerDay) || pd.defaultBasePerDay;
-  const stableDau = cohortDauCurve(basePerDay, horizon, r1, r7, r30)[horizon - 1] || 0;
+  // Tab 1 metric: stable DAU at end of horizon under steady drip.
+  const horizon    = num(meta.horizon,    pd.defaultHorizon);
+  const basePerDay = num(meta.basePerDay, pd.defaultBasePerDay);
+  const stableDau  = cohortDauCurve(basePerDay, horizon, t1r1, t1r7, t1r30)[horizon - 1] || 0;
 
-  // Tab 2 metric: projected total revenue
+  // Tab 2 metric: projected total revenue using Tab 2's retention curve.
   const revResult = revenueProjection({
-    newPerDay: Number(meta.newPerDay) || pd.defaultNewPerDay,
-    horizon: Number(meta.revHorizon) || pd.defaultTimeline,
-    maturityDays: Number(meta.maturityDays) || pd.defaultMaturityDays,
-    yieldRate: Number(meta.yieldRate) || pd.defaultYieldRate,
-    yieldValue: Number(meta.yieldValue) || pd.defaultYieldValue,
-    r1, r7, r30,
+    newPerDay:    num(meta.newPerDay,    pd.defaultNewPerDay),
+    horizon:      num(meta.revHorizon,   pd.defaultTimeline),
+    maturityDays: num(meta.maturityDays, pd.defaultMaturityDays),
+    yieldRate:    num(meta.yieldRate,    pd.defaultYieldRate),
+    yieldValue:   num(meta.yieldValue,   pd.defaultYieldValue),
+    r1: t2r1, r7: t2r7, r30: t2r30,
   });
 
-  return { tab0, stableDau, revResult };
+  return { tab0, stableDau, revResult, r1, r7, r30, t1r1, t1r7, t1r30, t2r1, t2r7, t2r30 };
 }
 
 export function renderEngineReport(signup, meta) {
@@ -140,7 +160,7 @@ export function renderEngineReport(signup, meta) {
   const goal = (meta.goal || "").trim();
   const date = new Date().toISOString().slice(0, 10);
 
-  const { tab0, stableDau, revResult } = computeMetrics(meta, pd);
+  const { tab0, stableDau, revResult, r1, r7, r30, t1r1, t1r7, t1r30, t2r1, t2r7, t2r30 } = computeMetrics(meta, pd);
   const marketDef = MARKET_DEFS[paradigm] || MARKET_DEFS.saas;
 
   // Build session summary card
@@ -175,19 +195,30 @@ export function renderEngineReport(signup, meta) {
   </div>
 </div>`;
 
-  // Build inputs summary
+  // Build inputs summary — use `num()` throughout so explicit zeros are
+  // preserved and only absent/non-finite values fall back to paradigm defaults.
+  // Retention values come from the computeMetrics call above.
+  const inp = (k, v) => `<div class="inp-row"><span class="inp-key">${esc(k)}</span><span class="inp-val">${esc(v)}</span></div>`;
   const inputs = [
-    ["Target " + pd.unitLabel, fmt(Number(meta.targetDau) || pd.defaultTargetDau)],
-    ["Timeline (days)", fmt(Number(meta.timelineDays) || pd.defaultTimeline)],
-    [pd.acqLabel + " (cost/unit)", fmtCurrency(Number(meta.costPerUnit) || pd.defaultCostPerUnit)],
-    ["New/day (stability)", fmt(Number(meta.basePerDay) || pd.defaultBasePerDay)],
-    ["Maturity milestone (days)", fmt(Number(meta.maturityDays) || pd.defaultMaturityDays)],
-    ["Yield rate", ((Number(meta.yieldRate) || pd.defaultYieldRate) * 100).toFixed(1) + "%"],
-    [pd.valueLabel + " / unit / day", fmtCurrency(Number(meta.yieldValue) || pd.defaultYieldValue)],
-    ["Day 1 retention", ((Number(meta.r1) || pd.r1) * 100).toFixed(0) + "%"],
-    ["Day 7 retention", ((Number(meta.r7) || pd.r7) * 100).toFixed(0) + "%"],
-    ["Day 30 retention", ((Number(meta.r30) || pd.r30) * 100).toFixed(0) + "%"],
-  ].map(([k, v]) => `<div class="inp-row"><span class="inp-key">${esc(k)}</span><span class="inp-val">${esc(v)}</span></div>`).join("");
+    inp("Target " + pd.unitLabel,       fmt(num(meta.targetDau,    pd.defaultTargetDau))),
+    inp("Timeline (days)",              fmt(num(meta.timelineDays, pd.defaultTimeline))),
+    inp(pd.acqLabel + " (cost/unit)",   fmtCurrency(num(meta.costPerUnit, pd.defaultCostPerUnit))),
+    inp("Tab 0 · Day 1 retention",      (r1  * 100).toFixed(0) + "%"),
+    inp("Tab 0 · Day 7 retention",      (r7  * 100).toFixed(0) + "%"),
+    inp("Tab 0 · Day 30 retention",     (r30 * 100).toFixed(0) + "%"),
+    inp("New/day (stability)",          fmt(num(meta.basePerDay,   pd.defaultBasePerDay))),
+    inp("Horizon (days)",               fmt(num(meta.horizon,      pd.defaultHorizon))),
+    inp("Tab 1 · Day 1 retention",      (t1r1  * 100).toFixed(0) + "%"),
+    inp("Tab 1 · Day 7 retention",      (t1r7  * 100).toFixed(0) + "%"),
+    inp("Tab 1 · Day 30 retention",     (t1r30 * 100).toFixed(0) + "%"),
+    inp("New/day (revenue)",            fmt(num(meta.newPerDay,    pd.defaultNewPerDay))),
+    inp("Maturity milestone (days)",    fmt(num(meta.maturityDays, pd.defaultMaturityDays))),
+    inp("Yield rate",                   (num(meta.yieldRate, pd.defaultYieldRate) * 100).toFixed(1) + "%"),
+    inp(pd.valueLabel + " / unit / day", fmtCurrency(num(meta.yieldValue, pd.defaultYieldValue))),
+    inp("Tab 2 · Day 1 retention",      (t2r1  * 100).toFixed(0) + "%"),
+    inp("Tab 2 · Day 7 retention",      (t2r7  * 100).toFixed(0) + "%"),
+    inp("Tab 2 · Day 30 retention",     (t2r30 * 100).toFixed(0) + "%"),
+  ].join("");
 
   // Implications section — all three markets always shown
   const goalPhrase = buildImplicationForGoal(goal, paradigm);

@@ -297,7 +297,7 @@ function home() {
     <div>
       <span class="eyebrow">Growth Cartography</span>
       <h1>Build the machine, <em>not the ad</em>.</h1>
-      <p class="lede">Owned marketing systems for aggregated, decentralized, and autonomous markets. We map the machine that decides who gets seen and build the tools to own your place in it.</p>
+      <p class="lede">The MarCom OS playbook, the Top Call MCP server, and the Davos Decision Kit are built and running today. FDI maps the machine that decides who gets seen and ships the tools to own your place in it, across aggregated, decentralized, and autonomous markets.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="/marcom-kit">Explore MarCom OS <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="/field-guide">Read the Field Guide</a>
@@ -334,7 +334,7 @@ function home() {
       <article class="card">
         <span class="tag">Product · Strategy as Code</span>
         <h3>SkillFoundry</h3>
-        <p>The enforcement engine inside the kit: a strategic firewall that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) as a plugin built on the open Model Context Protocol (MCP). It is how the kit's Riverbank rules run on every asset, every day.</p>
+        <p>The enforcement engine inside the kit and the Verification Loop of an agentic content system: a strategic firewall that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) as a plugin built on the open Model Context Protocol (MCP). It is how the kit's Riverbank rules run on every asset, every day.</p>
         <div class="card-foot"><a class="link-arrow" href="/skillfoundry">See how it works <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
@@ -953,7 +953,7 @@ function skillfoundry() {
     <div>
       <span class="eyebrow">A False Dawn Industries product · As of ${AS_OF}</span>
       <h1>SkillFoundry: <em>strategy as code</em>.</h1>
-      <p class="lede">Modern comms teams have automated execution but lost strategic oversight. SkillFoundry is an agnostic strategic firewall: it routes any content asset through three opinionated gates before it ships, so automated output actually drives enterprise value.</p>
+      <p class="lede">SkillFoundry is built and running today: a plugin on the open Model Context Protocol that routes any content asset through three Signal-to-Value gates before it ships. Modern comms teams have automated execution but lost strategic oversight; SkillFoundry is the Verification Loop that keeps machine-speed output on strategy.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="#gates">See the three gates</a>
@@ -965,7 +965,7 @@ function skillfoundry() {
 
 <section class="section" id="what">
   <div class="wrap">
-    <p class="definition"><b>SkillFoundry is a strategic firewall for content.</b> It is a plugin, built on the open Model Context Protocol (MCP), that routes any asset (pasted text or a file) through three Signal-to-Value gates, Relevance, Performance, and Algorithmic Signal, and returns the optimized asset plus a structured audit you can defend to the C-suite. Built by False Dawn Industries. As of ${AS_OF}.</p>
+    <p class="definition"><b>SkillFoundry is a strategic firewall for content and the Verification Loop of an agentic content pipeline.</b> It is a plugin, built on the open Model Context Protocol (MCP), that routes any asset (pasted text or a file) through three Signal-to-Value gates, Relevance, Performance, and Algorithmic Signal, and returns the optimized asset plus a structured audit you can defend to the C-suite. Built by False Dawn Industries. As of ${AS_OF}.</p>
   </div>
 </section>
 
@@ -1490,7 +1490,7 @@ function marcomKit() {
     <div>
       <span class="eyebrow">The FDI flagship · As of ${AS_OF}</span>
       <h1>MarCom OS: <em>structure as code</em>.</h1>
-      <p class="lede">AI did not just change marketing tools, it broke the marketing org chart. The kit is the blueprint for what replaces it: the Hourglass organization, a capability calculator that tells you what to use, compose, or build, and a governance Riverbank that keeps autonomous output inside the brand. Shipped as working documents, not a deck.</p>
+      <p class="lede">The complete MarCom OS playbook ships today as editable working documents: Hourglass org blueprint, Use, Compose, Build capability calculator, and Riverbank governance templates. AI broke the marketing org chart; this is the blueprint for what replaces it, structured so teams and agents can both enforce the rules.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#starter-pack">Get the free starter pack <span class="arrow">↓</span></a>
         <a class="btn btn-ghost" href="#pillars">See what is inside</a>
@@ -2263,9 +2263,28 @@ const CONCEPTS = {
       },
       {
         q: "How is AI search changing marketing?",
-        a: "Bain finds roughly 60% of searches now end without a click to any website, and Pew Research Center found only about 1% of users click a source cited inside an AI summary. Discovery is moving behind AI answer layers, which is why FDI recommends owning a corpus and identity that models can retrieve, verify, and cite.",
+        a: "Bain finds roughly 60% of searches now end without a click to any website, and Pew Research Center found only about 1% of users click a source cited inside an AI summary. The deeper shift is structural: traditional SEO was a pull ecosystem where search engines crawled in real time and surfaced a vast index of links. LLMs work as a push ecosystem, synthesizing training data and delivering conversational answers that cite only a handful of domains per response. The success metric moves from organic rank and traffic volume to AI citation frequency and share of voice in LLM outputs. FDI recommends owning a corpus and identity that models can retrieve, verify, and cite.",
       },
     ],
+    extraSection: {
+      eyebrow: "The discovery shift",
+      h2: "From pull to push: search ranks pages, AI curates sources.",
+      intro: "Traditional SEO was built for a pull ecosystem: search engines crawled in real time and presented a vast index of links. LLMs work differently.",
+      cards: [
+        {
+          h: "The old game: pull",
+          p: "Search engines crawled the open web continuously, ranked pages, and gave users ten blue links to choose from. Success meant organic rank and traffic volume. More pages, more links, more clicks.",
+        },
+        {
+          h: "The new game: push",
+          p: 'LLMs synthesize training data and deliver conversational answers that skip the link layer entirely. About <a href="https://www.bain.com/insights/goodbye-clicks-hello-ai-zero-click-search-redefines-marketing/" target="_blank" rel="noopener">60% of searches now end without a click</a> (Bain), and only about <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/" target="_blank" rel="noopener">1% of users click a source cited in an AI summary</a> (Pew Research Center).',
+        },
+        {
+          h: "What success looks like now",
+          p: "Where Google historically surfaced a vast index, LLMs typically cite only two to seven domains per response. The new metrics are AI citation frequency and share of voice in LLM outputs, not rank or traffic. Profound and Brandpipers both document the shift to Generative Engine Optimization (GEO) and LLM Engine Optimization (LEO). Owning a corpus and identity that models can retrieve, verify, and cite is the durable countermove.",
+        },
+      ],
+    },
     kit: {
       name: "The Aggregator-Resilient Org",
       p: "In aggregated markets the org itself is the exposure: teams staffed around a single channel collapse when the algorithm turns. MarCom OS's Hourglass blueprint and Use, Compose, Build calculator structure the team around owned capabilities, so no aggregator rule change can zero out the operation.",
@@ -2409,6 +2428,22 @@ function conceptPage(key) {
   </div>
 </section>
 
+${c.extraSection ? `
+<hr class="divider" />
+
+<section class="section" id="discovery-shift">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">${c.extraSection.eyebrow}</span>
+      <h2>${c.extraSection.h2}</h2>
+      <p>${c.extraSection.intro}</p>
+    </div>
+    <div class="grid cols-3">
+      ${c.extraSection.cards.map((pt) => `<article class="card"><h3>${pt.h}</h3><p>${pt.p}</p></article>`).join("\n      ")}
+    </div>
+  </div>
+</section>
+` : ""}
 <hr class="divider" />
 
 <section class="section" id="own-the-structure">

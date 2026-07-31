@@ -426,16 +426,23 @@
       r1: getInputVal("t0-r1", Math.round(pd.r1 * 100)) / 100,
       r7: getInputVal("t0-r7", Math.round(pd.r7 * 100)) / 100,
       r30: getInputVal("t0-r30", Math.round(pd.r30 * 100)) / 100,
-      // tab 1
+      // tab 1 — includes its own retention anchors so the report uses the
+      // values the visitor actually configured in this tab, not Tab 0's.
       basePerDay: getInputVal("t1-base", pd.defaultBasePerDay),
       spikeDay: getInputVal("t1-spike-day", 0),
       horizon: getInputVal("t1-horizon", pd.defaultHorizon),
-      // tab 2
+      t1r1: getInputVal("t1-r1", Math.round(pd.r1 * 100)) / 100,
+      t1r7: getInputVal("t1-r7", Math.round(pd.r7 * 100)) / 100,
+      t1r30: getInputVal("t1-r30", Math.round(pd.r30 * 100)) / 100,
+      // tab 2 — same: carry its own retention anchors separately.
       newPerDay: getInputVal("t2-new-per-day", pd.defaultNewPerDay),
       maturityDays: getInputVal("t2-maturity", pd.defaultMaturityDays),
       yieldRate: getInputVal("t2-yield-rate", Math.round(pd.defaultYieldRate * 100)) / 100,
       yieldValue: getInputVal("t2-yield-value", pd.defaultYieldValue),
       revHorizon: getInputVal("t2-horizon", pd.defaultTimeline),
+      t2r1: getInputVal("t2-r1", Math.round(pd.r1 * 100)) / 100,
+      t2r7: getInputVal("t2-r7", Math.round(pd.r7 * 100)) / 100,
+      t2r30: getInputVal("t2-r30", Math.round(pd.r30 * 100)) / 100,
     };
   }
 

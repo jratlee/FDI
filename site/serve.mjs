@@ -1427,7 +1427,7 @@ ${dnotice}
     try {
       await ensureTable();
       const existing = await pool.query(
-        `SELECT id, confirmed_at, unsub_token, source
+        `SELECT id, confirmed_at, unsub_token, source, meta
            FROM waitlist_signups WHERE email = $1`,
         [email],
       );
@@ -1461,7 +1461,7 @@ ${dnotice}
         const unsubscribeUrl = row.unsub_token
           ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
           : "";
-        sendWelcomeEmails({ email, source, unsubscribeUrl }).catch(
+        sendWelcomeEmails({ email, source, unsubscribeUrl, meta: row.meta || null }).catch(
           (err) => console.error("[admin] manual confirm welcome email failed:", err.message),
         );
       }
