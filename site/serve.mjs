@@ -2498,12 +2498,13 @@ async function handleValidate(req, res) {
     result.product === "skillfoundry";
   // 402 (payment required) is a clear, machine-actionable refusal for clients.
   const status = active ? 200 : 402;
-  sendJson(res, status, {
-    ok: active,
-    active,
-    tier: result.tier || null,
-    status: result.status || "unknown",
-  });
+  // Return the same 402 body regardless of whether the key is unknown or
+  // found-but-inactive. Leaking which case applies would let an attacker use
+  // this endpoint as an oracle to enumerate valid (purchased) keys.
+  sendJson(res, status, active
+    ? { ok: true, active: true, tier: result.tier || null, status: result.status }
+    : { ok: false, active: false, status: "inactive" }
+  );
 }
 
 // The Tier 2 protected run path. The latest gate logic stays server-side; the
