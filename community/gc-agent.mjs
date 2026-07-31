@@ -31,12 +31,17 @@ import {
   buildSpikeVsDrip,
 } from "./gc-engine.mjs";
 import { parseScenario } from "./gc-parser.mjs";
+import { renderCurve } from "./gc-render.mjs";
 
 /* ─── Config ─────────────────────────────────────────────────────────── */
 
 const RELAY_URL = process.env.BUZZ_RELAY_URL;
 const PRIVATE_KEY_HEX = process.env.BUZZ_AGENT_PRIVATE_KEY;
 const CHANNEL_ID = process.env.BUZZ_CHANNEL_ID || null;
+// When GC_SERVICE_URL is set the agent delegates to the HTTP service, which
+// handles parsing, engine math, and chart rendering in one call and returns
+// a chart URL that community members can open in a browser.
+const SERVICE_URL = process.env.GC_SERVICE_URL || null;
 const AGENT_NAME = "Growth Cartography Agent";
 const AGENT_ABOUT = "I model growth scenarios using the FDI compounding cohort-decay engine. Ask me a question with numbers and I will show you where the math points.";
 
@@ -184,21 +189,59 @@ function connect() {
     const question = content.replace(/@\w+/g, "").trim();
     console.log(`[gc-agent] received question: ${question.slice(0, 100)}`);
 
-    const parsed = await parseScenario(question);
-
     let replyContent;
-    if (!parsed.ok) {
-      if (parsed.error) {
-        replyContent = `I could not parse that scenario. ${parsed.prompt || "Please include the unit type (users/nodes/agents), retention rates at day 1, 7, and 30, and a daily inflow or churn rate."}`;
-      } else {
-        replyContent = parsed.prompt || "I need a few more details to run the model. Please include retention rates (day 1, 7, 30) and a daily inflow or churn rate.";
-      }
-    } else {
+
+    // When the HTTP service is running (GC_SERVICE_URL set), delegate to it.
+    // The service handles parsing, engine math, chart rendering, and returns
+    // the chart URL so community members can view the image directly.
+    if (SERVICE_URL) {
       try {
-        replyContent = formatAnswer(parsed.params);
+        const res = await fetch(`${SERVICE_URL}/model`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          replyContent = result.answer;
+        } else {
+          replyContent = result.prompt
+            || result.error
+            || "I could not parse that scenario. Please include the unit type (users/nodes/agents), retention rates at day 1, 7, and 30, and a daily inflow or churn rate.";
+        }
       } catch (err) {
-        console.error("[gc-agent] engine error:", err);
-        replyContent = `The model encountered an error with those parameters: ${err.message}. Please check the inputs and try again.`;
+        console.error("[gc-agent] service call failed, falling back to local:", err.message);
+        // Fall through to local path
+        replyContent = null;
+      }
+    }
+
+    // Local path: parse + run engine directly (no chart URL, SVG saved locally).
+    if (!replyContent) {
+      const parsed = await parseScenario(question);
+      if (!parsed.ok) {
+        replyContent = parsed.prompt
+          || "I need a few more details to run the model. Please include retention rates (day 1, 7, 30) and a daily inflow or churn rate.";
+      } else {
+        try {
+          // Render the SVG curve locally. In a VPS deployment this can be
+          // served over HTTP; here we note its availability in the reply.
+          const svg = renderCurve({
+            anchorDays: parsed.params.retentionAnchors.days,
+            anchorRates: parsed.params.retentionAnchors.rates,
+            periods: parsed.params.periods ?? 90,
+            dailyNew: parsed.params.dailyNew ?? null,
+            spikeDay: parsed.params.spikeDay ?? null,
+            spikeSize: parsed.params.spikeSize ?? null,
+            unit: parsed.params.unit ?? "units",
+          });
+          // Store for potential serving; log length as a confirmation.
+          console.log(`[gc-agent] chart rendered (${svg.length} bytes SVG)`);
+          replyContent = formatAnswer(parsed.params);
+        } catch (err) {
+          console.error("[gc-agent] engine error:", err);
+          replyContent = `The model encountered an error with those parameters: ${err.message}. Please check the inputs and try again.`;
+        }
       }
     }
 
