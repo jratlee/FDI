@@ -834,19 +834,62 @@ async function handleUnsubscribe(req, res, urlObj) {
 }
 
 /* ---------------- Davos demo page: password gate ---------------- */
-// The private client demo at /davos-kit-demo is a static build artifact, but
-// it must never be reachable without the DAVOS_DEMO_PASSWORD secret. The gate
-// intercepts BOTH the clean route and the .html file before static serving.
-// After a correct entry, a derived session token (HMAC of a fixed label keyed
-// by the password, so the cookie never carries the password itself) is set as
-// an httpOnly cookie (Path=/, so the gated screenshot assets also receive it).
-const DAVOS_PASSWORD = process.env.DAVOS_DEMO_PASSWORD || "";
+// Runtime-managed access code stored in davos-config.json next to serve.mjs.
+// The file is seeded from DAVOS_DEMO_PASSWORD at first boot but can be rotated
+// via POST /admin/davos/set-code while the server is running — no redeploy or
+// restart needed. All existing sessions are instantly revoked when the code
+// changes because the HMAC signing key changes.
+//
+// Token format (v2): "{expiry}.{hmac}"
+//   expiry — Unix timestamp (seconds) when this session expires.
+//   hmac   — HMAC-SHA256 of "davos-demo-gate-v2:{expiry}" keyed by the
+//             current access code, so expiry cannot be tampered with.
+//
+// Revocation paths:
+//   (a) POST /admin/davos/set-code — takes effect immediately, no restart.
+//   (b) Rotate DAVOS_DEMO_PASSWORD env secret and restart the server.
 
-function davosSessionToken() {
-  return crypto
-    .createHmac("sha256", DAVOS_PASSWORD)
-    .update("davos-demo-gate-v1")
+// Allow test harnesses to supply their own isolated config path via env var.
+const DAVOS_CONFIG_FILE = process.env.DAVOS_CONFIG_FILE || path.join(__dirname, "davos-config.json");
+const DAVOS_SESSION_TTL = 12 * 60 * 60; // 12 hours in seconds
+
+// Seed the config file from the env var at first boot if the file does not
+// yet exist. After that the file is the authoritative source — read fresh on
+// every gate check so the code can be rotated live without a restart.
+(function seedDavosConfig() {
+  if (fs.existsSync(DAVOS_CONFIG_FILE)) return;
+  const envPw = (process.env.DAVOS_DEMO_PASSWORD || "").trim();
+  if (envPw) {
+    try {
+      fs.writeFileSync(DAVOS_CONFIG_FILE, JSON.stringify({ password: envPw }), "utf8");
+    } catch (err) {
+      console.error("[davos] could not seed config file:", err.message);
+    }
+  }
+})();
+
+/** Read the current access code fresh from disk. Falls back to env var. */
+function readDavosPassword() {
+  try {
+    const raw = fs.readFileSync(DAVOS_CONFIG_FILE, "utf8");
+    return (JSON.parse(raw).password || "").trim();
+  } catch {
+    return (process.env.DAVOS_DEMO_PASSWORD || "").trim();
+  }
+}
+
+/** Persist a new access code. All existing sessions become invalid immediately. */
+function writeDavosPassword(pw) {
+  fs.writeFileSync(DAVOS_CONFIG_FILE, JSON.stringify({ password: pw.trim() }), "utf8");
+}
+
+function davosSessionToken(pw) {
+  const expiry = Math.floor(Date.now() / 1000) + DAVOS_SESSION_TTL;
+  const sig = crypto
+    .createHmac("sha256", pw)
+    .update(`davos-demo-gate-v2:${expiry}`)
     .digest("hex");
+  return `${expiry}.${sig}`;
 }
 
 function davosCookieAttrs(req) {
@@ -859,9 +902,21 @@ function davosCookieAttrs(req) {
 }
 
 function hasDavosAccess(req) {
-  if (!DAVOS_PASSWORD) return false;
-  const supplied = parseCookies(req).dk_demo || "";
-  return supplied ? timingSafeEqual(supplied, davosSessionToken()) : false;
+  const pw = readDavosPassword();
+  if (!pw) return false;
+  const cookie = parseCookies(req).dk_demo || "";
+  if (!cookie) return false;
+  const dot = cookie.indexOf(".");
+  if (dot === -1) return false;
+  const expiry = parseInt(cookie.slice(0, dot), 10);
+  // Reject missing, non-numeric, or already-expired timestamps.
+  if (!Number.isFinite(expiry) || Math.floor(Date.now() / 1000) >= expiry) return false;
+  const supplied = cookie.slice(dot + 1);
+  const expected = crypto
+    .createHmac("sha256", pw)
+    .update(`davos-demo-gate-v2:${expiry}`)
+    .digest("hex");
+  return timingSafeEqual(supplied, expected);
 }
 
 function davosGateShell(inner) {
@@ -923,7 +978,8 @@ function serveDavosDemoFile(res) {
 }
 
 async function handleDavosDemo(req, res) {
-  if (!DAVOS_PASSWORD) {
+  const pw = readDavosPassword();
+  if (!pw) {
     res.writeHead(503, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
@@ -940,10 +996,10 @@ async function handleDavosDemo(req, res) {
     const raw = await readBody(req, 4096).catch(() => "");
     const params = new URLSearchParams(String(raw));
     const supplied = params.get("password") || "";
-    if (supplied && timingSafeEqual(supplied, DAVOS_PASSWORD)) {
+    if (supplied && timingSafeEqual(supplied, pw)) {
       res.writeHead(303, {
         Location: "/davos-kit-demo",
-        "Set-Cookie": `dk_demo=${davosSessionToken()}; ${davosCookieAttrs(req)} Max-Age=43200`,
+        "Set-Cookie": `dk_demo=${davosSessionToken(pw)}; ${davosCookieAttrs(req)} Max-Age=43200`,
         "Cache-Control": "no-store",
       });
       res.end();
@@ -1138,6 +1194,59 @@ async function handleAdmin(req, res, urlObj) {
     );
     return;
   }
+  // Davos demo access-code management — file-based, no DB required.
+  // Protected by the same ADMIN_TOKEN / wl_admin cookie as other admin routes.
+  const davosPathname = urlObj.pathname;
+  if (davosPathname === "/admin/davos" || davosPathname.startsWith("/admin/davos/")) {
+    if (req.method === "POST" && davosPathname === "/admin/davos/set-code") {
+      if (!isAdmin(req, urlObj)) { loginPage(res, 401); return; }
+      let code = "";
+      try {
+        const raw = await readBody(req, 512);
+        code = (new URLSearchParams(raw).get("code") || "").trim();
+      } catch {
+        res.writeHead(303, { Location: "/admin/davos?msg=bad", "Cache-Control": "no-store" });
+        res.end(); return;
+      }
+      if (!code) {
+        res.writeHead(303, { Location: "/admin/davos?msg=empty", "Cache-Control": "no-store" });
+        res.end(); return;
+      }
+      try { writeDavosPassword(code); } catch (err) {
+        console.error("[davos] failed to write config:", err.message);
+        res.writeHead(303, { Location: "/admin/davos?msg=error", "Cache-Control": "no-store" });
+        res.end(); return;
+      }
+      res.writeHead(303, { Location: "/admin/davos?msg=updated", "Cache-Control": "no-store" });
+      res.end(); return;
+    }
+    if (!isAdmin(req, urlObj)) { loginPage(res, 401); return; }
+    const curPw = readDavosPassword();
+    const dmsg = urlObj.searchParams.get("msg") || "";
+    const dnotice = dmsg === "updated"
+      ? `<p class="notice ok">Access code updated. All existing client sessions are now invalid.</p>`
+      : dmsg === "empty" ? `<p class="notice warn">Code cannot be empty.</p>`
+      : dmsg === "bad"   ? `<p class="notice warn">Bad request.</p>`
+      : dmsg === "error" ? `<p class="notice warn">Failed to save — check server logs.</p>`
+      : "";
+    const dbody = `<p class="eyebrow">Growth Cartography — Internal</p>
+<h1>Davos demo access code</h1>
+${dnotice}
+<p style="color:#A8997B;margin:0 0 24px;font-size:.9rem">
+  The access code is currently <strong style="color:#FFCB6B">${curPw ? "set" : "not set"}</strong>.
+  Updating it takes effect immediately — all existing client sessions are revoked.
+</p>
+<form method="POST" action="/admin/davos/set-code" style="max-width:400px">
+  <label for="dk-code">New access code</label>
+  <input id="dk-code" name="code" type="text" autocomplete="off" autofocus required placeholder="new-access-code">
+  <button class="btn" type="submit">Update access code</button>
+</form>
+<p style="margin:28px 0 0"><a href="/admin/waitlist">← Back to signups</a></p>`;
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+    res.end(adminShell(dbody));
+    return;
+  }
+
   if (!pool) {
     res.writeHead(503, {
       "Content-Type": "text/html; charset=utf-8",
