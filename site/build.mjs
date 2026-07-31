@@ -137,7 +137,7 @@ function footer() {
     <div class="footer-grid">
       <div>
         ${lockup()}
-        <p class="blurb">Owned marketing systems for aggregated, decentralized, and autonomous markets. We map the machine that decides who gets seen and build the tools to own your place in it.</p>
+        <p class="blurb">Reach is commoditized; platforms are opaque. False Dawn Industries builds the systems that let a brand do what a person does: show up with one consistent, coherent identity in every new space, legible to machines, portable across communities, and verifiable by agents.</p>
       </div>
       <div>
         <h5>Explore</h5>
