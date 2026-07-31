@@ -1091,8 +1091,14 @@ async function handleDavosDemo(req, res) {
 function timingSafeEqual(a, b) {
   const ab = Buffer.from(String(a));
   const bb = Buffer.from(String(b));
-  if (ab.length !== bb.length) return false;
-  return crypto.timingSafeEqual(ab, bb);
+  // Pad shorter buffer so comparison always runs in constant time regardless
+  // of length, preventing token-length disclosure via timing side-channel.
+  const len = Math.max(ab.length, bb.length);
+  const ap = Buffer.alloc(len);
+  const bp = Buffer.alloc(len);
+  ab.copy(ap);
+  bb.copy(bp);
+  return crypto.timingSafeEqual(ap, bp) && ab.length === bb.length;
 }
 
 function parseCookies(req) {
@@ -1116,16 +1122,30 @@ function parseCookies(req) {
   return out;
 }
 
-function isAdmin(req, urlObj) {
+// Returns the HMAC-derived value stored in the wl_admin session cookie.
+// The cookie never contains the raw ADMIN_TOKEN — stealing the cookie does not
+// reveal the underlying credential, and rotating ADMIN_TOKEN instantly
+// invalidates all existing sessions (the HMAC changes).
+function adminSessionToken() {
+  return crypto
+    .createHmac("sha256", ADMIN_TOKEN)
+    .update("admin-gate-v1")
+    .digest("hex");
+}
+
+function isAdmin(req) {
   if (!ADMIN_TOKEN) return false;
   const cookies = parseCookies(req);
+  // Accept the HMAC-derived session cookie OR a raw Bearer token in the
+  // Authorization header.  The ?token= query-parameter path has been removed:
+  // embedding credentials in URLs exposes them in server logs, browser history,
+  // and Referer headers sent to third parties.
+  const cookieOk = cookies.wl_admin
+    ? timingSafeEqual(cookies.wl_admin, adminSessionToken())
+    : false;
   const bearer = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  const supplied =
-    cookies.wl_admin ||
-    bearer ||
-    (urlObj && urlObj.searchParams.get("token")) ||
-    "";
-  return supplied ? timingSafeEqual(supplied, ADMIN_TOKEN) : false;
+  const bearerOk = bearer ? timingSafeEqual(bearer, ADMIN_TOKEN) : false;
+  return cookieOk || bearerOk;
 }
 
 function esc(s) {
@@ -1351,7 +1371,7 @@ ${dnotice}
     }
     res.writeHead(303, {
       Location: "/admin/waitlist",
-      "Set-Cookie": `wl_admin=${encodeURIComponent(token)}; ${cookieAttrs(req)} Max-Age=43200`,
+      "Set-Cookie": `wl_admin=${adminSessionToken()}; ${cookieAttrs(req)} Max-Age=43200`,
       "Cache-Control": "no-store",
     });
     res.end();
@@ -2341,7 +2361,7 @@ async function handleManagePortal(req, res, urlObj) {
     return;
   }
   try {
-    const { url } = await createPortalSession({ key, origin: reqOrigin(req) });
+    const { url } = await createPortalSession({ key, origin: SITE_ORIGIN || reqOrigin(req) });
     res.writeHead(303, { Location: url, "Cache-Control": "no-store" });
     res.end();
   } catch (err) {
@@ -2407,7 +2427,7 @@ async function handleCheckout(req, res) {
   try {
     const { url } = await createCheckoutSession({
       tierId,
-      origin: reqOrigin(req),
+      origin: SITE_ORIGIN || reqOrigin(req),
     });
     sendJson(res, 200, { ok: true, url });
   } catch (err) {
@@ -2627,7 +2647,7 @@ async function handlePortal(req, res) {
     return;
   }
   try {
-    const { url } = await createPortalSession({ key, origin: reqOrigin(req) });
+    const { url } = await createPortalSession({ key, origin: SITE_ORIGIN || reqOrigin(req) });
     sendJson(res, 200, { ok: true, url });
   } catch (err) {
     if (err instanceof CommerceError) {
