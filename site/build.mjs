@@ -1206,8 +1206,8 @@ function topcall() {
   <div class="wrap hero-inner">
     <div>
       <span class="eyebrow">A False Dawn Industries product · As of ${AS_OF}</span>
-      <h1>Top Call: <em>the owned authority layer</em>.</h1>
-      <p class="lede">85% of business leaders are concerned that AI-generated content makes it harder to know what is credible. The leaders who get cited are not producing more content. They are building the graded corpus, the traceable knowledge graph, and the verifiable interface that gives a model or a boardroom a reason to trust them. Top Call is that infrastructure: the owned authority layer that makes your brand's expertise citeable by AI and by the people who brief it.</p>
+      <h1>Top Call: <em>signal as code</em>.</h1>
+      <p class="lede">LLMs cite only 2 to 7 domains per query. Citation authority is zero-sum. 85% of business leaders are concerned that AI-generated content makes credibility harder to assess. Top Call is the owned radar built to earn and defend your place in the citation set: a provenance-stamped corpus, a knowledge graph, and a verifiable interface agents can query. SkillFoundry is strategy as code; Top Call is signal as code.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#prompt-pack">Get the free prompt-pack <span class="arrow">↓</span></a>
         <a class="btn btn-ghost" href="#constructs">See the owned system</a>
@@ -1253,37 +1253,64 @@ function topcall() {
   <div class="wrap">
     <div class="section-hd">
       <span class="eyebrow">The thesis, in code</span>
-      <h2>Three pillars. Three reasons a source gets trusted.</h2>
-      <p>FT research finds decision-makers are ten times more likely to trust evidenced, independently produced information than speedy information. Top Call maps those requirements onto working infrastructure: a citable corpus, a traceable graph, and a verifiable interface agents and executives can rely on. ${cite(CITE.ftipa, "FT New Dimensions of Influence, 2026")}</p>
+      <h2>Three constructs build citation authority, not just a brief.</h2>
+      <p>LLM Engine Optimization (LEO) requires three trust signals: citation authority (are you in the source set?), entity depth (does the model understand your relationships?), and a verifiable interface (can an agent query you directly?). Top Call maps one construct to each signal, in working infrastructure. FT research finds decision-makers are ten times more likely to trust evidenced, independently produced information than speedy information. ${cite(CITE.ftipa, "FT New Dimensions of Influence, 2026")}</p>
     </div>
     <div class="grid cols-3">
       ${construct(
         1,
         "Corpus",
-        "Evidence that withstands scrutiny",
-        "Every source is classified into a source-authority tier (1A/1B/1C/2/3) at ingest and written into a persistent, provenance-stamped store. The chain of evidence is preserved from ingest to answer, so every claim a model or executive sees can be checked against the source that justified it.",
-        "Becomes",
-        "Owned, provenance-stamped store",
+        "Citation authority",
+        "Every source is classified into a source-authority tier (1A/1B/1C/2/3) at ingest and written into a persistent, provenance-stamped store. Re-running is cumulative: known moves gain provenance and confidence instead of duplicating. The corpus is what LLMs weight; the tier grading is what makes your citations defensible. Every claim is traceable to the source that justified it.",
+        "Built for",
+        "AI citation frequency, not just recall",
       )}
       ${construct(
         2,
         "Graph",
-        "Independent, traceable oversight",
-        "Executives, companies, moves, categories, implications, and sources become a queryable node/edge graph. Relationships are independently traceable and never re-derived from scratch on demand. When a Tier 1 source corroborates a move first seen in a Tier 2 release, confidence upgrades automatically and the audit trail is always there.",
-        "Becomes",
-        "Queryable node/edge graph",
+        "Entity depth",
+        "Executives, companies, moves, categories, implications, and sources become a queryable node/edge graph. LLMs understand the world through entity relationships; the graph preserves those relationships so your brand and its context compound in the model's understanding. Relationships are independently traceable and never re-derived from scratch on demand.",
+        "Built for",
+        "Entity depth and share of voice in LLM outputs",
       )}
       ${construct(
         3,
         "Interface",
-        "Human review, built in",
-        "The repeatable read skills are exposed as MCP tools built on the open Model Context Protocol (MCP) so an agent can call them and get answers stamped with source, tier, and confidence. Nothing is a black box. Every answer is checkable by a human before anyone acts on it.",
-        "Becomes",
+        "A verifiable MCP interface",
+        "The repeatable read skills are exposed as MCP tools built on the open Model Context Protocol, so an agent in any MCP-compatible client can query the corpus directly and get answers stamped with source, tier, and confidence. Visibility over traffic: the goal is to be cited, not just crawled. Nothing is a black box; every answer is checkable by a human before anyone acts on it.",
+        "Built for",
         "Answers stamped source · tier · confidence",
       )}
     </div>
     <p class="flowline" style="margin-top:40px;">Source in &nbsp;→&nbsp; <b>graded by tier</b> &nbsp;→&nbsp; <b>written to the corpus</b> &nbsp;→&nbsp; <b>linked in the graph</b> &nbsp;→&nbsp; provenance-stamped answer out</p>
     <p class="flowline" style="margin-top:14px;color:var(--muted);">The moat compounds: when a Tier 1 trade later corroborates a move first seen in a Tier 2 release, the move's confidence upgrades automatically, permanently, and traceably.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="why-authority">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Citation authority over content volume</span>
+      <h2>Why authority-graded sources beat volume in an LLM world.</h2>
+      <p>Traditional SEO competed on volume: more pages, more links, more traffic. LEO competes on authority: LLMs synthesize from a narrow set of sources they trust, and that set is hyper-competitive. The Financial Times study "New Dimensions of Influence" found 74% of business leaders delayed critical decisions because they did not know what data to trust, and 85% of executives are concerned AI-generated content makes credibility harder to assess. The answer is not more content; it is sourcing that withstands scrutiny.</p>
+    </div>
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">FT Dimension 1</span>
+        <h3>Evidence that withstands scrutiny</h3>
+        <p>Decision-makers rank accuracy, clear sourcing, and independence vastly higher than speed. Leaders are ten times more likely to trust independently evidenced information than rapid, unverified claims. Top Call's source-authority tiers are designed to make every line of a brief traceable to its origin, so the corpus itself is the evidence layer.</p>
+      </article>
+      <article class="card">
+        <span class="tag">FT Dimension 4</span>
+        <h3>Ideas that challenge assumptions</h3>
+        <p>82% of leaders place higher trust in a source that actively challenges their existing assumptions than one that merely confirms their biases. A provenance-stamped corpus that surfaces a confidence upgrade (when a Tier 1 source corroborates what was initially Tier 2) is exactly this kind of structural challenge: the data moves, and it proves it moved.</p>
+      </article>
+    </div>
+    <div class="definition" style="margin-top:40px;">
+      <p><b>The LEO shift, in one line:</b> traditional SEO success is SERP position and web traffic; LEO success is AI citation frequency and share of voice in LLM outputs. Top Call is built for the second set of benchmarks.</p>
+    </div>
   </div>
 </section>
 
@@ -1300,6 +1327,35 @@ function topcall() {
       <div class="mod"><code>skills/</code><h4>Skills</h4><p>Markdown files encoding the corpus contract and the repeatable reads: exec-move scan, authority audit, and brief generation.</p></div>
       <div class="mod"><code>commands/</code><h4>Commands</h4><p>Slash commands like <code>/topcall:exec-move-scan</code>, <code>/topcall:authority-audit</code>, and <code>/topcall:brief</code> run the reads straight from your terminal.</p></div>
       <div class="mod"><code>.mcp.json</code><h4>Connectors</h4><p>An MCP server that loads natively into MCP-compatible clients and answers with source, tier, and confidence attached to every line.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section class="section" id="roadmap">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">Where this is heading</span>
+      <h2>The machine-buyer future Top Call is built to anticipate.</h2>
+      <p>Top Call's verifiable MCP interface is designed for a world where the primary query comes from an agent, not a browser. Three emerging standards define what that world looks like, and Top Call's architecture anticipates all three. These are directions, not shipped capabilities.</p>
+    </div>
+    <div class="grid cols-3">
+      <article class="card">
+        <span class="tag">Protocol</span>
+        <h3>Agent-to-Agent (A2A)</h3>
+        <p>The A2A protocol, now hosted by the Linux Foundation, enables autonomous agents from different platforms to discover each other, negotiate, and collaborate. Top Call's MCP interface is already structured for direct agent queries; A2A extends that to cross-platform agent discovery at scale.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Identity</span>
+        <h3>AgentCards</h3>
+        <p>AgentCards are tamper-proof, machine-readable identity records that let agents advertise their skills and verify their identities across organizational boundaries. A verifiable corpus with provenance-stamped sources maps naturally to the AgentCard model: the card is the proof of what you know and how you know it.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Commerce</span>
+        <h3>x402 micropayments</h3>
+        <p>The x402 open standard uses the HTTP 402 status code to facilitate blockchain-agnostic micropayments, letting agents autonomously negotiate access and settle via stablecoins without manual billing flows. Top Call's gated MCP interface anticipates a world where access to a trusted corpus is priced per query, machine-speed.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -1392,9 +1448,9 @@ function topcall() {
   </div>
 </section>`;
   return page({
-    title: "Top Call: The Owned Authority Layer | False Dawn Industries",
+    title: "Top Call: Citation Authority and Signal as Code | False Dawn Industries",
     description:
-      "Top Call is the owned authority layer that makes your brand's expertise citeable by AI and by the people who brief it. A provenance-stamped corpus, a traceable knowledge graph, and a verifiable MCP interface. Get the free prompt-pack, then the owned system.",
+      "LLMs cite only 2 to 7 domains per query. Top Call builds the owned radar that earns citation authority: a provenance-stamped corpus, a knowledge graph, and a verifiable MCP interface agents can query directly. Get the free prompt-pack, then the owned system.",
     active: "topcall",
     body,
     canonical: `${SITE_URL}/topcall`,
