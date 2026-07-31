@@ -3200,6 +3200,7 @@ const SITEMAP_ROUTES = [
   "field-guide",
   "field-guide-002",
   "field-guide-003",
+  "field-guide-004",
   "fdcp",
   "skillfoundry",
   "marcom-kit",

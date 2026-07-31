@@ -120,8 +120,55 @@ Full detail for the FDI public marketing site. Summary and locked rules live in
      Google Search Console" (fastest, no tag needed) or the **HTML Meta Tag**
      method → copy the `content="..."` value → set `BING_SITE_VERIFICATION`
      → redeploy → Verify. Then Sitemaps → submit the same sitemap URL.
-  3. After a few days, confirm in coverage/indexing reports that the 8
-     indexable pages appear and that the noindex pages (gated holding pages,
-     `/davos-kit-demo`) do not.
+  3. After a few days (or a week), do the post-verification indexing pass
+     described in the next section.
 - Alternative: both consoles also accept DNS TXT verification (no code or
   redeploy involved); the env-var tags are just the zero-DNS option.
+
+## Post-verification indexing check (owner runbook, ~10 minutes)
+
+Run this a week or two after submitting the sitemap, once crawlers have had
+time to discover and index the pages.
+
+### What to check
+
+**Sitemap status**
+- Google Search Console → Sitemaps → `https://falsedawn.industries/sitemap.xml`
+  should show **"Success"** and list the correct number of discovered URLs
+  (matches the count in `SITEMAP_ROUTES` in `build.mjs` after the GATED
+  filter — currently **14** indexable pages).
+- Bing Webmaster Tools → Sitemaps → same URL, same expectation.
+
+**Coverage / Indexing reports**
+- Google Search Console → Pages (or Coverage) → filter to "Indexed" — all 14
+  public routes should appear with no errors or warnings.
+- Bing Webmaster Tools → URL Inspection or Index Explorer — same check.
+
+**noindex pages must NOT be indexed**
+  Use URL Inspection in each console (or a `site:falsedawn.industries/topcall`
+  search) to confirm the following pages are excluded from the index:
+  - `/topcall` — gated holding page, noindex
+  - `/roadmap` — gated holding page, noindex
+  - `/davos-kit-demo` — internal demo, noindex, never linked from public nav
+
+**Coverage errors**
+- If the console flags any "Crawled — currently not indexed", "Discovered —
+  currently not indexed", or redirect/4xx errors, open each in URL Inspection,
+  request re-indexing, and check whether the page's canonical tag or
+  `robots.txt` is the cause.
+
+### What the build enforces automatically
+`check.mjs` (run on every deploy via the `site-links` workflow) already
+verifies:
+- Every `<loc>` in `sitemap.xml` resolves to a real built page.
+- Every `<loc>` in `sitemap.xml` does NOT carry a noindex meta tag
+  (contradictory signal).
+- The known noindex routes (`/topcall`, `/roadmap`, `/davos-kit-demo`) are
+  absent from the sitemap.
+- `robots.txt` carries the `Sitemap:` pointer.
+- Gated pages carry the noindex tag and show the neutral holding copy.
+
+So most coverage mismatches would be caught before deploy. Anything flagged
+only in the consoles is likely a timing issue (crawl lag) or a page added
+after the last sitemap submission — in that case, re-submit the sitemap URL
+in both consoles to trigger a fresh crawl.

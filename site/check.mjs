@@ -135,6 +135,23 @@ if (!fs.existsSync(sitemapPath)) {
     }
     const route = loc.slice(SITE_URL.length) || "/";
     if (!resolveFile(route)) fail(`sitemap.xml lists unresolvable route: ${route}`);
+    /* Verify every sitemap URL is actually indexable (no noindex tag).
+     * A noindex page in the sitemap sends contradictory signals to crawlers. */
+    const file = resolveFile(route);
+    if (file && typeof file === "string" && file.endsWith(".html") && fs.existsSync(file)) {
+      const html = fs.readFileSync(file, "utf8");
+      if (html.includes('content="noindex')) {
+        fail(`sitemap.xml lists ${route} but that page carries a noindex meta tag — remove it from SITEMAP_ROUTES or un-noindex the page`);
+      }
+    }
+  }
+  /* Also confirm that known noindex pages are absent from the sitemap. */
+  const NOINDEX_ROUTES = ["/topcall", "/roadmap", "/davos-kit-demo"];
+  for (const nr of NOINDEX_ROUTES) {
+    const fullUrl = `${SITE_URL}${nr}`;
+    if (locs.includes(fullUrl)) {
+      fail(`sitemap.xml must not list noindex page: ${nr} — remove it from SITEMAP_ROUTES`);
+    }
   }
 }
 const robotsPath = path.join(DIST, "robots.txt");
