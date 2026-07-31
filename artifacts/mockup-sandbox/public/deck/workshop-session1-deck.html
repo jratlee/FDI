@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FDI · The Cartographers' Table · Session 1 · Aggregated</title>
+<link rel="stylesheet" href="/__mockup/ads/brand.css">
+<style>
+  /* Override brand.css fixed-viewport for deck scrolling + print */
+  html, body { width: auto; height: auto; overflow: visible; background: #060504; }
+
+  @page { size: 1920px 1080px; margin: 0; }
+
+  /* ---- Base slide ---- */
+  .slide {
+    position: relative;
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: var(--base);
+    page-break-after: always; break-after: page;
+    font-family: 'Inter', sans-serif;
+    color: var(--cream);
+  }
+  @media screen { .slide { margin: 0 auto 24px; } }
+
+  /* ---- Shared chrome ---- */
+  .s-top {
+    position: absolute; top: 60px; left: 96px; right: 96px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .s-top .lockup { font-size: 28px; }
+  .s-top .corner {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14.5px; letter-spacing: .22em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .s-foot {
+    position: absolute; bottom: 60px; left: 96px; right: 96px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .s-foot-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase; line-height: 1.5;
+  }
+  .pageno {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; letter-spacing: .2em; color: var(--muted);
+  }
+
+  /* ---- Workshop eyebrow: no signal-orange tick ---- */
+  .ws-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 19px; font-weight: 500;
+    letter-spacing: .24em; text-transform: uppercase;
+    color: var(--faded);
+    display: block;
+  }
+
+  /* ---- Headline + emphasis ---- */
+  .ws-h {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; color: var(--cream);
+    line-height: 1.02; letter-spacing: -.02em;
+  }
+  .ws-h em { font-style: normal; color: var(--amber); }
+
+  /* ---- Support / body ---- */
+  .ws-sub {
+    font-family: 'Inter', sans-serif;
+    color: var(--faded); line-height: 1.65;
+  }
+
+  /* ---- Subtle grid decoration ---- */
+  .gl-v { position: absolute; top: 0; bottom: 0; width: 0;
+    border-left: 1px solid rgba(58,45,28,.35); pointer-events: none; }
+
+  /* ==========================================================
+     TEMPLATE: TITLE (slide 1)
+     ========================================================== */
+  .tpl-title .body {
+    position: absolute; left: 96px; right: 560px; top: 286px;
+  }
+  .tpl-title .ws-eyebrow { margin-bottom: 48px; }
+  .tpl-title .ws-h { font-size: 108px; }
+  .tpl-title .ws-sub { font-size: 26px; margin-top: 50px; }
+  /* Large ghosted series number right-side decoration */
+  .tpl-title .deco {
+    position: absolute; right: 64px; top: 80px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 580px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1px rgba(58,45,28,.8);
+    user-select: none; pointer-events: none; overflow: hidden;
+  }
+  /* Amber rule under eyebrow */
+  .tpl-title .rule {
+    display: block; width: 64px; height: 3px;
+    background: var(--amber); margin-bottom: 36px;
+  }
+
+  /* ==========================================================
+     TEMPLATE: STATEMENT (slides 2, 3, 4, 6, 7, 10, 11)
+     ========================================================== */
+  .tpl-stmt .body {
+    position: absolute; left: 96px; right: 96px; top: 286px;
+  }
+  .tpl-stmt .ws-eyebrow { margin-bottom: 52px; }
+  .tpl-stmt .ws-h { font-size: 96px; max-width: 16em; }
+  .tpl-stmt .ws-sub { font-size: 29px; margin-top: 52px; max-width: 42em; }
+
+  /* ==========================================================
+     TEMPLATE: FOCUS (slides 3 — facilitator live; 11 — catch)
+     ========================================================== */
+  .tpl-focus .body {
+    position: absolute; left: 96px; right: 96px; top: 256px;
+  }
+  .tpl-focus .ws-eyebrow { margin-bottom: 56px; }
+  .tpl-focus .ws-h { font-size: 112px; max-width: 14em; }
+  .tpl-focus .ws-sub { font-size: 30px; margin-top: 52px; max-width: 38em; }
+  /* Facilitator note */
+  .fac-note {
+    position: absolute; right: 96px; bottom: 120px;
+    font-family: 'JetBrains Mono', monospace; font-size: 14px;
+    letter-spacing: .18em; text-transform: uppercase;
+    color: var(--border);
+    border: 1px solid var(--border); padding: 10px 18px;
+  }
+
+  /* ==========================================================
+     TEMPLATE: DIAGRAM (slide 5)
+     ========================================================== */
+  .tpl-diag .body-top {
+    position: absolute; left: 96px; right: 96px; top: 148px;
+  }
+  .tpl-diag .ws-eyebrow { margin-bottom: 26px; }
+  .tpl-diag .ws-h { font-size: 68px; }
+  .tpl-diag .diag-area {
+    position: absolute; left: 96px; right: 96px; top: 356px; height: 578px;
+  }
+  .tpl-diag .ws-sub {
+    position: absolute; left: 96px; right: 96px; bottom: 72px;
+    font-size: 24px; color: var(--faded); line-height: 1.55;
+  }
+
+  /* ==========================================================
+     TEMPLATE: REFRAME (slide 6 — two contrast columns)
+     ========================================================== */
+  .tpl-reframe .body {
+    position: absolute; left: 96px; right: 96px; top: 196px;
+  }
+  .tpl-reframe .ws-eyebrow { margin-bottom: 40px; }
+  .tpl-reframe .ws-h { font-size: 84px; max-width: 20em; }
+  .tpl-reframe .cols {
+    display: flex; gap: 0; margin-top: 80px;
+  }
+  .tpl-reframe .col {
+    flex: 1; padding: 0 64px;
+    border-left: 2px solid var(--hairline);
+  }
+  .tpl-reframe .col:first-child { padding-left: 0; border-left: 0; }
+  .tpl-reframe .col-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tpl-reframe .col-h {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 62px; font-weight: 700; color: var(--cream);
+    margin-top: 18px; line-height: 1.08;
+  }
+  .tpl-reframe .col-h.amber { color: var(--amber); }
+  .tpl-reframe .col-p {
+    font-family: 'Inter', sans-serif;
+    font-size: 25px; color: var(--faded);
+    margin-top: 22px; line-height: 1.6;
+  }
+
+  /* ==========================================================
+     TEMPLATE: BUILD BRIEF (slide 8 — stays up 55 min)
+     ========================================================== */
+  .tpl-build .body {
+    position: absolute; left: 96px; right: 96px; top: 180px;
+  }
+  .tpl-build .ws-eyebrow { margin-bottom: 40px; }
+  .tpl-build .ws-h { font-size: 86px; }
+  .tpl-build .tasks { margin-top: 56px; }
+  .tpl-build .task {
+    display: flex; gap: 52px; align-items: flex-start;
+    padding: 34px 0; border-top: 2px solid var(--border);
+  }
+  .tpl-build .task:last-child { border-bottom: 2px solid var(--border); }
+  .tpl-build .task-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px; font-weight: 700; color: var(--amber);
+    letter-spacing: .12em; min-width: 44px; padding-top: 4px;
+  }
+  .tpl-build .task-main {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px; font-weight: 600; color: var(--cream);
+    line-height: 1.3;
+  }
+  .tpl-build .task-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 24px; color: var(--faded); margin-top: 8px; line-height: 1.45;
+  }
+
+  /* ==========================================================
+     TEMPLATE: TIERS (slide 9)
+     ========================================================== */
+  .tpl-tiers .body {
+    position: absolute; left: 96px; right: 96px; top: 180px;
+  }
+  .tpl-tiers .ws-eyebrow { margin-bottom: 40px; }
+  .tpl-tiers .ws-h { font-size: 78px; }
+  .tpl-tiers .tiers { margin-top: 58px; }
+  .tpl-tiers .tier {
+    display: flex; gap: 52px; align-items: baseline;
+    padding: 36px 0; border-top: 2px solid var(--border);
+  }
+  .tpl-tiers .tier:last-child { border-bottom: 2px solid var(--border); }
+  .tpl-tiers .tier-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px; font-weight: 500; color: var(--amber);
+    letter-spacing: .18em; min-width: 92px; text-transform: uppercase;
+  }
+  .tpl-tiers .tier-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 40px; font-weight: 700; color: var(--cream);
+    min-width: 280px; line-height: 1.15;
+  }
+  .tpl-tiers .tier-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 27px; color: var(--faded); line-height: 1.45;
+  }
+
+  /* ==========================================================
+     TEMPLATE: PRODUCT (slide 12)
+     ========================================================== */
+  .tpl-product .body {
+    position: absolute; left: 96px; right: 700px; top: 246px;
+  }
+  .tpl-product .ws-eyebrow { margin-bottom: 52px; }
+  .tpl-product .ws-h { font-size: 84px; }
+  .tpl-product .ws-sub { font-size: 28px; margin-top: 52px; max-width: 34em; line-height: 1.7; }
+  .tpl-product .ws-sub strong { color: var(--cream); font-weight: 500; }
+  .tpl-product .mcp-note {
+    font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
+    letter-spacing: .12em; color: var(--muted); text-transform: uppercase;
+    margin-top: 48px; border-top: 1px solid var(--border); padding-top: 24px;
+    max-width: 36em;
+  }
+  /* Right panel decoration */
+  .tpl-product .panel {
+    position: absolute; right: 96px; top: 160px; width: 520px;
+    border: 2px solid var(--hairline); padding: 52px;
+    background: var(--surface);
+  }
+  .tpl-product .panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+  }
+  .tpl-product .panel-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 52px; font-weight: 700; color: var(--cream);
+    margin-top: 20px; line-height: 1.1;
+  }
+  .tpl-product .panel-name span { color: var(--amber); }
+  .tpl-product .panel-items { margin-top: 40px; }
+  .tpl-product .panel-item {
+    font-family: 'Inter', sans-serif; font-size: 22px;
+    color: var(--faded); padding: 18px 0;
+    border-top: 1px solid var(--border); line-height: 1.45;
+  }
+  .tpl-product .panel-item::before {
+    content: "→ "; color: var(--amber);
+    font-family: 'JetBrains Mono', monospace; font-size: 18px;
+  }
+
+  /* ==========================================================
+     TEMPLATE: CLOSE (slide 13)
+     ========================================================== */
+  .tpl-close .body {
+    position: absolute; left: 96px; right: 400px; top: 286px;
+  }
+  .tpl-close .ws-eyebrow { margin-bottom: 52px; }
+  .tpl-close .ws-h { font-size: 108px; }
+  .tpl-close .ws-sub { font-size: 27px; margin-top: 52px; max-width: 38em; }
+  /* QR placeholder */
+  .tpl-close .qr-box {
+    position: absolute; right: 96px; bottom: 128px;
+    width: 200px; height: 200px;
+    border: 2px solid var(--hairline);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+  }
+  .tpl-close .qr-inner {
+    width: 132px; height: 132px;
+    background: var(--elevated);
+    border: 1px solid var(--border);
+    display: grid; grid-template-columns: repeat(8,1fr); gap: 2px;
+    padding: 8px;
+  }
+  .tpl-close .qr-cell { background: var(--faded); border-radius: 0; }
+  .tpl-close .qr-cell.off { background: transparent; }
+  .tpl-close .qr-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================= SLIDE 01 · TITLE ============================= -->
+<section class="slide tpl-title" id="s1">
+  <div class="gl-v" style="left:1440px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">The Cartographers' Table · Session 1 · 01/13</div>
+  </div>
+
+  <div class="deco">1</div>
+
+  <div class="body">
+    <span class="rule"></span>
+    <div class="ws-eyebrow">Growth Cartography</div>
+    <h1 class="ws-h" style="margin-top:0">Become the Answer<br>the Machine <em>Cites</em></h1>
+    <p class="ws-sub">The Cartographers' Table · Session 1 · Aggregated</p>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">False Dawn Industries · Aggregated · Decentralized · Autonomous</div>
+    <div class="pageno">01</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 02 · THE PROMISE ============================= -->
+<section class="slide tpl-stmt" id="s2">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">02/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">Tonight</div>
+    <h1 class="ws-h">You leave having built<br>one <em>owned</em> answer object.</h1>
+    <p class="ws-sub">For a real client. That an AI assistant should cite.<br>Plus the method to repeat it.</p>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">02</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 03 · COLD OPEN ============================= -->
+<section class="slide tpl-focus" id="s3">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">03/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">Live</div>
+    <h1 class="ws-h">Ask the machine<br>a real buyer's question.</h1>
+    <p class="ws-sub">Now watch which sources it decided to <em style="font-style:normal;color:var(--amber)">trust</em>.</p>
+  </div>
+
+  <div class="fac-note">Facilitator: type live over this slide</div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">03</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 04 · THE EMERGENCY ============================= -->
+<section class="slide tpl-stmt" id="s4">
+  <div class="gl-v" style="left:960px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">04/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">The Terrain</div>
+    <h1 class="ws-h">The cost of making content<br>just fell to zero.</h1>
+    <p class="ws-sub" style="max-width:52em">
+      That is not the opportunity. That is the emergency.<br>
+      If content is free to make, making it is worth nothing.<br>
+      What stays scarce is provenance, trust, and the system that decides who gets seen.
+    </p>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">04</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 05 · THE DIAGRAM ============================= -->
+<section class="slide tpl-diag" id="s5">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">05/13</div>
+  </div>
+
+  <div class="body-top">
+    <div class="ws-eyebrow">Aggregated</div>
+    <h1 class="ws-h" style="margin-top:22px">The machine is the new front door.</h1>
+  </div>
+
+  <!-- DIAGRAM: buyer question → model → cites one owner past a wall of renters -->
+  <div class="diag-area">
+    <svg viewBox="0 0 1728 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs>
+        <!-- Arrow marker: amber (owner citation) -->
+        <marker id="arr-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#FFB12B"/>
+        </marker>
+        <!-- Arrow marker: muted (question → model) -->
+        <marker id="arr-muted" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#7A6A50"/>
+        </marker>
+        <!-- Arrow marker: dim (model → renters, ignored) -->
+        <marker id="arr-dim" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#2A2015"/>
+        </marker>
+      </defs>
+
+      <!-- ---- BUYER'S QUESTION (left) ---- -->
+      <rect x="20" y="180" width="260" height="180" fill="#141009" stroke="#3A2D1C" stroke-width="2"/>
+      <text x="150" y="252" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="15" fill="#7A6A50"
+        letter-spacing="0.18em" font-weight="500">BUYER'S</text>
+      <text x="150" y="276" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="15" fill="#7A6A50"
+        letter-spacing="0.18em" font-weight="500">QUESTION</text>
+      <!-- italic context line -->
+      <text x="150" y="310" text-anchor="middle"
+        font-family="'Inter',sans-serif" font-size="17" fill="#3A2D1C"
+        font-style="italic">"Who should I trust?"</text>
+
+      <!-- Q → Model arrow -->
+      <line x1="280" y1="270" x2="400" y2="270"
+        stroke="#7A6A50" stroke-width="2"
+        marker-end="url(#arr-muted)"/>
+
+      <!-- ---- THE MODEL (center) ---- -->
+      <rect x="400" y="80" width="300" height="380" fill="#1C160D" stroke="#FFB12B" stroke-width="3"/>
+      <!-- amber top bar -->
+      <rect x="400" y="80" width="300" height="5" fill="#FFB12B"/>
+      <text x="550" y="250" text-anchor="middle"
+        font-family="'Space Grotesk',sans-serif" font-size="36" fill="#F0E8D5"
+        font-weight="700" letter-spacing="-0.02em">THE</text>
+      <text x="550" y="296" text-anchor="middle"
+        font-family="'Space Grotesk',sans-serif" font-size="36" fill="#F0E8D5"
+        font-weight="700" letter-spacing="-0.02em">MODEL</text>
+      <text x="550" y="340" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="13" fill="#7A6A50"
+        letter-spacing="0.16em">AI ASSISTANT</text>
+
+      <!-- ---- RENTER WALL (center-right, grey) ---- -->
+      <!-- Label above wall -->
+      <text x="880" y="48" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="13" fill="#3A2D1C"
+        letter-spacing="0.22em" font-weight="500">RENTERS</text>
+
+      <!-- 5 renter boxes stacked -->
+      <rect x="740" y="58"  width="280" height="76" fill="#0D0B08" stroke="#2A2015" stroke-width="1.5"/>
+      <rect x="740" y="144" width="280" height="76" fill="#0D0B08" stroke="#2A2015" stroke-width="1.5"/>
+      <rect x="740" y="230" width="280" height="76" fill="#0D0B08" stroke="#2A2015" stroke-width="1.5"/>
+      <rect x="740" y="316" width="280" height="76" fill="#0D0B08" stroke="#2A2015" stroke-width="1.5"/>
+      <rect x="740" y="402" width="280" height="76" fill="#0D0B08" stroke="#2A2015" stroke-width="1.5"/>
+      <text x="880" y="101" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#3A2D1C" letter-spacing="0.2em">CONTENT FARM</text>
+      <text x="880" y="187" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#3A2D1C" letter-spacing="0.2em">SEO ARTICLE</text>
+      <text x="880" y="273" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#3A2D1C" letter-spacing="0.2em">SYNDICATED POST</text>
+      <text x="880" y="359" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#3A2D1C" letter-spacing="0.2em">REPURPOSED THREAD</text>
+      <text x="880" y="445" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#3A2D1C" letter-spacing="0.2em">UNNAMED BLOG</text>
+      <!-- "RENTER" label on each box (smaller, far right) -->
+      <text x="1008" y="101" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2A2015" letter-spacing="0.12em">RENTER</text>
+      <text x="1008" y="187" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2A2015" letter-spacing="0.12em">RENTER</text>
+      <text x="1008" y="273" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2A2015" letter-spacing="0.12em">RENTER</text>
+      <text x="1008" y="359" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2A2015" letter-spacing="0.12em">RENTER</text>
+      <text x="1008" y="445" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2A2015" letter-spacing="0.12em">RENTER</text>
+
+      <!-- Model → Renters: dim dashed arrows (not cited) -->
+      <line x1="700" y1="220" x2="736" y2="220"
+        stroke="#2A2015" stroke-width="1.5" stroke-dasharray="5,4"
+        marker-end="url(#arr-dim)"/>
+      <line x1="700" y1="270" x2="736" y2="270"
+        stroke="#2A2015" stroke-width="1.5" stroke-dasharray="5,4"
+        marker-end="url(#arr-dim)"/>
+      <line x1="700" y1="320" x2="736" y2="320"
+        stroke="#2A2015" stroke-width="1.5" stroke-dasharray="5,4"
+        marker-end="url(#arr-dim)"/>
+
+      <!-- ---- OWNER (far right, amber, CITED) ---- -->
+      <!-- "CITED" label with amber tick above -->
+      <text x="1380" y="48" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="13" fill="#FFB12B"
+        letter-spacing="0.24em" font-weight="700">CITED</text>
+      <line x1="1284" y1="38" x2="1476" y2="38" stroke="#FFB12B" stroke-width="1.5"/>
+
+      <!-- Owner box -->
+      <rect x="1140" y="96" width="480" height="348" fill="#1C160D" stroke="#FFB12B" stroke-width="3"/>
+      <!-- amber left accent -->
+      <rect x="1140" y="96" width="5" height="348" fill="#FFB12B"/>
+      <!-- amber glow (subtle outer) -->
+      <rect x="1135" y="91" width="490" height="358" fill="none" stroke="rgba(255,177,43,0.15)" stroke-width="8"/>
+
+      <text x="1380" y="228" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="14" fill="#FFB12B"
+        letter-spacing="0.22em" font-weight="700">OWNER</text>
+      <text x="1380" y="270" text-anchor="middle"
+        font-family="'Space Grotesk',sans-serif" font-size="32" fill="#F0E8D5"
+        font-weight="700" letter-spacing="-0.01em">First-party.</text>
+      <text x="1380" y="312" text-anchor="middle"
+        font-family="'Space Grotesk',sans-serif" font-size="32" fill="#F0E8D5"
+        font-weight="700" letter-spacing="-0.01em">Named. Dated.</text>
+      <text x="1380" y="354" text-anchor="middle"
+        font-family="'Space Grotesk',sans-serif" font-size="32" fill="#F0E8D5"
+        font-weight="700" letter-spacing="-0.01em">Verifiable.</text>
+      <text x="1380" y="400" text-anchor="middle"
+        font-family="'Inter',sans-serif" font-size="18" fill="#A8997B"
+        font-style="italic">owns the corpus</text>
+
+      <!-- Model → Owner: solid amber arc OVER the renter wall -->
+      <path d="M 700 160 C 860 -20, 1060 -20, 1140 210"
+        fill="none" stroke="#FFB12B" stroke-width="3"
+        marker-end="url(#arr-amber)"/>
+      <!-- tiny label on the arc: "CITATION" -->
+      <text x="910" y="-4" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="12" fill="#FFB12B"
+        letter-spacing="0.2em">CITATION PATH</text>
+    </svg>
+  </div>
+
+  <p class="ws-sub">
+    You cannot negotiate reach with an aggregator. You can own a corpus it cites.
+  </p>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography · Aggregated</div>
+    <div class="pageno">05</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 06 · THE REFRAME ============================= -->
+<section class="slide tpl-reframe" id="s6">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">06/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">The Shift</div>
+    <h1 class="ws-h">Being found is <em>rented</em>.<br>Being cited is <em>owned</em>.</h1>
+
+    <div class="cols">
+      <div class="col">
+        <div class="col-tag">Rented</div>
+        <div class="col-h">Ranking</div>
+        <p class="col-p">A position you rent from an algorithm that changes weekly. No compounding. No provable asset.</p>
+      </div>
+      <div class="col">
+        <div class="col-tag">Owned</div>
+        <div class="col-h amber">Citation</div>
+        <p class="col-p">An answer a model trusts and cites. An asset you own and can prove. Compounding over time.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">06</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 07 · THE SKILL ============================= -->
+<section class="slide tpl-stmt" id="s7">
+  <div class="gl-v" style="left:1200px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">07/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">What You Will Do</div>
+    <h1 class="ws-h" style="font-size:120px"><em>Audit.</em> Grade. Build.</h1>
+    <p class="ws-sub">
+      Pick one high-intent question. Audit who the machine cites now.<br>
+      Grade those sources. Build the owned answer object that deserves the citation.
+    </p>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">07</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 08 · THE BUILD BRIEF ============================= -->
+<section class="slide tpl-build" id="s8">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">Build Brief · 08/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">Build · 55 Min</div>
+    <h1 class="ws-h">Work a real client.</h1>
+    <div class="tasks">
+      <div class="task">
+        <div class="task-key">A</div>
+        <div>
+          <div class="task-main">Audit the question.</div>
+          <div class="task-sub">What does AI cite today? Run the buyer's question. List every source the model chose.</div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-key">B</div>
+        <div>
+          <div class="task-main">Grade the sources.</div>
+          <div class="task-sub">Tier 1 owns it. Tier 2 corroborated. Tier 3 noise. Grade each citation honestly.</div>
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-key">C</div>
+        <div>
+          <div class="task-main">Build the answer object.</div>
+          <div class="task-sub">Direct answer, proof, provenance, freshness. One piece that deserves to be cited.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">08</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 09 · SOURCE-AUTHORITY TIERS ============================= -->
+<section class="slide tpl-tiers" id="s9">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">Reference · 09/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">Grade It</div>
+    <h1 class="ws-h">What should a machine <em>trust</em>?</h1>
+    <div class="tiers">
+      <div class="tier">
+        <div class="tier-num">Tier 1</div>
+        <div class="tier-name">Own it.</div>
+        <div class="tier-desc">First-party, named, dated, verifiable. You control the provenance.</div>
+      </div>
+      <div class="tier">
+        <div class="tier-num">Tier 2</div>
+        <div class="tier-name">Corroborated.</div>
+        <div class="tier-desc">Independent, evidence shown. Someone else can verify the claim.</div>
+      </div>
+      <div class="tier">
+        <div class="tier-num">Tier 3</div>
+        <div class="tier-name">Noise.</div>
+        <div class="tier-desc">Optimized to rank, not to be true. Avoid building on Tier 3.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography · Source-Authority Framework</div>
+    <div class="pageno">09</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 10 · THE SHARE ============================= -->
+<section class="slide tpl-stmt" id="s10">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">10/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">Show Your Work</div>
+    <h1 class="ws-h">Read me your<br>one-sentence answer.</h1>
+    <p class="ws-sub">
+      Then tell me who is winning the citation today,<br>
+      and what tier they actually deserve.
+    </p>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">10</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 11 · THE CATCH ============================= -->
+<section class="slide tpl-focus" id="s11">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">The Bridge · 11/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">The Ceiling</div>
+    <h1 class="ws-h">You did this once.<br>Now it starts to <em>evaporate</em>.</h1>
+    <p class="ws-sub" style="max-width:46em">
+      Next week you re-audit from scratch. Nothing compounds.<br>
+      Nothing is provable to a client. An agent cannot call it.<br>
+      The recipe is not the moat.
+    </p>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography</div>
+    <div class="pageno">11</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 12 · THE OWNED SYSTEM ============================= -->
+<section class="slide tpl-product" id="s12">
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">12/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">Build the Machine</div>
+    <h1 class="ws-h">SkillFoundry makes tonight<br><em>repeatable and provable</em>.</h1>
+    <p class="ws-sub">
+      <strong>Source-authority grading as code.</strong> Every answer stamped with where it came from.
+      Over an open interface an agent can query and trust.
+      You own the system. You do not rent the outcome.
+    </p>
+    <div class="mcp-note">
+      MCP: an open standard for agent-readable knowledge interfaces
+    </div>
+  </div>
+
+  <!-- Right-side product card -->
+  <div class="panel">
+    <div class="panel-label">SkillFoundry</div>
+    <div class="panel-name">The<br><span>owned</span><br>system.</div>
+    <div class="panel-items">
+      <div class="panel-item">Corpus graded by source authority</div>
+      <div class="panel-item">Provenance stamped on every answer</div>
+      <div class="panel-item">MCP endpoint an agent can call</div>
+      <div class="panel-item">Yours. Not rented from a platform.</div>
+    </div>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">Growth Cartography · SkillFoundry</div>
+    <div class="pageno">12</div>
+  </div>
+</section>
+
+
+<!-- ============================= SLIDE 13 · CLOSE & NEXT ============================= -->
+<section class="slide tpl-close" id="s13">
+  <div class="gl-v" style="left:1440px;"></div>
+  <div class="s-top">
+    <div class="lockup"><span class="wm">False Dawn Industries</span>
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <path class="arc" d="M12 50 A38 38 0 0 1 88 50"/>
+        <path class="fill" d="M12 50 A38 38 0 0 0 88 50 Z"/>
+      </svg>
+    </div>
+    <div class="corner">13/13</div>
+  </div>
+
+  <div class="body">
+    <div class="ws-eyebrow">The Map Continues</div>
+    <h1 class="ws-h">Next month:<br><em>Decentralized</em>.</h1>
+    <p class="ws-sub">
+      Your answer object becomes the first node in an owned knowledge graph.
+      Check your inbox tonight for the worksheet, the Field Guide, and the free prompt-pack.
+    </p>
+  </div>
+
+  <!-- QR placeholder -->
+  <div class="qr-box">
+    <div style="width:132px;height:132px;background:var(--elevated);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <!-- simplified QR-style mark -->
+        <rect x="4"  y="4"  width="28" height="28" rx="0" stroke="#3A2D1C" stroke-width="2" fill="none"/>
+        <rect x="10" y="10" width="16" height="16" rx="0" fill="#3A2D1C"/>
+        <rect x="48" y="4"  width="28" height="28" rx="0" stroke="#3A2D1C" stroke-width="2" fill="none"/>
+        <rect x="54" y="10" width="16" height="16" rx="0" fill="#3A2D1C"/>
+        <rect x="4"  y="48" width="28" height="28" rx="0" stroke="#3A2D1C" stroke-width="2" fill="none"/>
+        <rect x="10" y="54" width="16" height="16" rx="0" fill="#3A2D1C"/>
+        <!-- data cells -->
+        <rect x="48" y="48" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="56" y="48" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="64" y="48" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="48" y="56" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="64" y="56" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="48" y="64" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="56" y="64" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="36" y="4"  width="6" height="6" fill="#3A2D1C"/>
+        <rect x="36" y="12" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="36" y="28" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="36" y="36" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="4"  y="36" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="12" y="36" width="6" height="6" fill="#3A2D1C"/>
+        <rect x="20" y="36" width="6" height="6" fill="#3A2D1C"/>
+      </svg>
+    </div>
+    <div class="qr-label">Register for<br>next session</div>
+  </div>
+
+  <div class="s-foot">
+    <div class="s-foot-mono">falsedawn.industries · Growth Cartography</div>
+    <div class="pageno">13</div>
+  </div>
+</section>
+
+</body>
+</html>
