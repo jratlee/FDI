@@ -1883,6 +1883,7 @@ function copyAssets() {
     "viz-three-markets-1200x680.png",
     "fdi-field-guide-deck.pdf",
     "fdi-field-guide-launch-bundle.zip",
+    "fdi-linkedin-thesis-package.zip",
     "top-call-prompt-pack.zip",
   ];
   for (const f of assetFiles) {

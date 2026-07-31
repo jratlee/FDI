@@ -2,7 +2,7 @@
 ### A CMO's case for owned marketing systems in aggregated, decentralized, and autonomous markets
 
 **Header image:** `li-article-header-1200x627.png`
-**Attribution note:** Credits Ben Thompson / Stratechery, Eric Seufert / DeCANT (Mobile Dev Memo), Alice Lassman (Disillusionomics), and Yuval Noah Harari (Sapiens), consistent with the launch deck's originality standard.
+**Attribution note:** Credits Ben Thompson / Stratechery, Eric Seufert / DeCANT (Mobile Dev Memo), Alice Lassman (Disillusionomics), Yuval Noah Harari (Sapiens), and Dr Karen Nelson-Field / Amplified (the 2.5-second attention-memory threshold), consistent with the launch deck's originality standard.
 
 **SEO title (62 chars):** Owned Marketing Systems for the AI Age | False Dawn Industries
 **SEO description (157 chars):** Reach is commoditized and ad platforms are black boxes. The durable play is owned marketing systems: a persistent identity and corpus you can prove. Read on.
@@ -24,7 +24,7 @@ The second idea is Eric Seufert's. His master's thesis in Applied Computation at
 
 Put those two together and you get the thesis I'm building False Dawn Industries on: when reach is commoditized and platforms are opaque, the only durable marketing assets are the ones you own and can prove. A persistent identity. A proprietary corpus. Systems that other machines can query and trust.
 
-Our first Field Guide made the diagnosis. The world will spend $1.3 trillion on advertising in 2026, and the average digital ad earns about 2.5 seconds of active attention. Worse, people now price in persuasion the moment they can see it. The economist Alice Lassman calls this Disillusionomics: every tactic a consumer can detect is a tactic they quietly discount. So belief lives in culture, trust lives in experience, and identity is the connective tissue between the two. That framing owes a debt to Yuval Noah Harari's account of how humans have coordinated around shared belief for roughly 70,000 years.
+Our first Field Guide made the diagnosis. The world will spend $1.3 trillion on advertising in 2026, and per Dr Karen Nelson-Field's attention-memory threshold research, the average digital ad earns about 2.5 seconds of active attention before memory encoding can even begin. Worse, people now price in persuasion the moment they can see it. The economist Alice Lassman calls this Disillusionomics: every tactic a consumer can detect is a tactic they quietly discount. So belief lives in culture, trust lives in experience, and identity is the connective tissue between the two. That framing owes a debt to Yuval Noah Harari's account of how humans have coordinated around shared belief for roughly 70,000 years.
 
 ![Identity is the ultimate infrastructure: the bridge between culture and code](viz-identity-bridge-1200x620.png)
 

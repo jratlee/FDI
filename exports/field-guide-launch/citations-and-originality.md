@@ -24,8 +24,8 @@ The traceable lineage: **~500–1,600 ads/day in the 1970s** → **up to ~5,000/
 
 ### 3. "Attention span fell from 12 seconds to 2.5 seconds"
 **Verdict: CONFLATION OF TWO DIFFERENT CLAIMS. The 12s baseline is a debunked myth.**
-The "12 seconds in 2000 → 8 seconds" framing traces to a 2015 Microsoft Canada infographic whose underlying numbers Microsoft never produced, and it has been repeatedly debunked (BBC, Temple Law AER, others). The **2.5 seconds** figure is real but measures something different: **average active (eyes-on) attention to a digital ad**, from Dentsu's Attention Economy program with Lumen Research eye tracking (typical display range ~1.5–2.5s).
-**Use instead:** "the average digital ad earns ~2.5 seconds of active attention", and drop the 12-second baseline entirely. · *Source: [Dentsu · The Attention Economy](https://www.dentsu.com/us/en/attention-economy) (with [Lumen Research](https://lumen-research.com/) eye-tracking benchmarks).*
+The "12 seconds in 2000 → 8 seconds" framing traces to a 2015 Microsoft Canada infographic whose underlying numbers Microsoft never produced, and it has been repeatedly debunked (BBC, Temple Law AER, others). The **2.5 seconds** figure is the attention-memory threshold identified by researcher Dr Karen Nelson-Field: the minimum active viewing time an ad requires before memory encoding begins. Nelson-Field's company Amplified publishes the primary explanation of this threshold on its insight page.
+**Use instead:** "the average digital ad earns ~2.5 seconds of active attention", and drop the 12-second baseline entirely. · *Source: [Dr Karen Nelson-Field / Amplified · Why Does the Attention-Memory Threshold Matter?](https://www.amplified.co/insight/why-does-the-attention-memory-threshold-matter)*
 
 ### 4. "75.2% of South Africans are online"
 **Verdict: SLIGHTLY OFF / STALE.**
@@ -70,7 +70,7 @@ Coined by **Alice Lassman** (British economist / Gen Z researcher), popularized 
 |---|---|---|
 | $1.08T ad spend 2026 | **$1.3T** | [WARC, Dec 2025](https://www.warc.com/en/article/warc-global-ad-forecasts-upgraded-but-growth-concentrated-within-big-tech-9ed8089870e64fbe84b6bf2b1f8d6442) |
 | 50,000 ads/day vs 2,000 | **up to 10,000/day vs ~500 (1970s)** | [CBS News / Yankelovich](https://www.cbsnews.com/news/cutting-through-advertising-clutter/) + industry estimates |
-| 12s → 2.5s attention span | **~2.5s active ad attention** (no 12s baseline) | [Dentsu](https://www.dentsu.com/us/en/attention-economy) / [Lumen Research](https://lumen-research.com/) |
+| 12s → 2.5s attention span | **~2.5s active ad attention** (no 12s baseline) | [Dr Karen Nelson-Field / Amplified](https://www.amplified.co/insight/why-does-the-attention-memory-threshold-matter) |
 | 75.2% SA online | **78.9%** | [DataReportal Digital 2025](https://datareportal.com/reports/digital-2025-south-africa) |
 | 40% digital share (SA) | **>50% share, +21.5% YoY** | [IAB SA](https://iabsa.net/iab-news/2024-iab-sa-pwc-internet-advertising-revenue-report-shows-growth-in-business-oriented-trends/) / [PwC](https://www.pwc.co.za/en/publications/entertainment-and-media-outlook.html) |
 | 70% budgets on acquisition | **44% vs 16% acquisition-vs-retention focus** | [Econsultancy](https://econsultancy.com/blog/63321-companies-more-focused-on-acquisition-than-retention-stats) |
