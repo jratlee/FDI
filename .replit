@@ -155,6 +155,7 @@ args = "node site/build.mjs && node site/check-field-guide-bundle.mjs"
 
 [workflows.workflow.metadata]
 outputType = "console"
+isValidation = true
 
 [[workflows.workflow]]
 name = "marcom-starter-pack-check"
@@ -166,6 +167,7 @@ args = "node site/build.mjs && node site/check-marcom-starter-pack.mjs"
 
 [workflows.workflow.metadata]
 outputType = "console"
+isValidation = true
 
 [deployment]
 deploymentTarget = "autoscale"
