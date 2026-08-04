@@ -118,7 +118,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node site/test-commerce-gates.mjs"
+args = "node site/build.mjs && node site/test-commerce-gates.mjs"
 
 [workflows.workflow.metadata]
 isValidation = true
@@ -129,7 +129,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node site/test-cron-link-check.mjs"
+args = "node site/build.mjs && node site/test-cron-link-check.mjs"
 
 [workflows.workflow.metadata]
 isValidation = true
@@ -140,7 +140,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node site/test-cron-silence.mjs"
+args = "node site/build.mjs && node site/test-cron-silence.mjs"
 
 [workflows.workflow.metadata]
 isValidation = true
