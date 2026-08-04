@@ -52,6 +52,10 @@ args = "cron-silence-check-test"
 task = "workflow.run"
 args = "field-guide-bundle-check"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "marcom-starter-pack-check"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -148,6 +152,17 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node site/build.mjs && node site/check-field-guide-bundle.mjs"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "marcom-starter-pack-check"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node site/build.mjs && node site/check-marcom-starter-pack.mjs"
 
 [workflows.workflow.metadata]
 outputType = "console"
