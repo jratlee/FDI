@@ -2154,6 +2154,12 @@ function buildPluginZip() {
 // /assets/fdi-field-guide-launch-bundle.zip — the URL referenced by the
 // field-guide download link.  Building from sources at every build ensures the
 // zip can never silently lag behind updates to the deck PDF or slide PNGs.
+//
+// Concurrency safety: the zip is written to a per-process temp path first,
+// then atomically renamed to the final path.  This means a concurrent build
+// never sees a partially-written or absent zip; the rename is atomic on Linux
+// (same filesystem), so readers always get either the old complete zip or the
+// new complete zip, never a half-built one.
 function buildFieldGuideBundleZip() {
   const srcDir = EXPORTS; // exports/field-guide-launch/
   if (!fs.existsSync(srcDir)) {
@@ -2167,8 +2173,11 @@ function buildFieldGuideBundleZip() {
   }
   const outDir = path.join(DIST, "assets");
   const outZip = path.join(outDir, "fdi-field-guide-launch-bundle.zip");
+  // Use a per-process temp path so concurrent builds never write to the same
+  // file simultaneously.  Clean up any stale temp from a previous crashed run.
+  const tmpZip = `${outZip}.build.${process.pid}`;
   mkdir(outDir);
-  rm(outZip);
+  rm(tmpZip);
   try {
     // Collect root-level files: PDF, PNGs, and MDs (exclude zip files so
     // stale pre-built archives never end up bundled inside the new zip).
@@ -2192,14 +2201,18 @@ function buildFieldGuideBundleZip() {
       console.warn("[build] no files found for field guide bundle, skipping");
       return;
     }
+    // Write to temp path, then rename atomically so the final zip is always complete.
     execFileSync(
       "zip",
-      ["-q", outZip, ...allEntries],
+      ["-q", tmpZip, ...allEntries],
       { cwd: srcDir, stdio: ["ignore", "ignore", "inherit"] },
     );
+    fs.renameSync(tmpZip, outZip);
     const kb = Math.round(fs.statSync(outZip).size / 1024);
     console.log(`[build] field guide bundle → dist/assets/fdi-field-guide-launch-bundle.zip (${kb} KB)`);
   } catch (err) {
+    // Clean up the temp file if something went wrong mid-build.
+    rm(tmpZip);
     console.warn("[build] field guide bundle zip build failed:", err.message);
   }
 }
@@ -2210,6 +2223,8 @@ function buildFieldGuideBundleZip() {
 // Building from sources at every build ensures the zip can never drift from the
 // markdown copy (the near-miss that prompted this: the old product name was still
 // inside the zip after a rename because only the static file was forgotten).
+//
+// Concurrency safety: same atomic temp-then-rename pattern as buildFieldGuideBundleZip.
 function buildStarterPackZip() {
   const srcDir = path.join(ROOT, "exports", "marcom-kit-lead-magnet");
   if (!fs.existsSync(srcDir)) {
@@ -2218,8 +2233,9 @@ function buildStarterPackZip() {
   }
   const outDir = path.join(DIST, "assets");
   const outZip = path.join(outDir, "fdi-marcom-starter-pack.zip");
+  const tmpZip = `${outZip}.build.${process.pid}`;
   mkdir(outDir);
-  rm(outZip);
+  rm(tmpZip);
   try {
     // Collect only .md files so stray editor artefacts or OS metadata never
     // slip into the download.
@@ -2231,14 +2247,17 @@ function buildStarterPackZip() {
       console.warn("[build] no .md files in marcom-kit-lead-magnet/, skipping starter pack zip");
       return;
     }
+    // Write to temp path, then rename atomically so the final zip is always complete.
     execFileSync(
       "zip",
-      ["-q", outZip, ...mdFiles],
+      ["-q", tmpZip, ...mdFiles],
       { cwd: srcDir, stdio: ["ignore", "ignore", "inherit"] },
     );
+    fs.renameSync(tmpZip, outZip);
     const kb = Math.round(fs.statSync(outZip).size / 1024);
     console.log(`[build] starter pack → dist/assets/fdi-marcom-starter-pack.zip (${kb} KB)`);
   } catch (err) {
+    rm(tmpZip);
     console.warn("[build] starter pack zip build failed:", err.message);
   }
 }
