@@ -13,6 +13,7 @@ import {
   sendPendingSignupNotification,
   sendKeyRecoveryEmail,
 } from "./email.mjs";
+import { safeEmailOrigin } from "./email-origin.mjs";
 import { runAudit } from "../skillfoundry/engine/audit.mjs";
 import { validateReport } from "../skillfoundry/schema/validate.mjs";
 import {
@@ -65,6 +66,19 @@ const ADMIN_TOKEN = process.env.WAITLIST_ADMIN_TOKEN || "";
 // Falls back to deriving from the request only for local / dev contexts where
 // the env var is not configured.
 const SITE_ORIGIN = (process.env.SITE_ORIGIN || "").replace(/\/+$/, "");
+// True when running as a Replit deployment (autoscale / reserved-VM).
+// Used by safeEmailOrigin to fail closed when SITE_ORIGIN is absent.
+const IS_PRODUCTION = !!process.env.REPLIT_DEPLOYMENT;
+
+if (IS_PRODUCTION && !SITE_ORIGIN) {
+  console.error(
+    "[serve] FATAL: SITE_ORIGIN is not set in the deployment environment. " +
+      "Email URLs cannot be constructed safely without it. " +
+      "Add SITE_ORIGIN=https://falsedawn.industries to the deployment secrets and redeploy."
+  );
+  process.exit(1);
+}
+
 // CRON_SECRET protects /api/cron/link-check from arbitrary callers.
 // If unset, the endpoint is disabled (404). Set it to any random string and
 // pass it as the `secret` query param or Authorization: Bearer header when
@@ -650,9 +664,9 @@ async function handleWaitlist(req, res) {
     // Best-effort confirmation email. Runs after the response is sent and never
     // blocks or fails the signup.
     if (mail && mail.confirm_token) {
-      const confirmUrl = `${reqOrigin(req)}/api/waitlist/confirm?token=${encodeURIComponent(mail.confirm_token)}`;
+      const confirmUrl = `${safeEmailOrigin(req, SITE_ORIGIN, IS_PRODUCTION)}/api/waitlist/confirm?token=${encodeURIComponent(mail.confirm_token)}`;
       const unsubscribeUrl = mail.unsub_token
-        ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(mail.unsub_token)}`
+        ? `${safeEmailOrigin(req, SITE_ORIGIN, IS_PRODUCTION)}/unsubscribe?token=${encodeURIComponent(mail.unsub_token)}`
         : "";
       sendConfirmationRequest({
         email,
@@ -821,7 +835,7 @@ async function handleConfirm(req, res, urlObj) {
 
   if (confirmed) {
     const unsubscribeUrl = row.unsub_token
-      ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
+      ? `${safeEmailOrigin(req, SITE_ORIGIN, IS_PRODUCTION)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
       : "";
     // Welcome email + team notification only fire now, on a proven address.
     sendWelcomeEmails({ email: row.email, source: row.source, unsubscribeUrl, meta: row.meta || null }).catch(
@@ -1467,9 +1481,9 @@ ${dnotice}
         [confirmToken, row.id],
       );
       // Best-effort — fire after redirect.
-      const confirmUrl = `${reqOrigin(req)}/api/waitlist/confirm?token=${encodeURIComponent(confirmToken)}`;
+      const confirmUrl = `${safeEmailOrigin(req, SITE_ORIGIN, IS_PRODUCTION)}/api/waitlist/confirm?token=${encodeURIComponent(confirmToken)}`;
       const unsubscribeUrl = row.unsub_token
-        ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
+        ? `${safeEmailOrigin(req, SITE_ORIGIN, IS_PRODUCTION)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
         : "";
       // Need source for the email copy; fetch it separately.
       const srcRow = await pool.query(`SELECT source FROM waitlist_signups WHERE id = $1`, [row.id]);
@@ -1543,7 +1557,7 @@ ${dnotice}
       if (didConfirm) {
         const source = row.source || "site";
         const unsubscribeUrl = row.unsub_token
-          ? `${reqOrigin(req)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
+          ? `${safeEmailOrigin(req, SITE_ORIGIN, IS_PRODUCTION)}/unsubscribe?token=${encodeURIComponent(row.unsub_token)}`
           : "";
         sendWelcomeEmails({ email, source, unsubscribeUrl, meta: row.meta || null }).catch(
           (err) => console.error("[admin] manual confirm welcome email failed:", err.message),

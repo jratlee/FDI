@@ -209,6 +209,9 @@ MARCOMKIT_TIER2_ANNUAL_PRICE_ID = "price_1Tyz00Ir6q4Tm9bcq6qAUMiC"
 MARCOMKIT_TIER2_MONTHLY_PRICE_ID = "price_1TyyzzIr6q4Tm9bcw0qRdPar"
 MARCOMKIT_TIER3_PRICE_ID = "price_1Tyz01Ir6q4Tm9bcHaicqQ4z"
 
+[userenv.production]
+SITE_ORIGIN = "https://falsedawn.industries"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
@@ -216,6 +219,10 @@ externalPort = 80
 [[ports]]
 localPort = 5091
 externalPort = 3001
+
+[[ports]]
+localPort = 5092
+externalPort = 5173
 
 [[ports]]
 localPort = 5093
