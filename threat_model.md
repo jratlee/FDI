@@ -17,14 +17,15 @@ Users: anonymous visitors, email waitlist subscribers, paid product buyers (Skil
 - **Product download ZIPs** — MarCom OS playbook, Davos Decision Kit, SkillFoundry plugin; served from `site/private/`. Gate bypass gives away paid content for free.
 - **OpenAI API key** — used only by the defrag report path; uncontrolled access burns API budget.
 - **Davos demo password (`DAVOS_DEMO_PASSWORD`)** — gates a password-protected demo page and its downloadable kit, intended for a single prospect (The Content Bureau).
+- **Waitlist email tokens (`confirm_token`, `unsub_token`)** — short-lived secrets embedded in outbound emails; theft enables phishing/token reuse.
 
 ## Trust Boundaries
 
-- **Public internet → Node server** — all inbound HTTP. The server is deployed on Replit autoscale behind Replit's reverse proxy; TLS is handled by the platform. The raw `Host` and `X-Forwarded-*` headers arrive from Replit's proxy but can be influenced by attacker-supplied values (see Stripe redirect finding).
+- **Public internet → Node server** — all inbound HTTP. The server is deployed on Replit autoscale behind Replit's reverse proxy; TLS is handled by the platform. The raw `Host` and `X-Forwarded-*` headers arrive from Replit's proxy but can be influenced by attacker-supplied values if proxy sanitization is incomplete.
 - **Node server → PostgreSQL** — direct `pg` pool connection. All queries use parameterized statements. Compromise of the connection string gives full DB access.
 - **Node server → Stripe API** — server-to-server with `STRIPE_SECRET_KEY`. Webhooks are signature-verified (`stripe.webhooks.constructEvent`).
 - **Node server → OpenAI API** — used only for the admin-gated defrag report generation path. Document content is fenced and HTML-escaped before any LLM interaction.
-- **Node server → Resend** — transactional email (confirmation, recovery, team notifications). Uses `RESEND_API_KEY`.
+- **Node server → Resend** — transactional email (confirmation, recovery, team notifications). Uses `RESEND_API_KEY`. Outbound email URLs are derived from `reqOrigin(req)` in the waitlist paths — see Spoofing section.
 - **Anonymous visitor / authenticated admin** — the only privilege boundary. The admin panel is protected by a single `WAITLIST_ADMIN_TOKEN` bearer secret (cookie or Authorization header). There is no per-user authentication; any holder of the token has full admin access.
 - **Public routes vs gated download routes** — product download endpoints require a valid, active, product-matched license key verified server-side.
 
@@ -37,11 +38,10 @@ Users: anonymous visitors, email waitlist subscribers, paid product buyers (Skil
 - Davos demo: `/davos-kit-demo` — gated by `DAVOS_DEMO_PASSWORD`
 
 **Highest-risk code areas:**
-- `site/serve.mjs` lines 870–880 (`isAdmin` — admin auth including URL token path)
-- `site/serve.mjs` lines 1879–1883 (`reqOrigin` — trusts Host header; embedded in Stripe redirect URLs)
-- `site/serve.mjs` lines 1886–1931 (`handleCheckout` — no rate limit)
-- `site/serve.mjs` lines 1973–2110 (`handleValidate`, `handleRun` — no rate limit, enumeration oracle)
-- `site/commerce.mjs` lines 305–334 (`createCheckoutSession` — `success_url`/`cancel_url` constructed from caller-supplied origin)
+- `site/serve.mjs` lines 1136–1148 (`isAdmin` — now cookie + Bearer only; `?token=` URL path removed)
+- `site/serve.mjs` lines 653, 655, 824, 1470, 1472, 1546 (`reqOrigin(req)` without `SITE_ORIGIN` guard in waitlist email paths)
+- `site/serve.mjs` lines 2393–2397 (`reqOrigin` — trusts Host header; used directly in waitlist email URL construction)
+- `site/commerce.mjs` lines 305–334 (`createCheckoutSession` — now receives `SITE_ORIGIN || reqOrigin(req)` from caller)
 - `site/defrag.mjs` lines 152–179 (LLM system prompt, document fencing, prompt injection mitigations)
 
 **Public vs authenticated vs admin surfaces:**
@@ -59,11 +59,15 @@ Users: anonymous visitors, email waitlist subscribers, paid product buyers (Skil
 
 ### Spoofing
 
-The admin panel uses a single shared secret token (`WAITLIST_ADMIN_TOKEN`). The `isAdmin()` function accepts this token via HTTP cookie, Authorization Bearer header, or `?token=` URL query parameter. The URL-parameter path exposes the raw secret in server logs and browser history. There is no session rotation, MFA, or login-attempt audit log.
+The admin panel uses a single shared secret token (`WAITLIST_ADMIN_TOKEN`). The `isAdmin()` function now accepts only an HMAC-derived session cookie (`wl_admin`) or a raw Bearer token in the `Authorization` header — the `?token=` URL query-parameter path was removed to prevent credential exposure in server logs and browser history.
 
-The Davos demo gate derives a session token via HMAC(password, fixed-string) and stores it in a cookie. This is cryptographically sound but tied to a single static password with no rotation mechanism.
+The admin cookie stores `HMAC(ADMIN_TOKEN, "admin-gate-v1")` rather than the raw token. Rotating `ADMIN_TOKEN` instantly invalidates all sessions. Timing-safe comparison is used throughout.
 
-**Required guarantees:** Admin token must never appear in URLs. `WAITLIST_ADMIN_TOKEN` must be a high-entropy random string (≥32 bytes). The `?token=` query-parameter path in `isAdmin()` should be removed.
+The Davos demo gate derives a session token via `HMAC(password, "davos-demo-gate-v2:" + expiry)` with an expiry timestamp, stored in an HttpOnly/Secure/SameSite=Strict cookie. Cryptographically sound; tied to a single static password with no rotation mechanism.
+
+**Remaining concern (MEDIUM):** The waitlist signup and key-recovery email paths construct confirmation/unsubscribe URLs using `reqOrigin(req)` directly, without the `SITE_ORIGIN || reqOrigin(req)` guard used by checkout and portal paths. A forged `Host` header on a POST to `/api/waitlist` could poison outbound email links to point to an attacker-controlled domain, leaking `confirm_token` and `unsub_token` values to the attacker. See vulnerability `host-header-email-url-poisoning-waitlist`.
+
+**Required guarantees:** `SITE_ORIGIN` must be set to `https://falsedawn.industries` in production environment secrets. All `reqOrigin(req)` call sites in email-sending paths should be changed to `SITE_ORIGIN || reqOrigin(req)` for consistency.
 
 ### Tampering
 
@@ -73,22 +77,26 @@ The LLM defrag report path fences user-supplied document content between `<<<DOC
 
 ### Information Disclosure
 
-The `reqOrigin()` function trusts the attacker-supplied `Host` header and embeds the result into Stripe checkout `success_url` and `cancel_url`. A spoofed host causes Stripe to redirect the buyer to an attacker domain after payment, leaking the `CHECKOUT_SESSION_ID`. The key-recovery email path already applies the correct fix (`SITE_ORIGIN || reqOrigin(req)`); the checkout and portal paths do not.
+The `reqOrigin()` function trusts the attacker-supplied `Host` header. The checkout and portal paths protect against this with `SITE_ORIGIN || reqOrigin(req)`; waitlist email paths do not (see Spoofing above).
 
-The `/api/skillfoundry/validate` endpoint returns distinguishable responses for "key not found" vs "key found but inactive vs active", enabling key enumeration with no rate limit.
+The `/api/skillfoundry/validate` endpoint now returns a uniform `402 { ok: false, active: false, status: "inactive" }` for both "key not found" and "found-but-inactive" cases, closing the key-enumeration oracle.
 
-**Required guarantees:** `SITE_ORIGIN` must be set and used unconditionally in `createCheckoutSession` and portal redirect paths. Validate endpoint responses must not distinguish between absent and inactive keys.
+No sensitive fields (unsub_token, confirm_token, key values) appear in admin list API responses — they are explicitly omitted per code comments.
 
 ### Denial of Service
 
-`POST /api/checkout` (Stripe session creation), `POST /api/skillfoundry/validate`, and `POST /api/skillfoundry/run` have no per-IP rate limit. The waitlist (`/api/waitlist`) and key-recovery (`/api/manage`) paths are correctly rate-limited with Postgres-backed `rate-limiter-flexible` instances.
+All public POST endpoints now have per-IP rate limits backed by Postgres `rate-limiter-flexible` with in-memory insurance limiters:
+- `/api/waitlist`: 8 attempts/hour
+- `/api/manage`: 5 attempts/15 minutes
+- `/api/checkout`: 20 attempts/hour
+- `/api/skillfoundry/validate`: 15 attempts/15 minutes
+- `/api/skillfoundry/run`: 10 attempts/hour
+- `/api/portal`: 10 attempts/hour
 
-An attacker can spam `/api/checkout` to exhaust Stripe API quota and flood the Stripe dashboard. `/api/skillfoundry/validate` can be used for key brute-force with no throttle.
-
-**Required guarantees:** All public POST endpoints that touch external APIs or perform non-trivial DB queries must have per-IP rate limits consistent with the existing `waitlistLimiter` pattern.
+Rate-limit counters are shared across autoscale instances via Postgres, preventing budget reset on restart.
 
 ### Elevation of Privilege
 
 All admin routes check `isAdmin()` before performing any action. Download endpoints verify both `product` and `tier` fields from the DB before serving gated files (cross-product key reuse is blocked). Stripe webhook processing uses `stripe.webhooks.constructEvent` signature verification and a DB-enforced idempotency ledger. No privilege-escalation paths were identified.
 
-The `wl_admin` cookie stores the raw admin token value (not a signed session reference). Theft of the cookie (e.g., via server infrastructure access) directly reveals the admin secret rather than just a session handle.
+The `wl_admin` cookie stores the HMAC-derived session token (not the raw admin secret). Bearer token auth transmits the raw `ADMIN_TOKEN` over HTTPS in the Authorization header, which is acceptable given TLS termination by Replit's proxy, but means the raw secret appears in the request if logs capture auth headers.
