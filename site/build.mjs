@@ -344,10 +344,16 @@ function home() {
         <div class="card-foot"><a class="link-arrow" href="/field-guide">Read the guide <span class="arrow">→</span></a></div>
       </article>
       <article class="card">
-        <span class="tag">The series · All three guides live</span>
-        <h3>Aggregated · Decentralized · Autonomous</h3>
-        <p>Three field guides map the markets reshaping marketing, and all three are live: Field Guide 002 on today's platforms and the AI platforms whose rules are not yet understood, Field Guide 003 on crypto-powered decentralized networks, and Field Guide 004 on agent-to-agent marketplaces scaling toward the size of Meta and Google today.</p>
-        <div class="card-foot"><a class="link-arrow" href="/series">See the series <span class="arrow">→</span></a></div>
+        <span class="tag">Field Guide 003 · Decentralized</span>
+        <h3>The Network Is the Product</h3>
+        <p>In crypto-powered networks there is no feed to buy and no platform to petition. Farcaster, Lens, ENS, wallet-based identity, and the three open agent-commerce primitives that let agents discover and pay each other onchain.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide-003">Read Field Guide 003 <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card featured">
+        <span class="pill">Latest · Field Guide 004 · Autonomous</span>
+        <h3>When the Buyer Is Software</h3>
+        <p>The open protocol stack (MCP, A2A, AP2, x402) is live. Agent-market dynamics, the growth curve toward marketplaces at the scale of Meta and Google, and why machine-legibility advantages compound at machine speed before the window closes.</p>
+        <div class="card-foot"><a class="link-arrow" href="/field-guide-004">Read Field Guide 004 <span class="arrow">→</span></a></div>
       </article>
     </div>
   </div>
