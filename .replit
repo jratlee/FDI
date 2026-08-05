@@ -191,6 +191,9 @@ SITE_BASE_URL = ""
 CRON_SECRET = ""
 SILENCE_THRESHOLD_H = ""
 ALERT_COOLDOWN_H = ""
+VPS_CERTBOT_EMAIL = "john@ratcliffe-lee.com"
+VPS_SSH_HOST = "162.243.115.129"
+VPS_SSH_USER = "root"
 
 [userenv.development]
 CRON_SECRET = "cron-dev-local-only-not-for-production"
