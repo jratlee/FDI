@@ -112,7 +112,7 @@ Notice what this list is not: reach, frequency, impressions. Influence at the ex
 
 ### From SEO to GEO and LEO
 
-Traditional search was a pull ecosystem: engines crawled, ranked ten blue links, and users came to your site. AI answer engines are a push ecosystem: models synthesize training data and retrieval-augmented grounding, then deliver a zero-click answer that may never send the buyer to you at all. The discipline that responds to this is Generative Engine Optimization, or LLM Engine Optimization, mapped in depth by [Profound's GEO framework](https://www.tryprofound.com/resources/articles/generative-engine-optimization-geo-guide-2025) and [Brandpipers' LEO guide](https://brandpipers.com/leo-llm-engine-optimization-the-definitive-guide/).
+Traditional search was a pull ecosystem: engines crawled, ranked ten blue links, and users came to your site. AI answer engines are a push ecosystem: models synthesize training data and retrieval-augmented grounding, then deliver a zero-click answer that may never send the buyer to you at all. The discipline that responds to this is Generative Engine Optimization, or LLM Engine Optimization, mapped in depth by [Profound's GEO framework](https://www.tryprofound.com/articles/generative-engine-optimization-geo-guide-2025).
 
 The mechanics differ from SEO in every column that matters. Trust signals shift from backlinks and keywords to citation authority, entity depth, and brand mentions in reputable third-party sources. Intent shifts from keyword phrases to complex conversational prompts. The success metric shifts from rank and traffic to AI citation frequency and share of voice inside model outputs. And the competition is brutal in a specific way: models typically cite only a handful of domains per answer, so citation authority is close to a zero-sum game.
 
@@ -159,8 +159,7 @@ So the question for your org chart is the same one we ask of every system we map
 - LangChain, "The Art of Loop Engineering" ([langchain.com](https://www.langchain.com/blog/the-art-of-loop-engineering))
 - Addy Osmani, "Loop Engineering" ([addyosmani.com](https://addyosmani.com/blog/loop-engineering/))
 - a16z crypto, "The new comms playbook: show, don't promise" ([a16zcrypto.substack.com](https://a16zcrypto.substack.com/))
-- Profound, "10-step framework for generative engine optimization" ([tryprofound.com](https://www.tryprofound.com/resources/articles/generative-engine-optimization-geo-guide-2025))
-- Brandpipers, "LEO (LLM Engine Optimization): The Definitive Guide" ([brandpipers.com](https://brandpipers.com/leo-llm-engine-optimization-the-definitive-guide/))
+- Profound, "10-step framework for generative engine optimization" ([tryprofound.com](https://www.tryprofound.com/articles/generative-engine-optimization-geo-guide-2025))
 - CodiLime, "Why Open Policy Agent is the missing guardrail for your AI agents" ([codilime.com](https://codilime.com/blog/why-use-open-policy-agent-for-your-ai-agents/))
 - HashiCorp, "Policy as code, explained" ([hashicorp.com](https://www.hashicorp.com/en/blog/policy-as-code-explained))
 - Zhao et al., "Towards Multi-Agent Economies" ([arXiv:2507.19550](https://arxiv.org/abs/2507.19550))

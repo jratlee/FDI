@@ -84,7 +84,7 @@ const GOOGLE_SITE_VERIFICATION = (process.env.GOOGLE_SITE_VERIFICATION || "")
 const BING_SITE_VERIFICATION = (process.env.BING_SITE_VERIFICATION || "")
   .trim()
   .replace(/["<>]/g, "");
-const MCP_URL = "https://modelcontextprotocol.io";
+const MCP_URL = "https://modelcontextprotocol.io/introduction";
 const AS_OF = "2026";
 
 /* Primary sources verified for the Field Guide launch (see
@@ -2495,7 +2495,7 @@ const CONCEPTS = {
       },
       {
         h: "The FDI answer",
-        p: 'Build the gated, citable, machine-legible interface agents can call: an <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP</a>-exposed corpus with provenance, structured so every answer carries its source and confidence. The same callable identity that agents verify over MCP is the identity that travels onchain through the crypto-settlement layer.',
+        p: 'Build the gated, citable, machine-legible interface agents can call: an <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener">MCP</a>-exposed corpus with provenance, structured so every answer carries its source and confidence. The same callable identity that agents verify over MCP is the identity that travels onchain through the crypto-settlement layer.',
       },
     ],
     guide: {
