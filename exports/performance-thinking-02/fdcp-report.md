@@ -1,7 +1,7 @@
 # The Forward-Deployed Communicator
 ### Performance Thinking · On the operator the autonomous market demands
 
-**Attribution note:** Written and published by False Dawn Industries. This report synthesizes public research and talks from AWS Events, the Financial Times, Gartner (as reported by Ramp), Anthropic's Fiona Fung, LangChain, Addy Osmani, a16z crypto, Profound, Brandpipers, CodiLime, and Zhao et al. (arXiv:2507.19550). All sources are credited inline. Nothing here is legal or financial advice.
+**Attribution note:** Written and published by [False Dawn Industries](https://falsedawn.industries/). This report synthesizes public research and talks from AWS Events, the Financial Times, Gartner (as reported by Ramp), Anthropic's Fiona Fung, LangChain, Addy Osmani, a16z crypto, Profound, Brandpipers, CodiLime, and Zhao et al. (arXiv:2507.19550). All sources are credited inline. Nothing here is legal or financial advice.
 
 ---
 
@@ -70,7 +70,7 @@ The FDCP does not sit inside these loops doing the work. They engineer the loops
 
 One pod running loops is a pilot. Scaling to many pods without chaos requires a specific operating structure: hyperconverged FDCP pods connected to a shared, centrally governed platform that handles runtime, memory, security, and observability for every pod at once. The pods stay small, fast, and autonomous. The platform stays boring, consistent, and safe. Each new pod, a growth pod, a narrative pod, a partnerships pod, inherits the guardrails on day one instead of reinventing them.
 
-This is the operating model we build toward in MarCom OS, and it only works because of the layer underneath it.
+This is the operating model we build toward in [MarCom OS](https://falsedawn.industries/marcom-kit), and it only works because of the layer underneath it.
 
 ### Policy as Code: the Riverbank
 
@@ -164,4 +164,4 @@ So the question for your org chart is the same one we ask of every system we map
 - HashiCorp, "Policy as code, explained" ([developer.hashicorp.com](https://developer.hashicorp.com/sentinel/docs/concepts/policy-as-code))
 - Zhao et al., "Towards Multi-Agent Economies" ([arXiv:2507.19550](https://arxiv.org/abs/2507.19550))
 
-MCP, where referenced in FDI's products, is the Model Context Protocol, an open standard. False Dawn Industries is not affiliated with or endorsed by any company named above.
+MCP, where referenced in FDI's products, is the Model Context Protocol, an open standard. [False Dawn Industries](https://falsedawn.industries/) is not affiliated with or endorsed by any company named above.

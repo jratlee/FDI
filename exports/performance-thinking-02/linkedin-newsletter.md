@@ -15,7 +15,7 @@ Meanwhile the buyer itself is changing. Analysts tracking agentic commerce expec
 
 The operator built for this market is what we call the Forward-Deployed Communications Professional, the FDCP. Borrowed from engineering's forward-deployed model: one person who owns an end-to-end workflow, runs a fleet of AI agents as on-demand experts, and stands at the exact point where rising human skepticism meets machine discoverability.
 
-In the full report we map the whole system:
+In [the full report](https://falsedawn.industries/fdcp) we map the whole system:
 
 - The four hiring traits that outlast any certification: first-principles thinking, systems curiosity, high-fidelity taste, and orchestration of both people and agents.
 - The Hourglass org shape: protect your 2034 senior pipeline, then arm the junior base with agents to expand margin and customer surface area while the Diamond trap quietly eats both.
@@ -27,7 +27,7 @@ In the full report we map the whole system:
 Every claim is sourced by name: AWS, the Financial Times, Gartner via Ramp, Anthropic's Fiona Fung, LangChain, Addy Osmani, a16z crypto, and the AgentCards research team.
 
 **CTA (single):**
-Read the full report, visuals, and deck at falsedawn.industries/fdcp
+Read the full report, visuals, and deck at [falsedawn.industries/fdcp](https://falsedawn.industries/fdcp)
 
 **Hashtags:**
 #MarketingLeadership #AgenticAI #OrgDesign #CMO #GEO
