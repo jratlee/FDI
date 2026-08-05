@@ -214,7 +214,7 @@ SITE_ORIGIN = "https://falsedawn.industries"
 
 [[ports]]
 localPort = 5000
-externalPort = 80
+externalPort = 5000
 
 [[ports]]
 localPort = 5091
@@ -226,20 +226,20 @@ externalPort = 5173
 
 [[ports]]
 localPort = 5093
-externalPort = 4200
-
-[[ports]]
-localPort = 5094
-externalPort = 5000
-
-[[ports]]
-localPort = 5095
-externalPort = 3002
-
-[[ports]]
-localPort = 5096
 externalPort = 3003
 
 [[ports]]
-localPort = 23636
+localPort = 5094
+externalPort = 4200
+
+[[ports]]
+localPort = 5095
 externalPort = 3000
+
+[[ports]]
+localPort = 5096
+externalPort = 80
+
+[[ports]]
+localPort = 23636
+externalPort = 3002

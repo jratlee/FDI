@@ -53,6 +53,7 @@ touching that area):**
 - `docs/commerce.md` — shared Stripe engine: SkillFoundry, MarCom OS, Davos demo + password gate
 - `docs/admin-tools.md` — defrag report generator, pipeline tracker, waitlist admin
 - `docs/export-assets.md` — outreach kit, Davos Decision Kit source assets + proposal
+- `docs/content-distribution.md` — **foundational intelligence**: Ghost/Steph Smith framework mapped to FDI; three-channel taxonomy (Owned/Earned/Paid); 1:1 creation:distribution rule; six-part model → FDI channel mapping; per-Field-Guide distribution checklist; FDI audience/channel/message/success answers. Read before any growth, content, or outreach task.
 
 ## The public site (`site/`) — summary
 Dependency-light static site. `build.mjs` emits ten pages + `/llms.txt` +
