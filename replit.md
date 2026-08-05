@@ -210,6 +210,8 @@ bodies. The canonical URLs are:
 | Field Guide 003 (Decentralized) | https://falsedawn.industries/field-guide-003 |
 | Field Guide 004 (Autonomous) | https://falsedawn.industries/field-guide-004 |
 | The series (all four) | https://falsedawn.industries/series |
+| The FDCP Report (Performance Thinking 02) | https://falsedawn.industries/fdcp |
+| The Hourglass Bet (Performance Thinking 01) | https://falsedawn.industries/hourglass |
 | SkillFoundry | https://falsedawn.industries/skillfoundry |
 | MarCom OS | https://falsedawn.industries/marcom-kit |
 | System Dynamics Engine | https://falsedawn.industries/engine |

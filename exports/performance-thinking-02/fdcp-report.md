@@ -50,7 +50,7 @@ The shape that survives is the Hourglass, and it is where the FDCP lives:
 
 Read correctly, the base is not a cost center held out of principle. It is an offensive position. Arm the junior layer with the same agent fleets the pods run and the economics invert: work that once priced out at senior rates ships from the base at junior cost, margin expands instead of shrinking, and the organization can take on more clients, more segments, and more markets without adding senior headcount. The Diamond cuts the base to protect this quarter's margin. The Hourglass upskills the base to grow next decade's surface area.
 
-Holding a junior base on the balance sheet while competitors post record margins still takes conviction. That conviction is now a core competency of the modern CMO. We made the full org-design argument in our earlier report, The Hourglass Bet; this one is about the operator that shape exists to produce.
+Holding a junior base on the balance sheet while competitors post record margins still takes conviction. That conviction is now a core competency of the modern CMO. We made the full org-design argument in our earlier report, [The Hourglass Bet](https://falsedawn.industries/hourglass); this one is about the operator that shape exists to produce.
 
 ## Part 2: The process
 

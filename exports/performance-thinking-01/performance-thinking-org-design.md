@@ -64,7 +64,7 @@ If I were running a MarCom department today, my next 90 days would look like the
 - **Days 31 to 60:** Ship a Verification Loop first, then an SEO/GEO loop with automated rollback. Strip visionary rhetoric out of every pending campaign and re-sequence it around proof.
 - **Days 61 to 90:** Move to pods plus a shared platform. Retrain the SEO and PR teams on citation authority instead of traffic. And launch the sandboxed junior program, because that is the whole bet.
 
-This is the thesis I'm building False Dawn Industries around: structure as code, not slides. We shipped the blueprint as a working kit, MarCom OS, with the Hourglass org design, the capability calculator, and the riverbank governance templates inside it. If you want it when it ships, join the waitlist at falsedawn.industries/marcom-kit.
+This is the thesis I'm building False Dawn Industries around: structure as code, not slides. We shipped the blueprint as a working kit, MarCom OS, with the Hourglass org design, the capability calculator, and the riverbank governance templates inside it. If you want it when it ships, join the waitlist at [falsedawn.industries/marcom-kit](https://falsedawn.industries/marcom-kit).
 
 Credit where it belongs: the frameworks above draw on an AWS Events talk on agentic team structures, Fiona Fung at Anthropic, LangChain and Addy Osmani on loop engineering, a16z crypto's comms playbook, the Financial Times' New Dimensions of Influence study, CodiLime, BigID, Profound, and Brandpipers. Sources are named in the deck.
 

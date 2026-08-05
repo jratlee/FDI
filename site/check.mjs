@@ -28,6 +28,7 @@ const EXPECTED_ROUTES = [
   "/field-guide-003",
   "/field-guide-004",
   "/fdcp",
+  "/hourglass",
   "/skillfoundry",
   "/marcom-kit",
   "/topcall",
@@ -43,6 +44,7 @@ const EXPECTED_ROUTES = [
 const EXPECTED_SLIDES = 13;
 const EXPECTED_SLIDES_FDCP = 12;
 const EXPECTED_SLIDES_004 = 13;
+const EXPECTED_SLIDES_PT01 = 12;
 
 const errors = [];
 const fail = (msg) => errors.push(msg);
@@ -258,6 +260,16 @@ const slideCountFdcp = fs.existsSync(slidesDirFdcp)
   : 0;
 if (slideCountFdcp !== EXPECTED_SLIDES_FDCP) {
   fail(`expected ${EXPECTED_SLIDES_FDCP} FDCP deck slides, found ${slideCountFdcp}`);
+}
+const deckPdfPt01 = path.join(DIST, "assets", "fdi-performance-thinking-01-deck.pdf");
+if (!fs.existsSync(deckPdfPt01))
+  fail("missing deck PDF: /assets/fdi-performance-thinking-01-deck.pdf");
+const slidesDirPt01 = path.join(DIST, "assets", "deck-slides-pt01");
+const slideCountPt01 = fs.existsSync(slidesDirPt01)
+  ? fs.readdirSync(slidesDirPt01).filter((f) => f.endsWith(".png")).length
+  : 0;
+if (slideCountPt01 !== EXPECTED_SLIDES_PT01) {
+  fail(`expected ${EXPECTED_SLIDES_PT01} Hourglass Bet deck slides, found ${slideCountPt01}`);
 }
 const deckPdf004 = path.join(DIST, "assets", "fdi-field-guide-004-deck.pdf");
 if (!fs.existsSync(deckPdf004)) fail("missing deck PDF: /assets/fdi-field-guide-004-deck.pdf");

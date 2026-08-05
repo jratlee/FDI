@@ -12,6 +12,7 @@ const SRC = path.join(__dirname, "src");
 const EXPORTS = path.join(ROOT, "exports", "field-guide-launch");
 const EXPORTS002 = path.join(ROOT, "exports", "field-guide-002-aggregated");
 const EXPORTS003 = path.join(ROOT, "exports", "field-guide-003-decentralized");
+const EXPORTSPT01 = path.join(ROOT, "exports", "performance-thinking-01");
 const EXPORTSPT02 = path.join(ROOT, "exports", "performance-thinking-02");
 const EXPORTS004 = path.join(ROOT, "exports", "field-guide-004-autonomous");
 const FONTS = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "fonts");
@@ -736,6 +737,90 @@ function fieldGuide003({ title, subtitle, attribution, bodyHtml }, slideFiles) {
     body,
     canonical: `${SITE_URL}/field-guide-003`,
     ogImage: "/assets/fg003-cover-1200x627.png",
+  });
+}
+
+/* Performance Thinking 01: The Hourglass Bet. Its source markdown has no
+   metadata/attribution block or "---" divider, so main() strips the title and
+   subtitle lines and renders the rest directly. */
+function hourglassPage({ title, subtitle, bodyHtml }, slideFiles) {
+  const body = `
+<article class="article">
+  <div class="wrap">
+    <div class="article-head">
+      <span class="eyebrow">Growth Cartography · Performance Thinking 01 · Org Design</span>
+      <h1>${title}</h1>
+      <p class="sub">${subtitle}</p>
+      <p class="byline">Written and published by False Dawn Industries.</p>
+    </div>
+    <div class="article-cover">
+      <img src="/assets/pt-cover-1280x720.png" alt="False Dawn Industries Performance Thinking 01: The Hourglass Bet. Org design for the agentic era." width="1280" height="720" />
+    </div>
+    <div class="prose">
+      ${bodyHtml}
+    </div>
+  </div>
+</article>
+
+<section class="deck section" id="deck">
+  <div class="wrap">
+    <div class="section-hd">
+      <span class="eyebrow">The deck</span>
+      <h2>The Hourglass Bet in 12 slides</h2>
+      <p>The full deck, built on the reusable FDI slide system. View it inline, download the PDF, or browse the slides.</p>
+    </div>
+    <div class="deck-frame">
+      <iframe src="/assets/fdi-performance-thinking-01-deck.pdf#view=FitH" title="FDI Performance Thinking 01 deck (PDF)" loading="lazy"></iframe>
+    </div>
+    <div class="deck-actions">
+      <form class="waitlist js-capture" data-source="hourglass-deck" data-subject="Hourglass Bet deck PDF" data-download="/assets/fdi-performance-thinking-01-deck.pdf" data-mail-body="Please send me the FDI Hourglass Bet deck PDF." novalidate style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <label class="sr-only" for="hourglass-deck-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="hourglass-deck-email" name="email" placeholder="you@company.com" autocomplete="email" required style="flex:1;min-width:200px;" />
+        <button class="btn btn-primary" type="submit">Download the deck (PDF) <span class="arrow">↓</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+    </div>
+    <div class="slides-strip">
+      ${slidesStrip(slideFiles, "deck-slides-pt01")}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="related">
+  <div class="wrap">
+    <div class="grid cols-2">
+      <article class="card">
+        <span class="tag">The sequel</span>
+        <h3>The Forward-Deployed Communicator</h3>
+        <p>Performance Thinking 02: the operator the Hourglass exists to produce. One person, a fleet of agents on a governed platform, and ownership of the whole workflow.</p>
+        <div class="card-foot"><a class="link-arrow" href="/fdcp">Read the FDCP report <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">The kit</span>
+        <h3>MarCom OS</h3>
+        <p>The Hourglass org blueprint, the Use, Compose, Build capability calculator, and the Riverbank governance templates, shipped as a working kit. Structure as code.</p>
+        <div class="card-foot"><a class="link-arrow" href="/marcom-kit">See the kit <span class="arrow">→</span></a></div>
+      </article>
+    </div>
+  </div>
+</section>`;
+  const description =
+    "Why cutting juniors is the org decision that bankrupts you by 2034: the four org shapes, the Hourglass bet, loop engineering, the Riverbank, and a 90-day plan. Report plus 12-slide deck.";
+  return page({
+    title: "The Hourglass Bet: Org Design for the Agentic Era | False Dawn Industries",
+    description,
+    active: "field-guide",
+    jsonLd: articleJsonLd({
+      headline: "The Hourglass Bet",
+      description,
+      image: "/assets/pt-cover-1280x720.png",
+      route: "/hourglass",
+      datePublished: "2026-07-10",
+    }),
+    body,
+    canonical: `${SITE_URL}/hourglass`,
+    ogImage: "/assets/pt-cover-1280x720.png",
   });
 }
 
@@ -2047,6 +2132,22 @@ function copyAssets() {
   for (const f of slideFiles003)
     copy(path.join(slidesDir003, f), path.join(DIST, "assets", "deck-slides-003", f));
 
+  // Performance Thinking 01 (The Hourglass Bet) cover + deck
+  const pt01Cover = path.join(EXPORTSPT01, "images", "pt-cover-1280x720.png");
+  if (fs.existsSync(pt01Cover)) copy(pt01Cover, path.join(DIST, "assets", "pt-cover-1280x720.png"));
+  const pt01Pdf = path.join(EXPORTSPT01, "fdi-performance-thinking-01-deck.pdf");
+  if (fs.existsSync(pt01Pdf))
+    copy(pt01Pdf, path.join(DIST, "assets", "fdi-performance-thinking-01-deck.pdf"));
+  const slidesDirPt01 = path.join(EXPORTSPT01, "deck-slides");
+  const slideFilesPt01 = fs.existsSync(slidesDirPt01)
+    ? fs
+        .readdirSync(slidesDirPt01)
+        .filter((f) => f.endsWith(".png"))
+        .sort()
+    : [];
+  for (const f of slideFilesPt01)
+    copy(path.join(slidesDirPt01, f), path.join(DIST, "assets", "deck-slides-pt01", f));
+
   // Performance Thinking 02 (FDCP) images + deck
   const assetFilesFdcp = [
     "fdcp-cover-1280x720.png",
@@ -2107,7 +2208,7 @@ function copyAssets() {
   const favicon = path.join(ROOT, "artifacts", "mockup-sandbox", "public", "favicon.svg");
   if (fs.existsSync(favicon)) copy(favicon, path.join(DIST, "favicon.svg"));
 
-  return { slideFiles, slideFiles002, slideFiles003, slideFilesFdcp, slideFiles004 };
+  return { slideFiles, slideFiles002, slideFiles003, slideFilesFdcp, slideFiles004, slideFilesPt01 };
 }
 
 // Build the gated Skillfoundry plugin package. It lives OUTSIDE dist/ (which is
@@ -3131,6 +3232,7 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 - The Network Is the Product (${SITE_URL}/field-guide-003): Field Guide 003 on the decentralized market. In crypto-powered networks (Farcaster, Lens, DAOs) there is no feed to buy and no platform to petition — reach is earned through verifiable onchain contribution. Wallet-based identity (ENS + SIWE via wevm/viem) is the portable reputation substrate. Includes the agent-commerce primitives (coinbase/x402, coinbase/agentkit, google-agentic-commerce/AP2), four visuals, and a 13-slide deck.
 - When the Buyer Is Software (${SITE_URL}/field-guide-004): Field Guide 004 on the autonomous market. Agents transacting with agents on the live open protocol stack (MCP, A2A, AP2, x402): agent-market dynamics, the growth curve toward marketplaces at the scale of Meta and Google today, and why machine-legibility advantages compound at machine speed. Includes three data visuals and a 13-slide deck.
 - The Forward-Deployed Communicator (${SITE_URL}/fdcp): the Performance Thinking report on the Forward-Deployed Communications Professional (FDCP), the operator role for agent-mediated markets. One person, a fleet of AI agents on a governed platform, and ownership of the whole workflow: loop engineering, policy as code, a receipts-first proof stack, and machine-to-machine communications. Includes four visuals and a 12-slide deck.
+- The Hourglass Bet (${SITE_URL}/hourglass): Performance Thinking 01, on org design for the agentic era. The four org shapes (Pyramid, Diamond, Inverted Pyramid, Hourglass), why cutting the junior base destroys the pipeline that manufactures senior judgment, loop engineering, the Riverbank governance metaphor, and a compressed 90-day plan. Includes a 12-slide deck.
 
 ## The series
 - Aggregated markets (${SITE_URL}/aggregated): marketing within today's platforms (Meta, Google, TikTok) plus what is not yet understood about AI platforms like ChatGPT; own assets that survive rule changes. Field Guide 002 covers this market in full.
@@ -3625,6 +3727,7 @@ const SITEMAP_ROUTES = [
   "field-guide-003",
   "field-guide-004",
   "fdcp",
+  "hourglass",
   "skillfoundry",
   "marcom-kit",
   "topcall",
@@ -3651,6 +3754,7 @@ function lastModDate() {
     path.join(EXPORTS002, "field-guide-002-article.md"),
     path.join(EXPORTS003, "field-guide-003-article.md"),
     path.join(EXPORTSPT02, "fdcp-report.md"),
+    path.join(EXPORTSPT01, "performance-thinking-org-design.md"),
   ];
   let latest = 0;
   for (const f of sources) {
@@ -4031,7 +4135,7 @@ function renderRoute(active, builder) {
 function main() {
   rm(DIST);
   mkdir(DIST);
-  const { slideFiles, slideFiles002, slideFiles003, slideFilesFdcp, slideFiles004 } = copyAssets();
+  const { slideFiles, slideFiles002, slideFiles003, slideFilesFdcp, slideFiles004, slideFilesPt01 } = copyAssets();
   buildPluginZip();
   buildKitZip();
   buildDavosZip();
@@ -4077,6 +4181,23 @@ function main() {
     path.join(DIST, "field-guide-003.html"),
     fieldGuide003({ ...parsed003, bodyHtml: bodyHtml003 }, slideFiles003),
   );
+  const mdPt01 = fs.readFileSync(
+    path.join(EXPORTSPT01, "performance-thinking-org-design.md"),
+    "utf8",
+  );
+  const pt01Title = (mdPt01.match(/^#\s+(.+)$/m) || [, "The Hourglass Bet"])[1].trim();
+  const pt01Sub = (mdPt01.match(/^###\s+(.+)$/m) || [, ""])[1].trim();
+  const pt01Body = mdPt01
+    .replace(/^#\s+.+$/m, "")
+    .replace(/^###\s+.+$/m, "")
+    .trim();
+  fs.writeFileSync(
+    path.join(DIST, "hourglass.html"),
+    hourglassPage(
+      { title: pt01Title, subtitle: pt01Sub, bodyHtml: renderArticleBody(pt01Body) },
+      slideFilesPt01,
+    ),
+  );
   const mdFdcp = fs.readFileSync(path.join(EXPORTSPT02, "fdcp-report.md"), "utf8");
   const parsedFdcp = parseArticle(mdFdcp);
   const bodyHtmlFdcp = renderArticleBody(parsedFdcp.body);
@@ -4111,7 +4232,7 @@ function main() {
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 16 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFiles003.length}+${slideFilesFdcp.length}+${slideFiles004.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 17 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFiles003.length}+${slideFilesFdcp.length}+${slideFiles004.length}+${slideFilesPt01.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 
