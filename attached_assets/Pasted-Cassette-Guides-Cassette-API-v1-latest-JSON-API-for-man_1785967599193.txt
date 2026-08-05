@@ -1,0 +1,157 @@
+Cassette
+Guides
+
+
+Cassette API
+v1 (latest)
+JSON API for managing cassettes, monitoring, backups, firewall rules, and SSH access programmatically.
+
+Overview
+Base URL (prod): https://cassette.sh
+Base URL (dev): http://localhost:3000
+Versioning: prefixed paths under /api/v1.
+Format: JSON only. Set Content-Type: application/json for request bodies.
+Authentication: organization-scoped API keys.
+Authentication
+Create API keys under "API Keys" and send them as a Bearer token:
+
+Authorization: Bearer <API_KEY>
+Alternatively, send X-Api-Key: <API_KEY>.
+
+Generate an API key (requires org admin)
+Response Shape
+Collections return a data array. Single-resource endpoints return the resource object directly. Async actions may also include a meta object.
+
+Collection
+{
+  "data": [
+    {
+      "id": "inst_123",
+      "name": "autumn-sky-1",
+      "status": "running"
+    }
+  ]
+}
+Async Action
+{
+  "id": "inst_123",
+  "name": "autumn-sky-1",
+  "status": "running",
+  "meta": {
+    "job": "RebootCassetteJob",
+    "accepted_at": "2026-03-14T14:00:00Z"
+  }
+}
+Endpoints
+Identity
+GET /api/v1/me
+Returns the current organization, its users, and the API key metadata for the token used on the request.
+
+curl -s -H "Authorization: Bearer $API_KEY" \
+  $BASE_URL/api/v1/me
+Cassettes
+GET /api/v1/cassettes List cassettes in your organization.
+GET /api/v1/cassettes/:id Fetch one cassette.
+POST /api/v1/cassettes Create a cassette. Required body: plan_id, region_id, image_id.
+PATCH /api/v1/cassettes/:id Update a cassette. Phase 1 supports renaming via name.
+DELETE /api/v1/cassettes/:id Destroy a cassette immediately.
+POST /api/v1/cassettes/:id/start Queue a start request.
+POST /api/v1/cassettes/:id/stop Queue a stop request.
+POST /api/v1/cassettes/:id/reboot Queue a reboot request.
+POST /api/v1/cassettes/:id/clone Queue a clone request. Requires an active subscription.
+POST /api/v1/cassettes/:id/resize Queue a resize. Required body: plan_id.
+POST /api/v1/cassettes/:id/cancel_deletion Cancel a scheduled deletion.
+GET /api/v1/cassettes/:id/metrics Return latest metrics plus a time series. Optional query: period=1h|6h|24h|7d|30d.
+GET /api/v1/cassettes/:id/logs Return system logs for the whole box. Optional query: tail, since, until, grep, case_sensitive.
+Health Checks
+GET /api/v1/cassettes/:cassette_id/health_checks List health checks.
+GET /api/v1/cassettes/:cassette_id/health_checks/:id Fetch one health check.
+POST /api/v1/cassettes/:cassette_id/health_checks Create a health check. Required body: url.
+PATCH /api/v1/cassettes/:cassette_id/health_checks/:id Update url, enabled, check_interval, expected_status, timeout, or failure_threshold.
+DELETE /api/v1/cassettes/:cassette_id/health_checks/:id Remove a health check.
+Backups
+GET /api/v1/cassettes/:cassette_id/backups List backups for a cassette.
+GET /api/v1/cassettes/:cassette_id/backups/:id Fetch one backup.
+POST /api/v1/cassettes/:cassette_id/backups Queue a new backup.
+POST /api/v1/cassettes/:cassette_id/backups/:id/restore Queue a restore from a successful backup.
+DELETE /api/v1/cassettes/:cassette_id/backups/:id Delete a backup.
+Firewall Rules
+GET /api/v1/cassettes/:cassette_id/firewall_rules List firewall rules. Response metadata includes default system rules.
+POST /api/v1/cassettes/:cassette_id/firewall_rules Create a rule. Body: firewall_rule[port], firewall_rule[protocol], optional description, enabled.
+PATCH /api/v1/cassettes/:cassette_id/firewall_rules/:id Update a rule.
+DELETE /api/v1/cassettes/:cassette_id/firewall_rules/:id Remove a rule.
+SSH Keys
+GET /api/v1/ssh_keys List SSH keys for users in your organization.
+POST /api/v1/ssh_keys Create an SSH key. Body: ssh_key[name], ssh_key[public_key], and user_id when the organization has multiple users.
+DELETE /api/v1/ssh_keys/:id Delete an SSH key.
+GET /api/v1/cassettes/:cassette_id/ssh_key_assignments List key assignments for a cassette.
+POST /api/v1/cassettes/:cassette_id/ssh_key_assignments Assign a key. Body: ssh_key_id.
+DELETE /api/v1/cassettes/:cassette_id/ssh_key_assignments/:id Remove a key assignment.
+Scheduled Operations
+GET /api/v1/cassettes/:cassette_id/scheduled_operations List scheduled operations for a cassette.
+POST /api/v1/cassettes/:cassette_id/scheduled_operations Schedule an operation. Required body: operation_type, scheduled_for. For resize operations also include plan_id. Supported types: resize, start, stop, reboot.
+DELETE /api/v1/cassettes/:cassette_id/scheduled_operations/:id Cancel a pending scheduled operation.
+Containers
+GET /api/v1/cassettes/:cassette_id/containers List containers detected on the cassette. Response metadata includes docker_detected and data freshness.
+GET /api/v1/cassettes/:cassette_id/containers/:container_id Fetch one container by full Docker ID or short ID.
+GET /api/v1/cassettes/:cassette_id/containers/:container_id/metrics Return latest container metrics plus a time series. Optional query: period=1h|6h|24h|7d|30d.
+GET /api/v1/cassettes/:cassette_id/containers/:container_id/logs Fetch recent container logs. Optional query: tail, since, until, grep, case_sensitive.
+System Status
+Public status endpoint. No authentication required.
+
+curl -s $BASE_URL/status/api
+Examples
+List Cassettes
+curl -s -H "Authorization: Bearer $API_KEY" \
+  $BASE_URL/api/v1/cassettes
+Rename a Cassette
+curl -s -X PATCH -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"new-name"}' \
+  $BASE_URL/api/v1/cassettes/<CASSETTE_ID>
+Reboot a Cassette
+curl -s -X POST -H "Authorization: Bearer $API_KEY" \
+  $BASE_URL/api/v1/cassettes/<CASSETTE_ID>/reboot
+Fetch Metrics
+curl -s -H "Authorization: Bearer $API_KEY" \
+  "$BASE_URL/api/v1/cassettes/<CASSETTE_ID>/metrics?period=24h"
+Fetch Box Logs
+curl -s -H "Authorization: Bearer $API_KEY" \
+  "$BASE_URL/api/v1/cassettes/<CASSETTE_ID>/logs?tail=200&since=2026-03-14T12:00:00Z&grep=error"
+Create a Firewall Rule
+curl -s -X POST -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"firewall_rule":{"port":3000,"protocol":"tcp","description":"app","enabled":true}}' \
+  $BASE_URL/api/v1/cassettes/<CASSETTE_ID>/firewall_rules
+Assign an SSH Key
+curl -s -X POST -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"ssh_key_id":"<SSH_KEY_ID>"}' \
+  $BASE_URL/api/v1/cassettes/<CASSETTE_ID>/ssh_key_assignments
+Schedule a Resize
+curl -s -X POST -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"operation_type":"resize","plan_id":"medium","scheduled_for":"2026-03-15T09:00:00Z"}' \
+  $BASE_URL/api/v1/cassettes/<CASSETTE_ID>/scheduled_operations
+List Containers
+curl -s -H "Authorization: Bearer $API_KEY" \
+  $BASE_URL/api/v1/cassettes/<CASSETTE_ID>/containers
+Fetch Container Logs
+curl -s -H "Authorization: Bearer $API_KEY" \
+  "$BASE_URL/api/v1/cassettes/<CASSETTE_ID>/containers/<CONTAINER_ID>/logs?tail=200"
+Errors
+401 Unauthorized Missing or invalid API key.
+402 Payment Required No active organization subscription.
+404 Not Found Resource not found within your organization.
+422 Unprocessable Entity Validation, billing, scheduling, or capacity error.
+Typical Error Body
+{
+  "error": "insufficient_capacity",
+  "message": "Optional human-readable message",
+  "details": [
+    "Optional validation detail"
+  ]
+}
+© 2026 Cassette
+Status
+hello@cassette.sh
