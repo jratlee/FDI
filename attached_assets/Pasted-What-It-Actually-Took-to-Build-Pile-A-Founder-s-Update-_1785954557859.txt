@@ -1,0 +1,51 @@
+What It Actually Took to Build Pile: A Founder's Update
+A build-in-public update from False Dawn Industries — product, marketing, and content, with the honest parts left in.
+
+I shipped a pay-per-question answer engine solo. The product was maybe a third of the actual work.
+
+That's the update in one line. Here's the longer, honest version — what building this actually looked like across the three tracks nobody warns you run in parallel: the product, the marketing, and the content.
+
+The origin, briefly
+For two years I hoarded good answers. Every time I dug something worth keeping out of a report, a book, or a paper I trusted, it went into one growing folder. Friends started asking me to "look it up in your pile." That was the tell: the value wasn't the folder, it was being able to ask it a question and get one clear answer back.
+
+Pile is that idea shipped as software. You ask a question, you see a free preview of the answer, and you pay only if it earns it — $0.99 for a Quick answer, $1.99 for a Deep one. Every paid answer comes with its sources and a proof-of-delivery receipt.
+
+Simple pitch. Now the part nobody puts in the pitch.
+
+Track 1: Product — the last 20% was 80% of the work
+The core is retrieval-augmented generation: documents synced from a private Drive folder, chunked, embedded, stored as vectors in Postgres, searched by similarity, answered by a model with citations. A competent weekend gets you a demo of that.
+
+What the demo doesn't include:
+
+Trust engineering. Preview-before-pay means the full answer is generated up front and held server-side until payment — which means the payment flow, the preview expiry, and the answer storage all have to agree, always. Add a proof-of-delivery hash, a dispute flow, and a quality check that warns buyers when confidence is low. Trust isn't a feature; it's a dozen small promises that all have to hold at once.
+
+Money correctness. Stripe webhooks get redelivered. Payments race. I had to prove — with tests, not hope — that a buyer can never be credited twice for the same payment, that a duplicate webhook can't re-reset a subscriber's usage, and that a failed billing update never silently vanishes. Nobody sees this work. Everybody would see its absence.
+
+Privacy as a moving target. The expert's source filenames and full document text must never leak to buyers. I locked that down on the main answer flow — and then had to lock it down again, separately, on every new surface I added, because each one (the API, the paid answer page, the admin routes) starts out knowing more than it should show. The lesson: source protection isn't a fix, it's a property every new surface has to re-earn. Same with logging: customer emails and question text kept creeping back into logs until I built guards that catch the regression before it ships.
+
+Sync reliability. A knowledge business dies quietly if the knowledge goes stale. So: scheduled syncs that survive a serverless environment that scales to zero, failure alerts that reach the admin without spamming them daily, and a guarantee that a sync error never silently drops working knowledge.
+
+There's also a Pro tier — API access and a machine-readable interface so AI agents can query the pile directly. It's built and tested, and deliberately switched off. Coming soon, on purpose: pay-per-question needs to prove itself first.
+
+Track 2: Marketing — the rebrand tax is real
+I renamed the product mid-build. Worth it — but the old name survived in browser tabs, social share captions, ad copy, and auth screens for weeks. Every rename you think is done, isn't. I ended up building automated checks that fail the build if the brand name or prices drift out of sync in ad creative, because "silently stale marketing" turned out to be a recurring bug class, not a one-off.
+
+The rest of the marketing track: a full brand kit (warm editorial — forest green, cream, ink), ad creatives across Instagram, Facebook, Google, and TikTok sizes with A/B headline variants, Story frames built to survive real platform UI safe zones, and a five-part SEO pass covering crawlability, performance, metadata, internal linking, and structured data — including making the site legible to AI crawlers, because the next buyer might not be human.
+
+Honest note: the wrong price shipped on a social share image twice before the automated check existed. Manual vigilance doesn't scale, even at a team size of one.
+
+Track 3: Content — the product is also the proof
+Three pieces so far: a launch content package (LinkedIn + Instagram, with a real calendar and tested hook variants), a technical build deep-dive for engineers, and a manifesto arguing that marketers should treat knowledge and identity as infrastructure machines can query.
+
+The content strategy is simple: Pile is the argument. Every piece points at the same idea — owned, provable knowledge that people and machines can transact with — and the product is the working example. Content that isn't downstream of something real is just noise; I built the real thing first so the writing has something to stand on.
+
+What I'd tell another founder
+The demo is 20% of the product. Budget for the money correctness, the privacy regressions, and the reliability work — that's where the actual product lives.
+Turn recurring mistakes into automated checks. If it broke twice, it's a bug class. Stop fixing instances.
+Run all three tracks from day one. Product without marketing is invisible. Marketing without content is hollow. Content without product is noise.
+Ship the small honest thing. Pile is deliberately small. It's also real, running, and hardened — which beats a big roadmap every time.
+Pile is live at [your-domain] — ask it something and see the preview before you pay.
+
+What's the piece of your build that took 80% of the time and shows up in 0% of the demo? Tell me in the comments.
+
+#BuildInPublic #Founders #AI #RAG #IndieHackers
