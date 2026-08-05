@@ -185,6 +185,16 @@ thick 2px/4px borders instead of shadows, glass sticky header/footer chrome
 only. Fonts unchanged: Space Grotesk (display), Inter (body), JetBrains Mono
 (labels). Lead with the FDI master brand + the "Growth Cartography" eyebrow.
 
+## Pre-publish checklist (global — run before every "you can republish now")
+
+Before telling the user to republish/redeploy, always run all three of these:
+
+1. **Security scan** — run the `security-scan` skill (dependency audit + SAST + secret-leakage scan). Surface any critical/high findings before the deploy goes out. Do not skip.
+2. **Growth/site audit** — run `node site/build.mjs && node site/check.mjs` to confirm all routes, links, and slide references resolve. Confirm the davos-gate, commerce-gates, and field-guide-bundle-check workflows are green.
+3. **Link check** — run `node site/link-check.mjs` to confirm no outbound citations have broken or redirected. Fix any failures before advising a publish.
+
+Only after all three are green should the user be told "ready to republish."
+
 ## Editorial rules (global — apply to every field guide, article, and export doc)
 
 **Hyperlink rule:** Every mention of an FDI product, page, or Field Guide in any
