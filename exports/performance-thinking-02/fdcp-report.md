@@ -74,7 +74,7 @@ This is the operating model we build toward in MarCom OS, and it only works beca
 
 ### Policy as Code: the Riverbank
 
-Continuous autonomous loops introduce real enterprise risk. An agent with a budget and API access can do damage at machine speed. The failed answer is ticket culture, where a human approves each action and the velocity advantage evaporates. The working answer is Policy as Code: brand guidelines, legal constraints, and budget limits translated from documents into executable rules that the infrastructure itself enforces, using engines such as [Open Policy Agent](https://codilime.com/blog/why-use-open-policy-agent-for-your-ai-agents/), a pattern HashiCorp has long described as [policy as code](https://www.hashicorp.com/en/blog/policy-as-code-explained).
+Continuous autonomous loops introduce real enterprise risk. An agent with a budget and API access can do damage at machine speed. The failed answer is ticket culture, where a human approves each action and the velocity advantage evaporates. The working answer is Policy as Code: brand guidelines, legal constraints, and budget limits translated from documents into executable rules that the infrastructure itself enforces, using engines such as [Open Policy Agent](https://codilime.com/blog/why-use-open-policy-agent-for-your-ai-agents/), a pattern HashiCorp has long described as [policy as code](https://developer.hashicorp.com/sentinel/docs/concepts/policy-as-code).
 
 We call this the Riverbank. The river is the fluid, fast, autonomous work of the agents. The riverbank is the immutable governance that gives the river its shape. Agents move freely inside it and cannot move outside it, and every action is intent-logged so a human can audit what happened and why. Written policy is a suggestion. Compiled policy is a wall. The FDCP operates the river; the Riverbank makes it safe to let them.
 
@@ -161,7 +161,7 @@ So the question for your org chart is the same one we ask of every system we map
 - a16z crypto, "The new comms playbook: show, don't promise" ([a16zcrypto.substack.com](https://a16zcrypto.substack.com/))
 - Profound, "10-step framework for generative engine optimization" ([tryprofound.com](https://www.tryprofound.com/articles/generative-engine-optimization-geo-guide-2025))
 - CodiLime, "Why Open Policy Agent is the missing guardrail for your AI agents" ([codilime.com](https://codilime.com/blog/why-use-open-policy-agent-for-your-ai-agents/))
-- HashiCorp, "Policy as code, explained" ([hashicorp.com](https://www.hashicorp.com/en/blog/policy-as-code-explained))
+- HashiCorp, "Policy as code, explained" ([developer.hashicorp.com](https://developer.hashicorp.com/sentinel/docs/concepts/policy-as-code))
 - Zhao et al., "Towards Multi-Agent Economies" ([arXiv:2507.19550](https://arxiv.org/abs/2507.19550))
 
 MCP, where referenced in FDI's products, is the Model Context Protocol, an open standard. False Dawn Industries is not affiliated with or endorsed by any company named above.
