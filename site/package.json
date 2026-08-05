@@ -13,6 +13,7 @@
   "dependencies": {
     "@replit/connectors-sdk": "^0.4.1",
     "marked": "^15.0.0",
+    "openai": "^6.49.0",
     "pg": "^8.22.0",
     "rate-limiter-flexible": "^11.2.0",
     "stripe": "^18.5.0"

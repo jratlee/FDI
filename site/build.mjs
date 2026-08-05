@@ -55,7 +55,7 @@ const CONTACT = "john@ratcliffe-lee.com";
 /* SkillFoundry Stripe checkout is not live yet: while false, the tier CTAs
    route to the waitlist instead of the checkout flow. Flip to true once the
    purchase flow is proven in Stripe (see skillfoundry/STRIPE_SETUP.md). */
-const CHECKOUT_LIVE = false;
+const CHECKOUT_LIVE = true;
 /* MarCom OS Stripe checkout: same pattern. While false, all kit
    tier CTAs stay waitlist links. Flip to true once the kit purchase flow is
    proven in Stripe (see exports/marcom-kit/STRIPE_SETUP.md). */

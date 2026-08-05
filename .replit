@@ -184,17 +184,11 @@ timeoutMs = 120000
 RESEND_FROM = "False Dawn Industries <onboarding@resend.dev>"
 WAITLIST_NOTIFY_EMAIL = "john@ratcliffe-lee.com"
 RESEND_REPLY_TO = "john@ratcliffe-lee.com"
-# Canonical production origin for the scheduled link checker.
-# Set to the deployed URL, e.g. https://falsedawn.industries
+SKILLFOUNDRY_TIER1_PRICE_ID = "price_1U19pTIr6q4Tm9bcoEsyHLjT"
+SKILLFOUNDRY_TIER2_PRICE_ID = "price_1U19pTIr6q4Tm9bc7zMakiGP"
+SKILLFOUNDRY_TIER3_PRICE_ID = "price_1U19pTIr6q4Tm9bcrRNUJJeo"
 SITE_BASE_URL = ""
-# Random secret that protects both /api/cron/* HTTP trigger endpoints.
-# Set to any strong random string; pass it as Authorization: Bearer <value>
-# when calling from a cron service (see site/cron-schedule.json).
-# Leave blank to disable both endpoints entirely.
 CRON_SECRET = ""
-# Silence monitor thresholds (optional — defaults shown).
-# SILENCE_THRESHOLD_H: hours of no recorded run before an alert fires (default 48).
-# ALERT_COOLDOWN_H: minimum hours between consecutive silence alerts (default 24).
 SILENCE_THRESHOLD_H = ""
 ALERT_COOLDOWN_H = ""
 
