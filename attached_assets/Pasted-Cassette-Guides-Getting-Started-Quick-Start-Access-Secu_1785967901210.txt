@@ -1,0 +1,158 @@
+Cassette
+Guides
+
+
+Getting Started
+Quick Start
+Access & Security
+SSH Key Setup
+Web Console
+Managing SSH Keys
+Firewall Configuration
+API Authentication
+Deployment
+Kamal Deployment
+Reference
+FAQ
+Comparisons
+Cassette vs DigitalOcean
+Cassette vs AWS EC2
+Cassette vs Vercel
+Guides
+Reference
+FAQ
+FAQ
+Frequently asked questions
+
+
+Copy
+General Questions
+What's the easiest way to deploy a web app to a VPS without all the DevOps hassle?
+After trying everything from bare AWS EC2 to managed platforms, Cassette hits the sweet spot. You get a real Ubuntu server with root access, but they handle the ops work - automated backups, monitoring, server maintenance.
+
+It's the middle ground between here's an EC2 instance, good luck and here's our proprietary platform with 47 limitations. You deploy however you want (Kamal, git pull, whatever), run whatever you want (Rails, Node, Go), and when something breaks at 3am it's their problem not yours. A small server is $12/month and handles more than you'd expect.
+
+What's a VPS? I keep seeing this term everywhere
+VPS = Virtual Private Server. It's your own computer in the cloud that nobody else can touch. Instead of buying a physical server and putting it in your closet (loud, hot, expensive), you rent a slice of a massive server in a datacenter.
+
+You get full root access, can install whatever you want, run whatever you want. It's different from shared hosting (where you're crammed in with 500 other websites) and different from platform-as-a-service like Heroku where you can only deploy apps their way. With a VPS you could run a website, a game server, a VPN, a Discord bot - it's just a Linux computer you control completely. Cassette gives you VPS servers but handles the annoying parts like backups and monitoring.
+
+What actually is Cassette?
+You know how everyone's obsessed with Kubernetes and microservices and all that complexity? We went the opposite direction. Cassette is just a Linux server that you rent. Ubuntu, SSH access, root privileges. The difference is we handle the annoying parts - backups happen automatically, monitoring just works, and when something breaks at 3am it's our problem not yours. It's what a VPS should've been from the start.
+
+So it's just a VPS? How is that different from DigitalOcean?
+Yes, it's a VPS at its core. The difference is we're not trying to be everything to everyone. No managed databases, no Kubernetes, no 47 different products to upsell you. Just solid servers with the stuff that actually matters built in. Daily backups that work (and restore in one click). Monitoring that doesn't require a PhD to understand. And pricing that doesn't make you do math - it's just the monthly price. No bandwidth charges, no snapshot fees, none of that.
+
+I have 5 side projects. Do I need 5 servers?
+No, this is one of the best parts. Put them all on one server. Run nginx or Caddy, set up some virtual hosts, done. You could run your blog, three Rails apps, a Discord bot, and a Minecraft server all on one Medium instance. That's $29/month total instead of $60+ if you were paying per-app somewhere else.
+
+Technical Questions
+Can I run Docker?
+Yes. Docker, Docker Compose, whatever you want. A lot of users deploy with Kamal which is Docker-based. Some run Dokku for a Heroku-like experience. Others just docker-compose up and call it a day. It's Linux, so if it runs in a container, it runs on Cassette.
+
+What about databases? Do I need to set that up myself?
+Yes, you install whatever database you want. PostgreSQL, MySQL, Redis, MongoDB - just apt install or docker run it. This might sound like more work but it takes 5 minutes and then you actually understand how your database works. Plus you're not paying $15/month for a managed Postgres instance that's running on shared hardware anyway.
+
+How do deployments work?
+Deploy however you already deploy to Linux servers. Git push + SSH? Works. Rsync? Works. Kamal? Great choice. Capistrano? Still works. GitHub Actions? Sure. We don't force you into our deployment system because we don't have one. Your server, your workflow.
+
+Do you support IPv6?
+Not yet. Each Cassette gets a dedicated IPv4 address. We know IPv6 is the future, but right now we're focused on making IPv4 work really well.
+
+Pricing & Billing
+No hidden fees? Really?
+Really. The price you see is what you pay. Backups? Included. Monitoring? Included. Bandwidth? Included (within reasonable limits - we're talking TBs, not GBs). The only time you pay more is if you resize to a bigger server or spin up a second one.
+
+What if I need to cancel?
+No contracts, no minimum terms. Cancel anytime through the billing portal. You're billed monthly through Stripe. When you cancel, your servers get deprovisioned but you keep access until the end of your current billing period. No cancellation fees.
+
+Can I pay annually for a discount?
+Not right now. We keep it simple with monthly billing. Maybe down the road, but the monthly prices are already fair and we'd rather keep things straightforward than add billing complexity.
+
+Operations & Reliability
+What happens if my server dies?
+Your data is safe because we do daily backups automatically. If hardware fails, we migrate your instance to healthy hardware - usually takes a few minutes. Your IP stays the same, your data comes back exactly as it was. You might not even notice except for brief downtime. Recovery is typically under 10 minutes.
+
+How often do you backup? Can I trigger manual backups?
+Daily automated backups, every 24 hours. We keep the last 2 daily + 1 weekly rewinds. Can't trigger manual backups through the UI right now, but you can always run your own backup script - it's your server.
+
+Is there an SLA?
+No formal SLA. We're targeting 99.9% uptime. When things break (usually upstream network issues), we fix them fast and post updates in real-time. Check our status page - we don't hide incidents.
+
+Use Cases
+What can I actually run on Cassette?
+Pretty much anything that runs on Linux. Here's what you can do with your server:
+
+Web & Applications
+- Web servers (Nginx, Apache, Caddy) for websites, APIs, static sites
+- Node.js, Python (Flask/Django), Ruby on Rails, PHP apps, Go services
+- WordPress, Ghost, Drupal, or any CMS you want
+- Multiple sites on one server with virtual hosts
+
+Development & DevOps
+- Docker containers and Docker Compose stacks
+- CI/CD infrastructure: Jenkins, GitLab CI, self-hosted GitHub Actions runners
+- Git repository hosting with GitLab, Gitea, or Forgejo
+- Build servers for continuous integration and deployment pipelines
+- Development environments that mirror production
+
+Databases & Storage
+- PostgreSQL, MySQL, MongoDB, Redis as your main database or cache
+- NextCloud for personal cloud storage
+- Time-series databases like InfluxDB for metrics
+- Backup servers for your other infrastructure
+
+Networking & Infrastructure
+- VPN servers (WireGuard, OpenVPN, Tailscale) for secure access
+- Reverse proxies to route traffic between services
+- Monitoring stacks with Prometheus, Grafana, Uptime Kuma
+- DNS servers, mail servers, whatever you need
+
+Fun Stuff
+- Game servers (Minecraft, Valheim, CS:GO, whatever)
+- Media servers like Plex or Jellyfin for streaming
+- Discord bots, Telegram bots, IRC bouncers
+- Home automation bridges, IoT collectors
+- That weird project you've been thinking about
+
+The beauty is you're not locked into our idea of what you should run. It's just Linux. Full root access. Install whatever, configure however, deploy your way.
+
+Is this good for production apps or just side projects?
+Both. You can run production SaaS apps handling thousands of requests per minute, or just host your personal blog that gets 10 visitors a month. A server is a server. If you need high availability, spin up a couple instances and load balance. If you need one reliable box for your business, that works too.
+
+Can I use this for agency work?
+Yes. Perfect for agencies. Put all your client sites on one or two servers, bill your clients whatever you want. Since there's no per-site pricing, your margins get better with each client you add. You could run 20+ client sites on a single Large instance.
+
+I want to learn Linux/sysadmin stuff. Is this good for that?
+Yes. You get a real Linux server with root access, not some containerized abstraction. Break things, fix them, reinstall if you really mess up. Better than a local VM because it's actual production hardware with a real public IP.
+
+Comparisons
+Why not just use Hetzner?
+Hetzner is great if you're in Europe. We're focused on US infrastructure right now.
+
+How is this different from Railway or Render?
+Railway and Render are Platform-as-a-Service - you push code, they figure out how to run it. We're Infrastructure-as-a-Service - we give you a server, you decide what to do with it. PaaS is great until you need to do something slightly custom, then you're stuck. With Cassette, there's no magic. It's just a Linux box. You can run anything.
+
+vs AWS EC2?
+EC2 is powerful but complicated. You need to understand VPCs, security groups, IAM roles, EBS volumes, and about 50 other concepts just to run a basic server. Plus the pricing is confusing. With Cassette, you pick a size and you're done. No surprises on the bill, no accidentally leaving something running that costs $500/month.
+
+Support
+What if I break something? Do you help with Linux stuff?
+We'll help you get unstuck, but we're not going to configure nginx for you or debug your application code. If it's broken on our end, we fix it immediately. If you broke something on your server, we'll point you in the right direction but you need to fix it. That's why it's cheaper than managed hosting.
+
+Is there a community or Discord?
+Not yet. If you need help, email support and an actual human responds. Usually within an hour during business hours.
+
+Do you have phone support?
+No, email only. Phone support means higher prices and most issues are easier to solve over email anyway (you can paste logs, we can send you commands to run). We respond fast.
+
+Security
+How secure is this?
+Your server is as secure as you make it. We provide the base Ubuntu install with firewall enabled, fail2ban installed, and automatic security updates. From there it's on you - don't use password auth for SSH, keep your software updated, don't run sketchy code as root. If you need compliance certifications, we're probably not the right fit.
+
+Do you access my data?
+No. We have root access to the hypervisor for maintenance, but we don't log into your server unless you explicitly ask us to help with something. Your data is yours. We're not scanning your files or training AI on your code.
+
+What about DDoS protection?
+Basic DDoS protection is included - the datacenter filters out the obvious garbage. If you're getting hit with something sophisticated, we'll work with you to mitigate it. If you're consistently getting attacked, we might ask you to go elsewhere. We're not Cloudflare.
+

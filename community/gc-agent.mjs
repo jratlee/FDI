@@ -20,7 +20,8 @@
  */
 
 import { WebSocket } from "ws";
-import { createHmac, randomBytes } from "node:crypto";
+import { randomBytes } from "node:crypto";
+import { getPublicKey, finalizeEvent } from "nostr-tools/pure";
 import {
   buildRetentionProfile,
   projectDAU,
@@ -54,43 +55,43 @@ if (!PRIVATE_KEY_HEX || PRIVATE_KEY_HEX.length !== 64) {
   process.exit(1);
 }
 
-/* ─── Minimal Nostr crypto (no external deps) ───────────────────────── */
+/* ─── Nostr crypto (secp256k1 via nostr-tools v2) ───────────────────── */
 
-/**
- * Derive a Nostr public key from a private key using the secp256k1 curve.
- * We use Node's built-in crypto to avoid adding secp256k1 as a dependency.
- * For a production deployment, use the `nostr-tools` package instead.
- *
- * NOTE: this is a simplified implementation for single-relay, low-volume use.
- * It uses a well-known approach: import the key via PKCS#8 wrapper.
- */
-async function getPublicKey(privateKeyHex) {
-  const { subtle } = globalThis.crypto ?? (await import("node:crypto")).webcrypto;
-  const privBytes = Buffer.from(privateKeyHex, "hex");
-  const keyData = new Uint8Array([
-    0x30, 0x2e, 0x02, 0x01, 0x00,
-    0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70,
-    0x04, 0x22, 0x04, 0x20, ...privBytes,
-  ]);
-  try {
-    const key = await subtle.importKey("pkcs8", keyData, { name: "Ed25519" }, false, ["sign"]);
-    return key;
-  } catch {
-    return null;
+function hexToBytes(hex) {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16);
   }
+  return bytes;
 }
 
-function eventId(event) {
-  const data = JSON.stringify([0, event.pubkey, event.created_at, event.kind, event.tags, event.content]);
-  return createHmac("sha256", "").update(data).digest("hex");
+const PRIVATE_KEY_BYTES = hexToBytes(PRIVATE_KEY_HEX);
+const PUBKEY = getPublicKey(PRIVATE_KEY_BYTES);
+
+console.log(`[gc-agent] pubkey: ${PUBKEY.slice(0, 16)}...`);
+
+/** Create and sign a Nostr event. */
+function makeEvent(kind, content, tags) {
+  return finalizeEvent(
+    { kind, content, tags, created_at: Math.floor(Date.now() / 1000) },
+    PRIVATE_KEY_BYTES
+  );
 }
 
-function makeEvent(kind, content, tags, pubkey) {
-  const created_at = Math.floor(Date.now() / 1000);
-  const ev = { pubkey, created_at, kind, tags, content };
-  ev.id = eventId(ev);
-  ev.sig = "0".repeat(128);
-  return ev;
+/** Build a NIP-42 AUTH response event for the given relay challenge. */
+function makeAuthEvent(relayUrl, challenge) {
+  return finalizeEvent(
+    {
+      kind: 22242,
+      content: "",
+      tags: [
+        ["relay", relayUrl],
+        ["challenge", challenge],
+      ],
+      created_at: Math.floor(Date.now() / 1000),
+    },
+    PRIVATE_KEY_BYTES
+  );
 }
 
 /* ─── Answer composition ─────────────────────────────────────────────── */
@@ -157,29 +158,79 @@ function formatAnswer(params) {
 /* ─── WebSocket agent loop ───────────────────────────────────────────── */
 
 const SUB_ID = randomBytes(8).toString("hex");
-let pubkey = PRIVATE_KEY_HEX.slice(0, 64);
 let ws;
+let authenticated = false;
+
+function subscribe() {
+  const filter = { kinds: [42], "#p": [PUBKEY], limit: 0 };
+  if (CHANNEL_ID) filter["#e"] = [CHANNEL_ID];
+  ws.send(JSON.stringify(["REQ", SUB_ID, filter]));
+  console.log(`[gc-agent] subscribed (sub=${SUB_ID})`);
+}
 
 function connect() {
   console.log(`[gc-agent] connecting to ${RELAY_URL}`);
   ws = new WebSocket(RELAY_URL);
+  authenticated = false;
 
   ws.on("open", () => {
     console.log("[gc-agent] connected");
-    const filter = { kinds: [42], "#p": [pubkey], limit: 0 };
-    if (CHANNEL_ID) filter["#e"] = [CHANNEL_ID];
-    ws.send(JSON.stringify(["REQ", SUB_ID, filter]));
-    console.log(`[gc-agent] subscribed (sub=${SUB_ID})`);
+    // Do not subscribe yet — wait for AUTH challenge or a short delay.
+    // If the relay doesn't send AUTH within 2s, subscribe anyway (open relay).
+    setTimeout(() => {
+      if (!authenticated) subscribe();
+    }, 2000);
   });
 
   ws.on("message", async (data) => {
     let msg;
     try { msg = JSON.parse(data.toString()); } catch { return; }
+    if (!Array.isArray(msg)) return;
 
-    if (!Array.isArray(msg) || msg[0] !== "EVENT") return;
-    const event = msg[2];
+    const [type, ...rest] = msg;
+
+    /* ── NIP-42: respond to AUTH challenge ─────────────────────────── */
+    if (type === "AUTH") {
+      const challenge = rest[0];
+      if (typeof challenge !== "string") return;
+      const authEvent = makeAuthEvent(RELAY_URL, challenge);
+      ws.send(JSON.stringify(["AUTH", authEvent]));
+      console.log(`[gc-agent] AUTH sent (challenge=${challenge.slice(0, 16)}...)`);
+      authenticated = true;
+      // Subscribe after auth
+      setTimeout(subscribe, 300);
+      return;
+    }
+
+    /* ── OK: log relay acceptance/rejection ────────────────────────── */
+    if (type === "OK") {
+      const [eventId, success, message] = rest;
+      if (!success) {
+        console.warn(`[gc-agent] relay rejected event ${eventId?.slice(0, 12)}: ${message}`);
+      } else {
+        console.log(`[gc-agent] event accepted (id=${eventId?.slice(0, 12)}...)`);
+      }
+      return;
+    }
+
+    /* ── NOTICE ────────────────────────────────────────────────────── */
+    if (type === "NOTICE") {
+      console.log(`[gc-agent] NOTICE: ${rest[0]}`);
+      return;
+    }
+
+    /* ── CLOSED: re-subscribe ──────────────────────────────────────── */
+    if (type === "CLOSED") {
+      console.warn(`[gc-agent] subscription closed by relay: ${rest[1]}. Resubscribing...`);
+      setTimeout(subscribe, 1000);
+      return;
+    }
+
+    /* ── EVENT: handle incoming messages ──────────────────────────── */
+    if (type !== "EVENT") return;
+    const event = rest[1];
     if (!event || event.kind !== 42) return;
-    if (event.pubkey === pubkey) return;
+    if (event.pubkey === PUBKEY) return;
 
     const content = event.content || "";
     if (!content.toLowerCase().includes("@gc") && !content.toLowerCase().includes("@growth")) {
@@ -192,8 +243,6 @@ function connect() {
     let replyContent;
 
     // When the HTTP service is running (GC_SERVICE_URL set), delegate to it.
-    // The service handles parsing, engine math, chart rendering, and returns
-    // the chart URL so community members can view the image directly.
     if (SERVICE_URL) {
       try {
         const res = await fetch(`${SERVICE_URL}/model`, {
@@ -211,12 +260,11 @@ function connect() {
         }
       } catch (err) {
         console.error("[gc-agent] service call failed, falling back to local:", err.message);
-        // Fall through to local path
         replyContent = null;
       }
     }
 
-    // Local path: parse + run engine directly (no chart URL, SVG saved locally).
+    // Local path: parse + run engine directly.
     if (!replyContent) {
       const parsed = await parseScenario(question);
       if (!parsed.ok) {
@@ -224,8 +272,6 @@ function connect() {
           || "I need a few more details to run the model. Please include retention rates (day 1, 7, 30) and a daily inflow or churn rate.";
       } else {
         try {
-          // Render the SVG curve locally. In a VPS deployment this can be
-          // served over HTTP; here we note its availability in the reply.
           const svg = renderCurve({
             anchorDays: parsed.params.retentionAnchors.days,
             anchorRates: parsed.params.retentionAnchors.rates,
@@ -235,7 +281,6 @@ function connect() {
             spikeSize: parsed.params.spikeSize ?? null,
             unit: parsed.params.unit ?? "units",
           });
-          // Store for potential serving; log length as a confirmation.
           console.log(`[gc-agent] chart rendered (${svg.length} bytes SVG)`);
           replyContent = formatAnswer(parsed.params);
         } catch (err) {
@@ -247,13 +292,14 @@ function connect() {
 
     const replyTags = [["e", event.id, "", "reply"], ["p", event.pubkey]];
     if (CHANNEL_ID) replyTags.unshift(["e", CHANNEL_ID, "", "root"]);
-    const reply = makeEvent(42, replyContent, replyTags, pubkey);
+    const reply = makeEvent(42, replyContent, replyTags);
     ws.send(JSON.stringify(["EVENT", reply]));
     console.log(`[gc-agent] replied (id=${reply.id.slice(0, 12)}...)`);
   });
 
   ws.on("close", (code) => {
     console.log(`[gc-agent] disconnected (code=${code}). reconnecting in 10s...`);
+    authenticated = false;
     setTimeout(connect, 10_000);
   });
 
