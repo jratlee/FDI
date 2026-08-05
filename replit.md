@@ -185,6 +185,41 @@ thick 2px/4px borders instead of shadows, glass sticky header/footer chrome
 only. Fonts unchanged: Space Grotesk (display), Inter (body), JetBrains Mono
 (labels). Lead with the FDI master brand + the "Growth Cartography" eyebrow.
 
+## Editorial rules (global — apply to every field guide, article, and export doc)
+
+**Hyperlink rule:** Every mention of an FDI product, page, or Field Guide in any
+published or publishable document must be hyperlinked on first reference. No
+exceptions for LinkedIn articles, email copy, export markdown, or site article
+bodies. The canonical URLs are:
+
+| Asset | URL |
+|---|---|
+| Homepage | https://falsedawn.industries/ |
+| Field Guide 001 | https://falsedawn.industries/field-guide |
+| Field Guide 002 (Aggregated) | https://falsedawn.industries/field-guide-002 |
+| Field Guide 003 (Decentralized) | https://falsedawn.industries/field-guide-003 |
+| Field Guide 004 (Autonomous) | https://falsedawn.industries/field-guide-004 |
+| The series (all four) | https://falsedawn.industries/series |
+| SkillFoundry | https://falsedawn.industries/skillfoundry |
+| MarCom OS | https://falsedawn.industries/marcom-kit |
+| System Dynamics Engine | https://falsedawn.industries/engine |
+| Workshop (The Cartographers' Table) | https://falsedawn.industries/workshop |
+| Community | https://falsedawn.industries/community |
+| GitHub | https://github.com/jratlee/FDI |
+
+**Cross-linking rule:** Each Field Guide's opening paragraph references its
+predecessors ("The first made the general case… The second mapped…"). Every such
+reference must be a live hyperlink to that guide's URL. The source markdown files
+in `exports/` are the canonical place to make these fixes — `build.mjs` renders
+them via `marked` so the links appear on the site automatically.
+
+**"On the way" rule:** Any copy that says a Field Guide is "coming" or "on the
+way" must be updated to "now live" with a link when the guide ships. Check the
+closing paragraph of every earlier guide when a new one launches.
+
+**Plain-URL rule:** Never write a bare URL like `falsedawn.industries/community`
+in publishable markdown. Always wrap it: `[falsedawn.industries/community](https://falsedawn.industries/community)`.
+
 ## User preferences
 - Reorganize `replit.md` for clarity but never trim content from it; the user
   does not want to risk context loss. (Done July 2026: detail moved verbatim

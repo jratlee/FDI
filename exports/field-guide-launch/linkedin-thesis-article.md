@@ -42,11 +42,11 @@ That's the map. Here is the terrain I've been building on, because a thesis you 
 
 Those two builds aren't a portfolio. They're a preview of the three market structures the next Field Guides cover, and why each one is urgent now.
 
-**Aggregated.** Discovery is moving behind recommenders and chat assistants. More and more, your customer asks a model, not a search box, and the model decides whether you exist. You don't get to negotiate reach with an aggregator. What you can own is a persistent identity and a corpus of trustworthy answers, the way Pile turns a private folder into something a machine can retrieve and cite.
+**[Aggregated](https://falsedawn.industries/field-guide-002).** Discovery is moving behind recommenders and chat assistants. More and more, your customer asks a model, not a search box, and the model decides whether you exist. You don't get to negotiate reach with an aggregator. What you can own is a persistent identity and a corpus of trustworthy answers, the way Pile turns a private folder into something a machine can retrieve and cite.
 
-**Decentralized.** Your knowledge is scattered across documents, product data, support logs, and policies that don't talk to each other. The winners will stitch those fragments into one owned, queryable graph, with the relationships between them preserved and citable, the way Talk to NYC turns a heap of XML into a graph you can actually reason over. Retrieval you own beats targeting you rent.
+**[Decentralized](https://falsedawn.industries/field-guide-003).** Your knowledge is scattered across documents, product data, support logs, and policies that don't talk to each other. The winners will stitch those fragments into one owned, queryable graph, with the relationships between them preserved and citable, the way Talk to NYC turns a heap of XML into a graph you can actually reason over. Retrieval you own beats targeting you rent.
 
-**Autonomous.** Agents are about to transact on your customers' behalf, and on yours. That means your marketing system needs to be something another agent can safely call. Talk to NYC's MCP server and Pile's gated agent API are early versions of exactly that, with the trust boundaries that make it survivable: treat every retrieved document as hostile input, sanitize everything that goes out, and never let data become a command.
+**[Autonomous](https://falsedawn.industries/field-guide-004).** Agents are about to transact on your customers' behalf, and on yours. That means your marketing system needs to be something another agent can safely call. Talk to NYC's MCP server and Pile's gated agent API are early versions of exactly that, with the trust boundaries that make it survivable: treat every retrieved document as hostile input, sanitize everything that goes out, and never let data become a command.
 
 ![Three markets, three new forms brand identity has to take: Aggregated, Decentralized, and Autonomous](viz-three-markets-1200x680.png)
 
@@ -56,4 +56,4 @@ Here is the urgency. These three shifts aren't tidy predictions for later this d
 
 You can keep feeding the black box. Or you can build the machine.
 
-Three Field Guides are on the way: Aggregated, Decentralized, Autonomous. Follow False Dawn Industries to get each one the day it drops, and pressure-test the thinking against real, working code at github.com/jratlee/FDI.
+All three Field Guides are now live: [Aggregated](https://falsedawn.industries/field-guide-002), [Decentralized](https://falsedawn.industries/field-guide-003), [Autonomous](https://falsedawn.industries/field-guide-004). Follow [False Dawn Industries](https://falsedawn.industries) and pressure-test the thinking against real, working code at [github.com/jratlee/FDI](https://github.com/jratlee/FDI).

@@ -54,7 +54,7 @@ The one house rule that matters: bring numbers. The agent cannot model a vibe.
 
 ## The Lab opens soon
 
-The waitlist is open now at falsedawn.industries/community. Waitlist members get the onboarding link when the first ring opens, plus notes on how to frame a scenario so the agent gives you its best work.
+The waitlist is open now at [falsedawn.industries/community](https://falsedawn.industries/community). Waitlist members get the onboarding link when the first ring opens, plus notes on how to frame a scenario so the agent gives you its best work.
 
 If you have a growth question that has been answered with opinions for too long, bring it. The math is waiting.
 

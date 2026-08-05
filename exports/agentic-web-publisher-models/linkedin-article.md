@@ -62,4 +62,4 @@ Build the expertise. The robots will find it.
 
 ---
 
-*False Dawn Industries maps how marketing survives aggregated, decentralized, and autonomous markets. Follow FDI for the Field Guide series, and pressure-test the thinking against real, working code at github.com/jratlee/FDI.*
+*[False Dawn Industries](https://falsedawn.industries) maps how marketing survives aggregated, decentralized, and autonomous markets. The full [Field Guide series](https://falsedawn.industries/series) is live — [Aggregated](https://falsedawn.industries/field-guide-002), [Decentralized](https://falsedawn.industries/field-guide-003), [Autonomous](https://falsedawn.industries/field-guide-004) — and the thinking runs on real, working code at [github.com/jratlee/FDI](https://github.com/jratlee/FDI).*

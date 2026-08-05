@@ -12,7 +12,7 @@
 
 Start with the number every marketer already feels in their budget: three companies are forecast to take 62.3% of all worldwide digital ad spending in 2026. [eMarketer](https://www.emarketer.com/press-releases/meta-to-surpass-google-in-digital-ad-revenues-for-first-time-ever/) projects Meta at $243.46 billion in ad revenue, passing Google at $239.54 billion for the first time, with Amazon third at roughly $82 billion. That is not a market. That is a toll system with three booths.
 
-This is the second Field Guide in the Growth Cartography series. The first made the general case: when content is free to make and platforms are opaque, the only durable marketing assets are the ones you own and can prove. This one maps the first of the three market structures, the aggregated market, and it comes in two halves. The half you already live in. And the half arriving on top of it.
+This is the second Field Guide in the Growth Cartography series. [The first](https://falsedawn.industries/field-guide) made the general case: when content is free to make and platforms are opaque, the only durable marketing assets are the ones you own and can prove. This one maps the first of the three market structures, the aggregated market, and it comes in two halves. The half you already live in. And the half arriving on top of it.
 
 ![Three platforms, one toll system: the 2026 digital ad market by forecast share](viz-triopoly-2026-1200x680.png)
 
@@ -58,4 +58,4 @@ Every quarter spent renting commoditized reach is a quarter not spent building t
 
 The machine is already deciding. Give it something of yours to find.
 
-Next in the series: Decentralized, on owned knowledge graphs, and Autonomous, on marketing systems agents can safely call. Follow False Dawn Industries to get each one the day it drops, and pressure-test the thinking against real, working code at [github.com/jratlee/FDI](https://github.com/jratlee/FDI).
+Both are live now: [Field Guide 003: Decentralized](https://falsedawn.industries/field-guide-003), on owned knowledge graphs, and [Field Guide 004: Autonomous](https://falsedawn.industries/field-guide-004), on marketing systems agents can safely call. Pressure-test the thinking against real, working code at [github.com/jratlee/FDI](https://github.com/jratlee/FDI).
