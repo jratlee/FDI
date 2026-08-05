@@ -86,9 +86,9 @@ stack: any tool that accepts reference documents can run the kit.
 
 The AI works from the documents, and the documents work from your answers.
 Give it real numbers and honest answers; the kit's math does the rest. For
-the judgment calls the documents deliberately stop short of (which rooms,
-which conversations, which positioning), that is what a strategy session with
-the team behind this kit is for.
+the judgment calls the documents deliberately stop short of — which rooms,
+which conversations, which positioning — your own knowledge of the landscape
+is the final input the kit cannot supply.
 
 ---
 

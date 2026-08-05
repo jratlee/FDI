@@ -2838,7 +2838,7 @@ const SUCCESS_META = {
   },
   davoskit: {
     label: "Davos Decision Kit",
-    backHref: "/davos-kit-demo",
+    backHref: "/davos-kit",
     backText: "← Back to the Davos Decision Kit",
     downloadPath: "/api/davos-kit/download",
     downloadText: "Download the kit",
@@ -3156,43 +3156,15 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
-  // Davos gate routes on the DECODED path so percent-encoded variants
-  // (e.g. /%64avos-kit-demo, /davos-kit-demo%2ehtml) cannot slip past the
-  // gate into the static resolver, which also decodes. The demo's journey
-  // screenshots under /assets/davos-demo/ are gated the same way.
+  // The /davos-kit-demo page is retired (the kit is now a public product at
+  // /davos-kit). Redirect all old demo paths — including percent-encoded
+  // variants — to the public product page.
   if (decodedPath === "/davos-kit-demo" || decodedPath === "/davos-kit-demo.html") {
-    handleDavosDemo(req, res).catch((err) => {
-      console.error("[davos-demo] gate error:", err.message);
-      if (!res.headersSent) {
-        res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
-        res.end("500 Server Error");
-      }
+    res.writeHead(301, {
+      Location: "/davos-kit",
+      "Cache-Control": "no-store",
     });
-    return;
-  }
-  if (decodedPath.startsWith("/assets/davos-demo/")) {
-    if (!hasDavosAccess(req)) {
-      res.writeHead(404, {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-store",
-      });
-      res.end("404 Not Found");
-      return;
-    }
-    // Authed: serve directly with no-store (never the long-cache static
-    // headers, so shared caches can't replay a gated image to anon users).
-    const assetFile = resolveFile(req.url || "/");
-    if (!assetFile) {
-      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("404 Not Found");
-      return;
-    }
-    res.writeHead(200, {
-      "Content-Type": MIME[path.extname(assetFile).toLowerCase()] || "application/octet-stream",
-      "Cache-Control": "no-store, private",
-      "X-Robots-Tag": "noindex, nofollow",
-    });
-    fs.createReadStream(assetFile).pipe(res);
+    res.end();
     return;
   }
   if (rawPath === "/admin" || rawPath.startsWith("/admin/")) {

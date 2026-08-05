@@ -56,56 +56,33 @@ Full detail for the three product families riding the shared Stripe engine in
   `KIT_CHECKOUT_LIVE=true` in `build.mjs` (currently false → waitlist CTAs);
   everything degrades gracefully when secrets are unset.
 
-## Davos Kit commerce demo
-- Davos Kit commerce demo: product `davoskit` / tier `dk1` (key prefix DK1) is
+## Davos Decision Kit commerce (public product)
+- Davos Decision Kit: product `davoskit` / tier `dk1` (key prefix DK1) is
   wired into the shared engine in `commerce.mjs` (`DAVOSKIT_TIER1_PRICE_ID`
-  secret; $199 test price). `build.mjs` builds
+  secret; $199 one-time). `build.mjs` builds
   `site/private/davos-decision-kit.zip` via `buildDavosZip()` (outside `dist/`,
-  excludes the checklist + convenience zip) and, while `DAVOS_DEMO=true`, emits
-  the noindex, unlinked demo page `/davos-kit-demo` (js-buy dk1 with waitlist
-  fallback, capture source `davos-kit-demo`).
-- The demo page is a **password-gated, client-custom presentation for The
-  Content Bureau** (framed as the custom build FDI proposes for TCB, not a
-  retail FDI product): single header (the shared `page()` shell), Solvra
-  worked-example visuals (score bars, budget range bars, 90-day runway
-  timeline, TCB insertion steps), an "After the download" AI-advisor section
-  (buyer journey steps 6/7: load the kit into ChatGPT/Claude/Copilot projects,
-  work it as an interactive advisor, with a labeled illustrative chat
-  exchange; an "Advanced applications" card grid for paid AI plans: Claude
-  Skills/Cowork, Microsoft 365 Copilot agent builder/Copilot Studio, ChatGPT
-  custom GPTs, plain-markdown catch-all, all hedged as plan-dependent; a
-  dashed "Roadmap" kicker naming a possible hosted chat advisor on
-  contentbureau.com as a later, out-of-scope iteration; the shipped kit's
-  `start-here-ai-prompts.md` mirrors the advanced setups in an "If you have a
-  paid plan" section; the buyer zip also ships a pre-built Claude Skill
-  folder `claude-skill/davos-decision-advisor/` whose `documents/` copies are
-  regenerated from the canonical kit docs by `buildDavosZip()` each build and
-  gitignored, so they can never drift), collaborative build framing (TCB and FDI align on the documents,
-  substance is mostly TCB input, FDI drafts then validates/refines with TCB;
-  FDI's job is the system build and product wiring), five real
-  end-user-journey screenshots
-  (`site/src/assets/davos-demo/journey-*.png`, captured from the live flow
-  incl. a real Stripe test purchase), proposal terms, live dk1 buy button.
-- Gate (in `serve.mjs`): the `DAVOS_DEMO_PASSWORD` secret guards
-  `/davos-kit-demo`, `/davos-kit-demo.html`, AND `/assets/davos-demo/*`.
-  Routing matches on the DECODED path (percent-encoded variants like
-  `/%64avos-kit-demo` cannot bypass into the static resolver). Correct POST →
-  httpOnly `dk_demo` cookie = HMAC-sha256 of a fixed label keyed by the
-  password (Path=/, SameSite=Strict, 12h, Secure behind https); wrong/absent →
-  on-brand 401 gate page; secret unset → 503 "not available" page. Gated
-  responses are `no-store, private` + `X-Robots-Tag: noindex`; unauth asset
-  requests 404. `parseCookies` tolerates malformed percent-encoding (no crash).
-  Revocation = rotate the secret (token is derived from it). Routes: `/davos-kit/success`
-  (shared product-aware success page) and `GET /api/davos-kit/download?key=`
-  (active dk1 license only). Cross-product gates verified: DK1 keys are 403 on
-  SkillFoundry/kit downloads and 402 on SF validate; checkout returns 503
-  `tier_unconfigured` with waitlist fallback when the price ID is unset.
-  A full Stripe test-mode purchase was verified end to end (card 4242 →
-  success page key → gated download). Flip-live steps:
-  `exports/davos-decision-kit/GO_LIVE_CHECKLIST.md`. Upkeep tooling:
-  `site/capture-davos-journey.mjs` recaptures the journey-1 screenshot
-  headlessly (journey 2-4 need a manual Stripe test purchase; journey-5 is a
-  document mock), and `site/gate-check.mjs` (validation step `davos-gate`)
-  boots the server on a throwaway port and asserts the gate holds
-  (401/404/percent-encoded bypass/cookie/no-store/noindex, 503 when the
-  secret is unset).
+  excludes the checklist + convenience zip).
+- **Public product page** `/davos-kit`: indexed, in sitemap + llms.txt + homepage
+  product grid. Buy button (`js-buy dk1`), Solvra worked-example visuals
+  (score bars, budget range bars, 90-day runway, meeting-request script),
+  AI advisor section, pricing section, waitlist fallback when Stripe is
+  unconfigured. `DAVOS_DEMO=false` in `build.mjs` (old TCB demo page not emitted).
+- **White-label offer page** `/davos-kit-white-label`: generic agency offer
+  ("build this kit under your brand"), $7,500 fixed + $2,500 commerce add-on.
+  Both pages in sitemap and llms.txt.
+- **Retired demo**: `/davos-kit-demo` and `/davos-kit-demo.html` return 301 →
+  `/davos-kit` (matched on decoded path so percent-encoded variants also
+  redirect). `site/gate-check.mjs` (validation step `davos-gate`) now verifies
+  the redirect and public page accessibility.
+- Routes: `/davos-kit/success` (product-aware success page), `GET
+  /api/davos-kit/download?key=` (active dk1 license only). Cross-product gates
+  unchanged: DK1 keys 403 on SF/MK downloads, 402 on SF validate.
+- **Kit documents de-branded**: README, `start-here-ai-prompts.md`, and the
+  Claude Skill's `SKILL.md` have no "book a strategy session" / "team behind
+  this kit" upsell language. Outreach proposal (`exports/outreach-kit/
+  davos-kit-proposal.md`) rewritten as a generic agency white-label offer.
+- **Go-live steps** (currently in test mode): see
+  `exports/davos-decision-kit/GO_LIVE_CHECKLIST.md`. Requires: live Stripe key
+  (`STRIPE_SECRET_KEY`), live price ID (`DAVOSKIT_TIER1_PRICE_ID`), live webhook
+  secret (`STRIPE_WEBHOOK_SECRET`). Stripe Tax enablement and webhook
+  registration on the deployed domain are tracked in separate tasks.

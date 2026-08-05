@@ -54,8 +54,8 @@ export const PRODUCT_META = {
   davoskit: {
     name: "Davos Decision Kit",
     successPath: "/davos-kit/success",
-    cancelPath: "/davos-kit-demo",
-    returnPath: "/davos-kit-demo",
+    cancelPath: "/davos-kit",
+    returnPath: "/davos-kit",
     licensePrefix: "DK1",
     subscriptionPrefix: "DKS",
   },

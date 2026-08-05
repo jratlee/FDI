@@ -65,7 +65,7 @@ const KIT_CHECKOUT_LIVE = true;
    is emitted at /davos-kit-demo (never linked from public nav) so the checkout
    flow can be screen-shared with a client. The buy button degrades to the
    page's own waitlist form until Stripe secrets are set. */
-const DAVOS_DEMO = true;
+const DAVOS_DEMO = false;
 /* Open Cartography Lab community: set COMMUNITY_URL to the hosted Buzz web
    client URL (e.g. https://lab.falsedawn.industries) once the relay is live.
    While unset, the /community page shows the concept and a waitlist form. */
@@ -298,7 +298,7 @@ function home() {
     <div>
       <span class="eyebrow">Growth Cartography</span>
       <h1>Build the machine, <em>not the ad</em>.</h1>
-      <p class="lede">The MarCom OS playbook, the Top Call MCP server, and the Davos Decision Kit are built and running today. FDI maps the machine that decides who gets seen and ships the tools to own your place in it, across aggregated, decentralized, and autonomous markets.</p>
+      <p class="lede">The MarCom OS playbook, the Davos Decision Kit, and the Top Call MCP server are built and running today. FDI maps the machine that decides who gets seen and ships the tools to own your place in it, across aggregated, decentralized, and autonomous markets.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="/marcom-kit">Explore MarCom OS <span class="arrow">→</span></a>
         <a class="btn btn-ghost" href="/field-guide">Read the Field Guide</a>
@@ -355,6 +355,12 @@ function home() {
         <h3>When the Buyer Is Software</h3>
         <p>The open protocol stack (MCP, A2A, AP2, x402) is live. Agent-market dynamics, the growth curve toward marketplaces at the scale of Meta and Google, and why machine-legibility advantages compound at machine speed before the window closes.</p>
         <div class="card-foot"><a class="link-arrow" href="/field-guide-004">Read Field Guide 004 <span class="arrow">→</span></a></div>
+      </article>
+      <article class="card">
+        <span class="tag">Product · Decisions as Code</span>
+        <h3>Davos Decision Kit</h3>
+        <p>A self-serve decision system for executives weighing the World Economic Forum annual meeting: a weighted go/no-go scorecard, a twelve-month runway, a budget calculator, and a visibility plan — plus a Start Here AI prompt sheet so the kit runs as your interactive advisor in ChatGPT, Claude, or Copilot. One-time purchase, $199 launch.</p>
+        <div class="card-foot"><a class="link-arrow" href="/davos-kit">See the kit <span class="arrow">→</span></a></div>
       </article>
     </div>
   </div>
@@ -3225,6 +3231,7 @@ False Dawn Industries (FDI) publishes the Field Guide thesis and ships working p
 ## Products
 - MarCom OS (${SITE_URL}/marcom-kit): the flagship. The blueprint for an AI-era marketing organization: the Hourglass org design, the Use, Compose, Build capability calculator, and the Riverbank governance system, shipped as a working kit of templates, calculators, and checklists. Structure as code. A free starter pack is available on the page.
 - SkillFoundry (${SITE_URL}/skillfoundry): the kit's running enforcement engine and a standalone strategic firewall for content. A plugin built on the open Model Context Protocol (MCP) that routes any asset through three Signal-to-Value gates (Relevance, Performance, and Algorithmic Signal) and returns the optimized asset plus a structured audit. Strategy as code.
+- Davos Decision Kit (${SITE_URL}/davos-kit): a self-serve decision system for executives weighing the World Economic Forum annual meeting. A weighted go/no-go scorecard, a twelve-month preparation runway, a budget calculator, and visibility plan templates — plus a Start Here AI prompt sheet so the kit runs as an interactive advisor in ChatGPT, Claude, or Copilot. One-time purchase, $199 launch price. White-label build-for-your-agency offer at ${SITE_URL}/davos-kit-white-label.
 
 ## The Field Guide
 - Build the Machine, Not the Ad (${SITE_URL}/field-guide): the FDI thesis on owned marketing systems, with the launch deck and working-code proof.
@@ -3717,9 +3724,9 @@ function holdingPage({ title, active }) {
 }
 
 /* ---------------- crawler discovery: sitemap.xml + robots.txt ----------------
- * Indexable public routes only: gated holding pages and the private
- * /davos-kit-demo page are noindex, so they are deliberately left out of the
- * sitemap. "" is the homepage (renders as SITE_URL/). */
+ * Indexable public routes only: gated holding pages are noindex and are
+ * deliberately left out of the sitemap. "" is the homepage (renders as
+ * SITE_URL/). */
 const SITEMAP_ROUTES = [
   "",
   "field-guide",
@@ -3730,6 +3737,8 @@ const SITEMAP_ROUTES = [
   "hourglass",
   "skillfoundry",
   "marcom-kit",
+  "davos-kit",
+  "davos-kit-white-label",
   "topcall",
   "series",
   "aggregated",
@@ -3897,7 +3906,7 @@ function tcbInsertionSteps() {
 /* End-user journey screenshots. Only rendered if the captures exist in
    site/src/assets/davos-demo/ (copied to /assets/davos-demo/ by copyAssets). */
 const DEMO_SHOTS = [
-  { file: "journey-1-product-page.png", title: "1 · The product page", cap: "The buyer lands on the kit page (shown here under the FDI demo brand; the real build ships under TCB's brand) and clicks Buy the kit." },
+  { file: "journey-1-product-page.png", title: "1 · The product page", cap: "The buyer lands on the kit page and clicks Buy the kit." },
   { file: "journey-2-checkout.png", title: "2 · Secure checkout", cap: "Stripe Checkout collects card and billing address; tax is calculated automatically at purchase." },
   { file: "journey-3-success-key.png", title: "3 · The license key", cap: "The success page issues the buyer's license key instantly and emails a copy for safekeeping." },
   { file: "journey-4-download.png", title: "4 · The gated download", cap: "The key unlocks the kit zip. The download is served only to an active license, never from a public URL." },
@@ -3920,7 +3929,7 @@ function demoJourney() {
   <div class="section-hd">
     <span class="eyebrow">The buyer's journey</span>
     <h2>What the end user actually sees.</h2>
-    <p>Real screenshots from the working build: from landing on the page to opening the delivered documents. This is the flow the $2,500 commerce add-on wires into TCB's own site.</p>
+    <p>Real screenshots from the working build: from landing on the page to opening the delivered documents.</p>
   </div>
   <div class="shots">${figs}</div>
 </section>`;
@@ -4126,6 +4135,325 @@ ${demoJourney()}
   });
 }
 
+/* ---------------- DAVOS DECISION KIT PUBLIC PRODUCT PAGE (/davos-kit) ------
+ * Public, indexed, publicly-linked FDI product page. Live Stripe checkout at
+ * $199 launch / $299 regular. Reuses the Solvra worked-example visualizations
+ * defined in the demo section above. */
+
+function davosKitPage() {
+  const body = `<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">False Dawn Industries · Decisions as Code</span>
+      <h1>The <em>Davos Decision Kit</em>.</h1>
+      <p class="lede">A self-serve decision system for executives and comms leaders weighing whether the World Economic Forum annual meeting belongs on next January's calendar — and what it would take to make the week count. One-time purchase. Yours forever.</p>
+      <div class="hero-cta">
+        <button type="button" class="btn btn-primary js-buy" data-tier="dk1" data-fallback="#waitlist">Buy the kit · $199 <span class="arrow">→</span></button>
+        <a class="btn btn-ghost" href="#solvra">See it working</a>
+      </div>
+      <p style="color:var(--muted);font-size:13px;margin-top:24px;"><s style="opacity:.6;">$299</s> · Launch price $199. All costs are public-range estimates. This kit is not affiliated with or endorsed by the World Economic Forum. Not legal or financial advice.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap section" id="inside">
+  <div class="section-hd">
+    <span class="eyebrow">What&rsquo;s inside</span>
+    <h2>Five working documents, one decision.</h2>
+    <p>Every document is plain text on purpose: the most portable format there is for AI assistants. You do not install anything. Load the kit into the AI tool you already use and it becomes an interactive advisor that interviews you, scores you, and plans with you.</p>
+  </div>
+  <div class="grid cols-2">
+    <article class="card"><span class="num">01</span><h3>Go/No-Go Scorecard</h3><p>Six weighted factors and thresholds that resolve to a board-defensible go, conditional go, or no-go, plus a five-line recommendation page you can put in front of your team.</p></article>
+    <article class="card"><span class="num">02</span><h3>Twelve-Month Runway</h3><p>The month-by-month plan working backward from the January week: decide and position, publish, build access, sharpen, lock, prepare, execute, convert.</p></article>
+    <article class="card"><span class="num">03</span><h3>Budget Calculator</h3><p>Line-by-line low and high estimates from public ranges, the hidden time line, and three scenario totals from promenade-only to badged. A number you can actually defend.</p></article>
+    <article class="card"><span class="num">04</span><h3>Visibility Plan Templates</h3><p>Meeting-request scripts, the one-page-per-day briefing doc, a model high-impact week, and the follow-up system where the ROI actually lives.</p></article>
+    <article class="card" style="grid-column:1/-1;"><span class="num">05</span><h3>The Worked Example</h3><p>A fully worked fictional buyer (Solvra, below) running the entire kit end to end. Every purchaser sees what good looks like before their own 45-minute session.</p></article>
+  </div>
+  <div class="grid cols-2" style="margin-top:24px;">
+    <article class="card"><span class="tag">Bonus · Start Here</span><h3>AI Advisor prompt sheet</h3><p>Copy-paste prompts — one per document — so the kit runs as your interactive advisor in ChatGPT, Claude, or Copilot with zero prompting skill required.</p></article>
+    <article class="card"><span class="tag">Bonus · Claude Pro / Team</span><h3>Pre-built Claude Skill</h3><p>A ready-made Claude Skill folder: drop it into Claude's skills and it becomes your Davos decision advisor on demand across the Claude apps and Cowork. Paid Claude plans only.</p></article>
+  </div>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="solvra">
+  <div class="section-hd">
+    <span class="eyebrow">The kit, working</span>
+    <h2>Solvra runs the kit.</h2>
+    <p>Solvra is a fictional Series C climate-fintech (~180 people, Amsterdam) weighing Davos January 2027 ahead of a Q3 raise. Here is the kit's actual output, visualized. Any resemblance to a real company or person is coincidental.</p>
+  </div>
+
+  <h3 class="viz-hd">Step 1 · The scorecard: six weighted factors, one defensible answer</h3>
+  ${solvraScoreboard()}
+
+  <h3 class="viz-hd">Step 2 · The budget: a lined, carryable range instead of &ldquo;roughly fifty grand?&rdquo;</h3>
+  <p class="viz-sub">Promenade-only scenario, two people, five nights, no badge, no hosted moment. Public-range estimates as of the 2026 cycle.</p>
+  ${solvraBudgetBars()}
+
+  <h3 class="viz-hd">Step 3 · The runway, condensed to Solvra&rsquo;s next 90 days</h3>
+  ${solvraTimeline()}
+
+  <h3 class="viz-hd">Step 4 · One meeting-request script, instantiated</h3>
+  <blockquote class="script">
+    <p class="script-sub">Subject: Intro to Dr. Elin Sørheim ahead of January?</p>
+    <p>Pieter, I will be in Davos the week of January 18 and Dr. Sørheim is at the top of my list. We are both working on carbon-market settlement integrity; I published our "Missing Layer" report on exactly this. Would you be open to a two-line introduction? Happy to send you the note to forward.</p>
+    <footer>The template forced the ask to wait until the anchor report existed to reference. Script quality is downstream of runway discipline, which is the kit's core argument.</footer>
+  </blockquote>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="ai-advisor">
+  <div class="section-hd">
+    <span class="eyebrow">After the download</span>
+    <h2>The kit becomes an AI advisor, not a folder of files.</h2>
+    <p>The documents are plain text on purpose: the most portable format there is for AI assistants. You do not install anything. Load the kit into the AI tool you already use and it turns from worksheets into an interactive advisor that interviews you, scores you, and plans with you. A Start Here prompt sheet ships in the zip so this works with zero prompting skill.</p>
+  </div>
+  <div class="grid cols-2">
+    <article class="card"><span class="tag">Load it in</span><h3>Upload once, keep it all year</h3><p>ChatGPT (Projects), Claude (Projects), and Microsoft Copilot (Notebooks) all let you upload reference files once so they stay attached to every future conversation. Upload the five documents to one project, name it "Davos Advisor," and return to it for twelve months. The quick path also works: drag one document into any chat and paste the matching prompt from the Start Here sheet.</p></article>
+    <article class="card"><span class="tag">Work the system</span><h3>The kit interviews you</h3><p>Each document ships with a copy-paste prompt. The scorecard prompt makes the AI interview you one criterion at a time, then calculate the weighted score and draft the five-line board recommendation. The runway prompt compresses the twelve months to the time you actually have. Your answers stay in your own AI account, not on anyone's server.</p></article>
+  </div>
+  <h3 class="viz-hd">Advanced setups for paid AI plans</h3>
+  <p class="viz-sub">The kit is plain markdown, so it climbs the capability ladder with you. Feature names and availability vary by vendor and plan.</p>
+  <div class="grid cols-2">
+    <article class="card"><span class="tag">Claude Pro / Max / Team</span><h3>A pre-built Skill ships in the zip</h3><p>Beyond Projects, Claude supports Skills, and the kit ships one ready-made: a folder holding the advisor instruction file plus the five documents. Installing it is one drag where your plan supports Skills. Claude then loads your Davos advisor on demand across the Claude apps, Claude Code, and Cowork.</p></article>
+    <article class="card"><span class="tag">Microsoft 365 Copilot</span><h3>A shared team agent in Teams and Office</h3><p>Beyond Notebooks, buyers on Microsoft 365 Copilot can use the agent builder or Copilot Studio to create a declarative "Davos Advisor" agent grounded in the kit documents, shared with the whole comms team inside Teams and Office.</p></article>
+    <article class="card"><span class="tag">ChatGPT Plus / Team</span><h3>A custom GPT for the whole team</h3><p>Instead of a personal Project, build a custom GPT from the kit documents and the Start Here instructions, then share it with your team. Everyone gets the same advisor with the same grounding.</p></article>
+    <article class="card"><span class="tag">Or any similar system</span><h3>Plain markdown goes anywhere</h3><p>Gemini (Gems), Notion AI, or your enterprise RAG stack: any tool that accepts reference documents can run the kit. Format never blocks you; that is the point of shipping text instead of an app.</p></article>
+  </div>
+  <div class="chat-demo">
+    <p class="chat-demo-hd">What that looks like in practice (Solvra, in their own AI workspace):</p>
+    <div class="chat-msg chat-user"><span class="chat-who">Solvra</span><p>It&rsquo;s the first week of October. We scored a 70, conditional go. What does the runway say we should be doing right now?</p></div>
+    <div class="chat-msg chat-ai"><span class="chat-who">Davos Advisor (AI running the kit)</span><p>With a conditional go in October you are on the condensed runway, not the twelve-month one. The three urgent items: 1) lock accommodation this week, October pricing is the last sane window; 2) your anchor report has to publish by mid-November or your meeting-request scripts have nothing to reference; 3) start the top-ten conversation list now, because badge-holder calendars fill from late November. Want me to build the week-by-week version through January?</p></div>
+    <p class="chat-demo-note">Illustrative exchange based on the kit&rsquo;s actual runway and scorecard logic.</p>
+  </div>
+</section>
+<hr class="divider" />
+
+${demoJourney()}
+${demoJourney() ? '<hr class="divider" />' : ""}
+
+<section class="wrap section" id="pricing">
+  <div class="section-hd">
+    <span class="eyebrow">Pricing</span>
+    <h2>One price, no subscription, no expiry.</h2>
+    <p>Buy once. Download any time. All future updates to the kit documents are included. Low enough for a corporate card without approval; high enough to signal senior advice.</p>
+  </div>
+  <div class="price-grid">
+    <div class="tier mid">
+      <span class="tname">The Davos Decision Kit</span>
+      <h3>All five documents &plus; AI advisor setup</h3>
+      <div class="tprice"><span class="tprice-was" style="font-size:1rem;opacity:.55;text-decoration:line-through;margin-bottom:4px;">$299</span><span class="tprice-amt">$199</span><span class="tprice-unit">launch price · one-time</span></div>
+      <ul>
+        <li>Go/No-Go Scorecard with weighted thresholds</li>
+        <li>Twelve-Month Runway (full and condensed)</li>
+        <li>Budget Calculator with three scenarios</li>
+        <li>Visibility Plan Templates and follow-up system</li>
+        <li>Worked Example (Solvra, fictional)</li>
+        <li>Start Here AI prompt sheet</li>
+        <li>Pre-built Claude Skill folder</li>
+      </ul>
+      <button type="button" class="btn btn-primary js-buy" data-tier="dk1" data-fallback="#waitlist" style="width:100%;margin-top:20px;">Buy the kit <span class="arrow">→</span></button>
+      <p class="form-msg js-buy-msg" role="status" aria-live="polite" style="margin-top:10px;"></p>
+      <p style="color:var(--muted);font-size:12px;margin-top:10px;">Instant download after purchase. Your license key unlocks the kit zip and stays valid indefinitely.</p>
+    </div>
+    <div class="tier">
+      <span class="tname">White-label build</span>
+      <h3>This kit under your agency&rsquo;s brand</h3>
+      <div class="tprice"><span class="tprice-amt">$7,500</span><span class="tprice-unit">fixed · 2 to 3 weeks</span></div>
+      <ul>
+        <li>All five documents in your voice and brand</li>
+        <li>Product page copy, launch email, two social posts</li>
+        <li>Optional: commerce plumbing add-on ($2,500)</li>
+        <li>All assets in editable form, yours outright</li>
+      </ul>
+      <a class="btn btn-ghost" href="/davos-kit-white-label" style="display:inline-block;width:100%;text-align:center;box-sizing:border-box;margin-top:20px;">See the white-label offer <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="waitlist">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Questions?</span>
+      <h2>Not ready to buy yet?</h2>
+      <p>Leave your email and we will follow up, or write us directly.</p>
+      <form class="waitlist js-capture" data-source="davos-kit" data-subject="Davos Decision Kit interest" data-success="Thanks. Check your inbox for a confirmation link and we will follow up." data-mail-body="Following up on the Davos Decision Kit." novalidate>
+        <label class="sr-only" for="dk-email-pub" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="dk-email-pub" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Follow up with me <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: "Davos Decision Kit · Self-Serve Decision System | False Dawn Industries",
+    description:
+      "A self-serve decision system for executives weighing the World Economic Forum annual meeting. Five working documents plus AI advisor setup. One-time purchase, $199 launch price.",
+    active: "davos-kit",
+    body,
+    canonical: `${SITE_URL}/davos-kit`,
+  });
+}
+
+/* --------------- DAVOS KIT WHITE-LABEL OFFER PAGE (/davos-kit-white-label) --
+ * Generic agency offer: "we'll build this kit under your brand". No TCB-
+ * specific references; addressed to any agency with a Davos practice. */
+
+function davosKitWhiteLabelPage() {
+  const body = `<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">False Dawn Industries · White-Label Offer</span>
+      <h1>Build the Davos Decision Kit <em>under your brand</em>.</h1>
+      <p class="lede">The Davos Decision Kit is a live, commercially validated product. Your agency can offer it to your own audience under your own brand in two to three weeks. We handle the system build and the commerce plumbing; you supply the expertise, the voice, and the brand.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#terms">See the offer <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/davos-kit">See the live kit first</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap section" id="gap">
+  <div class="section-hd">
+    <span class="eyebrow">The opportunity</span>
+    <h2>Your Davos practice has two doors. The buyers live between them.</h2>
+    <p>The free door, the briefing or overview, leaves the attendee with notes, not a system. The big door, high-touch advisory, is a five-figure first step. The kit is the middle door: it monetizes the curious who never convert, qualifies the ones who will, and hands you a warm, pre-educated pipeline. The people who buy a $199 decision kit and then decide to go are exactly the people who will eventually need a team like yours.</p>
+  </div>
+  <div class="grid cols-3">
+    <article class="card"><span class="tag">Door 1 · Free</span><h3>The briefing</h3><p>Generous and effective, but the attendee leaves with notes. No system, no next step, no revenue for you.</p></article>
+    <article class="card featured"><span class="tag">The middle door · $199–$299</span><h3>The Decision Kit</h3><p>A one-time purchase, instantly downloadable, under your brand. Monetizes the curious, qualifies the committed.</p></article>
+    <article class="card"><span class="tag">Door 2 · Advisory</span><h3>High-touch engagement</h3><p>The right answer for committed clients — and exactly where kit buyers who score a Go end up.</p></article>
+  </div>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="what">
+  <div class="section-hd">
+    <span class="eyebrow">What gets delivered</span>
+    <h2>Five working documents, in your voice.</h2>
+    <p>Your team reviews and corrects the content before anything ships under your name. The kit&rsquo;s credibility is your expertise. FDI drafts first; you validate and refine. FDI&rsquo;s real job is the system architecture, the document scaffolding, and the commerce plumbing.</p>
+  </div>
+  <div class="grid cols-2">
+    <article class="card"><span class="num">01</span><h3>Go/No-Go Scorecard</h3><p>Six weighted factors and thresholds that resolve to a board-defensible go, conditional go, or no-go — calibrated to your practice&rsquo;s real experience and ranges.</p></article>
+    <article class="card"><span class="num">02</span><h3>Twelve-Month Runway</h3><p>The month-by-month plan working backward from January: your timelines, your access-building patterns, your advice on what actually moves the needle.</p></article>
+    <article class="card"><span class="num">03</span><h3>Budget Calculator</h3><p>Line-by-line low and high estimates informed by your ground truth on costs, not just public ranges. A number your audience can actually defend internally.</p></article>
+    <article class="card"><span class="num">04</span><h3>Visibility Plan Templates</h3><p>Meeting-request scripts and briefing-doc structures built from the patterns your practice has seen work. Your scripts, not generic ones.</p></article>
+    <article class="card" style="grid-column:1/-1;"><span class="num">05</span><h3>Worked Example &plus; AI Advisor Setup</h3><p>A fully worked fictional buyer running the kit end to end, plus a Start Here AI prompt sheet and a pre-built Claude Skill folder so buyers use the kit as an interactive advisor from day one.</p></article>
+  </div>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="process">
+  <div class="section-hd">
+    <span class="eyebrow">The build process</span>
+    <h2>Where your expertise goes in.</h2>
+    <p>FDI drafts everything first. Your team corrects. Nothing proprietary leaves without your sign-off. Total time required from your team: about 4 to 6 hours across 2 to 3 weeks.</p>
+  </div>
+  <ol class="steps">
+    <li class="step">
+      <div class="step-hd"><span class="step-num">1</span><div><span class="step-when">Week 1 · 90 to 120 min</span><h4>The working session</h4></div></div>
+      <p><b>FDI brings:</b> Draft scorecard, budget lines from public ranges, draft runway.</p>
+      <p><b>You bring:</b> Real weights and thresholds validated against your clients' outcomes. The calendar timing and cost ranges as your practice actually knows them.</p>
+    </li>
+    <li class="step">
+      <div class="step-hd"><span class="step-num">2</span><div><span class="step-when">Week 1 · 60 to 90 min</span><h4>Async follow-ups</h4></div></div>
+      <p><b>FDI brings:</b> Script skeletons, briefing-doc structure, model-week grid.</p>
+      <p><b>You bring:</b> The patterns that actually get replies, the model week as your practice runs it, anything that conflicts with how you position advisory.</p>
+    </li>
+    <li class="step">
+      <div class="step-hd"><span class="step-num">3</span><div><span class="step-when">Week 2 · 60 to 90 min</span><h4>The red-line pass</h4></div></div>
+      <p><b>FDI brings:</b> The full revised kit.</p>
+      <p><b>You bring:</b> Veto anything that overpromises, conflicts with your advisory positioning, or leaks proprietary method. Nothing ships under your brand without your approval.</p>
+    </li>
+    <li class="step">
+      <div class="step-hd"><span class="step-num">4</span><div><span class="step-when">Week 2 · 15 to 30 min</span><h4>Sign-off</h4></div></div>
+      <p><b>FDI brings:</b> Final packaged kit, launch copy, product page draft.</p>
+      <p><b>You bring:</b> A yes or a short punch list. Nothing ships without your final word.</p>
+    </li>
+    <li class="step">
+      <div class="step-hd"><span class="step-num">5</span><div><span class="step-when">Week 3 (add-on) · 30 min</span><h4>Commerce check</h4></div></div>
+      <p><b>FDI brings:</b> Checkout, gated download, and email capture wired and tested. This is the same commerce engine the Davos Decision Kit runs today — proven, not speculative.</p>
+      <p><b>You bring:</b> One test purchase walkthrough on a screen share. You see what a buyer sees first.</p>
+    </li>
+  </ol>
+</section>
+<hr class="divider" />
+
+<section class="wrap section" id="terms">
+  <div class="section-hd">
+    <span class="eyebrow">The offer</span>
+    <h2>Scope, timeline, and investment.</h2>
+    <p>Two to three weeks from working session to delivered kit. All assets in editable form under your brand, yours outright. No open-ended consulting tail: the engagement ends at delivery.</p>
+  </div>
+  <div class="price-grid">
+    <div class="tier mid">
+      <span class="tname">The build</span>
+      <h3>Product, packaging, launch copy</h3>
+      <div class="tprice"><span class="tprice-amt">$7,500</span><span class="tprice-unit">fixed</span></div>
+      <p class="model">Half on signing, half on delivery.</p>
+      <ul>
+        <li>Week 1: working session; FDI drafts all five assets plus read-me and packaging</li>
+        <li>Week 2: your review pass; FDI revises, finalizes launch copy, delivers the packaged kit</li>
+        <li>Launch copy: product page, launch email, two social posts</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <span class="tname">Add-on</span>
+      <h3>Commerce plumbing</h3>
+      <div class="tprice"><span class="tprice-amt">$2,500</span><span class="tprice-unit">optional week 3</span></div>
+      <p class="model">The same engine the Davos Decision Kit runs today, wired into your site.</p>
+      <ul>
+        <li>Checkout, license keys, gated download</li>
+        <li>Email capture and buyer notifications</li>
+        <li>Tested end to end before launch</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <span class="tname">Alternative structure</span>
+      <h3>Shared upside</h3>
+      <div class="tprice"><span class="tprice-amt">$5,000</span><span class="tprice-unit">+ 20% of kit revenue, 12 months</span></div>
+      <p class="model">If preferred: lower fixed fee, shared outcome.</p>
+      <ul>
+        <li>Same scope and timeline as the fixed build</li>
+        <li>Suggested buyer pricing: $299 one-time, $199 launch</li>
+        <li>Low enough for a corporate card, high enough to signal senior advice</li>
+      </ul>
+    </div>
+  </div>
+  <p style="color:var(--muted);font-size:13px;margin-top:18px;">This page is a proposal, not a contract. No claim of WEF affiliation appears in any asset; all cost figures are framed as public ranges; nothing in the kit is legal or financial advice.</p>
+</section>
+
+<section class="cta" id="contact">
+  <div class="wrap section">
+    <div class="cta-box">
+      <span class="eyebrow" style="justify-content:center;">Start the conversation</span>
+      <h2>Ready to put your name on it?</h2>
+      <p>Leave an email and FDI will follow up, or write us directly.</p>
+      <form class="waitlist js-capture" data-source="davos-kit-white-label" data-subject="Davos Kit white-label inquiry" data-success="Thanks. Check your inbox for a confirmation link and we will follow up on the proposal." data-mail-body="Following up on the Davos Kit white-label offer." novalidate>
+        <label class="sr-only" for="wl-dk-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Email address</label>
+        ${HONEYPOT}
+        <input type="email" id="wl-dk-email" name="email" placeholder="you@agency.com" autocomplete="email" required />
+        <button class="btn btn-primary" type="submit">Follow up with me <span class="arrow">→</span></button>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="waitlist-note" style="color:var(--muted);font-size:13px;margin-top:6px;">Prefer email? Write us at <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>
+    </div>
+  </div>
+</section>`;
+  return page({
+    title: "White-Label the Davos Decision Kit for Your Agency | False Dawn Industries",
+    description:
+      "Build the Davos Decision Kit under your agency's brand. A two-to-three-week engagement: FDI drafts five expert documents in your voice, you validate and refine, and the kit ships under your name.",
+    active: "davos-kit-white-label",
+    body,
+    canonical: `${SITE_URL}/davos-kit-white-label`,
+  });
+}
+
 function renderRoute(active, builder) {
   return GATED.has(active)
     ? holdingPage({ title: "Coming soon | False Dawn Industries", active })
@@ -4212,6 +4540,8 @@ function main() {
 
   fs.writeFileSync(path.join(DIST, "skillfoundry.html"), skillfoundry());
   fs.writeFileSync(path.join(DIST, "marcom-kit.html"), marcomKit());
+  fs.writeFileSync(path.join(DIST, "davos-kit.html"), davosKitPage());
+  fs.writeFileSync(path.join(DIST, "davos-kit-white-label.html"), davosKitWhiteLabelPage());
   fs.writeFileSync(path.join(DIST, "topcall.html"), renderRoute("topcall", topcall));
   fs.writeFileSync(path.join(DIST, "series.html"), seriesPage());
   fs.writeFileSync(path.join(DIST, "aggregated.html"), conceptPage("aggregated"));
@@ -4224,15 +4554,12 @@ function main() {
   fs.writeFileSync(path.join(DIST, "community.html"), communityPage());
   fs.writeFileSync(path.join(DIST, "workshop.html"), workshopPage());
   fs.writeFileSync(path.join(DIST, "engine.html"), enginePage());
-  if (DAVOS_DEMO) {
-    fs.writeFileSync(path.join(DIST, "davos-kit-demo.html"), davosDemoPage());
-  }
   fs.writeFileSync(path.join(DIST, "llms.txt"), llmsTxt());
   fs.writeFileSync(path.join(DIST, "sitemap.xml"), sitemapXml());
   fs.writeFileSync(path.join(DIST, "robots.txt"), robotsTxt());
 
   console.log(
-    `[build] wrote 17 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFiles003.length}+${slideFilesFdcp.length}+${slideFiles004.length}+${slideFilesPt01.length} slides, assets → ${path.relative(ROOT, DIST)}`,
+    `[build] wrote 19 pages + llms.txt + sitemap.xml + robots.txt, ${slideFiles.length}+${slideFiles002.length}+${slideFiles003.length}+${slideFilesFdcp.length}+${slideFiles004.length}+${slideFilesPt01.length} slides, assets → ${path.relative(ROOT, DIST)}`,
   );
 }
 

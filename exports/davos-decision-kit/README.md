@@ -29,13 +29,6 @@ One-time purchase. Yours forever. Launch price $199 (regular $299).
 4. Use the **Visibility Plan Templates** to build the meeting stack and the
    follow-up system.
 
-## When you want a partner
-
-Every asset in this kit ends where the self-serve path ends: strategy. Which
-side events fit your positioning, which conversations to pursue, how to convert
-one week of visibility into a year of momentum. That is what a strategy session
-is for. Book one with the team that built the practice behind this kit.
-
 ---
 
 Costs and figures in this kit are estimates drawn from public ranges and

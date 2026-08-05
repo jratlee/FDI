@@ -1,21 +1,20 @@
 #!/usr/bin/env node
-// Recapture all five /davos-kit-demo journey screenshots headlessly.
+// Recapture all five /davos-kit journey screenshots headlessly.
 //
 // Usage:
-//   DAVOS_DEMO_PASSWORD=... node site/capture-davos-journey.mjs [baseUrl]
+//   node site/capture-davos-journey.mjs [baseUrl]
 //
 // Requires:
 //   - A running site server (node site/build.mjs && node site/serve.mjs)
-//   - DAVOS_DEMO_PASSWORD env var
 //   - DAVOSKIT_TIER1_PRICE_ID env var (for the Stripe checkout)
 //   - STRIPE_TEST_API_KEY or STRIPE_SECRET_KEY env var
 //   - Nix chromium on PATH
 //
 // Writes to site/src/assets/davos-demo/:
-//   journey-1-product-page.png   — authenticated demo page hero
+//   journey-1-product-page.png   — public product page hero
 //   journey-2-checkout.png       — Stripe Checkout filled, ready to submit
 //   journey-3-success-key.png    — success page with license key
-//   journey-4-download.png       — success page download button highlighted
+//   journey-4-download.png       — kit contents listing
 //   journey-5-documents.png      — rendered kit document (README.md)
 
 import fs from "node:fs";
@@ -26,30 +25,8 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = path.join(__dirname, "src", "assets", "davos-demo");
 const BASE = (process.argv[2] || `http://localhost:${process.env.PORT || 5000}`).replace(/\/+$/, "");
-const PASSWORD = process.env.DAVOS_DEMO_PASSWORD;
-
-if (!PASSWORD) {
-  console.error("DAVOS_DEMO_PASSWORD is not set; cannot authenticate to the gated page.");
-  process.exit(1);
-}
 
 // ── helpers ──────────────────────────────────────────────────────────────────
-
-async function getCookie() {
-  const res = await fetch(`${BASE}/davos-kit-demo`, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ password: PASSWORD }),
-    redirect: "manual",
-  });
-  const setCookie = res.headers.get("set-cookie") || "";
-  const m = setCookie.match(/dk_demo=([^;]+)/);
-  if (!m) {
-    console.error(`Gate did not issue a cookie (status ${res.status}). Wrong password?`);
-    process.exit(1);
-  }
-  return m[1];
-}
 
 async function createCheckoutSession() {
   const res = await fetch(`${BASE}/api/checkout`, {
@@ -102,9 +79,6 @@ try {
   process.exit(1);
 }
 
-const token = await getCookie();
-console.log("  ✓ Gate authenticated, dk_demo cookie obtained");
-
 const checkoutUrl = await createCheckoutSession();
 console.log(`  ✓ Checkout session created: ${checkoutUrl.slice(0, 72)}…`);
 
@@ -124,14 +98,12 @@ const browser = await puppeteer.launch({
 const VIEWPORT = { width: 1360, height: 850, deviceScaleFactor: 2 };
 
 try {
-  // ── Journey 1: authenticated product demo page ──────────────────────────
-  console.log("\n[1/5] Demo product page…");
+  // ── Journey 1: public product page ─────────────────────────────────────
+  console.log("\n[1/5] Public product page…");
   {
     const page = await browser.newPage();
     await page.setViewport(VIEWPORT);
-    const url = new URL(BASE);
-    await page.setCookie({ name: "dk_demo", value: token, domain: url.hostname, path: "/" });
-    await page.goto(`${BASE}/davos-kit-demo`, { waitUntil: "networkidle0", timeout: 60_000 });
+    await page.goto(`${BASE}/davos-kit`, { waitUntil: "networkidle0", timeout: 60_000 });
     await new Promise((r) => setTimeout(r, 900)); // fonts settle
     const out = path.join(OUT_DIR, "journey-1-product-page.png");
     await page.screenshot({ path: out });
