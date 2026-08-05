@@ -2,6 +2,12 @@
 
 Four standalone LinkedIn posts to run across launch week. One CTA each. No em-dashes.
 
+> **Plain-URL exception (documented):** the CTA URLs below are deliberately left
+> bare. These are LinkedIn *feed posts*, and the LinkedIn feed strips markdown,
+> so `[text](url)` syntax would publish as literal brackets. LinkedIn auto-links
+> the bare domain instead. This is the platform exception permitted by the
+> Plain-URL rule in `replit.md`; do not "fix" these into markdown links.
+
 ---
 
 ## Post 1 · The archetype (launch day)

@@ -3,14 +3,14 @@
 The complete launch bundle for the False Dawn Industries Performance Thinking
 report on the Forward-Deployed Communications Professional (FDCP): the operator
 role for agent-mediated markets. The live article is published at
-https://falsedawn.industries/fdcp
+[falsedawn.industries/fdcp](https://falsedawn.industries/fdcp)
 
 ## Contents
 
 - `fdcp-report.md` - the full report (about 3,000 words). Source of truth for
   the live `/fdcp` page; the site build parses this file directly.
 - `linkedin-newsletter.md` - the LinkedIn newsletter edition of the report,
-  with hook, single CTA to falsedawn.industries/fdcp, and hashtags.
+  with hook, single CTA to [falsedawn.industries/fdcp](https://falsedawn.industries/fdcp), and hashtags.
 - `promo-posts.md` - four standalone LinkedIn promo posts for the launch week.
 - `images/` - all rendered visuals:
   - `fdcp-cover-1280x720.png` - newsletter / article cover.

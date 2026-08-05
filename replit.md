@@ -229,6 +229,10 @@ closing paragraph of every earlier guide when a new one launches.
 
 **Plain-URL rule:** Never write a bare URL like `falsedawn.industries/community`
 in publishable markdown. Always wrap it: `[falsedawn.industries/community](https://falsedawn.industries/community)`.
+**Documented platform exception:** copy destined for platforms that strip
+markdown (e.g. LinkedIn feed posts, X) may keep bare URLs deliberately, but the
+file must carry an explicit note saying so (see
+`exports/performance-thinking-02/promo-posts.md`).
 
 ## User preferences
 - Reorganize `replit.md` for clarity but never trim content from it; the user
