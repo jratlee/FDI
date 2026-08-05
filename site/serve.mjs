@@ -3325,4 +3325,18 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`[serve] False Dawn Industries site on http://${HOST}:${PORT}`);
+  // Warn loudly when RESEND_FROM is still the Resend shared test sender.
+  // That address only delivers to the Resend account owner's own inbox, so
+  // subscriber confirmation emails 403 for everyone else.  Fix:
+  //   1. Verify a sending domain at https://resend.com/domains
+  //   2. Set RESEND_FROM to an address on that domain, e.g.
+  //      "False Dawn Industries <hello@yourdomain.com>"
+  const resendFrom = (process.env.RESEND_FROM || "").trim();
+  if (!resendFrom) {
+    console.warn("[email] WARNING: RESEND_FROM is not set — confirmation and welcome emails are disabled.");
+  } else if (resendFrom.includes("onboarding@resend.dev")) {
+    console.warn("[email] WARNING: RESEND_FROM is still the Resend shared test sender (onboarding@resend.dev).");
+    console.warn("[email]          Subscriber confirmation emails will 403 for any non-owner address.");
+    console.warn("[email]          Fix: verify a domain at https://resend.com/domains, then update RESEND_FROM.");
+  }
 });

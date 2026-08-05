@@ -55,6 +55,31 @@ spam defense, and retention. Summary lives in `replit.md`.
   owner still work). Swap `RESEND_FROM` to a verified-domain address to enable
   confirmations for all subscribers.
 
+### Enabling full delivery: domain verification steps
+
+1. **Log in to Resend** at <https://resend.com> with the account linked to this
+   project's Resend integration.
+2. Go to **Domains** → **Add Domain** and enter the domain you want to send
+   from (e.g. `ratcliffe-lee.com` or `falsedawn.industries`).
+3. Resend will display several DNS records (typically SPF, DKIM, and optionally
+   DMARC). Add each record at your DNS provider (Cloudflare, Namecheap, etc.)
+   exactly as shown. DKIM records can take a few minutes to propagate.
+4. Back in the Resend **Domains** panel, click **Verify** (or wait for the
+   status to flip to **Verified** automatically).
+5. Once verified, update the `RESEND_FROM` environment variable in Replit to an
+   address on that domain, e.g.:
+   ```
+   False Dawn Industries <hello@ratcliffe-lee.com>
+   ```
+   The value goes in the Replit **Environment Variables** panel (not Secrets,
+   since it is not sensitive). Delete the old shared-key entry first if it
+   exists under the same name.
+6. Restart the **Start application** workflow so the new value is picked up.
+   The startup log will no longer show the `onboarding@resend.dev` warning.
+7. Run an end-to-end test with a non-owner address: sign up → confirmation
+   email arrives → click the link → welcome email arrives, no 403s in the
+   server log.
+
 ## Self-serve deletion (data-subject rights)
 - Every `waitlist_signups` row carries
   an unguessable per-signup `unsub_token` (64 hex chars, generated on insert;
