@@ -240,10 +240,15 @@ file must carry an explicit note saying so (see
 - Reorganize `replit.md` for clarity but never trim content from it; the user
   does not want to risk context loss. (Done July 2026: detail moved verbatim
   into the `docs/` files listed above; nothing was deleted.)
-- **AI model default:** Always use OpenRouter (`https://openrouter.ai/api/v1`)
-  with the `openrouter/auto` model selector as the default for any AI feature
-  built in this project. The user has an OpenRouter account; the key is stored
-  as `OPENROUTER_API_KEY` in Replit secrets. Only fall back to the Replit
-  OpenAI integration (`AI_INTEGRATIONS_OPENAI_API_KEY`) when OpenRouter is
-  explicitly unavailable. Never hardcode `gpt-4o-mini` or any other specific
-  model — use `openrouter/auto` and let the router choose.
+- **AI model defaults (OpenRouter):** Always use OpenRouter
+  (`https://openrouter.ai/api/v1`) for all AI features. Key is `OPENROUTER_API_KEY`
+  in Replit secrets. Two tiers:
+  - **Open-ended tasks** (copywriting, brainstorming, reasoning, agents): use
+    `openrouter/auto` — let the router pick the best model for the prompt.
+  - **Deterministic extraction tasks** (JSON schema parsing, classification,
+    structured output, temperature=0): pin to `meta-llama/llama-3.3-70b-instruct`
+    — cheaper than gpt-4o-mini ($0.10/M vs $0.15/M in), consistent latency,
+    no auto-router surprises on long system prompts.
+  Fall back to `AI_INTEGRATIONS_OPENAI_API_KEY` only when OpenRouter is
+  explicitly unavailable (e.g. inside a Replit-only service). Never hardcode
+  `gpt-4o-mini` or any provider-specific model string without this analysis.

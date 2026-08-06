@@ -10,12 +10,12 @@
 
 import OpenAI from "openai";
 
-// Uses OpenRouter with the /auto model selector by default.
-// On the VPS: OPENAI_BASE_URL=https://openrouter.ai/api/v1, OPENAI_API_KEY=<openrouter key>.
-// On Replit: OPENAI_BASE_URL and OPENAI_API_KEY from the OpenAI integration or OpenRouter secret.
+// Runs via OpenRouter. Reads OPENROUTER_API_KEY; falls back to the Replit
+// AI integration key (AI_INTEGRATIONS_OPENAI_API_KEY) if that is set.
+// Base URL defaults to OpenRouter; can be overridden via OPENROUTER_BASE_URL.
 const client = new OpenAI({
-  baseURL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY,
+  baseURL: process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
 });
 
 const SYSTEM_PROMPT = `You are a parameter extraction assistant for the FDI Growth Cartography modeling engine.
@@ -70,8 +70,11 @@ export async function parseScenario(rawQuestion) {
 
   let raw;
   try {
+    // Pinned to llama-3.3-70b for deterministic JSON extraction:
+    // cheaper than gpt-4o-mini, consistent latency, no auto-router surprises
+    // on a long system prompt. Use openrouter/auto for open-ended features.
     const completion = await client.chat.completions.create({
-      model: "openrouter/auto",
+      model: "meta-llama/llama-3.3-70b-instruct",
       max_tokens: 512,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
