@@ -1,0 +1,12 @@
+[Unit]
+Description=Buzz relay version check (posts Nostr notification if behind)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+EnvironmentFile=/opt/fdi-community/.env.agent
+ExecStart=/opt/buzz/scripts/buzz-version-check.sh
+StandardOutput=journal
+StandardError=journal

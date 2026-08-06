@@ -269,7 +269,82 @@ Redeploy. The `/community` page automatically switches from waitlist to "Enter t
 
 ## Ongoing maintenance
 
-- Relay updates: `cd /opt/buzz && git pull && cargo build --release -p buzz-relay && systemctl restart buzz-relay`
-- Web client updates: `cd /opt/buzz/web && git pull && pnpm install && VITE_RELAY_URL=wss://relay.falsedawn.industries pnpm build && systemctl reload nginx`
+- Relay updates: use `sudo /opt/buzz/scripts/buzz-update.sh` (see §12 below)
+- Web client updates: `cd /opt/buzz/web && pnpm install && VITE_RELAY_URL=wss://lab.falsedawn.industries pnpm build`
 - Agent updates: pull the FDI repo, `systemctl restart gc-agent`
 - Certs: certbot auto-renews via the cron job it installs.
+
+---
+
+## 12. Version check and safe upgrade scripts
+
+### Purpose
+
+`buzz-version-check.sh` — run weekly by systemd timer. Compares `/opt/buzz` git
+tag against the latest stable GitHub release. If behind, posts a kind-9 Nostr
+message to `wss://lab.falsedawn.industries` visible in the Lab. Silent when current.
+
+`buzz-update.sh` — run manually when you are ready to upgrade. Fetches the target
+tag (defaults to latest stable), backs up the current binary, builds the relay and
+web client, restarts all services, waits 10 s, then health-checks `/api/health`
+and the NIP-11 endpoint. Rolls back the binary automatically on failure.
+
+### Installation (done by setup.sh — manual steps if re-running)
+
+```bash
+# Copy scripts from the FDI repo (community/scripts/) to /opt/buzz/scripts/
+mkdir -p /opt/buzz/scripts
+cp /opt/fdi-community/community/scripts/buzz-update.sh        /opt/buzz/scripts/
+cp /opt/fdi-community/community/scripts/buzz-version-check.sh /opt/buzz/scripts/
+chmod +x /opt/buzz/scripts/buzz-update.sh /opt/buzz/scripts/buzz-version-check.sh
+
+# Install systemd units
+cp /opt/fdi-community/community/scripts/buzz-version-check.service /etc/systemd/system/
+cp /opt/fdi-community/community/scripts/buzz-version-check.timer   /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now buzz-version-check.timer
+
+# Verify
+systemctl list-timers buzz-version-check.timer
+```
+
+### Running manually
+
+```bash
+# Check for a new release now (exits silently if already current)
+sudo BUZZ_AGENT_PRIVATE_KEY=... BUZZ_RELAY_URL=wss://lab.falsedawn.industries \
+  /opt/buzz/scripts/buzz-version-check.sh
+
+# Or let systemd inject the env from .env.agent:
+sudo systemctl start buzz-version-check.service
+journalctl -u buzz-version-check.service
+
+# Dry-run the upgrade (shows plan, builds nothing)
+sudo /opt/buzz/scripts/buzz-update.sh --dry-run
+
+# Upgrade to the latest stable release
+sudo /opt/buzz/scripts/buzz-update.sh
+
+# Upgrade to a specific tag
+sudo /opt/buzz/scripts/buzz-update.sh v0.4.25
+```
+
+### What the timer looks like when healthy
+
+```
+NEXT                        LEFT    LAST                        PASSED  UNIT                       ACTIVATES
+Sun 2026-08-09 09:00:00 UTC 2d 14h  -                           -       buzz-version-check.timer   buzz-version-check.service
+```
+
+### Notification format
+
+When a new release is available the Lab receives (from @gc):
+
+> Buzz v0.4.23 is available (running v0.4.22). Run buzz-update.sh to upgrade.
+
+### Rollback behaviour
+
+If the health check fails after an upgrade, `buzz-update.sh` copies
+`/opt/buzz/target/release/buzz-relay.prev` back over the binary, git-checks-out
+the previous tag (best-effort), and restarts services. If no backup binary exists
+(first-ever build) a manual recovery command is printed instead.

@@ -292,6 +292,26 @@ systemctl restart gc-agent
 sleep 3
 systemctl is-active buzz-relay gc-service gc-agent || true
 
+# ── 12. Version check + upgrade scripts ──────────────────────────────────
+log "installing buzz-update.sh and buzz-version-check.sh"
+SCRIPTS_SRC="$FDI_DIR/community/scripts"
+SCRIPTS_DST="$BUZZ_DIR/scripts"
+mkdir -p "$SCRIPTS_DST"
+cp "$SCRIPTS_SRC/buzz-update.sh"        "$SCRIPTS_DST/buzz-update.sh"
+cp "$SCRIPTS_SRC/buzz-version-check.sh" "$SCRIPTS_DST/buzz-version-check.sh"
+chmod +x "$SCRIPTS_DST/buzz-update.sh" "$SCRIPTS_DST/buzz-version-check.sh"
+
+# Install systemd units for the weekly version check
+cp "$SCRIPTS_SRC/buzz-version-check.service" /etc/systemd/system/buzz-version-check.service
+cp "$SCRIPTS_SRC/buzz-version-check.timer"   /etc/systemd/system/buzz-version-check.timer
+
+systemctl daemon-reload
+systemctl enable --now buzz-version-check.timer
+
+log "version check timer enabled (weekly, Sunday 09:00 UTC)"
+log "verify: systemctl list-timers buzz-version-check.timer"
+
+# ── Done ──────────────────────────────────────────────────────────────────
 log "done. verify:"
 log "  curl -s https://${RELAY_DOMAIN}/health"
 log "  open https://${LAB_DOMAIN} in a browser"
