@@ -46,6 +46,31 @@ const BUZZ_AGENT_KEY_HEX = (process.env.BUZZ_AGENT_PRIVATE_KEY || "").trim();
 const BUZZ_RELAY_INTERNAL = (process.env.BUZZ_RELAY_INTERNAL_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 const BUZZ_HOST = (process.env.BUZZ_RELAY_HOST || "lab.falsedawn.industries");
 
+/* ─── Per-IP invite rate limiter ──────────────────────────────────── */
+// Allow at most INVITE_RATE_MAX requests per INVITE_RATE_WINDOW_MS per IP.
+// This bounds anonymous invite minting without breaking the intended
+// public-invite flow (one page load = one invite; generous to cover retries).
+const INVITE_RATE_MAX = 5;
+const INVITE_RATE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const _inviteRateBuckets = new Map(); // ip -> { count, resetAt }
+
+function inviteRateLimitExceeded(ip) {
+  const now = Date.now();
+  let bucket = _inviteRateBuckets.get(ip);
+  if (!bucket || now >= bucket.resetAt) {
+    bucket = { count: 0, resetAt: now + INVITE_RATE_WINDOW_MS };
+  }
+  bucket.count += 1;
+  _inviteRateBuckets.set(ip, bucket);
+  // Evict stale entries (simple cleanup to bound memory).
+  if (_inviteRateBuckets.size > 5000) {
+    for (const [k, v] of _inviteRateBuckets) {
+      if (now >= v.resetAt) _inviteRateBuckets.delete(k);
+    }
+  }
+  return bucket.count > INVITE_RATE_MAX;
+}
+
 /* ─── In-memory chart cache (bounded) ──────────────────────────────── */
 
 const MAX_CHARTS = 200;
@@ -224,7 +249,13 @@ function sendJSON(res, status, body) {
   res.end(payload);
 }
 
-async function handleInvite(_req, res) {
+async function handleInvite(req, res) {
+  // Per-IP rate limit: prevent anonymous callers from bulk-minting invites.
+  const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress || "unknown";
+  if (inviteRateLimitExceeded(ip)) {
+    return sendJSON(res, 429, { ok: false, error: "Too many invite requests. Try again later." });
+  }
+
   if (!BUZZ_AGENT_KEY_HEX) {
     return sendJSON(res, 503, { ok: false, error: "Agent key not configured." });
   }
@@ -232,7 +263,7 @@ async function handleInvite(_req, res) {
     const privkeyBytes = Uint8Array.from(Buffer.from(BUZZ_AGENT_KEY_HEX, "hex"));
 
     // NIP-98 u tag must be the public URL the relay sees on the wire.
-    // We call the relay internally on port 3000 with the correct Host header
+    // We call the relay via BUZZ_RELAY_INTERNAL with the correct Host header
     // so the relay routes to the right community tenant.
     const pubUrl = `https://${BUZZ_HOST}/api/invites`;
 
@@ -250,11 +281,13 @@ async function handleInvite(_req, res) {
     const authHeader = "Nostr " + Buffer.from(JSON.stringify(authEvent)).toString("base64");
 
     // Use http.request (not fetch) so the Host header is honoured — Node's
-    // built-in fetch (undici) treats Host as a forbidden header.
+    // built-in fetch (undici) treats Host as a forbidden header and strips it.
+    // Parse BUZZ_RELAY_INTERNAL to extract hostname and port.
+    const relayInternalUrl = new URL(BUZZ_RELAY_INTERNAL);
     const result = await new Promise((resolve, reject) => {
       const r = http.request({
-        hostname: "127.0.0.1",
-        port: 3000,
+        hostname: relayInternalUrl.hostname,
+        port: Number(relayInternalUrl.port) || (relayInternalUrl.protocol === "https:" ? 443 : 80),
         path: "/api/invites",
         method: "POST",
         headers: {

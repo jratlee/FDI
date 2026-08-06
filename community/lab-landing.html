@@ -770,8 +770,13 @@
         expiryEl.textContent = 'Expires ' + exp.toLocaleString() + ' · Use within 7 days';
       }
 
-      // Generate QR code onto canvas
-      const drawn = (typeof qrcode !== 'undefined') && drawQR(canvas, data.code);
+      // Generate QR code onto canvas.
+      // Encode the canonical invite URL (https://<relay>/invite/<code>) so
+      // iPhone's camera app opens it in Safari, which universal-links into the
+      // Buzz iOS app and triggers its InviteJoinSheet with the correct relay URL
+      // and code pre-populated. The raw JWT code alone is unrecognised by Buzz.
+      const inviteUrl = window.location.origin + '/invite/' + data.code;
+      const drawn = (typeof qrcode !== 'undefined') && drawQR(canvas, inviteUrl);
       if (!drawn) canvas.style.display = 'none';
 
       loadingEl.style.display = 'none';
