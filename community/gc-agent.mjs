@@ -1,20 +1,21 @@
 /**
  * Growth Cartography Agent
  *
- * Connects to a self-hosted Buzz relay (Nostr/NIP-01 protocol) as an agent
- * identity. Listens for mentions in the configured channel. When a mention
- * contains a growth-modeling question, parses the scenario and replies with
- * a modeled answer: parameters used, equilibrium/floor, curve summary, and
- * two or three sensitivity notes.
+ * Connects to a self-hosted Buzz relay using Nostr keypair auth (NIP-42).
+ * Listens for messages mentioning @gc or @growth in the configured community
+ * channel. Replies with a modeled answer: parameters, equilibrium/floor,
+ * curve summary, and sensitivity notes.
  *
- * Environment variables (set in deployment, never hardcoded):
- *   BUZZ_RELAY_URL          WebSocket URL of the Buzz relay, e.g. wss://relay.falsedawn.industries
- *   BUZZ_AGENT_PRIVATE_KEY  Nostr private key (hex, 64 chars) for the agent's keypair
- *   BUZZ_CHANNEL_ID         Nostr channel event ID the agent should monitor (optional; monitors all mentions if unset)
- *   OPENAI_API_KEY          Provided by the Replit OpenAI integration
+ * Buzz relay uses kind-9 (KIND_STREAM_MESSAGE) for channel messages, scoped
+ * to a community via the ["h", <community-uuid>] NIP-29 group tag. This is
+ * NOT the same as NIP-28 kind-42 (Public Chat), which Buzz does not support.
  *
- * The agent participates using standard Nostr keypair auth (NIP-42). No Keycloak
- * or Buzz-specific auth extensions are needed for a basic message agent.
+ * Environment variables:
+ *   BUZZ_RELAY_URL          WebSocket URL, e.g. wss://relay.falsedawn.industries
+ *   BUZZ_AGENT_PRIVATE_KEY  64-char hex Nostr private key
+ *   BUZZ_CHANNEL_ID         Community UUID (e.g. f5156ed0-...) from the operator API
+ *   OPENAI_API_KEY          OpenAI key (must point to api.openai.com from VPS)
+ *   OPENAI_BASE_URL         OpenAI base URL (must be https://api.openai.com/v1 on VPS)
  *
  * Run: node community/gc-agent.mjs
  */
@@ -38,6 +39,9 @@ import { renderCurve } from "./gc-render.mjs";
 
 const RELAY_URL = process.env.BUZZ_RELAY_URL;
 const PRIVATE_KEY_HEX = process.env.BUZZ_AGENT_PRIVATE_KEY;
+// BUZZ_CHANNEL_ID: UUID of the sub-channel within the community (h-tag value).
+// Set this after creating a channel via kind-9007. If unset the agent monitors
+// all kind-9 messages in the community that mention @gc or @growth.
 const CHANNEL_ID = process.env.BUZZ_CHANNEL_ID || null;
 // When GC_SERVICE_URL is set the agent delegates to the HTTP service, which
 // handles parsing, engine math, and chart rendering in one call and returns
@@ -162,10 +166,13 @@ let ws;
 let authenticated = false;
 
 function subscribe() {
-  const filter = { kinds: [42], "#p": [PUBKEY], limit: 0 };
-  if (CHANNEL_ID) filter["#e"] = [CHANNEL_ID];
+  // Buzz relay uses kind-9 (KIND_STREAM_MESSAGE) for channel messages, scoped
+  // by community via Host header (routing) and optionally by sub-channel via
+  // "#h" filter. kind-42 (NIP-28 Public Chat) is not supported by Buzz.
+  const filter = { kinds: [9], limit: 0 };
+  if (CHANNEL_ID) filter["#h"] = [CHANNEL_ID];
   ws.send(JSON.stringify(["REQ", SUB_ID, filter]));
-  console.log(`[gc-agent] subscribed (sub=${SUB_ID})`);
+  console.log(`[gc-agent] subscribed (sub=${SUB_ID}${CHANNEL_ID ? ` h=${CHANNEL_ID.slice(0,8)}` : ""})`);
 }
 
 function connect() {
@@ -229,7 +236,7 @@ function connect() {
     /* ── EVENT: handle incoming messages ──────────────────────────── */
     if (type !== "EVENT") return;
     const event = rest[1];
-    if (!event || event.kind !== 42) return;
+    if (!event || event.kind !== 9) return;
     if (event.pubkey === PUBKEY) return;
 
     const content = event.content || "";
@@ -290,9 +297,13 @@ function connect() {
       }
     }
 
-    const replyTags = [["e", event.id, "", "reply"], ["p", event.pubkey]];
-    if (CHANNEL_ID) replyTags.unshift(["e", CHANNEL_ID, "", "root"]);
-    const reply = makeEvent(42, replyContent, replyTags);
+    // kind-9 reply: channel-scoped via h tag, threaded via e/p tags.
+    const replyTags = [
+      ["e", event.id, "", "reply"],
+      ["p", event.pubkey],
+    ];
+    if (CHANNEL_ID) replyTags.unshift(["h", CHANNEL_ID]);
+    const reply = makeEvent(9, replyContent, replyTags);
     ws.send(JSON.stringify(["EVENT", reply]));
     console.log(`[gc-agent] replied (id=${reply.id.slice(0, 12)}...)`);
   });

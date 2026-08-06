@@ -1,96 +1,73 @@
 ---
 name: Cassette VPS deployment
-description: State of the Buzz relay VPS on Cassette — connection details, what's installed, what's left.
+description: Full state of the Buzz relay VPS at 162.243.115.129 — domains, services, communities, SSH, gc-agent architecture
 ---
 
-# Cassette VPS — Open Cartography Lab
+## VPS basics
+- IP: 162.243.115.129, plan: medium ($29/mo, ~2 GB RAM / 1 vCPU)
+- SSH: `ssh -i /tmp/cassette-deploy/id_ed25519 cassette@162.243.115.129`
+  - Key recreated 2026-08-06; key ID 44d9545c; assigned to cassette instance 8558cf93
+  - The /tmp key is ephemeral — regenerate with `ssh-keygen -t ed25519 -f /tmp/cassette-deploy/id_ed25519 -N ""` then re-add to VPS if the Replit session resets
+- Rust toolchain must be stable (not pinned); post-resize needs reboot; DNS/TLS/flip done 2026-08-06
 
-## Server identity
-- Provider: Cassette (cassette.sh)
-- Cassette ID: `8558cf93-e8e6-4e7f-b9cc-262e96d457de`
-- Name: `falling-wildflower-1`
-- IP: `162.243.115.129` (permanent)
-- Plan: `medium` (2 vCPU / 4GB RAM / 50GB SSD — upgraded from small)
-- Region: `us-nyc-1`
-- OS: Ubuntu 24.04 LTS
+## Domains
+- `relay.falsedawn.industries` → nginx → buzz-relay at 127.0.0.1:3000 (WebSocket relay)
+- `lab.falsedawn.industries` → nginx → buzz-relay at 127.0.0.1:3000 (WebSocket + SPA)
+  - **Both** domains proxy ALL traffic to port 3000; the relay distinguishes tenants by Host header
+  - TLS: both share /etc/letsencrypt/live/relay.falsedawn.industries/ cert (SAN or wildcard)
 
-## SSH access
-- Username: `cassette` (passwordless sudo — NOT root)
-- Keypair: generated at `/tmp/cassette-deploy/id_ed25519` in Replit (ephemeral /tmp — regenerate if lost)
-- Cassette key ID: `6999ba8d-1566-47e5-affb-6927dc227b35` (registered via API, assigned to cassette)
-- To SSH: `ssh -i /tmp/cassette-deploy/id_ed25519 cassette@162.243.115.129`
-- If /tmp key is lost: generate new ed25519 keypair, POST to `/api/v1/ssh_keys`, DELETE old assignment, POST new to `/api/v1/cassettes/:id/ssh_key_assignments`
+## Communities (Buzz tenants)
+- `lab.falsedawn.industries` → UUID `f5156ed0-59f8-4ec3-b133-b2a1d66495bc` ← **the active Lab**
+- `relay.falsedawn.industries` → UUID `030ffa74-3e39-4c67-838d-7839b27af584` (relay community, not used by the Lab)
 
-## What's installed on the server
-- Swap: 4GB at /swapfile (persists via /etc/fstab)
-- System: build-essential, pkg-config, libssl-dev, git, curl, nginx, certbot, python3-certbot-nginx
-- PostgreSQL: running, `buzz` role + `buzz` database, password `lab-buzz-2026`
-- Redis: running on localhost:6379
-- Node.js: v22.23.2
-- Rust: 1.97.1 stable (had to upgrade from 1.88 — sqlx requires 1.94+, netwatch requires 1.91)
-- Buzz relay: cloned at `/opt/buzz` tag v0.4.22; **build in progress** (cargo build --release -p buzz-relay)
-- GC community: `/opt/fdi-community/community/*.mjs` + `ws` + `openai` npm packages
+## Buzz web client
+- Built at `/opt/buzz/web`, deployed to `/opt/buzz/web/dist`
+- Served by the relay itself (from BUZZ_WEB_DIR) when Host=lab or relay
+- Must be rebuilt with `VITE_RELAY_URL=wss://lab.falsedawn.industries` for the Lab community
 
-## Config files on server
-- `/opt/buzz/.env.production` — DATABASE_URL, REDIS_URL, HOST, PORT, RELAY_URL (set to ws://IP:3000 temporarily)
-- `/opt/fdi-community/.env.agent` — BUZZ_RELAY_URL, BUZZ_AGENT_PRIVATE_KEY, GC_SERVICE_URL, GC_CHART_BASE_URL, OPENAI_API_KEY, OPENAI_BASE_URL
-- `/etc/nginx/sites-available/buzz-lab` — HTTP-only config (TLS pending DNS)
-- `/etc/systemd/system/buzz-relay.service`
-- `/etc/systemd/system/gc-service.service`
-- `/etc/systemd/system/gc-agent.service`
+## gc-agent
+- Service: gc-agent.service, WorkingDirectory=/opt/fdi-community, ExecStart=node community/gc-agent.mjs
+- EnvironmentFile: /opt/fdi-community/.env.agent
+- Key env vars:
+  - BUZZ_RELAY_URL=wss://lab.falsedawn.industries (community routing via Host header)
+  - BUZZ_CHANNEL_ID=f5156ed0-59f8-4ec3-b133-b2a1d66495bc (community UUID, used as `h` tag in kind-9 messages)
+  - BUZZ_AGENT_PRIVATE_KEY=<64-char hex> (Nostr private key for gc-agent)
+  - OPENAI_API_KEY / OPENAI_BASE_URL — must point to https://api.openai.com/v1 (NOT the Replit localhost:1106 proxy, which is unreachable from VPS)
 
-## What IS running (deployed Aug 5 2026)
-- minio ✅ (localhost:9000, bucket buzz-media, user fdi-community, pw lab-minio-2026)
-- postgresql ✅ (migrations complete, all tables present)
-- redis ✅ (localhost:6379)
-- nginx ✅ (port 80, proxies to buzz-relay:3000)
-- buzz-relay ✅ (port 3000/ws + 8080/health + 9102/metrics, serves web/dist)
-- gc-service ✅ (port 4242, Growth Cartography HTTP service)
-- gc-agent ✅ (NIP-42 authenticated pubkey 7bc38f37c27aa98f..., subscribed)
+## Buzz relay event kind architecture (CRITICAL)
+Buzz does NOT use NIP-28 (kind-40/41/42 Public Chat). It uses:
+- **KIND_STREAM_MESSAGE = 9** — channel messages (use this for all community posts/replies)
+- KIND_STREAM_MESSAGE_V2 = 40002 — newer variant
+- KIND_NIP29_CREATE_GROUP = 9007 — create sub-channel within community
+- KIND_NIP29_PUT_USER = 9000 — add member/admin (scope: AdminChannels)
+- KIND_NIP29_JOIN_REQUEST = 9021 — join request (scope: ChannelsRead)
+- KIND_PROFILE = 0 — user profile metadata
+- kind-42 is REJECTED with "restricted: unknown event kind"
 
-## MinIO note
-Added MinIO because Buzz relay v0.4.22 requires S3-compatible object store (runs git conformance probe on startup; fails without it).
-MinIO data: /opt/minio-data
+## Buzz message format (kind-9)
+- Channel scope: `["h", "<channel-or-community-uuid>"]` tag
+  - For the Lab: use the community UUID `f5156ed0-...`; this scopes message to the lab community's default channel
+  - The relay parses `h` tag as UUID via `extract_channel_id()`
+- Threaded reply: `["e", "<parent_event_id>", "", "reply"]` + `["p", "<author_pubkey>"]`
+- Full reply tags: `[["h", CHANNEL_ID], ["e", parentId, "", "reply"], ["p", authorPubkey]]`
 
-## nostr-tools fix
-gc-agent shipped with wrong crypto (Ed25519 slice, no AUTH handler). Fixed to use nostr-tools v2 (secp256k1, finalizeEvent, NIP-42 AUTH handler). Deployed at /opt/fdi-community/community/gc-agent.mjs.
+## gc-agent subscription filter
+- Subscribe to kind-9 in channel: `{ kinds: [9], "#h": [CHANNEL_ID], limit: 0 }`
+- Detect @gc mentions by scanning event.content client-side (not via #p filter)
+- Agent pubkey is the community owner; added as owner via kind-9000 put-user
 
-## Community provisioned
-- community_id: `826e7d07-8c79-4076-bec0-bfa8fefd819a`
-- host: `162.243.115.129` (will update to `lab.falsedawn.industries` after DNS)
-- owner pubkey: `7bc38f37c27aa98f032cc0e505b6c61f0cb27b871cb899b2fbf65efc94b8b63d` (the gc-agent)
-- Operator API: needs NIP-98 signed request (`kind:27235`, tags `["u", url], ["method", method], ["payload", sha256body]`)
-  - RELAY_OPERATOR_API_ORIGIN must match the URL used in the NIP-98 event exactly (no 127.0.0.1!)
+## Lab seeded (2026-08-06)
+- @gc kind-0 profile posted to relay
+- 3 example exchanges seeded (PR coverage velocity, SaaS unit economics, agent network spike-vs-drip)
+- All using kind-9 with h=f5156ed0 community UUID
 
-## FULLY LIVE (Aug 6 2026)
-- TLS: certs from Let's Encrypt, auto-renew via certbot systemd timer
-- `https://relay.falsedawn.industries` → Buzz WebSocket relay (NIP-11 + NIP-42 auth)
-- `https://lab.falsedawn.industries` → Buzz web client SPA
-- gc-agent authenticates over `wss://relay.falsedawn.industries` ✅
-- Community `lab.falsedawn.industries` (id: f5156ed0-59f8-4ec3-b133-b2a1d66495bc) provisioned
-- Community `relay.falsedawn.industries` (id: 030ffa74-3e39-4c67-838d-7839b27af584) provisioned
-- COMMUNITY_URL=https://lab.falsedawn.industries set as Replit shared env var
-- /community page now shows "Enter the Lab →" button
+## OpenAI connectivity gap (BLOCKER for live agent responses)
+- gc-service (and gc-agent local fallback) both use OPENAI_BASE_URL=http://localhost:1106/modelfarm/openai
+- That URL is the Replit AI integration sidecar — NOT reachable from the VPS
+- Result: gc-service /model returns "OpenAI call failed: Connection error."
+- Fix: set OPENAI_BASE_URL=https://api.openai.com/v1 and OPENAI_API_KEY to a real key in /opt/fdi-community/.env.agent
+- Until fixed: gc-agent can subscribe and post seeded content but cannot parse/answer live questions
 
-## Remaining operational notes
-- nginx uses `proxy_pass http://127.0.0.1:3000` (NOT localhost — avoids IPv6 [::1] 502 errors)
-- NIP-98 operator API calls must use the exact URL that matches RELAY_OPERATOR_API_ORIGIN
-- BUZZ_AGENT_PRIVATE_KEY is only stored at /opt/fdi-community/.env.agent on the VPS
-
-## Firewall ports open
-22 (SSH), 80 (HTTP), 443 (HTTPS), 3000 (relay WS), 3001 (web client), 4242 (gc-service)
-
-## Cassette API notes
-- API key: available as `CASSETTE_API_KEY` Replit secret
-- Base URL: `https://cassette.sh/api/v1/`
-- Resize: `POST /api/v1/cassettes/:id/resize` with `{"plan_id":"medium"}`
-- Reboot: `POST /api/v1/cassettes/:id/reboot`
-- Firewall: `POST /api/v1/cassettes/:id/firewall_rules`
-- SSH key assignment: `POST /api/v1/cassettes/:id/ssh_key_assignments`
-- Plans: small ($12/mo 1vCPU/2GB), medium ($29/mo 2vCPU/4GB), large ($99/mo 4vCPU/8GB)
-
-## Key lessons
-- Rust version: Buzz v0.4.22 deps require rustc 1.94+ (sqlx) and 1.91+ (netwatch). Install stable, not a pinned old version.
-- Post-resize networking: server may be unreachable for 2-3 minutes after a resize even though API shows "running". Reboot via API fixes it.
-- SSH username is `cassette`, not `root`. `sudo` works passwordlessly.
-- Cassette API returns `ssh_username: "cassette"` on the cassette object — always trust that field.
+## Services (all active)
+- buzz-relay, buzz-operator, gc-agent, gc-service, nginx, certbot-renew (timer)
+- Total RSS ~356 MB, load avg ~0.36 — healthy headroom
