@@ -24,6 +24,7 @@
  */
 
 import http from "node:http";
+import https from "node:https";
 import { randomBytes, createHash } from "node:crypto";
 import { finalizeEvent } from "nostr-tools/pure";
 import { parseScenario } from "./gc-parser.mjs";
@@ -53,6 +54,14 @@ const BUZZ_HOST = (process.env.BUZZ_RELAY_HOST || "lab.falsedawn.industries");
 const INVITE_RATE_MAX = 5;
 const INVITE_RATE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 const _inviteRateBuckets = new Map(); // ip -> { count, resetAt }
+
+// Extract the real client IP from a request that has passed through nginx.
+// nginx is configured to overwrite X-Real-IP with $remote_addr (the actual
+// downstream peer), so it cannot be spoofed by the client. Do NOT use
+// X-Forwarded-For: its leftmost entry is client-controlled.
+function clientIp(req) {
+  return req.headers["x-real-ip"] || req.socket.remoteAddress || "unknown";
+}
 
 function inviteRateLimitExceeded(ip) {
   const now = Date.now();
@@ -250,9 +259,8 @@ function sendJSON(res, status, body) {
 }
 
 async function handleInvite(req, res) {
-  // Per-IP rate limit: prevent anonymous callers from bulk-minting invites.
-  const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress || "unknown";
-  if (inviteRateLimitExceeded(ip)) {
+  // Per-IP rate limit using the nginx-injected X-Real-IP header (not spoofable).
+  if (inviteRateLimitExceeded(clientIp(req))) {
     return sendJSON(res, 429, { ok: false, error: "Too many invite requests. Try again later." });
   }
 
@@ -282,10 +290,14 @@ async function handleInvite(req, res) {
 
     // Use http.request (not fetch) so the Host header is honoured — Node's
     // built-in fetch (undici) treats Host as a forbidden header and strips it.
-    // Parse BUZZ_RELAY_INTERNAL to extract hostname and port.
+    // Select http vs https based on the configured internal relay URL scheme.
     const relayInternalUrl = new URL(BUZZ_RELAY_INTERNAL);
+    if (relayInternalUrl.protocol !== "http:" && relayInternalUrl.protocol !== "https:") {
+      throw new Error(`Unsupported BUZZ_RELAY_INTERNAL_URL scheme: ${relayInternalUrl.protocol}`);
+    }
+    const transport = relayInternalUrl.protocol === "https:" ? https : http;
     const result = await new Promise((resolve, reject) => {
-      const r = http.request({
+      const r = transport.request({
         hostname: relayInternalUrl.hostname,
         port: Number(relayInternalUrl.port) || (relayInternalUrl.protocol === "https:" ? 443 : 80),
         path: "/api/invites",

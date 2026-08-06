@@ -201,13 +201,46 @@ server {
     root ${BUZZ_DIR}/web/dist;
     index index.html;
 
+    # Landing page — served from its own directory, not from the Buzz SPA root.
+    location = / {
+        root ${BUZZ_DIR}/lab-landing;
+        try_files /index.html =404;
+    }
+
+    # Invite API — proxied to gc-service.
+    # proxy_set_header X-Real-IP writes nginx's downstream peer address so
+    # gc-service can rate-limit by real client IP without trusting the
+    # client-controlled X-Forwarded-For header.
+    location = /api/gc-invite {
+        proxy_pass http://localhost:4242/invite;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$remote_addr;
+    }
+
     location /charts/ {
         proxy_pass http://localhost:4242/chart/;
         proxy_set_header Host \$host;
     }
 
-    location / {
+    # /app and SPA assets
+    location /app {
+        root ${BUZZ_DIR}/web/dist;
+        index index.html;
         try_files \$uri \$uri/ /index.html;
+    }
+    location /assets/ {
+        root ${BUZZ_DIR}/web/dist;
+    }
+
+    # Relay API and WebSocket — everything else proxied to Buzz relay port 3000
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host \$host;
+        proxy_read_timeout 86400;
     }
 }
 EOF
@@ -221,7 +254,7 @@ if [ ! -d "$FDI_DIR/community" ]; then
 fi
 cd "$FDI_DIR"
 [ -f package.json ] || npm init -y >/dev/null
-npm install ws openai
+npm install ws openai nostr-tools
 
 cat > "$FDI_DIR/.env.agent" <<EOF
 BUZZ_RELAY_URL=wss://${RELAY_DOMAIN}
@@ -234,6 +267,10 @@ cat > "$FDI_DIR/.env.service" <<EOF
 GC_SERVICE_PORT=4242
 GC_CHART_BASE_URL=https://${LAB_DOMAIN}/charts
 OPENAI_API_KEY=${OPENAI_API_KEY}
+# Keys and relay config required by gc-service for invite minting
+BUZZ_AGENT_PRIVATE_KEY=${BUZZ_AGENT_PRIVATE_KEY}
+BUZZ_RELAY_INTERNAL_URL=http://127.0.0.1:3000
+BUZZ_RELAY_HOST=${LAB_DOMAIN}
 EOF
 chown www-data:www-data "$FDI_DIR/.env.agent" "$FDI_DIR/.env.service"
 chmod 600 "$FDI_DIR/.env.agent" "$FDI_DIR/.env.service"
