@@ -24,7 +24,8 @@
  */
 
 import http from "node:http";
-import { randomBytes } from "node:crypto";
+import { randomBytes, createHash } from "node:crypto";
+import { finalizeEvent } from "nostr-tools/pure";
 import { parseScenario } from "./gc-parser.mjs";
 import { renderCurve } from "./gc-render.mjs";
 import {
@@ -39,6 +40,11 @@ import {
 
 const PORT = Number(process.env.GC_SERVICE_PORT ?? 4242);
 const CHART_BASE = (process.env.GC_CHART_BASE_URL ?? `http://localhost:${PORT}`).replace(/\/$/, "");
+
+/* Invite code generation — NIP-98 signed request to the Buzz relay */
+const BUZZ_AGENT_KEY_HEX = (process.env.BUZZ_AGENT_PRIVATE_KEY || "").trim();
+const BUZZ_RELAY_INTERNAL = (process.env.BUZZ_RELAY_INTERNAL_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
+const BUZZ_HOST = (process.env.BUZZ_RELAY_HOST || "lab.falsedawn.industries");
 
 /* ─── In-memory chart cache (bounded) ──────────────────────────────── */
 
@@ -218,6 +224,69 @@ function sendJSON(res, status, body) {
   res.end(payload);
 }
 
+async function handleInvite(_req, res) {
+  if (!BUZZ_AGENT_KEY_HEX) {
+    return sendJSON(res, 503, { ok: false, error: "Agent key not configured." });
+  }
+  try {
+    const privkeyBytes = Uint8Array.from(Buffer.from(BUZZ_AGENT_KEY_HEX, "hex"));
+
+    // NIP-98 u tag must be the public URL the relay sees on the wire.
+    // We call the relay internally on port 3000 with the correct Host header
+    // so the relay routes to the right community tenant.
+    const pubUrl = `https://${BUZZ_HOST}/api/invites`;
+
+    const bodyStr = JSON.stringify({ ttl_secs: 604800 }); // 7-day invite
+    // NIP-98 requires sha256 of the raw request body for POST requests
+    const payloadHash = createHash("sha256").update(bodyStr).digest("hex");
+
+    const authEvent = finalizeEvent({
+      kind: 27235,
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [["u", pubUrl], ["method", "POST"], ["payload", payloadHash]],
+      content: "",
+    }, privkeyBytes);
+
+    const authHeader = "Nostr " + Buffer.from(JSON.stringify(authEvent)).toString("base64");
+
+    // Use http.request (not fetch) so the Host header is honoured — Node's
+    // built-in fetch (undici) treats Host as a forbidden header.
+    const result = await new Promise((resolve, reject) => {
+      const r = http.request({
+        hostname: "127.0.0.1",
+        port: 3000,
+        path: "/api/invites",
+        method: "POST",
+        headers: {
+          "Host": BUZZ_HOST,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(bodyStr),
+          "Authorization": authHeader,
+        },
+      }, (resp) => {
+        let data = "";
+        resp.on("data", (c) => { data += c; });
+        resp.on("end", () => resolve({ status: resp.statusCode, body: data }));
+      });
+      r.on("error", reject);
+      r.write(bodyStr);
+      r.end();
+    });
+
+    if (result.status !== 200 && result.status !== 201) {
+      console.error("[gc-service] invite relay error:", result.status, result.body.slice(0, 200));
+      return sendJSON(res, 502, { ok: false, error: `Relay returned ${result.status}` });
+    }
+
+    let data;
+    try { data = JSON.parse(result.body); } catch { data = {}; }
+    return sendJSON(res, 200, { ok: true, code: data.code, expires_at: data.expires_at });
+  } catch (err) {
+    console.error("[gc-service] invite error:", err.message);
+    return sendJSON(res, 500, { ok: false, error: err.message });
+  }
+}
+
 async function handleModel(req, res) {
   let body;
   try { body = await jsonBody(req); }
@@ -291,6 +360,10 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && url === "/model") {
     return handleModel(req, res);
+  }
+
+  if (req.method === "POST" && url === "/invite") {
+    return handleInvite(req, res);
   }
 
   const chartMatch = url.match(/^\/chart\/([a-f0-9]{24})\.svg$/);

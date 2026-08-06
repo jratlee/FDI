@@ -9,10 +9,16 @@ description: FDI community relay (Buzz) running at lab.falsedawn.industries; gc-
 - Buzz relay: `/opt/buzz/` — running on port 3000
 - gc-agent + gc-service: `/opt/fdi-community/` — Node.js, systemd services
 
-## nginx
-Both `lab.falsedawn.industries` and `relay.falsedawn.industries` proxy all
-traffic (HTTP + WebSocket) to `127.0.0.1:3000`. Buzz routes community tenants
-by WebSocket Host header, so domain matters.
+## nginx layout
+- `relay.falsedawn.industries` — full proxy to port 3000 (WebSocket + HTTP)
+- `lab.falsedawn.industries`:
+  - `/` (HTTP browser) → landing page at `/opt/buzz/lab-landing/index.html`
+  - `/` (WebSocket, Upgrade header present) → proxy to port 3000 (relay)
+  - `/app` → Buzz SPA at `/opt/buzz/web/dist/index.html`
+  - `/assets/` → `/opt/buzz/web/dist/assets/` (SPA uses absolute asset paths)
+  - `/api/` → proxy to port 3000 (relay REST API)
+  - `/api/gc-invite` → gc-service at port 4242 `/invite`
+- Buzz routes community tenants by the HTTP `Host` header, so domain matters.
 
 ## Buzz architecture (critical)
 - Community messages: **kind-9** (KIND_STREAM_MESSAGE), NOT kind-42 (Public Chat)
@@ -31,8 +37,8 @@ by WebSocket Host header, so domain matters.
 - `OPENAI_BASE_URL` — no longer used; gc-parser hardcodes OpenRouter base URL
 
 ## gc-agent Nostr identity
-- Private key (hex): `5594929a44614f19ef59e1d6959184de614e041ba5b7ade538d2dc52312548e5`
 - Pubkey prefix: `7bc38f37c27aa98f...`
+- Private key stored in Replit secret `BUZZ_AGENT_PRIVATE_KEY` and in `.env.agent` on VPS
 - Added as owner via kind-9000 put-user; has kind-0 profile in relay
 
 ## AI model config
@@ -53,6 +59,12 @@ by WebSocket Host header, so domain matters.
 2. SaaS unit economics (CAC payback + churn)
 3. Agent network spike-vs-drip pattern
 
-## Outstanding
-- BUZZ_AGENT_PRIVATE_KEY not yet stored in Replit secrets (Task #305)
-  Value: see gc-agent Nostr identity above (already on VPS, stored for DR)
+## Invite code endpoint
+- `POST /invite` on gc-service (port 4242), proxied publicly at `/api/gc-invite`
+- Builds a NIP-98 kind-27235 event signed with `BUZZ_AGENT_PRIVATE_KEY`
+- **Payload hash required**: NIP-98 POST events must include `["payload", sha256hex(body)]` tag
+  or the Buzz relay rejects with 401 "missing payload tag"
+- **Host header**: must use `http.request` (not Node's built-in fetch) — undici treats
+  `Host` as a forbidden header and won't forward it; relay routes by Host and returns
+  404 "no community configured" without it
+- Returns `{ok, code, expires_at}` — code is a 7-day JWT-style invite for Buzz iOS
