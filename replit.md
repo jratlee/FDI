@@ -240,3 +240,10 @@ file must carry an explicit note saying so (see
 - Reorganize `replit.md` for clarity but never trim content from it; the user
   does not want to risk context loss. (Done July 2026: detail moved verbatim
   into the `docs/` files listed above; nothing was deleted.)
+- **AI model default:** Always use OpenRouter (`https://openrouter.ai/api/v1`)
+  with the `openrouter/auto` model selector as the default for any AI feature
+  built in this project. The user has an OpenRouter account; the key is stored
+  as `OPENROUTER_API_KEY` in Replit secrets. Only fall back to the Replit
+  OpenAI integration (`AI_INTEGRATIONS_OPENAI_API_KEY`) when OpenRouter is
+  explicitly unavailable. Never hardcode `gpt-4o-mini` or any other specific
+  model — use `openrouter/auto` and let the router choose.

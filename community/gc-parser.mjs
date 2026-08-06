@@ -10,7 +10,13 @@
 
 import OpenAI from "openai";
 
-const client = new OpenAI();
+// Uses OpenRouter with the /auto model selector by default.
+// On the VPS: OPENAI_BASE_URL=https://openrouter.ai/api/v1, OPENAI_API_KEY=<openrouter key>.
+// On Replit: OPENAI_BASE_URL and OPENAI_API_KEY from the OpenAI integration or OpenRouter secret.
+const client = new OpenAI({
+  baseURL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY,
+});
 
 const SYSTEM_PROMPT = `You are a parameter extraction assistant for the FDI Growth Cartography modeling engine.
 
@@ -65,7 +71,7 @@ export async function parseScenario(rawQuestion) {
   let raw;
   try {
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "openrouter/auto",
       max_tokens: 512,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
