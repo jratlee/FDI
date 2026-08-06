@@ -244,7 +244,8 @@ file must carry an explicit note saying so (see
   (`https://openrouter.ai/api/v1`) for all AI features. Key is `OPENROUTER_API_KEY`
   in Replit secrets. Two tiers:
   - **Open-ended tasks** (copywriting, brainstorming, reasoning, agents): use
-    `openrouter/auto` — let the router pick the best model for the prompt.
+    `openrouter/auto-beta` — the current router (community spend-share ranking,
+    ~30 task-type classes). Note: `openrouter/auto` is deprecated as of 2026.
   - **Deterministic extraction tasks** (JSON schema parsing, classification,
     structured output, temperature=0): pin to `meta-llama/llama-3.3-70b-instruct`
     — cheaper than gpt-4o-mini ($0.10/M vs $0.15/M in), consistent latency,

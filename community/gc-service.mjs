@@ -15,10 +15,10 @@
  *   GET  /health         { ok: true, uptime }
  *
  * Environment:
- *   GC_SERVICE_PORT   Port to listen on (default: 4242)
- *   GC_CHART_BASE_URL Public base URL for chart links (default: http://localhost:PORT)
- *   OPENAI_API_KEY    Provided by Replit OpenAI integration (or set directly on VPS)
- *   AI_INTEGRATIONS_OPENAI_BASE_URL  Optional custom base URL for the AI gateway
+ *   GC_SERVICE_PORT    Port to listen on (default: 4242)
+ *   GC_CHART_BASE_URL  Public base URL for chart links (default: http://localhost:PORT)
+ *   OPEN_ROUTER        OpenRouter API key (Replit secret name)
+ *   OPENROUTER_API_KEY OpenRouter API key (VPS env var name — same key, different name)
  *
  * Run: node community/gc-service.mjs
  */
