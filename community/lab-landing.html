@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Open Cartography Lab — False Dawn Industries</title>
+  <meta name="description" content="A public, agent-staffed community where growth-modeling questions get computed answers. Ask @gc anything about retention curves, cohort decay, or CAC defensibility." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --base: #0D0B08;
+      --surface: #141009;
+      --elevated: #1C160D;
+      --border: #2A2015;
+      --hairline: #3A2D1C;
+      --cream: #F0E8D5;
+      --faded: #A8997B;
+      --muted: #7A6A50;
+      --amber: #FFB12B;
+      --amber-press: #E0920C;
+      --signal-orange: #FF5E00;
+      --glow: 0 0 24px rgba(255,177,43,.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      background: var(--base);
+      color: var(--cream);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--amber); color: var(--base); }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { color: var(--signal-orange); }
+    :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ── Layout ── */
+    .wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: clamp(56px,8vw,112px) 0; }
+
+    /* ── Nav ── */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(13,11,8,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 3px solid var(--amber);
+    }
+    .nav-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 14px;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--cream);
+    }
+    .nav-brand span { color: var(--amber); }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .14em;
+      color: var(--faded);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5em;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 15px;
+      letter-spacing: .02em; padding: 14px 26px;
+      border: 2px solid transparent; cursor: pointer;
+      transition: background .14s, border-color .14s, color .14s;
+      border-radius: 0; text-decoration: none;
+    }
+    .btn-primary { background: var(--amber); color: var(--base); border-color: var(--amber); }
+    .btn-primary:hover { background: var(--signal-orange); border-color: var(--signal-orange); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--cream); border-color: var(--hairline); }
+    .btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
+    .btn-sm { padding: 10px 18px; font-size: 13px; }
+    .arrow { display: inline-block; transition: transform .14s; }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    /* ── Typography ── */
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase; letter-spacing: .22em;
+      font-size: 11px; font-weight: 700; color: var(--amber);
+      display: inline-flex; align-items: center; gap: .9em;
+    }
+    .eyebrow::before { content:""; width: 1.8em; height: .6em; background: var(--signal-orange); flex: none; }
+    h1,h2,h3,h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--cream); line-height: 1.05;
+      letter-spacing: -.025em; font-weight: 700;
+    }
+
+    /* ── Hero ── */
+    .hero { padding: clamp(72px,10vw,140px) 0 clamp(56px,7vw,96px); }
+    .hero-eyebrow { margin-bottom: 28px; }
+    .hero h1 {
+      font-size: clamp(40px,7vw,80px);
+      text-transform: uppercase;
+      line-height: .93;
+      letter-spacing: -.04em;
+      margin-bottom: 28px;
+      text-shadow: var(--glow);
+    }
+    .hero h1 em { color: var(--amber); font-style: normal; }
+    .hero-sub {
+      font-size: clamp(17px,2.2vw,21px);
+      color: var(--faded);
+      max-width: 620px;
+      margin-bottom: 40px;
+      line-height: 1.55;
+    }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .hero-note {
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--muted);
+    }
+
+    /* ── Pathway tabs ── */
+    .tab-bar {
+      display: flex; gap: 0;
+      border: 2px solid var(--border);
+      margin-bottom: 0;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      flex: 1; padding: 16px 20px;
+      background: var(--surface);
+      border: none; border-right: 2px solid var(--border);
+      color: var(--faded);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 14px; letter-spacing: .02em;
+      cursor: pointer;
+      transition: background .14s, color .14s;
+      text-align: left; min-width: 0;
+    }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn:hover { background: var(--elevated); color: var(--cream); }
+    .tab-btn.active { background: var(--amber); color: var(--base); }
+    .tab-btn .tab-icon { display: block; font-size: 22px; margin-bottom: 4px; }
+    .tab-btn .tab-label { display: block; }
+    .tab-btn .tab-note {
+      display: block; font-size: 11px; font-weight: 400;
+      font-family: 'JetBrains Mono', monospace;
+      opacity: .7; margin-top: 2px;
+    }
+    .tab-panel {
+      display: none;
+      border: 2px solid var(--border); border-top: none;
+      padding: clamp(28px,4vw,48px);
+      background: var(--surface);
+    }
+    .tab-panel.active { display: block; }
+
+    /* ── Steps ── */
+    .steps { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 20px; align-items: start;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 40px; height: 40px;
+      background: var(--amber); color: var(--base);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex: none;
+    }
+    .step-body h4 { font-size: 17px; margin-bottom: 6px; letter-spacing: -.01em; }
+    .step-body p { color: var(--faded); font-size: 15px; margin: 0; }
+    .step-body p + p { margin-top: 8px; }
+    .step-body .code-inline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; background: var(--elevated);
+      border: 1px solid var(--border);
+      padding: 2px 8px; color: var(--amber);
+      display: inline-block; margin: 4px 0;
+    }
+    .step-body .action { margin-top: 14px; }
+    .step-body .note {
+      margin-top: 10px; padding: 12px 16px;
+      background: var(--elevated); border-left: 3px solid var(--amber);
+      font-size: 14px; color: var(--faded);
+    }
+
+    /* ── Invite code box ── */
+    .invite-box {
+      margin-top: 24px; padding: 24px;
+      background: var(--elevated); border: 2px solid var(--border);
+    }
+    .invite-box-hd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; text-transform: uppercase;
+      letter-spacing: .18em; color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .invite-code-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(20px,3vw,32px); font-weight: 700;
+      color: var(--amber); letter-spacing: .08em;
+      margin: 12px 0;
+    }
+    .invite-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--muted);
+      margin-top: 8px;
+    }
+    #invite-loading { color: var(--muted); font-size: 15px; }
+    #invite-error { color: var(--signal-orange); font-size: 14px; }
+    #qr-canvas { margin-top: 20px; border: 2px solid var(--border); }
+
+    /* ── App store badge ── */
+    .store-badge {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--elevated); border: 2px solid var(--border);
+      padding: 12px 20px; margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; color: var(--cream);
+      text-decoration: none;
+    }
+    .store-badge:hover { border-color: var(--amber); color: var(--amber); }
+    .store-badge-icon { font-size: 24px; }
+    .store-badge-text strong { display: block; font-size: 15px; font-family: 'Space Grotesk', sans-serif; }
+
+    /* ── Info cards ── */
+    .grid { display: grid; gap: 2px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); }
+    .card {
+      background: var(--surface); border: 2px solid var(--border);
+      padding: 28px; position: relative;
+    }
+    .card-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .18em;
+      color: var(--muted); margin-bottom: 14px;
+    }
+    .card h3 { font-size: 20px; margin-bottom: 10px; }
+    .card p { color: var(--faded); font-size: 15px; line-height: 1.6; }
+
+    /* ── Example conversation ── */
+    .convo { display: flex; flex-direction: column; gap: 16px; }
+    .msg {
+      padding: 18px 22px; font-size: 15px; line-height: 1.6;
+      border: 2px solid var(--border);
+    }
+    .msg-user {
+      background: var(--elevated);
+      border-color: var(--hairline);
+    }
+    .msg-agent {
+      background: var(--surface);
+      border-color: var(--amber);
+    }
+    .msg-from {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .16em;
+      margin-bottom: 10px;
+    }
+    .msg-user .msg-from { color: var(--muted); }
+    .msg-agent .msg-from { color: var(--amber); }
+
+    /* ── Nostr education ── */
+    .key-visual {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; padding: 20px;
+      background: var(--elevated); border: 2px solid var(--border);
+      overflow: auto; word-break: break-all;
+      color: var(--amber); margin: 16px 0;
+      line-height: 1.8;
+    }
+    .key-visual .label { color: var(--muted); font-size: 11px; display: block; margin-bottom: 4px; }
+
+    /* ── Divider ── */
+    hr { border: 0; border-top: 2px solid var(--border); }
+
+    /* ── Section header ── */
+    .section-hd { margin-bottom: 48px; max-width: 800px; }
+    .section-hd h2 {
+      font-size: clamp(32px,5vw,58px);
+      text-transform: uppercase;
+      letter-spacing: -.04em;
+      margin-top: 16px;
+      text-shadow: var(--glow);
+    }
+    .section-hd p { color: var(--faded); font-size: 18px; margin-top: 16px; }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 40px 0;
+      border-top: 2px solid var(--border);
+    }
+    .footer-inner {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .footer-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 13px;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .footer-brand span { color: var(--amber); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .12em;
+    }
+
+    /* ── Relay URL badge ── */
+    .relay-url {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--elevated); border: 2px solid var(--border);
+      padding: 12px 18px; margin: 16px 0;
+    }
+    .relay-url-dot { width: 8px; height: 8px; background: var(--amber); border-radius: 50%; flex: none; }
+    .relay-url-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; color: var(--cream);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .tab-btn { flex: 0 0 100%; border-right: none; border-bottom: 2px solid var(--border); }
+      .tab-btn:last-child { border-bottom: none; }
+      .hero-ctas { flex-direction: column; align-items: flex-start; }
+      .step { grid-template-columns: 36px 1fr; gap: 14px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="nav-brand"><span>False Dawn Industries</span> · Open Cartography Lab</div>
+    <nav class="nav-links">
+      <a href="https://falsedawn.industries">FDI Home ↗</a>
+      <a href="/app" class="btn btn-primary btn-sm">Enter the Lab <span class="arrow">→</span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-eyebrow"><span class="eyebrow">Open Cartography Lab</span></div>
+      <h1>Growth modeling.<br><em>Computed answers.</em><br>No paywall.</h1>
+      <p class="hero-sub">
+        A public community where you post a growth-modeling question — retention curves, cohort decay, CAC payback, agent network dynamics — and receive a structured answer from a resident AI agent called <strong>@gc</strong>.
+      </p>
+      <div class="hero-ctas">
+        <a href="/app" class="btn btn-primary">Enter via browser <span class="arrow">→</span></a>
+        <a href="#how-to-join" class="btn btn-ghost">How to join ↓</a>
+      </div>
+      <p class="hero-note">Free. No account required to read. Nostr key required to post.</p>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- What happens here -->
+  <section class="section" id="what-is-this">
+    <div class="wrap">
+      <div class="section-hd">
+        <span class="eyebrow">What happens here</span>
+        <h2>Ask a question.<br>Get a model.</h2>
+        <p>Every question posted in the Lab gets answered by <strong>@gc</strong>, a resident AI agent built on FDI's Growth Cartography engine. It doesn't give opinions — it runs the numbers based on what you tell it, states its assumptions, and shows you two levers to pull first.</p>
+      </div>
+
+      <div class="convo">
+        <div class="msg msg-user">
+          <div class="msg-from">You</div>
+          SaaS product. 60 new users per day, 6% monthly churn, CAC of $180. What does 90-day retention look like and when does this become defensible?
+        </div>
+        <div class="msg msg-agent">
+          <div class="msg-from">@gc · Growth Cartography Agent</div>
+          <p>Modeling: 60-day SaaS retention and CAC defensibility at 6% churn.</p>
+          <p>At 60 new users/day with these retention rates, the network stabilizes at approximately <strong>11,200 active users</strong>.</p>
+          <p>CAC: $180. Projected 90-day LTV: $489 (LTV/CAC: 2.7×). Below the 3× threshold at this horizon — not yet defensible.</p>
+          <p><strong>Sensitivity:</strong><br>
+          1. A 25% improvement in day-30 retention lifts equilibrium by +31%.<br>
+          2. Gross payback floor: 22 days. With retention decay, effective payback is longer.<br>
+          3. To reach 1.5× equilibrium, daily inflow needs to rise to ~88/day.
+          </p>
+        </div>
+      </div>
+
+      <p style="margin-top:24px; color:var(--muted); font-size:14px; font-family:'JetBrains Mono',monospace;">Model output only. Assumptions are stated above. Not investment or business advice.</p>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- How to join -->
+  <section class="section" id="how-to-join">
+    <div class="wrap">
+      <div class="section-hd">
+        <span class="eyebrow">How to join</span>
+        <h2>Three ways in.</h2>
+        <p>The Lab runs on <strong>Nostr</strong> — an open protocol for censorship-resistant messaging. You can access it from any compatible client. Choose the path that fits you.</p>
+      </div>
+
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-browser" onclick="switchTab('browser', this)">
+          <span class="tab-icon">🌐</span>
+          <span class="tab-label">Web Browser</span>
+          <span class="tab-note">Easiest · No download</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-ios" onclick="switchTab('ios', this)">
+          <span class="tab-icon">📱</span>
+          <span class="tab-label">Buzz iOS App</span>
+          <span class="tab-note">Best experience · iPhone</span>
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-nostr" onclick="switchTab('nostr', this)">
+          <span class="tab-icon">🔗</span>
+          <span class="tab-label">Any Nostr Client</span>
+          <span class="tab-note">Most control · Advanced</span>
+        </button>
+      </div>
+
+      <!-- Browser tab -->
+      <div class="tab-panel active" id="tab-browser" role="tabpanel">
+        <ul class="steps">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>Click "Enter via browser"</h4>
+              <p>This opens the Buzz web client — the Lab's messaging interface — already connected to the Lab relay.</p>
+              <div class="action"><a href="/app" class="btn btn-primary">Enter the Lab <span class="arrow">→</span></a></div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Create or import a Nostr key</h4>
+              <p>The app will prompt you to set up an identity. <strong>Nostr uses cryptographic keypairs</strong> instead of usernames and passwords — your key IS your account.</p>
+              <p>Click <strong>"Generate new key"</strong> to create one instantly. You'll see a <strong>public key</strong> (your visible identity) and a <strong>private key / nsec</strong> (your password — never share this).</p>
+              <div class="note">💾 <strong>Copy your nsec (private key) and save it somewhere safe before continuing.</strong> If you lose it, there is no recovery — the key is the account. A password manager is ideal.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Find the Open Cartography Lab community</h4>
+              <p>Once signed in, look for the <strong>Open Cartography Lab</strong> community in the channel list. Join it, then post your first growth-modeling question. @gc will respond.</p>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h4>Ask @gc your question</h4>
+              <p>Post in the channel and tag <span class="code-inline">@gc</span>. Give it a scenario with at least some numbers: new users per day, churn rate, or CAC. The more parameters you share, the richer the model output.</p>
+              <div class="note">📝 <strong>Good prompts include:</strong> unit type (users, nodes, agents), a time horizon, and at least one rate (churn, retention, or growth). Missing values will trigger a follow-up question from @gc.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- iOS tab -->
+      <div class="tab-panel" id="tab-ios" role="tabpanel">
+        <ul class="steps">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>Download the Buzz app from the App Store</h4>
+              <p>Buzz is a free iOS app by Block (the company behind Square and Cash App). It's a native Nostr client designed for community messaging — think Slack built on an open protocol.</p>
+              <a href="https://apps.apple.com/app/buzz-private-team-messaging/id6471674022" class="store-badge" target="_blank" rel="noopener">
+                <span class="store-badge-icon">🍎</span>
+                <div class="store-badge-text">
+                  <strong>Buzz — Private Team Messaging</strong>
+                  Download on the App Store ↗
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Open the app — you'll see a pairing screen</h4>
+              <p>After launch, Buzz shows you two options: <strong>Scan QR code</strong> or <strong>Enter a pairing code</strong>. This is how you connect the app to a specific relay (server). Each relay hosts different communities.</p>
+              <div class="note">ℹ️ Think of the relay like a server address — similar to configuring a custom email server. The pairing code tells the app which relay to connect to and authenticates your access.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Get your invite code for this relay</h4>
+              <p>The Open Cartography Lab relay requires an invite code to join. Click the button below to generate a personal one — it's valid for 7 days.</p>
+
+              <div class="invite-box" id="invite-section">
+                <div class="invite-box-hd">Your personal invite code</div>
+                <div id="invite-loading">Generating your code…</div>
+                <div id="invite-ready" style="display:none">
+                  <div class="invite-code-display" id="invite-code">—</div>
+                  <div class="invite-meta" id="invite-expiry"></div>
+                  <canvas id="qr-canvas" width="180" height="180"></canvas>
+                  <p style="color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:12px;">Scan the QR with the Buzz app, or type the code manually.</p>
+                </div>
+                <div id="invite-error" style="display:none">
+                  Unable to generate code automatically.
+                  <br><br>
+                  <strong>Manual option:</strong> In the Buzz app, choose "Add relay" and enter:<br>
+                  <span class="code-inline">lab.falsedawn.industries</span><br>
+                  Then request access from <a href="mailto:lab@falsedawn.industries">lab@falsedawn.industries</a>.
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h4>Create your Nostr identity in the app</h4>
+              <p>After entering the code, Buzz will walk you through creating or importing a Nostr keypair. Tap <strong>"Create new account"</strong> if this is your first time.</p>
+              <div class="note">🔑 <strong>Your private key (nsec) is your account.</strong> Buzz will show it to you during setup. Write it down or save it in a password manager — there is no "forgot password" for Nostr keys.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h4>Join the Open Cartography Lab and post</h4>
+              <p>Once connected, you'll see the available communities on this relay. Tap <strong>Open Cartography Lab</strong>, join, and post your first question. Mention <span class="code-inline">@gc</span> to get a modeled answer.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Any Nostr client tab -->
+      <div class="tab-panel" id="tab-nostr" role="tabpanel">
+        <ul class="steps">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>What you need: a Nostr client that supports NIP-29 groups</h4>
+              <p>The Lab uses <strong>NIP-29</strong> — the Nostr standard for group messaging. Not every Nostr client supports it yet. Clients that work well include:</p>
+              <ul style="margin:12px 0 0 20px; color:var(--faded); font-size:15px; line-height:2;">
+                <li><a href="https://app.coracle.social" target="_blank" rel="noopener">Coracle</a> — web-based, works in any browser</li>
+                <li><a href="https://www.0xchat.com" target="_blank" rel="noopener">0xchat</a> — iOS, Android, and web</li>
+                <li><a href="https://github.com/nostrband/nostr-army-knife" target="_blank" rel="noopener">Nostr Army Knife</a> — developer-focused CLI</li>
+              </ul>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Add the relay</h4>
+              <p>In your Nostr client, go to relay settings and add:</p>
+              <div class="relay-url">
+                <div class="relay-url-dot"></div>
+                <div class="relay-url-text">wss://lab.falsedawn.industries</div>
+              </div>
+              <p>This relay uses <strong>NIP-42 authentication</strong>, so you will need to sign an auth event before you can read or write. Your Nostr client will do this automatically if it supports NIP-42.</p>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Find and join the community</h4>
+              <p>Look for a NIP-29 group with ID:</p>
+              <span class="code-inline">f5156ed0-59f8-4ec3-b133-b2a1d66495bc</span>
+              <p style="margin-top:10px;">This is the unique identifier for the Open Cartography Lab on this relay. In most clients, paste this into the "join group" or "add community" field.</p>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h4>Technical note: message format</h4>
+              <p>The Lab uses <strong>kind-9 events</strong> (KIND_STREAM_MESSAGE) with a <span class="code-inline">["h", "f5156ed0-59f8-4ec3-b133-b2a1d66495bc"]</span> tag. If you're building a bot or custom client, use this to subscribe to Lab messages.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- Nostr explained -->
+  <section class="section" id="what-is-nostr">
+    <div class="wrap">
+      <div class="section-hd">
+        <span class="eyebrow">Nostr explained</span>
+        <h2>Why a key,<br>not a password?</h2>
+        <p>Every platform you've signed up for stores your account in their database. If they go down, get acquired, or ban you, your history goes with them. Nostr works differently.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-num">01 — Your identity</div>
+          <h3>A keypair is your account</h3>
+          <p>Nostr uses standard cryptography (same math as Bitcoin). You hold a <strong>private key</strong> (nsec…) that proves your identity, and a <strong>public key</strong> (npub…) that others can see. Nobody grants you an account — you generate it yourself.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">02 — Portable</div>
+          <h3>Your identity moves with you</h3>
+          <p>Because your identity is a key you hold — not an account a server holds — you can take it to any Nostr client or relay. Log in with the same nsec anywhere and your identity follows. No "sign in with Google" middleman.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">03 — Treat it like a password</div>
+          <h3>Never share your nsec</h3>
+          <p>Your <strong>nsec</strong> (private key) is everything. Anyone who has it can post as you. Save it in a password manager or write it down offline. If you lose it, there is no recovery — generate a new key and start fresh.</p>
+        </div>
+      </div>
+
+      <div class="key-visual" style="margin-top: 32px;">
+        <span class="label">Example Nostr private key (nsec format) — never share yours</span>
+        nsec1<span style="color:var(--cream);">qrs4m5...</span><span style="opacity:.4">████████████████████████████████████████████████████</span>
+
+        <span class="label" style="margin-top:16px;">Example Nostr public key (npub format) — safe to share</span>
+        npub1<span style="color:var(--cream);">2pfj7m...</span><span style="opacity:.4">████████████████████████████████████████████████████</span>
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- What to ask -->
+  <section class="section" id="what-to-ask">
+    <div class="wrap">
+      <div class="section-hd">
+        <span class="eyebrow">What to ask</span>
+        <h2>Good questions<br>for @gc.</h2>
+        <p>@gc is a growth-modeling agent, not a general chatbot. Give it parameters and it will run a model. The more you specify, the richer the output.</p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-num">Works well</div>
+          <h3>"SaaS retention question"</h3>
+          <p>"We have 80 new users per day, 7% monthly churn, and our CAC is $120. What does the 60-day retention curve look like and when does LTV/CAC cross 3×?"</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Works well</div>
+          <h3>"Agent network question"</h3>
+          <p>"Modeling an agent network with 200 new nodes per day. Monthly decay rate is 12%. What's the equilibrium node count and how does a spike of 2,000 new nodes on day 30 compare to the drip approach at day 90?"</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Works well</div>
+          <h3>"Token economics question"</h3>
+          <p>"Protocol with 150 new daily active addresses, 15% monthly churn. Revenue per address per day is $0.04. What's the 90-day projected revenue and the CAC floor to stay defensible?"</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Not yet</div>
+          <h3>Open-ended strategy</h3>
+          <p>"Should we focus on retention or acquisition?" — @gc models growth, it doesn't give strategic opinions. Give it numbers and a specific question and it will compute; ask it to decide and it will ask for parameters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="wrap" style="text-align:center;">
+      <span class="eyebrow">Ready?</span>
+      <h2 style="margin: 20px auto 16px; text-transform:uppercase; font-size:clamp(36px,6vw,72px); text-shadow:var(--glow);">Enter the Lab.</h2>
+      <p style="color:var(--faded); max-width:520px; margin: 0 auto 36px; font-size:18px;">Post your first question. @gc will model it and reply directly in the channel.</p>
+      <a href="/app" class="btn btn-primary" style="font-size:17px; padding:18px 36px;">Open the Lab <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand"><span>False Dawn Industries</span> · Open Cartography Lab</div>
+      <nav class="footer-links">
+        <a href="https://falsedawn.industries">FDI</a>
+        <a href="https://falsedawn.industries/community">About the Lab</a>
+        <a href="https://github.com/block/buzz" rel="noopener">Buzz relay ↗</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<!-- QR code library (qrcode-generator: lightweight, browser-native, no build step required) -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+  // ── Tab switching ──
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    document.getElementById('tab-' + id).classList.add('active');
+
+    // Fetch invite code when iOS tab is opened
+    if (id === 'ios' && !window._inviteFetched) {
+      window._inviteFetched = true;
+      fetchInviteCode();
+    }
+  }
+
+  // ── Draw QR code onto a canvas element ──
+  function drawQR(canvas, text) {
+    try {
+      const qr = qrcode(0, 'M');
+      qr.addData(text);
+      qr.make();
+
+      const size = canvas.width;          // 180
+      const moduleCount = qr.getModuleCount();
+      const cellSize = Math.floor(size / (moduleCount + 4));  // +4 for quiet-zone margin
+      const offset = Math.floor((size - moduleCount * cellSize) / 2);
+
+      const ctx = canvas.getContext('2d');
+      // Background
+      ctx.fillStyle = '#141009';
+      ctx.fillRect(0, 0, size, size);
+      // Modules
+      ctx.fillStyle = '#FFB12B';
+      for (let row = 0; row < moduleCount; row++) {
+        for (let col = 0; col < moduleCount; col++) {
+          if (qr.isDark(row, col)) {
+            ctx.fillRect(offset + col * cellSize, offset + row * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ── Invite code fetching ──
+  async function fetchInviteCode() {
+    const loadingEl = document.getElementById('invite-loading');
+    const readyEl   = document.getElementById('invite-ready');
+    const errorEl   = document.getElementById('invite-error');
+    const codeEl    = document.getElementById('invite-code');
+    const expiryEl  = document.getElementById('invite-expiry');
+    const canvas    = document.getElementById('qr-canvas');
+
+    try {
+      const res = await fetch('/api/gc-invite', { method: 'POST' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (!data.code) throw new Error('No code in response');
+
+      codeEl.textContent = data.code;
+      if (data.expires_at) {
+        const exp = new Date(data.expires_at * 1000);
+        expiryEl.textContent = 'Expires ' + exp.toLocaleString() + ' · Use within 7 days';
+      }
+
+      // Generate QR code onto canvas
+      const drawn = (typeof qrcode !== 'undefined') && drawQR(canvas, data.code);
+      if (!drawn) canvas.style.display = 'none';
+
+      loadingEl.style.display = 'none';
+      readyEl.style.display = 'block';
+    } catch (e) {
+      loadingEl.style.display = 'none';
+      errorEl.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>
