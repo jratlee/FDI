@@ -62,15 +62,20 @@ gc-agent shipped with wrong crypto (Ed25519 slice, no AUTH handler). Fixed to us
 - Operator API: needs NIP-98 signed request (`kind:27235`, tags `["u", url], ["method", method], ["payload", sha256body]`)
   - RELAY_OPERATOR_API_ORIGIN must match the URL used in the NIP-98 event exactly (no 127.0.0.1!)
 
-## What's NOT done yet (blocked on DNS)
-1. Point Hover DNS A-records: `relay.falsedawn.industries` and `lab.falsedawn.industries` → 162.243.115.129
-2. Run certbot for TLS
-3. Update RELAY_OPERATOR_API_ORIGIN, RELAY_URL, BUZZ_RELAY_URL in env files to use https/wss domains
-4. Rebuild Buzz web client with `VITE_RELAY_URL=wss://relay.falsedawn.industries`
-5. Re-provision community with `host: lab.falsedawn.industries`
-6. Set `COMMUNITY_URL=https://lab.falsedawn.industries` in Replit deployment env vars
-7. Redeploy site → /community shows "Enter the Lab"
-Covered by Task #300.
+## FULLY LIVE (Aug 6 2026)
+- TLS: certs from Let's Encrypt, auto-renew via certbot systemd timer
+- `https://relay.falsedawn.industries` → Buzz WebSocket relay (NIP-11 + NIP-42 auth)
+- `https://lab.falsedawn.industries` → Buzz web client SPA
+- gc-agent authenticates over `wss://relay.falsedawn.industries` ✅
+- Community `lab.falsedawn.industries` (id: f5156ed0-59f8-4ec3-b133-b2a1d66495bc) provisioned
+- Community `relay.falsedawn.industries` (id: 030ffa74-3e39-4c67-838d-7839b27af584) provisioned
+- COMMUNITY_URL=https://lab.falsedawn.industries set as Replit shared env var
+- /community page now shows "Enter the Lab →" button
+
+## Remaining operational notes
+- nginx uses `proxy_pass http://127.0.0.1:3000` (NOT localhost — avoids IPv6 [::1] 502 errors)
+- NIP-98 operator API calls must use the exact URL that matches RELAY_OPERATOR_API_ORIGIN
+- BUZZ_AGENT_PRIVATE_KEY is only stored at /opt/fdi-community/.env.agent on the VPS
 
 ## Firewall ports open
 22 (SSH), 80 (HTTP), 443 (HTTPS), 3000 (relay WS), 3001 (web client), 4242 (gc-service)

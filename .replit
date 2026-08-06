@@ -194,6 +194,7 @@ ALERT_COOLDOWN_H = ""
 VPS_CERTBOT_EMAIL = "john@ratcliffe-lee.com"
 VPS_SSH_HOST = "162.243.115.129"
 VPS_SSH_USER = "cassette"
+COMMUNITY_URL = "https://lab.falsedawn.industries"
 
 [userenv.development]
 DAVOSKIT_TIER1_PRICE_ID = "price_1TrNbuIr6q4Tm9bcIzcEhR8c"
@@ -215,6 +216,26 @@ externalPort = 80
 [[ports]]
 localPort = 5091
 externalPort = 3001
+
+[[ports]]
+localPort = 5092
+externalPort = 5173
+
+[[ports]]
+localPort = 5093
+externalPort = 3002
+
+[[ports]]
+localPort = 5094
+externalPort = 3003
+
+[[ports]]
+localPort = 5095
+externalPort = 5000
+
+[[ports]]
+localPort = 5096
+externalPort = 4200
 
 [[ports]]
 localPort = 23636
